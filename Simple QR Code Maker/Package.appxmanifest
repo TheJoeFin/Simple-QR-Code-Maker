@@ -11,15 +11,15 @@
   IgnorableNamespaces="uap rescap genTemplate">
 
   <Identity
-    Name="af7f7f6a-ccc9-4640-8f32-096771a95b4d"
-    Publisher="CN=josep"
+    Name="40087JoeFinApps.SimpleQRCodeMaker"
+    Publisher="CN=153F3B0F-BA3D-4964-8098-71AC78A1DF6A"
     Version="1.0.0.0" />
     
-  <mp:PhoneIdentity PhoneProductId="af7f7f6a-ccc9-4640-8f32-096771a95b4d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="24ace133-1601-417e-8740-5ba2ec04f662" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
     
   <Properties>
     <DisplayName>Simple QR Code Maker</DisplayName>
-    <PublisherDisplayName>josep</PublisherDisplayName>
+    <PublisherDisplayName>JoeFinApps</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
