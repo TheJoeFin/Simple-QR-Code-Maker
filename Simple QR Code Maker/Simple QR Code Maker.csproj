@@ -22,6 +22,7 @@
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+    <AppxPackageDir>AppPackages\</AppxPackageDir>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Views\AboutDialog.xaml" />
