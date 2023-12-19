@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "Simple QR Code Maker (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "Simple QR Code Maker (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}
