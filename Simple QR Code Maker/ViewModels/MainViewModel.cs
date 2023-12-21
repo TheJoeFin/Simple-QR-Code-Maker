@@ -1,13 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Helpers;
-using Simple_QR_Code_Maker.Services;
-using Simple_QR_Code_Maker.Views;
-using System.Drawing;
+using Simple_QR_Code_Maker.Models;
+using System.Collections.ObjectModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -26,6 +23,8 @@ public partial class MainViewModel : ObservableRecipient
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanSaveImage))]
     private WriteableBitmap? qrCodeSource;
+
+    public ObservableCollection<BarcodeImageItem> QrCodeBitmaps { get; set; } = new();
 
     [ObservableProperty]
     private bool showLengthError = false;
@@ -51,20 +50,35 @@ public partial class MainViewModel : ObservableRecipient
         debounceTimer.Stop();
 
         QrCodeSource = null;
+        QrCodeBitmaps.Clear();
 
         if (string.IsNullOrWhiteSpace(UrlText))
             return;
 
         string textToEncode = UrlText;
+        string[] lines = UrlText.Split();
 
-        try
+        foreach ( string line in lines )
         {
-            QrCodeSource = BarcodeHelpers.GetQrCodeBitmapFromText(textToEncode, ErrorCorrectionLevel.M, System.Drawing.Color.Black, System.Drawing.Color.White);
-            ShowLengthError = false;
-        }
-        catch (ZXing.WriterException)
-        {
-            ShowLengthError = true;
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+
+            try
+            {
+                WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(line, ErrorCorrectionLevel.M, System.Drawing.Color.Black, System.Drawing.Color.White);
+                BarcodeImageItem barcodeImageItem = new()
+                {
+                    CodeAsBitmap = bitmap,
+                    CodeAsText = line,
+                };
+
+                QrCodeBitmaps.Add(barcodeImageItem);
+                ShowLengthError = false;
+            }
+            catch (ZXing.WriterException)
+            {
+                ShowLengthError = true;
+            }
         }
     }
 
