@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
@@ -10,6 +11,7 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using WinRT.Interop;
 using ZXing.QrCode.Internal;
+using static Simple_QR_Code_Maker.Enums;
 using static ZXing.Rendering.SvgRenderer;
 
 namespace Simple_QR_Code_Maker.ViewModels;
@@ -20,16 +22,12 @@ public partial class MainViewModel : ObservableRecipient
     [NotifyPropertyChangedFor(nameof(CanSaveImage))]
     private string urlText = "";
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanSaveImage))]
-    private WriteableBitmap? qrCodeSource;
-
     public ObservableCollection<BarcodeImageItem> QrCodeBitmaps { get; set; } = new();
 
     [ObservableProperty]
     private bool showLengthError = false;
 
-    public bool CanSaveImage { get => QrCodeSource is not null && !string.IsNullOrWhiteSpace(UrlText); }
+    public bool CanSaveImage { get => !string.IsNullOrWhiteSpace(UrlText); }
 
     partial void OnUrlTextChanged(string value)
     {
@@ -49,13 +47,11 @@ public partial class MainViewModel : ObservableRecipient
     {
         debounceTimer.Stop();
 
-        QrCodeSource = null;
         QrCodeBitmaps.Clear();
 
         if (string.IsNullOrWhiteSpace(UrlText))
             return;
 
-        string textToEncode = UrlText;
         string[] lines = UrlText.Split();
 
         foreach ( string line in lines )
@@ -85,36 +81,41 @@ public partial class MainViewModel : ObservableRecipient
     [RelayCommand]
     private async Task SavePng()
     {
-        FileSavePicker savePicker = new()
-        {
-            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-        };
-        savePicker.FileTypeChoices.Add("PNG Image", new List<string>() { ".png" });
-        savePicker.DefaultFileExtension = ".png";
-        savePicker.SuggestedFileName = "QR Code";
-
-        Window saveWindow = new();
-        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
-        InitializeWithWindow.Initialize(savePicker, windowHandleSave);
-
-        StorageFile file = await savePicker.PickSaveFileAsync();
-
-        if (file is null || QrCodeSource is null)
+        if (QrCodeBitmaps.Count == 0)
             return;
 
-        await QrCodeSource.SavePngToStorageFile(file);
+        if (QrCodeBitmaps.Count == 1)
+        {
+            await SaveSingle(FileKind.PNG, QrCodeBitmaps.First());
+            return;
+        }
+
+        await SaveAllFiles(FileKind.PNG);
     }
 
-    [RelayCommand]
-    private async Task SaveSvg()
+    private static async Task SaveSingle(FileKind kindOfFile, BarcodeImageItem imageItem)
     {
         FileSavePicker savePicker = new()
         {
             SuggestedStartLocation = PickerLocationId.PicturesLibrary,
         };
-        savePicker.FileTypeChoices.Add("SVG Image", new List<string>() { ".svg" });
-        savePicker.DefaultFileExtension = ".svg";
-        savePicker.SuggestedFileName = "QR Code";
+
+        switch (kindOfFile)
+        {
+            case FileKind.None:
+                break;
+            case FileKind.PNG:
+                savePicker.FileTypeChoices.Add("PNG Image", new List<string>() { ".png" });
+                savePicker.DefaultFileExtension = ".png";
+                break;
+            case FileKind.SVG:
+                savePicker.FileTypeChoices.Add("SVG Image", new List<string>() { ".svg" });
+                savePicker.DefaultFileExtension = ".svg";
+                break;
+            default:
+                break;
+        }
+        savePicker.SuggestedFileName = imageItem.CodeAsText.ReplaceReservedCharacters();
 
         Window saveWindow = new();
         IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
@@ -122,14 +123,84 @@ public partial class MainViewModel : ObservableRecipient
 
         StorageFile file = await savePicker.PickSaveFileAsync();
 
-        SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(UrlText, ErrorCorrectionLevel.M);
-
-        if (file is null || QrCodeSource is null || string.IsNullOrWhiteSpace(svgImage.Content))
+        if (file is null || imageItem.CodeAsBitmap is null)
             return;
 
-        using IRandomAccessStream randomAccessStream = await file.OpenAsync(FileAccessMode.ReadWrite);
-        DataWriter dataWriter = new(randomAccessStream);
-        dataWriter.WriteString(svgImage.Content);
-        await dataWriter.StoreAsync();
+        await WriteImageToFile(imageItem, file, kindOfFile);
+    }
+
+    private static async Task WriteImageToFile(BarcodeImageItem imageItem, StorageFile file, FileKind kindOfFile)
+    {
+        switch (kindOfFile)
+        {
+            case FileKind.None:
+                break;
+            case FileKind.PNG:
+                if (imageItem.CodeAsBitmap is null)
+                    return;
+
+                await imageItem.CodeAsBitmap.SavePngToStorageFile(file);
+                break;
+            case FileKind.SVG:
+                {
+                    SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(imageItem.CodeAsText, ErrorCorrectionLevel.M);
+                    using IRandomAccessStream randomAccessStream = await file.OpenAsync(FileAccessMode.ReadWrite);
+                    DataWriter dataWriter = new(randomAccessStream);
+                    dataWriter.WriteString(svgImage.Content);
+                    await dataWriter.StoreAsync();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public async Task SaveAllFiles(FileKind kindOfFile)
+    {
+        FolderPicker folderPicker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+        };
+
+
+        Window saveWindow = new();
+        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
+        InitializeWithWindow.Initialize(folderPicker, windowHandleSave);
+
+        StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+
+        if (folder is null)
+            return;
+
+        string extension = $".{kindOfFile.ToString().ToLower()}";
+
+        foreach (BarcodeImageItem imageItem in QrCodeBitmaps)
+        {
+            string fileName = imageItem.CodeAsText.ReplaceReservedCharacters();
+
+            if (string.IsNullOrWhiteSpace(fileName) || imageItem.CodeAsBitmap is null)
+                continue;
+
+            fileName += extension;
+
+            StorageFile file = await folder.CreateFileAsync(fileName);
+            await WriteImageToFile(imageItem, file, kindOfFile);
+        }
+    }
+
+
+    [RelayCommand]
+    private async Task SaveSvg()
+    {
+        if (QrCodeBitmaps.Count == 0)
+            return;
+
+        if (QrCodeBitmaps.Count == 1)
+        {
+            await SaveSingle(FileKind.SVG, QrCodeBitmaps.First());
+            return;
+        }
+
+        await SaveAllFiles(FileKind.SVG);
     }
 }
