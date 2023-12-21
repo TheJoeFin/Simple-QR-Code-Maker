@@ -41,7 +41,7 @@
                 Spacing="12">
                 <TextBox
                     x:Name="UrlTextBox"
-                    Width="300"
+                    MinWidth="300"
                     AcceptsReturn="True"
                     PlaceholderText="ex: http://example.com/"
                     Text="{x:Bind ViewModel.UrlText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -50,12 +50,11 @@
                 <Border
                     MinWidth="300"
                     MinHeight="300"
-                    MaxWidth="308"
                     HorizontalAlignment="Center"
                     Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
                     CornerRadius="4">
-                    <ItemsRepeater x:Name="ListOfCodes" ItemsSource="{x:Bind ViewModel.QrCodeBitmaps, Mode=OneWay}">
-                        <ItemsRepeater.ItemTemplate>
+                    <GridView x:Name="ListOfCodes" ItemsSource="{x:Bind ViewModel.QrCodeBitmaps, Mode=OneWay}">
+                        <GridView.ItemTemplate>
                             <DataTemplate x:DataType="models:BarcodeImageItem">
                                 <Border
                                     Padding="4"
@@ -66,11 +65,12 @@
                                         Width="300"
                                         Height="300"
                                         CanDrag="True"
-                                        Source="{x:Bind CodeAsBitmap}" />
+                                        Source="{x:Bind CodeAsBitmap}"
+                                        ToolTipService.ToolTip="{x:Bind CodeAsText}" />
                                 </Border>
                             </DataTemplate>
-                        </ItemsRepeater.ItemTemplate>
-                    </ItemsRepeater>
+                        </GridView.ItemTemplate>
+                    </GridView>
                 </Border>
 
                 <StackPanel
