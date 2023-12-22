@@ -16,15 +16,19 @@
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         Click="Button_Click"
+        Style="{StaticResource AccentButtonStyle}"
         ToolTipService.ToolTip="{x:Bind BorderInfo.Text}">
         <Border
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            Background="Black"
+            Background="Transparent"
             CornerRadius="6">
             <Viewbox>
-                <TextBlock Text="1" />
-                <!--<TextBlock Text="{x:Bind BorderInfo.Text}" />-->
+                <TextBlock
+                    MaxWidth="200"
+                    Foreground="{ThemeResource TextFillColorInverse}"
+                    Text="{x:Bind BorderInfo.Text}"
+                    TextWrapping="Wrap" />
             </Viewbox>
         </Border>
     </Button>

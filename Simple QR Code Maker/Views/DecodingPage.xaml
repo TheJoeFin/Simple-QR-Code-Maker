@@ -30,7 +30,6 @@
                 Style="{StaticResource PageTitleStyle}" />
             <AppBarButton
                 Command="{x:Bind ViewModel.OpenNewFileCommand}"
-                Content="Test"
                 Icon="OpenFile"
                 IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}" />
         </StackPanel>
@@ -62,6 +61,8 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Background="{StaticResource SystemControlBackgroundAltHighBrush}"
+            BorderBrush="{StaticResource SystemAccentColor}"
+            BorderThickness="3"
             IsOpen="{x:Bind ViewModel.IsInfoBarShowing, Mode=TwoWay}"
             Severity="Informational">
             <StackPanel
@@ -69,9 +70,11 @@
                 Orientation="Horizontal"
                 Spacing="12">
                 <TextBlock
+                    MaxWidth="600"
                     VerticalAlignment="Center"
                     IsTextSelectionEnabled="True"
-                    Text="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}" />
+                    Text="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}"
+                    TextWrapping="Wrap" />
                 <Button
                     VerticalAlignment="Center"
                     Command="{x:Bind ViewModel.AddMessageToClipboardCommand}"

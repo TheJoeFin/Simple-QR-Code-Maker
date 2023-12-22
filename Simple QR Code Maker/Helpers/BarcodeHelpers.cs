@@ -89,6 +89,9 @@ public static class BarcodeHelpers
 
         List<(string, Result)> strings = new();
 
+        if (results == null || results.Length == 0)
+            return strings;
+
         foreach (Result result in results)
             if (!string.IsNullOrWhiteSpace(result.Text))
                 strings.Add((result.Text, result));

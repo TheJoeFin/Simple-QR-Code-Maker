@@ -82,7 +82,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         var strings = BarcodeHelpers.GetStringsFromImageFile(pickedFile);
 
         if (!strings.Any())
+        {
+            InfoBarMessage = "Could not read any codes. Could be there are none present or content failed to read.\rIf you believe this is an issue with the app, please email joe@joefinapps.com";
+            IsInfoBarShowing = true;
             return;
+        }
 
         foreach ((string, Result) item in strings)
         {
