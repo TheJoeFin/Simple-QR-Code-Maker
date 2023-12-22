@@ -39,7 +39,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     public async void OnNavigatedTo(object parameter)
     {
-        await OpenNewFile();
+        await OpenNewFileCommand.ExecuteAsync(null);
     }
 
     [RelayCommand]
