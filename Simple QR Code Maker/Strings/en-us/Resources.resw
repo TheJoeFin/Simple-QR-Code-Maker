@@ -99,4 +99,8 @@
     <value>Settings</value>
     <comment>Page title for SettingsPage</comment>
   </data>
+  <data name="Decoding_Title.Text" xml:space="preserve">
+    <value>Decoding</value>
+    <comment>Page title for DecodingPage</comment>
+  </data>
 </root>
