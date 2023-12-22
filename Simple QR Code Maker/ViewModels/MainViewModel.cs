@@ -89,6 +89,12 @@ public partial class MainViewModel : ObservableRecipient
     }
 
     [RelayCommand]
+    private void GoToSettings()
+    {
+        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!);
+    }
+
+    [RelayCommand]
     private async Task SavePng()
     {
         if (QrCodeBitmaps.Count == 0)

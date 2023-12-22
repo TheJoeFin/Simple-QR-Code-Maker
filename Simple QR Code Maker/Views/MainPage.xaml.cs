@@ -16,14 +16,4 @@ public sealed partial class MainPage : Page
         ViewModel = App.GetService<MainViewModel>();
         InitializeComponent();
     }
-
-    private async void AboutButton_Click(object sender, RoutedEventArgs e)
-    {
-        AboutDialog aboutWindow = new()
-        {
-            XamlRoot = Content.XamlRoot
-        };
-
-        _ = await aboutWindow.ShowAsync();
-    }
 }

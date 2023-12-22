@@ -10,7 +10,7 @@
     <Page.Resources>
         <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
     </Page.Resources>
-    <Grid>
+    <Grid Padding="40,0,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
             <RowDefinition Height="*" />
@@ -20,56 +20,116 @@
             x:Uid="Settings_Title"
             Grid.Row="0"
             Style="{StaticResource PageTitleStyle}" />
-        <StackPanel x:Name="ContentArea" Grid.Row="1">
-            <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
-            <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
-                <TextBlock x:Uid="Settings_Theme" />
+        <ScrollViewer Grid.Row="1">
+            <StackPanel x:Name="ContentArea" Margin="0,0,0,40">
+                <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
+                    <TextBlock x:Uid="Settings_Theme" />
+
+                    <StackPanel Margin="{StaticResource XSmallTopMargin}">
+                        <RadioButton
+                            x:Uid="Settings_Theme_Light"
+                            Command="{x:Bind ViewModel.SwitchThemeCommand}"
+                            FontSize="15"
+                            GroupName="AppTheme"
+                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
+                            <RadioButton.CommandParameter>
+                                <xaml:ElementTheme>Light</xaml:ElementTheme>
+                            </RadioButton.CommandParameter>
+                        </RadioButton>
+                        <RadioButton
+                            x:Uid="Settings_Theme_Dark"
+                            Command="{x:Bind ViewModel.SwitchThemeCommand}"
+                            FontSize="15"
+                            GroupName="AppTheme"
+                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
+                            <RadioButton.CommandParameter>
+                                <xaml:ElementTheme>Dark</xaml:ElementTheme>
+                            </RadioButton.CommandParameter>
+                        </RadioButton>
+                        <RadioButton
+                            x:Uid="Settings_Theme_Default"
+                            Command="{x:Bind ViewModel.SwitchThemeCommand}"
+                            FontSize="15"
+                            GroupName="AppTheme"
+                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
+                            <RadioButton.CommandParameter>
+                                <xaml:ElementTheme>Default</xaml:ElementTheme>
+                            </RadioButton.CommandParameter>
+                        </RadioButton>
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
 
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                    <RadioButton
-                        x:Uid="Settings_Theme_Light"
-                        Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                        FontSize="15"
-                        GroupName="AppTheme"
-                        IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
-                        <RadioButton.CommandParameter>
-                            <xaml:ElementTheme>Light</xaml:ElementTheme>
-                        </RadioButton.CommandParameter>
-                    </RadioButton>
-                    <RadioButton
-                        x:Uid="Settings_Theme_Dark"
-                        Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                        FontSize="15"
-                        GroupName="AppTheme"
-                        IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
-                        <RadioButton.CommandParameter>
-                            <xaml:ElementTheme>Dark</xaml:ElementTheme>
-                        </RadioButton.CommandParameter>
-                    </RadioButton>
-                    <RadioButton
-                        x:Uid="Settings_Theme_Default"
-                        Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                        FontSize="15"
-                        GroupName="AppTheme"
-                        IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
-                        <RadioButton.CommandParameter>
-                            <xaml:ElementTheme>Default</xaml:ElementTheme>
-                        </RadioButton.CommandParameter>
-                    </RadioButton>
+                    <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" />
+
+                    <TextBlock
+                        x:Uid="Settings_AboutDescription"
+                        Margin="{StaticResource XSmallTopMargin}"
+                        Style="{ThemeResource BodyTextBlockStyle}" />
+                    <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" Margin="{StaticResource SettingsPageHyperlinkButtonMargin}" />
                 </StackPanel>
-            </StackPanel>
 
-            <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
-
-            <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" />
-
+                <HyperlinkButton
+                    x:Name="ReviewBTN"
+                    Margin="-12,0,0,0"
+                    Command="{x:Bind ViewModel.ReviewAppCommand}">
+                    Rate / Review on the Microsoft Store
+                </HyperlinkButton>
+                <HyperlinkButton
+                    x:Name="SourceBTN"
+                    Margin="-12,0,0,0"
+                    NavigateUri="https://github.com/TheJoeFin/Simple-QR-Code-Maker">
+                    Source code on GitHub
+                </HyperlinkButton>
+                <TextBlock IsTextSelectionEnabled="True">
+                    <Run FontWeight="SemiBold">
+                        Version:
+                    </Run>
+                    <Run x:Name="VersionNumber" />
+                </TextBlock>
                 <TextBlock
-                    x:Uid="Settings_AboutDescription"
-                    Margin="{StaticResource XSmallTopMargin}"
-                    Style="{ThemeResource BodyTextBlockStyle}" />
-                <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" Margin="{StaticResource SettingsPageHyperlinkButtonMargin}" />
+                    Margin="0,16,0,0"
+                    FontWeight="SemiBold"
+                    Text="Created by:" />
+                <HyperlinkButton
+                    x:Name="TheJoeFinBTN"
+                    Margin="-12,0,0,0"
+                    NavigateUri="https://github.com/TheJoeFin">
+                    TheJoeFin (GitHub)
+                </HyperlinkButton>
+                <TextBlock
+                    Margin="0,16,0,0"
+                    FontWeight="SemiBold"
+                    Text="Libraries used:" />
+                <HyperlinkButton
+                    x:Name="MagickDotNetBTN"
+                    Margin="-12,0,0,0"
+                    NavigateUri="https://github.com/micjahn/ZXing.Net">
+                    ZXing.NET
+                </HyperlinkButton>
+                <HyperlinkButton
+                    x:Name="WindowsAppSDKBTN"
+                    Margin="-12,0,0,0"
+                    NavigateUri="https://github.com/microsoft/WindowsAppSDK">
+                    Windows App SDK
+                </HyperlinkButton>
+                <HyperlinkButton
+                    x:Name="WinUIBTN"
+                    Margin="-12,0,0,0"
+                    NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml">
+                    WinUI 3
+                </HyperlinkButton>
+                <HyperlinkButton
+                    x:Name="WinUIExBTN"
+                    Margin="-12,0,0,0"
+                    NavigateUri="https://github.com/dotMorten/WinUIEx">
+                    WinUIEx
+                </HyperlinkButton>
+
             </StackPanel>
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

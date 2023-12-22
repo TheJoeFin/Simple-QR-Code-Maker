@@ -71,15 +71,10 @@
                         Command="{x:Bind ViewModel.SaveSvgCommand}"
                         Content="Save SVG..."
                         IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}" />
-                    <Button
-                        Height="32"
-                        HorizontalAlignment="Left"
-                        Click="AboutButton_Click"
-                        ToolTipService.ToolTip="About Simple QR Code Maker">
-                        <FontIcon
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            Glyph="&#xE946;" />
+                    <Button Command="{x:Bind ViewModel.GoToSettingsCommand}">
+                        <Viewbox Height="16">
+                            <SymbolIcon Symbol="Setting" />
+                        </Viewbox>
                     </Button>
                 </StackPanel>
 
