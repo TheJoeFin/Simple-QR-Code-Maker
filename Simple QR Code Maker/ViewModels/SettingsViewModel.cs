@@ -23,10 +23,7 @@ public partial class SettingsViewModel : ObservableRecipient
     [ObservableProperty]
     private string _versionDescription;
 
-    public ICommand SwitchThemeCommand
-    {
-        get;
-    }
+    public ICommand SwitchThemeCommand { get; }
 
     public SettingsViewModel(IThemeSelectorService themeSelectorService)
     {

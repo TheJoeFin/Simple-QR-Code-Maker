@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Simple_QR_Code_Maker.Contracts.Services;
+using Windows.UI.Core;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
