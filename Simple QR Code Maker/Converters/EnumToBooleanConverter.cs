@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 
-namespace Simple_QR_Code_Maker.Helpers;
+namespace Simple_QR_Code_Maker.Converters;
 
 public class EnumToBooleanConverter : IValueConverter
 {

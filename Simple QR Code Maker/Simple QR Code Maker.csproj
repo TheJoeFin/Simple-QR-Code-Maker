@@ -27,6 +27,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Views\AboutDialog.xaml" />
+    <None Remove="Views\ShellPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,4 +71,12 @@
             <FrameworkSdkReference Remove="@(FrameworkSdkReference)" Condition="$([System.String]::Copy('%(FrameworkSdkReference.SDKName)').StartsWith('Microsoft.WindowsAppRuntime.'))" />
         </ItemGroup>
     </Target>
+
+    <ItemGroup>
+      <CustomAdditionalCompileInputs Remove="Views\ShellPage.xaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Resource Remove="Views\ShellPage.xaml" />
+    </ItemGroup>
 </Project>

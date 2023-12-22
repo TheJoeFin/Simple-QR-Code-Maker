@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
@@ -37,10 +38,17 @@ public partial class MainViewModel : ObservableRecipient
 
     private readonly DispatcherTimer debounceTimer = new();
 
-    public MainViewModel()
+    public INavigationService NavigationService
+    {
+        get;
+    }
+
+    public MainViewModel(INavigationService navigationService)
     {
         debounceTimer.Interval = TimeSpan.FromMilliseconds(600);
         debounceTimer.Tick += DebounceTimer_Tick;
+
+        NavigationService = navigationService;
     }
 
     private void DebounceTimer_Tick(object? sender, object e)
