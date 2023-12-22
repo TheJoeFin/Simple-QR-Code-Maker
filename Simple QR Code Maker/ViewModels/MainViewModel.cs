@@ -39,7 +39,7 @@ public partial class MainViewModel : ObservableRecipient
 
     public MainViewModel()
     {
-        debounceTimer.Interval = TimeSpan.FromMilliseconds(400);
+        debounceTimer.Interval = TimeSpan.FromMilliseconds(600);
         debounceTimer.Tick += DebounceTimer_Tick;
     }
 
@@ -52,20 +52,22 @@ public partial class MainViewModel : ObservableRecipient
         if (string.IsNullOrWhiteSpace(UrlText))
             return;
 
-        string[] lines = UrlText.Split();
+        string[] lines = UrlText.Split('\r');
 
         foreach ( string line in lines )
         {
             if (string.IsNullOrWhiteSpace(line))
                 continue;
 
+            string textToUse = line.Trim();
+
             try
             {
-                WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(line, ErrorCorrectionLevel.M, System.Drawing.Color.Black, System.Drawing.Color.White);
+                WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(textToUse, ErrorCorrectionLevel.M, System.Drawing.Color.Black, System.Drawing.Color.White);
                 BarcodeImageItem barcodeImageItem = new()
                 {
                     CodeAsBitmap = bitmap,
-                    CodeAsText = line,
+                    CodeAsText = textToUse,
                 };
 
                 QrCodeBitmaps.Add(barcodeImageItem);

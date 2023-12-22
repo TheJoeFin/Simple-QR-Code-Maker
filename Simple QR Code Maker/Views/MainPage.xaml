@@ -42,6 +42,7 @@
                 <TextBox
                     x:Name="UrlTextBox"
                     MinWidth="300"
+                    MaxWidth="800"
                     AcceptsReturn="True"
                     PlaceholderText="ex: http://example.com/"
                     Text="{x:Bind ViewModel.UrlText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -53,11 +54,17 @@
                     HorizontalAlignment="Center"
                     Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
                     CornerRadius="4">
-                    <GridView x:Name="ListOfCodes" ItemsSource="{x:Bind ViewModel.QrCodeBitmaps, Mode=OneWay}">
+                    <GridView
+                        x:Name="ListOfCodes"
+                        Margin="0"
+                        Padding="2,2,0,0"
+                        ItemsSource="{x:Bind ViewModel.QrCodeBitmaps, Mode=OneWay}"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="models:BarcodeImageItem">
                                 <Border
-                                    Padding="4"
+                                    Margin="4"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
                                     <Image
@@ -80,12 +87,12 @@
                     <Button
                         x:Name="SavePngButton"
                         Command="{x:Bind ViewModel.SavePngCommand}"
-                        Content="Save PNG(s)..."
+                        Content="Save PNG..."
                         IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}" />
                     <Button
                         x:Name="SaveSvgButton"
                         Command="{x:Bind ViewModel.SaveSvgCommand}"
-                        Content="Save SVG(s)..."
+                        Content="Save SVG..."
                         IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}" />
                     <Button
                         Height="32"
