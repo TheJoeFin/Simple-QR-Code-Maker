@@ -71,6 +71,11 @@
                         Command="{x:Bind ViewModel.SaveSvgCommand}"
                         Content="Save SVG..."
                         IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}" />
+                    <Button Command="{x:Bind ViewModel.OpenFileCommand}">
+                        <Viewbox Height="16">
+                            <SymbolIcon Symbol="OpenFile" />
+                        </Viewbox>
+                    </Button>
                     <Button Command="{x:Bind ViewModel.GoToSettingsCommand}">
                         <Viewbox Height="16">
                             <SymbolIcon Symbol="Setting" />

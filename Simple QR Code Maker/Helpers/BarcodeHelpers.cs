@@ -1,8 +1,12 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using System.Drawing;
 using System.Drawing.Imaging;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
+using Windows.Storage.Streams;
 using ZXing;
 using ZXing.Common;
+using ZXing.Multi;
 using ZXing.QrCode.Internal;
 using ZXing.Rendering;
 using ZXing.Windows.Compatibility;
@@ -65,5 +69,39 @@ public static class BarcodeHelpers
         SvgImage svg = barcodeWriter.Write(text);
 
         return svg;
+    }
+
+    public static IEnumerable<string> GetStringsFromImageFile(StorageFile storageFile)
+    {
+        //using IRandomAccessStream stream = await storageFile.OpenReadAsync();
+        //BitmapImage bitmapImage = new();
+        //await bitmapImage.SetSourceAsync(stream);
+
+        //WriteableBitmap writableBitmap = new(bitmapImage.PixelWidth, bitmapImage.PixelHeight);
+        //writableBitmap.SetSource(stream);
+        //stream.Seek(0);
+        //writableBitmap.SetSource(stream);
+
+        Bitmap bitmap = new(storageFile.Path);
+
+        BarcodeReader barcodeReader = new()
+        {
+            AutoRotate = true,
+            Options =
+            {
+                TryHarder = true,
+                TryInverted = true,
+            }
+        };
+
+        Result[] results = barcodeReader.DecodeMultiple(bitmap);
+
+        List<string> strings = new();
+
+        foreach (Result result in results)
+            if (!string.IsNullOrWhiteSpace(result.Text))
+                strings.Add(result.Text);
+
+        return strings;
     }
 }

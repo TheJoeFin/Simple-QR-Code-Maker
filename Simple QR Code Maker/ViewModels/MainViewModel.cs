@@ -89,6 +89,37 @@ public partial class MainViewModel : ObservableRecipient
     }
 
     [RelayCommand]
+    private async Task OpenFile()
+    {
+        FileOpenPicker fileOpenPicker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.Downloads,
+        };
+        fileOpenPicker.FileTypeFilter.Add(".png");
+        fileOpenPicker.FileTypeFilter.Add(".jpg");
+        fileOpenPicker.FileTypeFilter.Add(".jpeg");
+        fileOpenPicker.FileTypeFilter.Add(".bmp");
+
+        Window saveWindow = new();
+        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
+        InitializeWithWindow.Initialize(fileOpenPicker, windowHandleSave);
+
+        StorageFile pickedFile = await fileOpenPicker.PickSingleFileAsync();
+
+        if (pickedFile is null)
+            return;
+
+        var strings = BarcodeHelpers.GetStringsFromImageFile(pickedFile);
+
+        if (!strings.Any())
+            return;
+
+        string joins = string.Join('\r', strings);
+
+        UrlText = joins;
+    }
+
+    [RelayCommand]
     private void GoToSettings()
     {
         NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!);
