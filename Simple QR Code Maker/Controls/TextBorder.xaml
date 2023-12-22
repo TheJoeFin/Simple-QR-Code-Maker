@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Simple_QR_Code_Maker.Controls.TextBorder"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Simple_QR_Code_Maker.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Canvas.Left="{x:Bind BorderInfo.BorderRect.Left}"
+    Canvas.Top="{x:Bind BorderInfo.BorderRect.Top}"
+    Width="{x:Bind BorderInfo.BorderRect.Width}"
+    Height="{x:Bind BorderInfo.BorderRect.Height}"
+    mc:Ignorable="d">
+
+    <Button
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        Click="Button_Click"
+        ToolTipService.ToolTip="{x:Bind BorderInfo.Text}">
+        <Border
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="Black"
+            CornerRadius="6">
+            <Viewbox>
+                <TextBlock Text="1" />
+                <!--<TextBlock Text="{x:Bind BorderInfo.Text}" />-->
+            </Viewbox>
+        </Border>
+    </Button>
+</UserControl>

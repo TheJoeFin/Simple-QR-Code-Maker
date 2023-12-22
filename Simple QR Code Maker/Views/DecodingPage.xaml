@@ -1,0 +1,73 @@
+﻿<Page
+    x:Class="Simple_QR_Code_Maker.Views.DecodingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Simple_QR_Code_Maker.Controls"
+    xmlns:converters="using:Simple_QR_Code_Maker.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Simple_QR_Code_Maker.Models"
+    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:InvertBoolConverter x:Key="InvertBool" />
+    </Page.Resources>
+
+    <Grid x:Name="ContentArea" Padding="40,0,40,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Grid.Row="0"
+            Orientation="Horizontal"
+            Spacing="12">
+            <TextBlock
+                x:Uid="Decoding_Title"
+                Grid.Row="0"
+                Style="{StaticResource PageTitleStyle}" />
+            <AppBarButton
+                Command="{x:Bind ViewModel.OpenNewFileCommand}"
+                Content="Test"
+                Icon="OpenFile"
+                IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}" />
+        </StackPanel>
+        <Viewbox Grid.Row="1">
+            <Grid>
+                <Image x:Name="ImageWithBarcodes" Source="{x:Bind ViewModel.PickedImage, Mode=OneWay}" />
+                <ItemsControl ItemsSource="{x:Bind ViewModel.CodeBorders, Mode=OneWay}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas
+                                Width="{Binding ImageWithBarcodes.Width, Mode=OneWay}"
+                                Height="{Binding ImageWithBarcodes.Height, Mode=OneWay}"
+                                Background="Transparent" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ContentControl />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Viewbox>
+        <InfoBar
+            x:Name="QrCodeInfoBar"
+            Title="QR Code Content"
+            Grid.Row="1"
+            Margin="20"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Background="{StaticResource SystemControlBackgroundAltHighBrush}"
+            IsOpen="{x:Bind ViewModel.IsInfoBarShowing, Mode=TwoWay}"
+            Severity="Informational">
+            <TextBlock
+                Margin="8,0,8,12"
+                IsTextSelectionEnabled="True"
+                Text="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}" />
+        </InfoBar>
+    </Grid>
+</Page>

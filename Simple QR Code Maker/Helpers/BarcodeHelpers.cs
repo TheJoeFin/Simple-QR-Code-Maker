@@ -71,17 +71,8 @@ public static class BarcodeHelpers
         return svg;
     }
 
-    public static IEnumerable<string> GetStringsFromImageFile(StorageFile storageFile)
+    public static IEnumerable<(string, Result)> GetStringsFromImageFile(StorageFile storageFile)
     {
-        //using IRandomAccessStream stream = await storageFile.OpenReadAsync();
-        //BitmapImage bitmapImage = new();
-        //await bitmapImage.SetSourceAsync(stream);
-
-        //WriteableBitmap writableBitmap = new(bitmapImage.PixelWidth, bitmapImage.PixelHeight);
-        //writableBitmap.SetSource(stream);
-        //stream.Seek(0);
-        //writableBitmap.SetSource(stream);
-
         Bitmap bitmap = new(storageFile.Path);
 
         BarcodeReader barcodeReader = new()
@@ -96,11 +87,11 @@ public static class BarcodeHelpers
 
         Result[] results = barcodeReader.DecodeMultiple(bitmap);
 
-        List<string> strings = new();
+        List<(string, Result)> strings = new();
 
         foreach (Result result in results)
             if (!string.IsNullOrWhiteSpace(result.Text))
-                strings.Add(result.Text);
+                strings.Add((result.Text, result));
 
         return strings;
     }
