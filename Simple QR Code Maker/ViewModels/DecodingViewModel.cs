@@ -7,9 +7,11 @@ using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Controls;
 using Simple_QR_Code_Maker.Helpers;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.System;
 using WinRT.Interop;
 using ZXing;
 
@@ -38,6 +40,17 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     public async void OnNavigatedTo(object parameter)
     {
         await OpenNewFile();
+    }
+
+    [RelayCommand]
+    private async Task TryLaunchLink()
+    {
+        bool success = Uri.TryCreate(InfoBarMessage, UriKind.Absolute, out Uri? uri);
+
+        if (success && uri is not null)
+        {
+            _ = await Launcher.LaunchUriAsync(uri);
+        }
     }
 
     [RelayCommand]

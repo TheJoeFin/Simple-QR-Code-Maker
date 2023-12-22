@@ -12,6 +12,7 @@
 
     <Page.Resources>
         <converters:InvertBoolConverter x:Key="InvertBool" />
+        <converters:TextHasURLConverter x:Key="HasURL" />
     </Page.Resources>
 
     <Grid x:Name="ContentArea" Padding="40,0,40,20">
@@ -66,19 +67,29 @@
             IsOpen="{x:Bind ViewModel.IsInfoBarShowing, Mode=TwoWay}"
             Severity="Informational">
             <StackPanel
-                Margin="8,0,8,12"
-                Orientation="Horizontal"
+                Margin="12,0"
+                Orientation="Vertical"
                 Spacing="12">
                 <TextBlock
-                    MaxWidth="600"
+                    MaxWidth="500"
                     VerticalAlignment="Center"
                     IsTextSelectionEnabled="True"
                     Text="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}"
                     TextWrapping="Wrap" />
-                <Button
-                    VerticalAlignment="Center"
-                    Command="{x:Bind ViewModel.AddMessageToClipboardCommand}"
-                    Content="Copy" />
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="12">
+                    <AppBarButton
+                        Command="{x:Bind ViewModel.AddMessageToClipboardCommand}"
+                        Icon="Copy"
+                        IsCompact="True" />
+                    <AppBarButton
+                        Command="{x:Bind ViewModel.TryLaunchLinkCommand}"
+                        Icon="Go"
+                        IsCompact="True"
+                        IsEnabled="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay, Converter={StaticResource HasURL}}" />
+                </StackPanel>
             </StackPanel>
         </InfoBar>
     </Grid>
