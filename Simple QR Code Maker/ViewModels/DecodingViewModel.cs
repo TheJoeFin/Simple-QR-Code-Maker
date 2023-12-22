@@ -7,7 +7,6 @@ using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Controls;
 using Simple_QR_Code_Maker.Helpers;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -51,6 +50,13 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         {
             _ = await Launcher.LaunchUriAsync(uri);
         }
+    }
+
+    [RelayCommand]
+    private void GoBack()
+    {
+        if (NavigationService.CanGoBack)
+            NavigationService.GoBack();
     }
 
     [RelayCommand]

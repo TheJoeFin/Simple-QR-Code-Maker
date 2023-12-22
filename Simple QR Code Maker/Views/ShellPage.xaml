@@ -26,10 +26,11 @@
             Command="{x:Bind ViewModel.BackCommand}"
             Icon="Back"
             IsEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
-            Style="{StaticResource NavigationBackButtonSmallStyle}" />
+            Style="{StaticResource NavigationBackButtonSmallStyle}"
+            Visibility="Collapsed" />
         <StackPanel
             x:Name="AppTitleBar"
-            Margin="36,0,0,0"
+            Margin="6,0,0,0"
             Padding="0"
             Canvas.ZIndex="1"
             IsHitTestVisible="True"

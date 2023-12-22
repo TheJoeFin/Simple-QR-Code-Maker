@@ -16,12 +16,15 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock
-            x:Uid="Settings_Title"
-            Grid.Row="0"
-            Style="{StaticResource PageTitleStyle}" />
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <AppBarButton Command="{x:Bind ViewModel.GoBackCommand}" Icon="Back" />
+            <TextBlock
+                x:Uid="Settings_Title"
+                Grid.Row="0"
+                Style="{StaticResource PageTitleStyle}" />
+        </StackPanel>
         <ScrollViewer Grid.Row="1">
-            <StackPanel x:Name="ContentArea" Margin="0,0,0,40">
+            <StackPanel x:Name="ContentArea" Margin="80,24,0,40">
                 <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                     <TextBlock x:Uid="Settings_Theme" />

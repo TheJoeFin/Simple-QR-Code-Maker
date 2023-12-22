@@ -25,6 +25,7 @@
             Grid.Row="0"
             Orientation="Horizontal"
             Spacing="12">
+            <AppBarButton Command="{x:Bind ViewModel.GoBackCommand}" Icon="Back" />
             <TextBlock
                 x:Uid="Decoding_Title"
                 Grid.Row="0"

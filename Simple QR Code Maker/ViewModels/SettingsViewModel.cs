@@ -8,7 +8,6 @@ using Microsoft.UI.Xaml;
 
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Helpers;
-
 using Windows.ApplicationModel;
 
 namespace Simple_QR_Code_Maker.ViewModels;
@@ -23,10 +22,12 @@ public partial class SettingsViewModel : ObservableRecipient
     [ObservableProperty]
     private string _versionDescription;
 
+    private INavigationService NavigationService { get; }
     public ICommand SwitchThemeCommand { get; }
 
-    public SettingsViewModel(IThemeSelectorService themeSelectorService)
+    public SettingsViewModel(IThemeSelectorService themeSelectorService, INavigationService navigationService)
     {
+        NavigationService = navigationService;
         _themeSelectorService = themeSelectorService;
         _elementTheme = _themeSelectorService.Theme;
         _versionDescription = GetVersionDescription();
@@ -40,6 +41,13 @@ public partial class SettingsViewModel : ObservableRecipient
                     await _themeSelectorService.SetThemeAsync(param);
                 }
             });
+    }
+
+    [RelayCommand]
+    private void GoBack()
+    {
+        if (NavigationService.CanGoBack)
+            NavigationService.GoBack();
     }
 
     [RelayCommand]
