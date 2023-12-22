@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Helpers;
@@ -59,7 +58,7 @@ public partial class MainViewModel : ObservableRecipient
 
         string[] lines = UrlText.Split('\r');
 
-        foreach ( string line in lines )
+        foreach (string line in lines)
         {
             if (string.IsNullOrWhiteSpace(line))
                 continue;
@@ -86,7 +85,7 @@ public partial class MainViewModel : ObservableRecipient
     }
 
     [RelayCommand]
-    private async Task OpenFile()
+    private void OpenFile()
     {
         NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!);
     }

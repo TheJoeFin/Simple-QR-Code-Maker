@@ -105,6 +105,37 @@ public class NavigationService : INavigationService
         return false;
     }
 
+    public async Task<bool> ShowAsModal(string pageKey, object? parameter = null)
+    {
+        if (_frame is null)
+            return false;
+
+        var pageType = _pageService.GetPageType(pageKey);
+        Frame tempFrame = new();
+
+        var vmBeforeNavigation = tempFrame.GetPageViewModel();
+        var navigated = tempFrame.Navigate(pageType, parameter);
+        if (navigated && vmBeforeNavigation is INavigationAware navigationAware)
+            navigationAware.OnNavigatedFrom();
+
+        ContentDialog wrapper = new()
+        {
+            XamlRoot = _frame.XamlRoot,
+            Content = tempFrame,
+            PrimaryButtonText = "Done"
+        };
+
+        try
+        {
+            var result = await wrapper.ShowAsync();
+        }
+        catch
+        {
+            return false;
+        }
+        return true;
+    }
+
     private void OnNavigated(object sender, NavigationEventArgs e)
     {
         if (sender is Frame frame)

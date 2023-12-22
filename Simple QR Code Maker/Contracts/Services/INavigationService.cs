@@ -19,5 +19,7 @@ public interface INavigationService
 
     bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false);
 
+    Task<bool> ShowAsModal(string pageKey, object? parameter = null);
+
     bool GoBack();
 }
