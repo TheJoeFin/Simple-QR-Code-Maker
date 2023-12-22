@@ -61,7 +61,7 @@
   <data name="AppDisplayName" xml:space="preserve">
     <value>Simple QR Code Maker</value>
   </data>
-	<data name="AppDescription" xml:space="preserve">
+  <data name="AppDescription" xml:space="preserve">
 		<value>Simple QR Code Maker</value>
   	</data>
   <data name="Main_Title.Text" xml:space="preserve">
@@ -87,13 +87,13 @@
     <value>About this application</value>
   </data>
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>TODO: Replace with your app description.</value>
+    <value>Simple QR Code Maker is an app for making QR Codes.</value>
   </data>
   <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
     <value>Privacy Statement</value>
   </data>
   <data name="SettingsPage_PrivacyTermsLink.NavigateUri" xml:space="preserve">
-    <value>https://YourPrivacyUrlGoesHere/</value>
+    <value>https://github.com/TheJoeFin/Simple-QR-Code-Maker/blob/master/PRIVACY</value>
   </data>
   <data name="Settings_Title.Text" xml:space="preserve">
     <value>Settings</value>
