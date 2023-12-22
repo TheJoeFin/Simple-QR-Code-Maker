@@ -64,10 +64,19 @@
             Background="{StaticResource SystemControlBackgroundAltHighBrush}"
             IsOpen="{x:Bind ViewModel.IsInfoBarShowing, Mode=TwoWay}"
             Severity="Informational">
-            <TextBlock
+            <StackPanel
                 Margin="8,0,8,12"
-                IsTextSelectionEnabled="True"
-                Text="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}" />
+                Orientation="Horizontal"
+                Spacing="12">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    IsTextSelectionEnabled="True"
+                    Text="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}" />
+                <Button
+                    VerticalAlignment="Center"
+                    Command="{x:Bind ViewModel.AddMessageToClipboardCommand}"
+                    Content="Copy" />
+            </StackPanel>
         </InfoBar>
     </Grid>
 </Page>

@@ -7,6 +7,7 @@ using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Controls;
 using Simple_QR_Code_Maker.Helpers;
 using System.Collections.ObjectModel;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
@@ -37,6 +38,17 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     public async void OnNavigatedTo(object parameter)
     {
         await OpenNewFile();
+    }
+
+    [RelayCommand]
+    private void AddMessageToClipboard()
+    {
+        if (string.IsNullOrWhiteSpace(InfoBarMessage))
+            return;
+
+        DataPackage dataPackage = new();
+        dataPackage.SetText(InfoBarMessage);
+        Clipboard.SetContent(dataPackage);
     }
 
     [RelayCommand]
