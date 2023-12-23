@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Contracts.Services;
+using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
@@ -22,10 +23,47 @@ public partial class MainViewModel : ObservableRecipient
     [NotifyPropertyChangedFor(nameof(CanSaveImage))]
     private string urlText = "";
 
-    public ObservableCollection<BarcodeImageItem> QrCodeBitmaps { get; set; } = new();
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanSaveImage))]
+    private ObservableCollection<BarcodeImageItem> qrCodeBitmaps = new();
 
     [ObservableProperty]
     private bool showLengthError = false;
+
+    [ObservableProperty]
+    private Windows.UI.Color backgroundColor = Windows.UI.Color.FromArgb(255,255,255,255);
+
+    [ObservableProperty]
+    private Windows.UI.Color foregroundColor = Windows.UI.Color.FromArgb(255,0,0,0);
+
+    [ObservableProperty]
+    private ErrorCorrectionOptions selectedOption = new("Medium 15%", ErrorCorrectionLevel.M);
+
+    public List<ErrorCorrectionOptions> ErrorCorrectionLevels { get; } = new()
+    {
+        new("Low 7%", ErrorCorrectionLevel.L),
+        new("Medium 15%", ErrorCorrectionLevel.M),
+        new("Quarter 25%", ErrorCorrectionLevel.Q),
+        new("High 30%", ErrorCorrectionLevel.H),
+    };
+
+    partial void OnSelectedOptionChanged(ErrorCorrectionOptions value)
+    {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
+    partial void OnBackgroundColorChanged(Windows.UI.Color value)
+    {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
+    partial void OnForegroundColorChanged(Windows.UI.Color value)
+    {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
 
     public bool CanSaveImage { get => !string.IsNullOrWhiteSpace(UrlText); }
 
@@ -67,7 +105,11 @@ public partial class MainViewModel : ObservableRecipient
 
             try
             {
-                WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(textToUse, ErrorCorrectionLevel.M, System.Drawing.Color.Black, System.Drawing.Color.White);
+                WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(
+                    textToUse,
+                    SelectedOption.ErrorCorrectionLevel,
+                    ForegroundColor.ToSystemDrawingColor(),
+                    BackgroundColor.ToSystemDrawingColor());
                 BarcodeImageItem barcodeImageItem = new()
                 {
                     CodeAsBitmap = bitmap,

@@ -11,6 +11,8 @@
 
     <Page.Resources>
         <converters:TextHasNoURLConverter x:Key="HasNoURL" />
+        <converters:ColorToBrushConverter x:Key="ColorToBrush" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
 
         <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
             <Setter Property="Height" Value="32" />
@@ -35,6 +37,62 @@
                     Text="{x:Bind ViewModel.UrlText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     TextWrapping="NoWrap" />
 
+                <StackPanel
+                    x:Name="QrCodeOptions"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="12"
+                    Visibility="{x:Bind ViewModel.CanSaveImage, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
+                    <Button Width="68" ToolTipService.ToolTip="Code Color">
+                        <Button.Flyout>
+                            <Flyout>
+                                <ColorPicker
+                                    x:Name="ForegroundColorPicker"
+                                    ColorSpectrumShape="Ring"
+                                    IsAlphaEnabled="False"
+                                    IsMoreButtonVisible="True"
+                                    Color="{x:Bind ViewModel.ForegroundColor, Mode=TwoWay}" />
+                            </Flyout>
+                        </Button.Flyout>
+                        <Button.Content>
+                            <Rectangle
+                                Width="12"
+                                Height="12"
+                                Fill="{x:Bind ForegroundColorPicker.Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
+                        </Button.Content>
+                    </Button>
+                    <Button Width="68" ToolTipService.ToolTip="Background Color">
+                        <Button.Flyout>
+                            <Flyout>
+                                <ColorPicker
+                                    x:Name="BackgroundColorPicker"
+                                    ColorSpectrumShape="Ring"
+                                    IsAlphaEnabled="False"
+                                    IsMoreButtonVisible="True"
+                                    Color="{x:Bind ViewModel.BackgroundColor, Mode=TwoWay}" />
+                            </Flyout>
+                        </Button.Flyout>
+                        <Button.Content>
+                            <Rectangle
+                                Width="12"
+                                Height="12"
+                                Fill="{x:Bind BackgroundColorPicker.Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
+                        </Button.Content>
+                    </Button>
+                    <ComboBox
+                        x:Name="ErrorCorrectionComboBox"
+                        Width="136"
+                        ItemsSource="{x:Bind ViewModel.ErrorCorrectionLevels}"
+                        SelectedItem="{x:Bind ViewModel.SelectedOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ToolTipService.ToolTip="Level of Error Correction">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:ErrorCorrectionOptions">
+                                <TextBlock Text="{x:Bind Description}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+
                 <Border
                     MinWidth="300"
                     MinHeight="300"
@@ -56,14 +114,14 @@
                                     VerticalAlignment="Center">
                                     <Image
                                         x:Name="QrCodeImage"
-                                        Width="300"
-                                        Height="300"
+                                        Width="285"
+                                        Height="285"
                                         CanDrag="True"
                                         Source="{x:Bind CodeAsBitmap}"
                                         ToolTipService.ToolTip="{x:Bind CodeAsText}" />
                                     <InfoBar
                                         IsOpen="{x:Bind CodeAsText, Converter={StaticResource HasNoURL}}"
-                                        Message="QR Code does not contain a URL"
+                                        Message="QR Code not a URL"
                                         Severity="Warning" />
                                 </Grid>
                             </DataTemplate>
@@ -79,18 +137,20 @@
                         x:Name="SavePngButton"
                         Command="{x:Bind ViewModel.SavePngCommand}"
                         Content="Save PNG..."
-                        IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}" />
+                        IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}"
+                        ToolTipService.ToolTip="Save code(s) as PNG files" />
                     <Button
                         x:Name="SaveSvgButton"
                         Command="{x:Bind ViewModel.SaveSvgCommand}"
                         Content="Save SVG..."
-                        IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}" />
-                    <Button Command="{x:Bind ViewModel.OpenFileCommand}">
+                        IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}"
+                        ToolTipService.ToolTip="Save code(s) as SVG files" />
+                    <Button Command="{x:Bind ViewModel.OpenFileCommand}" ToolTipService.ToolTip="Open an image to read and extract text from any codes">
                         <Viewbox Height="16">
                             <SymbolIcon Symbol="OpenFile" />
                         </Viewbox>
                     </Button>
-                    <Button Command="{x:Bind ViewModel.GoToSettingsCommand}">
+                    <Button Command="{x:Bind ViewModel.GoToSettingsCommand}" ToolTipService.ToolTip="Simple QR Code Maker Settings">
                         <Viewbox Height="16">
                             <SymbolIcon Symbol="Setting" />
                         </Viewbox>
