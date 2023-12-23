@@ -35,26 +35,36 @@
                 Icon="OpenFile"
                 IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}" />
         </StackPanel>
-        <Viewbox Grid.Row="1">
-            <Grid>
-                <Image x:Name="ImageWithBarcodes" Source="{x:Bind ViewModel.PickedImage, Mode=OneWay}" />
-                <ItemsControl ItemsSource="{x:Bind ViewModel.CodeBorders, Mode=OneWay}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas
-                                Width="{Binding ImageWithBarcodes.Width, Mode=OneWay}"
-                                Height="{Binding ImageWithBarcodes.Height, Mode=OneWay}"
-                                Background="Transparent" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ContentControl />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+        <ScrollViewer
+            x:Name="ImageScrollViewer"
+            Grid.Row="1"
+            HorizontalScrollBarVisibility="Auto"
+            MinZoomFactor="1"
+            VerticalScrollBarVisibility="Auto"
+            ZoomMode="Enabled">
+            <Grid Width="{x:Bind ImageScrollViewer.ViewportWidth, Mode=OneWay}" Height="{x:Bind ImageScrollViewer.ViewportHeight, Mode=OneWay}">
+                <Viewbox Grid.Row="1">
+                    <Grid>
+                        <Image x:Name="ImageWithBarcodes" Source="{x:Bind ViewModel.PickedImage, Mode=OneWay}" />
+                        <ItemsControl ItemsSource="{x:Bind ViewModel.CodeBorders, Mode=OneWay}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas
+                                        Width="{Binding ImageWithBarcodes.Width, Mode=OneWay}"
+                                        Height="{Binding ImageWithBarcodes.Height, Mode=OneWay}"
+                                        Background="Transparent" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Viewbox>
             </Grid>
-        </Viewbox>
+        </ScrollViewer>
         <InfoBar
             x:Name="QrCodeInfoBar"
             Title="QR Code Content"
