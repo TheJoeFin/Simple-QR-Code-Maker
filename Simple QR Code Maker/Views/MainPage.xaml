@@ -11,6 +11,10 @@
 
     <Page.Resources>
         <converters:TextHasNoURLConverter x:Key="HasNoURL" />
+
+        <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+            <Setter Property="Height" Value="32" />
+        </Style>
     </Page.Resources>
 
     <Grid>
