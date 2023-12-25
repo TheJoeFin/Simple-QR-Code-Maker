@@ -63,10 +63,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             if (clipboardItems.Count == 0)
                 return;
 
-            StorageFile? firstStorageFile = clipboardItems[0] as StorageFile;
-
-            if (firstStorageFile is not null)
-                OpenAndDecodeStorageFile(firstStorageFile);
+            OpenAndDecodeStorageFiles(clipboardItems);
         }
         else if (clipboardData.Contains(StandardDataFormats.Bitmap))
         {
@@ -129,12 +126,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
         InitializeWithWindow.Initialize(fileOpenPicker, windowHandleSave);
 
-        StorageFile pickedFile = await fileOpenPicker.PickSingleFileAsync();
+        IReadOnlyList<StorageFile>? pickedFiles = await fileOpenPicker.PickMultipleFilesAsync();
 
-        if (pickedFile is null)
+        if (pickedFiles is null || pickedFiles.Count == 0)
             return;
 
-        OpenAndDecodeStorageFile(pickedFile);
+        OpenAndDecodeStorageFiles(pickedFiles);
     }
 
     private void OpenAndDecodeBitmap(IRandomAccessStreamWithContentType streamWithContentType)
@@ -174,18 +171,31 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         // try { File.Delete(cachePath); } catch { };
     }
 
-    private void OpenAndDecodeStorageFile(StorageFile pickedFile)
+    private void OpenAndDecodeStorageFiles(IReadOnlyList<IStorageItem> pickedFiles)
     {
-        Uri uri = new(pickedFile.Path);
+        foreach (var file in pickedFiles)
+        {
+            if (file is not StorageFile storageFile)
+                continue;
+
+            var decodedItem = GetDecodingImageItemFromStorageFile(storageFile);
+            if (decodedItem is not null)
+                DecodingImageItems.Add(decodedItem);
+        }
+
+    }
+
+    private DecodingImageItem? GetDecodingImageItemFromStorageFile(StorageFile storageFile)
+    {
+        Uri uri = new(storageFile.Path);
         BitmapImage thisPickedImage = new(uri);
 
-        IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromImageFile(pickedFile);
+        IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromImageFile(storageFile);
 
         if (!strings.Any())
         {
-            InfoBarMessage = "Could not read any codes. Could be there are none present or content failed to read.\rIf you believe this is an issue with the app, please email joe@joefinapps.com";
+            InfoBarMessage = $"Could not read codes on {Path.GetFileName(storageFile.Path)}.\rCould be there are none present or content failed to read.\rIf you believe this is an issue with the app, please email joe@joefinapps.com";
             IsInfoBarShowing = true;
-            return;
         }
 
         ObservableCollection<TextBorder> codeBorders = new();
@@ -198,12 +208,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         DecodingImageItem decodingImage = new()
         {
-            Name = pickedFile.Path,
+            Name = storageFile.Path,
             BitmapImage = thisPickedImage,
             CodeBorders = codeBorders,
         };
 
-        DecodingImageItems.Add(decodingImage);
+        return decodingImage;
     }
 
     private void TextBorder_TextBorder_Click(object sender, RoutedEventArgs e)
