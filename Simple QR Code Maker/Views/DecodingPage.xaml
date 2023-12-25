@@ -34,6 +34,14 @@
                 Command="{x:Bind ViewModel.OpenNewFileCommand}"
                 Icon="OpenFile"
                 IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}" />
+            <AppBarButton
+                Command="{x:Bind ViewModel.OpenFileFromClipboardCommand}"
+                Icon="Paste"
+                IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}" />
+            <AppBarButton
+                Command="{x:Bind ViewModel.ClearImagesCommand}"
+                Icon="ClearSelection"
+                IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}" />
         </StackPanel>
         <ScrollViewer
             x:Name="ImageScrollViewer"
@@ -42,28 +50,38 @@
             MinZoomFactor="1"
             VerticalScrollBarVisibility="Auto"
             ZoomMode="Enabled">
-            <Grid Width="{x:Bind ImageScrollViewer.ViewportWidth, Mode=OneWay}" Height="{x:Bind ImageScrollViewer.ViewportHeight, Mode=OneWay}">
-                <Viewbox Grid.Row="1">
-                    <Grid>
-                        <Image x:Name="ImageWithBarcodes" Source="{x:Bind ViewModel.PickedImage, Mode=OneWay}" />
-                        <ItemsControl ItemsSource="{x:Bind ViewModel.CodeBorders, Mode=OneWay}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <Canvas
-                                        Width="{Binding ImageWithBarcodes.Width, Mode=OneWay}"
-                                        Height="{Binding ImageWithBarcodes.Height, Mode=OneWay}"
-                                        Background="Transparent" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <ContentControl />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </Grid>
-                </Viewbox>
-            </Grid>
+            <GridView
+                Width="{x:Bind ImageScrollViewer.ViewportWidth, Mode=OneWay}"
+                Height="{x:Bind ImageScrollViewer.ViewportHeight, Mode=OneWay}"
+                ItemsSource="{x:Bind ViewModel.DecodingImageItems, Mode=OneWay}"
+                SelectionMode="None">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="models:DecodingImageItem">
+                        <Grid>
+                            <Viewbox Grid.Row="1">
+                                <Grid>
+                                    <Image x:Name="ImageWithBarcodes" Source="{x:Bind BitmapImage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <ItemsControl ItemsSource="{x:Bind CodeBorders, Mode=OneWay}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <Canvas
+                                                    Width="{Binding ImageWithBarcodes.Width, Mode=OneWay}"
+                                                    Height="{Binding ImageWithBarcodes.Height, Mode=OneWay}"
+                                                    Background="Transparent" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <ContentControl />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
+                            </Viewbox>
+                        </Grid>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
         </ScrollViewer>
         <InfoBar
             x:Name="QrCodeInfoBar"

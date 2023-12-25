@@ -75,6 +75,11 @@ public static class BarcodeHelpers
     {
         Bitmap bitmap = new(storageFile.Path);
 
+        return GetStringsFromBitmap(bitmap);
+    }
+
+    public static IEnumerable<(string, Result)> GetStringsFromBitmap(Bitmap bitmap)
+    {
         BarcodeReader barcodeReader = new()
         {
             AutoRotate = true,
