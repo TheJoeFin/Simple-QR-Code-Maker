@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Contracts.Services;
+using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
@@ -17,7 +18,7 @@ using static ZXing.Rendering.SvgRenderer;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-public partial class MainViewModel : ObservableRecipient
+public partial class MainViewModel : ObservableRecipient, INavigationAware
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanSaveImage))]
@@ -38,6 +39,26 @@ public partial class MainViewModel : ObservableRecipient
 
     [ObservableProperty]
     private ErrorCorrectionOptions selectedOption = new("Medium 15%", ErrorCorrectionLevel.M);
+
+    [ObservableProperty]
+    private bool isHistoryPaneOpen = false;
+
+    [ObservableProperty]
+    private ObservableCollection<HistoryItem> historyItems = new();
+
+    [ObservableProperty]
+    private HistoryItem? selectedHistoryItem = null;
+
+    partial void OnSelectedHistoryItemChanged(HistoryItem? value)
+    {
+        if (value is null)
+            return;
+
+        IsHistoryPaneOpen = false;
+        UrlText = value.CodesContent;
+
+        SelectedHistoryItem = null;
+    }
 
     public List<ErrorCorrectionOptions> ErrorCorrectionLevels { get; } = new()
     {
@@ -77,12 +98,15 @@ public partial class MainViewModel : ObservableRecipient
 
     public INavigationService NavigationService { get; }
 
-    public MainViewModel(INavigationService navigationService)
+    public ILocalSettingsService LocalSettingsService { get; }
+
+    public MainViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService)
     {
         debounceTimer.Interval = TimeSpan.FromMilliseconds(600);
         debounceTimer.Tick += DebounceTimer_Tick;
 
         NavigationService = navigationService;
+        LocalSettingsService = localSettingsService;
     }
 
     private void DebounceTimer_Tick(object? sender, object e)
@@ -124,6 +148,12 @@ public partial class MainViewModel : ObservableRecipient
                 ShowLengthError = true;
             }
         }
+    }
+
+    [RelayCommand]
+    private void ToggleHistoryPaneOpen()
+    {
+        IsHistoryPaneOpen = !IsHistoryPaneOpen;
     }
 
     [RelayCommand]
@@ -262,5 +292,48 @@ public partial class MainViewModel : ObservableRecipient
         }
 
         await SaveAllFiles(FileKind.SVG);
+    }
+
+    public async void OnNavigatedTo(object parameter)
+    {
+        await LoadHistory();
+    }
+
+    public void OnNavigatedFrom()
+    {
+        if (!string.IsNullOrWhiteSpace(UrlText))
+            SaveCurrentStateToHistory();
+
+        LocalSettingsService.SaveSettingAsync(nameof(HistoryItems), HistoryItems);
+    }
+
+    private void SaveCurrentStateToHistory()
+    {
+        HistoryItem historyItem = new()
+        {
+            CodesContent = UrlText,
+            // Foreground = ForegroundColor,
+            // Background = BackgroundColor,
+            // ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
+        };
+
+        HistoryItems.Add(historyItem);
+    }
+
+    private async Task LoadHistory()
+    {
+        ObservableCollection<HistoryItem>? prevHistory = null;
+
+        try
+        {
+            prevHistory = await LocalSettingsService.ReadSettingAsync<ObservableCollection<HistoryItem>>(nameof(HistoryItems));
+        }
+        catch { }
+
+        if (prevHistory is null || prevHistory.Count == 0)
+            return;
+
+        foreach (HistoryItem hisItem in prevHistory)
+            HistoryItems.Add(hisItem);
     }
 }
