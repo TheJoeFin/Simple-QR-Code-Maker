@@ -46,12 +46,18 @@ public static class BarcodeHelpers
         return bitmapImage;
     }
 
-    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel)
+    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background)
     {
+        SvgRenderer svgRenderer = new()
+        {
+            Foreground = new SvgRenderer.Color(foreground.A, foreground.R, foreground.G, foreground.B),
+            Background = new SvgRenderer.Color(background.A, background.R, background.G, background.B),
+        };
+
         BarcodeWriterSvg barcodeWriter = new()
         {
             Format = BarcodeFormat.QR_CODE,
-            Renderer = new SvgRenderer()
+            Renderer = svgRenderer
         };
 
         EncodingOptions encodingOptions = new()

@@ -56,6 +56,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         IsHistoryPaneOpen = false;
         UrlText = value.CodesContent;
+        ForegroundColor = value.Foreground;
+        BackgroundColor = value.Background;
+        SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == value.ErrorCorrection);
 
         SelectedHistoryItem = null;
     }
@@ -174,6 +177,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (QrCodeBitmaps.Count == 0)
             return;
 
+        SaveCurrentStateToHistory();
+
         if (QrCodeBitmaps.Count == 1)
         {
             await SaveSingle(FileKind.PNG, QrCodeBitmaps.First());
@@ -183,7 +188,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         await SaveAllFiles(FileKind.PNG);
     }
 
-    private static async Task SaveSingle(FileKind kindOfFile, BarcodeImageItem imageItem)
+    private async Task SaveSingle(FileKind kindOfFile, BarcodeImageItem imageItem)
     {
         FileSavePicker savePicker = new()
         {
@@ -219,7 +224,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         await WriteImageToFile(imageItem, file, kindOfFile);
     }
 
-    private static async Task WriteImageToFile(BarcodeImageItem imageItem, StorageFile file, FileKind kindOfFile)
+    private async Task WriteImageToFile(BarcodeImageItem imageItem, StorageFile file, FileKind kindOfFile)
     {
         switch (kindOfFile)
         {
@@ -233,7 +238,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 break;
             case FileKind.SVG:
                 {
-                    SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(imageItem.CodeAsText, ErrorCorrectionLevel.M);
+                    SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(imageItem.CodeAsText, ErrorCorrectionLevel.M, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor());
                     using IRandomAccessStream randomAccessStream = await file.OpenAsync(FileAccessMode.ReadWrite);
                     DataWriter dataWriter = new(randomAccessStream);
                     dataWriter.WriteString(svgImage.Content);
@@ -285,7 +290,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (QrCodeBitmaps.Count == 0)
             return;
 
+        SaveCurrentStateToHistory();
+
         if (QrCodeBitmaps.Count == 1)
+
         {
             await SaveSingle(FileKind.SVG, QrCodeBitmaps.First());
             return;
@@ -312,12 +320,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         HistoryItem historyItem = new()
         {
             CodesContent = UrlText,
-            // Foreground = ForegroundColor,
-            // Background = BackgroundColor,
-            // ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
+            Foreground = ForegroundColor,
+            Background = BackgroundColor,
+            ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
         };
 
-        HistoryItems.Add(historyItem);
+        if (HistoryItems.Contains(historyItem))
+            HistoryItems.Remove(historyItem);
+        HistoryItems.Insert(0, historyItem);
     }
 
     private async Task LoadHistory()
