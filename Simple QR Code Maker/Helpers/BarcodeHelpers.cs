@@ -1,12 +1,9 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using System.Drawing;
 using System.Drawing.Imaging;
-using Windows.Graphics.Imaging;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using ZXing;
 using ZXing.Common;
-using ZXing.Multi;
 using ZXing.QrCode.Internal;
 using ZXing.Rendering;
 using ZXing.Windows.Compatibility;
