@@ -58,7 +58,10 @@
                     SelectionMode="None">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="models:DecodingImageItem">
-                            <Grid>
+                            <Grid
+                                MaxWidth="400"
+                                MaxHeight="400"
+                                Margin="20">
                                 <Viewbox>
                                     <Grid>
                                         <Image x:Name="ImageWithBarcodes" Source="{x:Bind BitmapImage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
