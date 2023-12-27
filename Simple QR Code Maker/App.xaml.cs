@@ -57,6 +57,7 @@ public partial class App : Application
             // Other Activation Handlers
 
             // Services
+            services.AddTransient<IWebViewService, WebViewService>();
             services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
             services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
             services.AddSingleton<IActivationService, ActivationService>();
@@ -67,6 +68,8 @@ public partial class App : Application
             services.AddSingleton<IFileService, FileService>();
 
             // Views and ViewModels
+            services.AddTransient<AboutQrCodesWebViewModel>();
+            services.AddTransient<AboutQrCodesWebPage>();
             services.AddTransient<DecodingViewModel>();
             services.AddTransient<DecodingPage>();
             services.AddTransient<SettingsViewModel>();

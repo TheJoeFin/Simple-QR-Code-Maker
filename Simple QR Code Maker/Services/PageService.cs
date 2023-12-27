@@ -18,6 +18,7 @@ public class PageService : IPageService
         Configure<SettingsViewModel, SettingsPage>();
         Configure<ShellViewModel, ShellPage>();
         Configure<DecodingViewModel, DecodingPage>();
+        Configure<AboutQrCodesWebViewModel, AboutQrCodesWebPage>();
     }
 
     public Type GetPageType(string key)
