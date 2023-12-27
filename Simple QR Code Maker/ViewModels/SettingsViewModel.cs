@@ -56,7 +56,7 @@ public partial class SettingsViewModel : ObservableRecipient
         _ = await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NCH56G3RQFC"));
     }
 
-private static string GetVersionDescription()
+    private static string GetVersionDescription()
     {
         Version version;
 
@@ -72,5 +72,11 @@ private static string GetVersionDescription()
         }
 
         return $"{"AppDisplayName".GetLocalized()} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+    }
+
+    [RelayCommand]
+    private void GoToMoreInfo()
+    {
+        NavigationService.NavigateTo(typeof(AboutQrCodesWebViewModel).FullName!);
     }
 }

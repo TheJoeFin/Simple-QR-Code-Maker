@@ -24,7 +24,10 @@
                 Style="{StaticResource PageTitleStyle}" />
         </StackPanel>
         <ScrollViewer Grid.Row="1">
-            <StackPanel x:Name="ContentArea" Margin="80,24,0,40">
+            <StackPanel
+                x:Name="ContentArea"
+                Margin="80,24,0,40"
+                Spacing="8">
                 <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                     <TextBlock x:Uid="Settings_Theme" />
@@ -74,6 +77,10 @@
                         Style="{ThemeResource BodyTextBlockStyle}" />
                     <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" Margin="{StaticResource SettingsPageHyperlinkButtonMargin}" />
                 </StackPanel>
+
+                <HyperlinkButton Margin="-12,0,0,0" Command="{x:Bind ViewModel.GoToMoreInfoCommand}">
+                    Learn more about QR Codes on Wikipedia
+                </HyperlinkButton>
 
                 <HyperlinkButton
                     x:Name="ReviewBTN"

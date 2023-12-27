@@ -172,12 +172,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private void GoToMoreInfo()
-    {
-        NavigationService.NavigateTo(typeof(AboutQrCodesWebViewModel).FullName!);
-    }
-
-    [RelayCommand]
     private async Task SavePng()
     {
         if (QrCodeBitmaps.Count == 0)

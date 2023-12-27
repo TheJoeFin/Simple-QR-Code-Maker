@@ -173,12 +173,7 @@
                             Severity="Error" />
                     </StackPanel>
                 </ScrollViewer>
-                <AppBarButton
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Command="{x:Bind ViewModel.GoToMoreInfoCommand}"
-                    Icon="Library"
-                    IsCompact="True" />
+
                 <AppBarButton
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
