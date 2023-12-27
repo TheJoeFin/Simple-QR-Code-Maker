@@ -13,82 +13,115 @@
     <Page.Resources>
         <converters:InvertBoolConverter x:Key="InvertBool" />
         <converters:TextHasURLConverter x:Key="HasURL" />
+        <converters:EmptyCollectionToVisibilityConverter x:Key="EmptyCollectionVisibilit" />
     </Page.Resources>
 
-    <Grid x:Name="ContentArea" Padding="40,0,40,20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="48" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <StackPanel
-            Grid.Row="0"
-            Orientation="Horizontal"
-            Spacing="12">
-            <AppBarButton Command="{x:Bind ViewModel.GoBackCommand}" Icon="Back" />
-            <TextBlock
-                x:Uid="Decoding_Title"
-                Grid.Row="0"
-                Style="{StaticResource PageTitleStyle}" />
-            <AppBarButton
-                Command="{x:Bind ViewModel.OpenNewFileCommand}"
-                Icon="OpenFile"
-                IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}" />
-            <AppBarButton
-                Command="{x:Bind ViewModel.OpenFileFromClipboardCommand}"
-                Icon="Paste"
-                IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}" />
-            <AppBarButton
-                Command="{x:Bind ViewModel.ClearImagesCommand}"
-                Icon="ClearSelection"
-                IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}" />
-        </StackPanel>
+    <Grid>
         <ScrollViewer
             x:Name="ImageScrollViewer"
-            Grid.Row="1"
-            HorizontalScrollBarVisibility="Auto"
-            MinZoomFactor="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto"
-            ZoomMode="Enabled">
-            <Grid Width="{x:Bind ImageScrollViewer.ViewportWidth, Mode=OneWay}" Height="{x:Bind ImageScrollViewer.ViewportHeight, Mode=OneWay}">
-                <GridView
-                    ScrollViewer.IsHorizontalScrollChainingEnabled="True"
-                    ScrollViewer.IsVerticalScrollChainingEnabled="True"
+            ZoomMode="Disabled">
+            <StackPanel
+                x:Name="ContentArea"
+                Orientation="Vertical"
+                Spacing="12">
+                <Border
+                    Grid.Row="1"
+                    MinWidth="300"
+                    MinHeight="300"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    ItemsSource="{x:Bind ViewModel.DecodingImageItems, Mode=OneWay}"
-                    SelectionMode="None">
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="models:DecodingImageItem">
-                            <Grid
-                                MaxWidth="400"
-                                MaxHeight="400"
-                                Margin="20">
-                                <Viewbox>
-                                    <Grid>
-                                        <Image x:Name="ImageWithBarcodes" Source="{x:Bind BitmapImage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        <ItemsControl ItemsSource="{x:Bind CodeBorders, Mode=OneWay}">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <Canvas
-                                                        Width="{Binding ImageWithBarcodes.Width}"
-                                                        Height="{Binding ImageWithBarcodes.Height}"
-                                                        Background="Transparent" />
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <ContentControl />
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </Grid>
-                                </Viewbox>
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-                </GridView>
-            </Grid>
+                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                    CornerRadius="4">
+                    <GridView
+                        Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ItemsSource="{x:Bind ViewModel.DecodingImageItems, Mode=OneWay}"
+                        ScrollViewer.IsHorizontalScrollChainingEnabled="True"
+                        ScrollViewer.IsVerticalScrollChainingEnabled="True"
+                        SelectionMode="None">
+                        <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="models:DecodingImageItem">
+                                <Grid
+                                    MaxWidth="400"
+                                    MaxHeight="400"
+                                    Margin="20">
+                                    <Viewbox>
+                                        <Grid>
+                                            <Image x:Name="ImageWithBarcodes" Source="{x:Bind BitmapImage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <ItemsControl ItemsSource="{x:Bind CodeBorders, Mode=OneWay}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <Canvas
+                                                            Width="{Binding ImageWithBarcodes.Width}"
+                                                            Height="{Binding ImageWithBarcodes.Height}"
+                                                            Background="Transparent" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <ContentControl />
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </Viewbox>
+                                </Grid>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
+                </Border>
+
+                <StackPanel
+                    Grid.Row="0"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="12">
+                    <Button Command="{x:Bind ViewModel.GoBackCommand}">
+                        <Viewbox Height="14">
+                            <SymbolIcon Symbol="Back" />
+                        </Viewbox>
+                    </Button>
+                    <Button
+                        Command="{x:Bind ViewModel.OpenNewFileCommand}"
+                        IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}"
+                        ToolTipService.ToolTip="Open one or many files to decode the barcodes contained in the image">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Viewbox Height="14">
+                                <SymbolIcon Symbol="OpenFile" />
+                            </Viewbox>
+                            <TextBlock Text="Open..." />
+                        </StackPanel>
+                    </Button>
+                    <Button
+                        Command="{x:Bind ViewModel.OpenFileFromClipboardCommand}"
+                        IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}"
+                        ToolTipService.ToolTip="Paste and image or file from your clipboard to try to decode the barcodes">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Viewbox Height="14">
+                                <SymbolIcon Symbol="Paste" />
+                            </Viewbox>
+                            <TextBlock Text="Paste" />
+                        </StackPanel>
+                    </Button>
+                    <Button
+                        Command="{x:Bind ViewModel.ClearImagesCommand}"
+                        IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}"
+                        ToolTipService.ToolTip="Clear out all the images"
+                        Visibility="{x:Bind ViewModel.DecodingImageItems, Converter={StaticResource EmptyCollectionVisibilit}, Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Viewbox Height="16">
+                                <SymbolIcon Symbol="Clear" />
+                            </Viewbox>
+                            <TextBlock Text="Clear" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
         </ScrollViewer>
         <InfoBar
             x:Name="QrCodeInfoBar"

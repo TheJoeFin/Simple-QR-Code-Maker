@@ -40,9 +40,9 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         NavigationService = navigationService;
     }
 
-    public async void OnNavigatedTo(object parameter)
+    public void OnNavigatedTo(object parameter)
     {
-        await OpenNewFileCommand.ExecuteAsync(null);
+
     }
 
     [RelayCommand]
@@ -168,17 +168,16 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         };
 
         DecodingImageItems.Add(decodingImage);
-        // try { File.Delete(cachePath); } catch { };
     }
 
     private void OpenAndDecodeStorageFiles(IReadOnlyList<IStorageItem> pickedFiles)
     {
-        foreach (var file in pickedFiles)
+        foreach (IStorageItem file in pickedFiles)
         {
             if (file is not StorageFile storageFile)
                 continue;
 
-            var decodedItem = GetDecodingImageItemFromStorageFile(storageFile);
+            DecodingImageItem? decodedItem = GetDecodingImageItemFromStorageFile(storageFile);
             if (decodedItem is not null)
                 DecodingImageItems.Add(decodedItem);
         }

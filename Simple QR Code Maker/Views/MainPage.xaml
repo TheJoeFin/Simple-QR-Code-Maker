@@ -153,7 +153,7 @@
                                 ToolTipService.ToolTip="Save code(s) as SVG files" />
                             <Button Command="{x:Bind ViewModel.OpenFileCommand}" ToolTipService.ToolTip="Open an image to read and extract text from any codes">
                                 <Viewbox Height="16">
-                                    <SymbolIcon Symbol="OpenFile" />
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEE6F;" />
                                 </Viewbox>
                             </Button>
                             <Button Command="{x:Bind ViewModel.GoToSettingsCommand}" ToolTipService.ToolTip="Simple QR Code Maker Settings">
