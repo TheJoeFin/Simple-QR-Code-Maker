@@ -12,8 +12,8 @@ public class HistoryItem : IEquatable<HistoryItem>
     public string SaveDateAsString => SavedDateTime.Humanize();
 
     public string CodesContent { get; set; } = string.Empty;
-    public Color Foreground { get; set; } = Color.FromArgb(255, 255, 255, 255);
-    public Color Background { get; set; } = Color.FromArgb(255, 0,0,0);
+    public Color Foreground { get; set; } = Color.FromArgb(255, 0, 0, 0);
+    public Color Background { get; set; } = Color.FromArgb(255, 255,255,255);
 
     public string ErrorCorrectionLevelAsString { get; set; } = "M";
 
