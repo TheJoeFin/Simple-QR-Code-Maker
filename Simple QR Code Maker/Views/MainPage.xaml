@@ -38,7 +38,7 @@
                             MinWidth="300"
                             MaxWidth="800"
                             AcceptsReturn="True"
-                            PlaceholderText="ex: http://example.com/"
+                            PlaceholderText="{x:Bind ViewModel.PlaceholderText, Mode=OneWay}"
                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
                             Text="{x:Bind ViewModel.UrlText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             TextWrapping="NoWrap" />

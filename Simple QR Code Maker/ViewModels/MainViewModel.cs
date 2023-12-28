@@ -8,6 +8,7 @@ using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
+using Windows.Graphics.Printing.Workflow;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -27,6 +28,20 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanSaveImage))]
     private ObservableCollection<BarcodeImageItem> qrCodeBitmaps = new();
+
+    [ObservableProperty]
+    private string placeholderText = "ex: http://www.example.com";
+
+    private string[] placeholdersList =
+    {
+        "http://example.com",
+        "https://www.wikipedia.org",
+        "https://www.JoeFinApps.com",
+        "https://github.com",
+        "https://github.com/TheJoeFin/Simple-QR-Code-Maker",
+        "https://github.com/TheJoeFin/Text-Grab",
+        "https://github.com/TheJoeFin/Simple-Icon-File-Maker"
+    };
 
     [ObservableProperty]
     private bool showLengthError = false;
@@ -99,6 +114,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private readonly DispatcherTimer debounceTimer = new();
 
+    private readonly DispatcherTimer placeholderTextTimer = new();
+
     public INavigationService NavigationService { get; }
 
     public ILocalSettingsService LocalSettingsService { get; }
@@ -108,9 +125,20 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         debounceTimer.Interval = TimeSpan.FromMilliseconds(600);
         debounceTimer.Tick += DebounceTimer_Tick;
 
+        placeholderTextTimer.Interval = TimeSpan.FromSeconds(6);
+        placeholderTextTimer.Tick += PlaceholderTextTimer_Tick;
+        placeholderTextTimer.Start();
+
         NavigationService = navigationService;
         LocalSettingsService = localSettingsService;
     }
+
+    private void PlaceholderTextTimer_Tick(object? sender, object e)
+    {
+        Random random = new();
+        PlaceholderText = $"ex: {placeholdersList[random.Next(placeholdersList.Length)]}";
+    }
+
 
     private void DebounceTimer_Tick(object? sender, object e)
     {
