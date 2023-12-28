@@ -111,7 +111,7 @@
                     </Button>
                     <Button
                         Command="{x:Bind ViewModel.OpenFileFromClipboardCommand}"
-                        IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}"
+                        IsEnabled="{x:Bind ViewModel.CanPasteImage, Mode=OneWay}"
                         ToolTipService.ToolTip="Paste and image or file from your clipboard to try to decode the barcodes">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <Viewbox Height="14">

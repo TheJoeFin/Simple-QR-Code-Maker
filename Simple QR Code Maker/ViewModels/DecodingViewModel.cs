@@ -31,18 +31,52 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     private BitmapImage? pickedImage;
 
     [ObservableProperty]
+    private bool canPasteImage = false;
+
+    [ObservableProperty]
     private ObservableCollection<DecodingImageItem> decodingImageItems = new();
 
     private INavigationService NavigationService { get; }
 
+    private List<string> imageExtensions = new()
+    {
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".bmp",
+    };
+
     public DecodingViewModel(INavigationService navigationService)
     {
         NavigationService = navigationService;
+
+        CheckIfCanPaste();
+
+        Clipboard.ContentChanged -= Clipboard_ContentChanged;
+        Clipboard.ContentChanged += Clipboard_ContentChanged;
+    }
+
+    ~DecodingViewModel()
+    {
+        Clipboard.ContentChanged -= Clipboard_ContentChanged;
+    }
+
+    private void Clipboard_ContentChanged(object? sender, object e) => CheckIfCanPaste();
+
+    private void CheckIfCanPaste()
+    {
+        var clipboardData = Clipboard.GetContent();
+
+        if (clipboardData.Contains(StandardDataFormats.StorageItems)
+            || clipboardData.Contains(StandardDataFormats.Bitmap))
+            CanPasteImage = true;
+        else
+            CanPasteImage = false;
     }
 
     public void OnNavigatedTo(object parameter)
     {
-
+        
     }
 
     [RelayCommand]
@@ -117,10 +151,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         {
             SuggestedStartLocation = PickerLocationId.Downloads,
         };
-        fileOpenPicker.FileTypeFilter.Add(".png");
-        fileOpenPicker.FileTypeFilter.Add(".jpg");
-        fileOpenPicker.FileTypeFilter.Add(".jpeg");
-        fileOpenPicker.FileTypeFilter.Add(".bmp");
+
+        foreach (string extension in imageExtensions)
+        {
+            fileOpenPicker.FileTypeFilter.Add(extension);
+        }
 
         Window saveWindow = new();
         IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
@@ -186,6 +221,10 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     private DecodingImageItem? GetDecodingImageItemFromStorageFile(StorageFile storageFile)
     {
         Uri uri = new(storageFile.Path);
+
+        if (!imageExtensions.Contains(Path.GetExtension(storageFile.Path).ToLowerInvariant()))
+            return null;
+
         BitmapImage thisPickedImage = new(uri);
 
         IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromImageFile(storageFile);

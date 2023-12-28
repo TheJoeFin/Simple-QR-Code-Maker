@@ -123,14 +123,28 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public MainViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService)
     {
         debounceTimer.Interval = TimeSpan.FromMilliseconds(600);
+        debounceTimer.Tick -= DebounceTimer_Tick;
         debounceTimer.Tick += DebounceTimer_Tick;
 
         placeholderTextTimer.Interval = TimeSpan.FromSeconds(6);
+        placeholderTextTimer.Tick -= PlaceholderTextTimer_Tick;
         placeholderTextTimer.Tick += PlaceholderTextTimer_Tick;
         placeholderTextTimer.Start();
 
         NavigationService = navigationService;
         LocalSettingsService = localSettingsService;
+    }
+
+    ~MainViewModel()
+    {
+        placeholderTextTimer?.Stop();
+
+        if (placeholderTextTimer is not null)
+            placeholderTextTimer.Tick -= PlaceholderTextTimer_Tick;
+
+        debounceTimer?.Stop();
+        if (debounceTimer is not null)
+            debounceTimer.Tick -= DebounceTimer_Tick;
     }
 
     private void PlaceholderTextTimer_Tick(object? sender, object e)
