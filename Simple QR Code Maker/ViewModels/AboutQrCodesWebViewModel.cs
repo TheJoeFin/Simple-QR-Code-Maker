@@ -36,7 +36,7 @@ public partial class AboutQrCodesWebViewModel : ObservableRecipient, INavigation
     [RelayCommand]
     private void GoHome()
     {
-        NavigationService.NavigateTo(typeof(MainViewModel).FullName!);
+        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!);
     }
 
     [RelayCommand]

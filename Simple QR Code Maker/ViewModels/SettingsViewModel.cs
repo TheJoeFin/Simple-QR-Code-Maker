@@ -44,14 +44,13 @@ public partial class SettingsViewModel : ObservableRecipient
     }
 
     [RelayCommand]
-    private void GoBack()
+    private void GoHome()
     {
-        if (NavigationService.CanGoBack)
-            NavigationService.GoBack();
+        NavigationService.NavigateTo(typeof(MainViewModel).FullName!);
     }
 
     [RelayCommand]
-    private async Task ReviewApp()
+    private static async Task ReviewApp()
     {
         _ = await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NCH56G3RQFC"));
     }

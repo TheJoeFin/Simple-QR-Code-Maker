@@ -18,8 +18,8 @@
                     Margin="{StaticResource XSmallLeftTopRightBottomMargin}"
                     Padding="{StaticResource XXSmallLeftTopRightBottomMargin}"
                     Command="{x:Bind ViewModel.GoHomeCommand, Mode=OneWay}"
-                    ToolTipService.ToolTip="Learn more about how QR Codes work (Wikipedia)">
-                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE80F;" />
+                    ToolTipService.ToolTip="Back to your Simple QR Code Maker Settings">
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
                 </Button>
                 <Button
                     x:Uid="BrowserBackButton"
@@ -53,7 +53,7 @@
                 </Button>
             </StackPanel>
         </Grid>
-        
+
         <WebView2
             x:Name="WebView"
             Grid.Row="1"

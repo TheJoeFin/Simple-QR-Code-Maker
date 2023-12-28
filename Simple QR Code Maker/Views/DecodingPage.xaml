@@ -13,7 +13,7 @@
     <Page.Resources>
         <converters:InvertBoolConverter x:Key="InvertBool" />
         <converters:TextHasURLConverter x:Key="HasURL" />
-        <converters:EmptyCollectionToVisibilityConverter x:Key="EmptyCollectionVisibilit" />
+        <converters:NotEmptyCollectionToVisibilityConverter x:Key="NotEmptyCollectionVisibilit" />
     </Page.Resources>
 
     <Grid>
@@ -112,7 +112,7 @@
                         Command="{x:Bind ViewModel.ClearImagesCommand}"
                         IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}"
                         ToolTipService.ToolTip="Clear out all the images"
-                        Visibility="{x:Bind ViewModel.DecodingImageItems, Converter={StaticResource EmptyCollectionVisibilit}, Mode=OneWay}">
+                        Visibility="{x:Bind ViewModel.DecodingImageItems.Count, Converter={StaticResource NotEmptyCollectionVisibilit}, Mode=OneWay}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <Viewbox Height="16">
                                 <SymbolIcon Symbol="Clear" />
