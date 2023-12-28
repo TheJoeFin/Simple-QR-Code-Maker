@@ -13,7 +13,9 @@
     <Page.Resources>
         <converters:InvertBoolConverter x:Key="InvertBool" />
         <converters:TextHasURLConverter x:Key="HasURL" />
-        <converters:NotEmptyCollectionToVisibilityConverter x:Key="NotEmptyCollectionVisibilit" />
+        <converters:EmptyCollectionToVisibilityConverter x:Key="EmptyCollectionVisibility" />
+        <converters:NotEmptyCollectionToVisibilityConverter x:Key="NotEmptyCollectionVisibiliy" />
+        <converters:IsZeroConverter x:Key="IsZero" />
     </Page.Resources>
 
     <Grid>
@@ -70,6 +72,16 @@
                                             </ItemsControl>
                                         </Grid>
                                     </Viewbox>
+                                    <InfoBar
+                                        Title="No codes found"
+                                        IsOpen="{x:Bind CodeBorders.Count, Converter={StaticResource IsZero}, Mode=OneWay}"
+                                        Severity="Warning">
+                                        <TextBlock
+                                            Margin="0,0,0,20"
+                                            IsTextSelectionEnabled="True"
+                                            Text="Could be there are none present or content failed to read. If you believe this is an issue with the app, please email joe@joefinapps.com"
+                                            TextWrapping="Wrap" />
+                                    </InfoBar>
                                 </Grid>
                             </DataTemplate>
                         </GridView.ItemTemplate>
@@ -81,7 +93,7 @@
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="12">
-                    <Button Command="{x:Bind ViewModel.GoBackCommand}">
+                    <Button Command="{x:Bind ViewModel.GoBackCommand}" ToolTipService.ToolTip="Go Back to making QR Code page">
                         <Viewbox Height="14">
                             <SymbolIcon Symbol="Back" />
                         </Viewbox>
@@ -112,7 +124,7 @@
                         Command="{x:Bind ViewModel.ClearImagesCommand}"
                         IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource InvertBool}}"
                         ToolTipService.ToolTip="Clear out all the images"
-                        Visibility="{x:Bind ViewModel.DecodingImageItems.Count, Converter={StaticResource NotEmptyCollectionVisibilit}, Mode=OneWay}">
+                        Visibility="{x:Bind ViewModel.DecodingImageItems.Count, Converter={StaticResource NotEmptyCollectionVisibiliy}, Mode=OneWay}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <Viewbox Height="16">
                                 <SymbolIcon Symbol="Clear" />
@@ -128,8 +140,8 @@
             Title="QR Code Content"
             Grid.Row="1"
             Margin="20"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
             Background="{StaticResource SystemControlBackgroundAltHighBrush}"
             BorderBrush="{StaticResource SystemAccentColor}"
             BorderThickness="3"

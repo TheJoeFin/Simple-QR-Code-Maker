@@ -181,7 +181,6 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             if (decodedItem is not null)
                 DecodingImageItems.Add(decodedItem);
         }
-
     }
 
     private DecodingImageItem? GetDecodingImageItemFromStorageFile(StorageFile storageFile)
@@ -190,12 +189,6 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         BitmapImage thisPickedImage = new(uri);
 
         IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromImageFile(storageFile);
-
-        if (!strings.Any())
-        {
-            InfoBarMessage = $"Could not read codes on {Path.GetFileName(storageFile.Path)}.\rCould be there are none present or content failed to read.\rIf you believe this is an issue with the app, please email joe@joefinapps.com";
-            IsInfoBarShowing = true;
-        }
 
         ObservableCollection<TextBorder> codeBorders = new();
         foreach ((string, Result) item in strings)
