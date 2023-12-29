@@ -21,13 +21,14 @@
     <Grid>
         <ScrollViewer
             x:Name="ImageScrollViewer"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto"
             ZoomMode="Disabled">
             <StackPanel
                 x:Name="ContentArea"
+                Margin="20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
                 Orientation="Vertical"
                 Spacing="12">
                 <Border
@@ -52,7 +53,12 @@
                                     MaxWidth="400"
                                     MaxHeight="400"
                                     Margin="20">
-                                    <Viewbox>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock x:Name="ImageTextName" Text="{x:Bind FileName, Mode=OneWay}" />
+                                    <Viewbox Grid.Row="1">
                                         <Grid>
                                             <Image x:Name="ImageWithBarcodes" Source="{x:Bind BitmapImage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <ItemsControl ItemsSource="{x:Bind CodeBorders, Mode=OneWay}">
@@ -74,6 +80,7 @@
                                     </Viewbox>
                                     <InfoBar
                                         Title="No codes found"
+                                        Grid.Row="1"
                                         IsOpen="{x:Bind CodeBorders.Count, Converter={StaticResource IsZero}, Mode=OneWay}"
                                         Severity="Warning">
                                         <TextBlock
@@ -141,7 +148,7 @@
             Grid.Row="1"
             Margin="20"
             HorizontalAlignment="Center"
-            VerticalAlignment="Bottom"
+            VerticalAlignment="Top"
             Background="{StaticResource SystemControlBackgroundAltHighBrush}"
             BorderBrush="{StaticResource SystemAccentColor}"
             BorderThickness="3"

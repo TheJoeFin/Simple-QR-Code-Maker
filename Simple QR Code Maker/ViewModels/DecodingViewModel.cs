@@ -197,7 +197,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         DecodingImageItem decodingImage = new()
         {
-            Name = cachePath,
+            ImagePath = cachePath,
             BitmapImage = thisPickedImage,
             CodeBorders = codeBorders,
         };
@@ -239,7 +239,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         DecodingImageItem decodingImage = new()
         {
-            Name = storageFile.Path,
+            ImagePath = storageFile.Path,
             BitmapImage = thisPickedImage,
             CodeBorders = codeBorders,
         };

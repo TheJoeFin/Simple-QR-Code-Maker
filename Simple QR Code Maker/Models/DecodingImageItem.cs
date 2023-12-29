@@ -6,7 +6,9 @@ using ZXing;
 namespace Simple_QR_Code_Maker.Models;
 public class DecodingImageItem
 {
-    public string Name { get; set; } = string.Empty;
+    public string ImagePath { get; set; } = string.Empty;
+
+    public string FileName => Path.GetFileName(ImagePath);
     
     public BitmapImage? BitmapImage { get; set; }
 
