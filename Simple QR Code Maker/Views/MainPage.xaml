@@ -61,10 +61,12 @@
                                     </Flyout>
                                 </Button.Flyout>
                                 <Button.Content>
-                                    <Rectangle
-                                        Width="12"
-                                        Height="12"
-                                        Fill="{x:Bind ForegroundColorPicker.Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
+                                    <Viewbox Width="18" Height="18">
+                                        <FontIcon
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            Foreground="{x:Bind ForegroundColorPicker.Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}"
+                                            Glyph="&#xED14;" />
+                                    </Viewbox>
                                 </Button.Content>
                             </Button>
                             <Button Width="68" ToolTipService.ToolTip="Background Color">
@@ -80,8 +82,8 @@
                                 </Button.Flyout>
                                 <Button.Content>
                                     <Rectangle
-                                        Width="12"
-                                        Height="12"
+                                        Width="16"
+                                        Height="16"
                                         Fill="{x:Bind BackgroundColorPicker.Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
                                 </Button.Content>
                             </Button>
