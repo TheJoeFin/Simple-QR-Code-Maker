@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
     Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -53,7 +54,8 @@
                                 Padding="0"
                                 VerticalAlignment="Bottom"
                                 Background="Transparent"
-                                Command="{x:Bind ViewModel.AddNewLineCommand}">
+                                Command="{x:Bind ViewModel.AddNewLineCommand}"
+                                ToolTipService.ToolTip="Add a return and start making another QR Code">
                                 <Viewbox Width="16" Height="16">
                                     <SymbolIcon Symbol="Add" />
                                 </Viewbox>
