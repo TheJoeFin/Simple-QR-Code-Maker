@@ -33,15 +33,32 @@
                         VerticalAlignment="Center"
                         Orientation="Vertical"
                         Spacing="12">
-                        <TextBox
-                            x:Name="UrlTextBox"
-                            MinWidth="300"
-                            MaxWidth="800"
-                            AcceptsReturn="True"
-                            PlaceholderText="{x:Bind ViewModel.PlaceholderText, Mode=OneWay}"
-                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                            Text="{x:Bind ViewModel.UrlText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            TextWrapping="NoWrap" />
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="6">
+                            <TextBox
+                                x:Name="UrlTextBox"
+                                MinWidth="258"
+                                MaxWidth="800"
+                                AcceptsReturn="True"
+                                PlaceholderText="{x:Bind ViewModel.PlaceholderText, Mode=OneWay}"
+                                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                Text="{x:Bind ViewModel.UrlText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                TextWrapping="NoWrap" />
+                            <Button
+                                Width="36"
+                                Height="36"
+                                Margin="0,0,0,-1"
+                                Padding="0"
+                                VerticalAlignment="Bottom"
+                                Background="Transparent"
+                                Command="{x:Bind ViewModel.AddNewLineCommand}">
+                                <Viewbox Width="16" Height="16">
+                                    <SymbolIcon Symbol="Add" />
+                                </Viewbox>
+                            </Button>
+                        </StackPanel>
 
                         <StackPanel
                             x:Name="QrCodeOptions"

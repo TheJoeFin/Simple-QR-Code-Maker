@@ -8,7 +8,6 @@ using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
-using Windows.Graphics.Printing.Workflow;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -47,10 +46,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private bool showLengthError = false;
 
     [ObservableProperty]
-    private Windows.UI.Color backgroundColor = Windows.UI.Color.FromArgb(255,255,255,255);
+    private Windows.UI.Color backgroundColor = Windows.UI.Color.FromArgb(255, 255, 255, 255);
 
     [ObservableProperty]
-    private Windows.UI.Color foregroundColor = Windows.UI.Color.FromArgb(255,0,0,0);
+    private Windows.UI.Color foregroundColor = Windows.UI.Color.FromArgb(255, 0, 0, 0);
 
     [ObservableProperty]
     private ErrorCorrectionOptions selectedOption = new("Medium 15%", ErrorCorrectionLevel.M);
@@ -228,6 +227,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
 
         await SaveAllFiles(FileKind.PNG);
+    }
+
+    [RelayCommand]
+    private void AddNewLine()
+    {
+        if (string.IsNullOrWhiteSpace(UrlText))
+            UrlText = "https://";
+
+        UrlText += "\rhttps://";
     }
 
     private async Task SaveSingle(FileKind kindOfFile, BarcodeImageItem imageItem)
