@@ -20,8 +20,8 @@ public static class WritableBitmapExtensions
             await pixelStream.ReadAsync(bytes);
 
             pngEncoder.SetPixelData(
-                BitmapPixelFormat.Rgba8,
-                BitmapAlphaMode.Straight,
+                BitmapPixelFormat.Bgra8,
+                BitmapAlphaMode.Ignore,
                 (uint)writeableBitmap.PixelWidth,
                 (uint)writeableBitmap.PixelHeight,
                 96.0,
