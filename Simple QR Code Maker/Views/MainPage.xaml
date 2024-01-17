@@ -200,15 +200,26 @@
                                     </MenuFlyout>
                                 </SplitButton.Flyout>
                             </SplitButton>
+                        </StackPanel>
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="10">
                             <Button Command="{x:Bind ViewModel.OpenFileCommand}" ToolTipService.ToolTip="Open an image to read and extract text from any codes">
-                                <Viewbox Height="16">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEE6F;" />
-                                </Viewbox>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Viewbox Height="16">
+                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEE6F;" />
+                                    </Viewbox>
+                                    <TextBlock Text="Read Codes" />
+                                </StackPanel>
                             </Button>
                             <Button Command="{x:Bind ViewModel.GoToSettingsCommand}" ToolTipService.ToolTip="Simple QR Code Maker Settings">
-                                <Viewbox Height="16">
-                                    <SymbolIcon Symbol="Setting" />
-                                </Viewbox>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Viewbox Height="16">
+                                        <SymbolIcon Symbol="Setting" />
+                                    </Viewbox>
+                                    <TextBlock Text="Settings" />
+                                </StackPanel>
                             </Button>
                         </StackPanel>
 
