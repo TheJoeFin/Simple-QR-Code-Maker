@@ -371,7 +371,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             SuggestedStartLocation = PickerLocationId.PicturesLibrary,
         };
 
-
         Window saveWindow = new();
         IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
         InitializeWithWindow.Initialize(folderPicker, windowHandleSave);
@@ -425,8 +424,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         if (!string.IsNullOrWhiteSpace(UrlText))
             SaveCurrentStateToHistory();
-
-        LocalSettingsService.SaveSettingAsync(nameof(HistoryItems), HistoryItems);
     }
 
     private void SaveCurrentStateToHistory()
@@ -442,6 +439,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (HistoryItems.Contains(historyItem))
             HistoryItems.Remove(historyItem);
         HistoryItems.Insert(0, historyItem);
+
+        LocalSettingsService.SaveSettingAsync(nameof(HistoryItems), HistoryItems);
     }
 
     private async Task LoadHistory()
