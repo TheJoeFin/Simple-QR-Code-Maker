@@ -213,8 +213,14 @@
                                     <TextBlock Text="Read Codes" />
                                 </StackPanel>
                             </Button>
-                            <Button Command="{x:Bind ViewModel.GoToSettingsCommand}" ToolTipService.ToolTip="Simple QR Code Maker Settings">
-                                <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Button
+                                Padding="0"
+                                Command="{x:Bind ViewModel.GoToSettingsCommand}"
+                                ToolTipService.ToolTip="Simple QR Code Maker Settings">
+                                <StackPanel
+                                    Padding="11,5,11,6"
+                                    Orientation="Horizontal"
+                                    Spacing="10">
                                     <Viewbox Height="16">
                                         <SymbolIcon Symbol="Setting" />
                                     </Viewbox>
