@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
@@ -8,6 +9,7 @@ using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -195,6 +197,72 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
+    private async Task CopyPngToClipboard()
+    {
+        if (QrCodeBitmaps.Count == 0)
+            return;
+
+        SaveCurrentStateToHistory();
+
+        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
+        List<StorageFile> files = new();
+        foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
+        {
+            if (qrCodeItem.CodeAsBitmap is null)
+                continue;
+
+            string? imageNameFileName = $"{qrCodeItem.CodeAsText.ReplaceReservedCharacters()}.png";
+            StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
+            bool success = await qrCodeItem.CodeAsBitmap.SavePngToStorageFile(file);
+
+            if (!success)
+                continue;
+
+            files.Add(file);
+        }
+
+        if (files.Count == 0)
+            return;
+
+        DataPackage dataPackage = new();
+        dataPackage.SetStorageItems(files);
+        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+    }
+
+    [RelayCommand]
+    private async Task CopySvgToClipboard()
+    {
+        if (QrCodeBitmaps.Count == 0)
+            return;
+
+        SaveCurrentStateToHistory();
+
+        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
+        List<StorageFile> files = new();
+        foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
+        {
+            if (qrCodeItem.CodeAsBitmap is null)
+                continue;
+
+            string? imageNameFileName = $"{qrCodeItem.CodeAsText.ReplaceReservedCharacters()}.svg";
+            StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
+
+            bool success = await qrCodeItem.SaveCodeAsSvgFile(file, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor());
+            if (!success)
+                continue;
+
+            files.Add(file);
+        }
+
+        if (files.Count == 0)
+            return;
+
+        DataPackage dataPackage = new();
+        dataPackage.SetStorageItems(files);
+        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+    }
+
+    [RelayCommand]
     private void ToggleHistoryPaneOpen()
     {
         IsHistoryPaneOpen = !IsHistoryPaneOpen;
@@ -288,11 +356,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 break;
             case FileKind.SVG:
                 {
-                    SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(imageItem.CodeAsText, ErrorCorrectionLevel.M, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor());
-                    using IRandomAccessStream randomAccessStream = await file.OpenAsync(FileAccessMode.ReadWrite);
-                    DataWriter dataWriter = new(randomAccessStream);
-                    dataWriter.WriteString(svgImage.Content);
-                    await dataWriter.StoreAsync();
+                    await imageItem.SaveCodeAsSvgFile(file, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor());
                 }
                 break;
             default:

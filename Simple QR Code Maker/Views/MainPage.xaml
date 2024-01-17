@@ -161,18 +161,45 @@
                             HorizontalAlignment="Center"
                             Orientation="Horizontal"
                             Spacing="10">
-                            <Button
+                            <TextBlock VerticalAlignment="Center" Text="Save as" />
+                            <SplitButton
                                 x:Name="SavePngButton"
                                 Command="{x:Bind ViewModel.SavePngCommand}"
-                                Content="Save PNG..."
+                                Content="PNG"
                                 IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}"
-                                ToolTipService.ToolTip="Save code(s) as PNG files" />
-                            <Button
+                                ToolTipService.ToolTip="Save code(s) as PNG files">
+                                <SplitButton.Flyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ViewModel.SavePngCommand}"
+                                            Icon="Save"
+                                            Text="Save all to files (default)" />
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ViewModel.CopyPngToClipboardCommand}"
+                                            Icon="Copy"
+                                            Text="Copy all to clipboard" />
+                                    </MenuFlyout>
+                                </SplitButton.Flyout>
+                            </SplitButton>
+                            <SplitButton
                                 x:Name="SaveSvgButton"
                                 Command="{x:Bind ViewModel.SaveSvgCommand}"
-                                Content="Save SVG..."
+                                Content="SVG"
                                 IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}"
-                                ToolTipService.ToolTip="Save code(s) as SVG files" />
+                                ToolTipService.ToolTip="Save code(s) as SVG files">
+                                <SplitButton.Flyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ViewModel.SaveSvgCommand}"
+                                            Icon="Save"
+                                            Text="Save all to files (default)" />
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ViewModel.CopySvgToClipboardCommand}"
+                                            Icon="Copy"
+                                            Text="Copy all to clipboard" />
+                                    </MenuFlyout>
+                                </SplitButton.Flyout>
+                            </SplitButton>
                             <Button Command="{x:Bind ViewModel.OpenFileCommand}" ToolTipService.ToolTip="Open an image to read and extract text from any codes">
                                 <Viewbox Height="16">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEE6F;" />
