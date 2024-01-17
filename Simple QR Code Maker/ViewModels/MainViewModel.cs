@@ -197,6 +197,21 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
+    private async Task PasteTextIntoUrlText()
+    {
+        var clipboardContent = Clipboard.GetContent();
+        if (clipboardContent.Contains(StandardDataFormats.Text))
+        {
+            string text = await clipboardContent.GetTextAsync();
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                text = text.Trim();
+                UrlText = text;
+            }
+        }
+    }
+
+    [RelayCommand]
     private async Task CopyPngToClipboard()
     {
         if (QrCodeBitmaps.Count == 0)

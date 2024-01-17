@@ -14,6 +14,7 @@
         <converters:TextHasNoURLConverter x:Key="HasNoURL" />
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+        <converters:BoolToVisibilityInvertedConverter x:Key="BoolToVisInverted" />
 
         <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
             <Setter Property="Height" Value="32" />
@@ -47,19 +48,34 @@
                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                 Text="{x:Bind ViewModel.UrlText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 TextWrapping="NoWrap" />
-                            <Button
-                                Width="36"
-                                Height="36"
-                                Margin="0,0,0,-1"
-                                Padding="0"
-                                VerticalAlignment="Bottom"
-                                Background="Transparent"
-                                Command="{x:Bind ViewModel.AddNewLineCommand}"
-                                ToolTipService.ToolTip="Add a return and start making another QR Code">
-                                <Viewbox Width="16" Height="16">
-                                    <SymbolIcon Symbol="Add" />
-                                </Viewbox>
-                            </Button>
+                            <Grid>
+                                <Button
+                                    Width="36"
+                                    Height="36"
+                                    Margin="0,0,0,-1"
+                                    Padding="0"
+                                    VerticalAlignment="Bottom"
+                                    Command="{x:Bind ViewModel.AddNewLineCommand}"
+                                    ToolTipService.ToolTip="Add a return and start making another QR Code"
+                                    Visibility="{x:Bind ViewModel.CanSaveImage, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
+                                    <Viewbox Width="16" Height="16">
+                                        <SymbolIcon Symbol="Add" />
+                                    </Viewbox>
+                                </Button>
+                                <Button
+                                    Width="36"
+                                    Height="36"
+                                    Margin="0,0,0,-1"
+                                    Padding="0"
+                                    VerticalAlignment="Bottom"
+                                    Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
+                                    ToolTipService.ToolTip="Paste text from clipboard"
+                                    Visibility="{x:Bind ViewModel.CanSaveImage, Converter={StaticResource BoolToVisInverted}, Mode=OneWay}">
+                                    <Viewbox Width="16" Height="16">
+                                        <SymbolIcon Symbol="Paste" />
+                                    </Viewbox>
+                                </Button>
+                            </Grid>
                         </StackPanel>
 
                         <StackPanel
@@ -124,7 +140,7 @@
                             MinWidth="300"
                             MinHeight="300"
                             HorizontalAlignment="Center"
-                            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                            Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
                             CornerRadius="4">
                             <GridView
                                 x:Name="ListOfCodes"
