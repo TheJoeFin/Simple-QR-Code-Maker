@@ -23,7 +23,7 @@ public static class BarcodeHelpers
 
         BarcodeWriter barcodeWriter = new()
         {
-            Format = ZXing.BarcodeFormat.QR_CODE,
+            Format = BarcodeFormat.QR_CODE,
             Renderer = bitmapRenderer,
         };
 
@@ -33,7 +33,7 @@ public static class BarcodeHelpers
             Height = 1024,
             Margin = 2,
         };
-        encodingOptions.Hints.Add(ZXing.EncodeHintType.ERROR_CORRECTION, correctionLevel);
+        encodingOptions.Hints.Add(EncodeHintType.ERROR_CORRECTION, correctionLevel);
         barcodeWriter.Options = encodingOptions;
 
         using Bitmap bitmap = barcodeWriter.Write(text);
@@ -62,9 +62,9 @@ public static class BarcodeHelpers
 
         EncodingOptions encodingOptions = new()
         {
-            Width = 500,
-            Height = 500,
-            Margin = 5,
+            Width = 1024,
+            Height = 1024,
+            Margin = 2,
         };
         encodingOptions.Hints.Add(EncodeHintType.ERROR_CORRECTION, correctionLevel);
         barcodeWriter.Options = encodingOptions;
