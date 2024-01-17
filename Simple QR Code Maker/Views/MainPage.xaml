@@ -144,6 +144,7 @@
                                                 Width="285"
                                                 Height="285"
                                                 CanDrag="True"
+                                                DragStarting="QrCodeImage_DragStarting"
                                                 Source="{x:Bind CodeAsBitmap}"
                                                 ToolTipService.ToolTip="{x:Bind CodeAsText}" />
                                             <InfoBar
