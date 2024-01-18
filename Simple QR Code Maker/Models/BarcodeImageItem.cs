@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Helpers;
+using Simple_QR_Code_Maker.Extensions;
 using Windows.Storage;
 using static ZXing.Rendering.SvgRenderer;
 using Windows.Storage.Streams;

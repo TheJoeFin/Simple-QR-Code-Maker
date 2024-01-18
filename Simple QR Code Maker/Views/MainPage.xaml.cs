@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Helpers;
+using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;

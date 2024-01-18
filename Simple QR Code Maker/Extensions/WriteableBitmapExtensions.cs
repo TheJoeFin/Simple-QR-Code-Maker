@@ -5,9 +5,9 @@ using Windows.Graphics.Imaging;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage.Streams;
 
-namespace Simple_QR_Code_Maker.Helpers;
+namespace Simple_QR_Code_Maker.Extensions;
 
-public static class WritableBitmapExtensions
+public static class WriteableBitmapExtensions
 {
     public static async Task<bool> SavePngToStorageFile(this WriteableBitmap writeableBitmap, StorageFile storageFile)
     {
