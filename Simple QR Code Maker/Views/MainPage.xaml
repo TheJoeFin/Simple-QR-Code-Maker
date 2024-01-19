@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
+    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
     Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
@@ -13,8 +14,7 @@
     <Page.Resources>
         <converters:TextHasNoURLConverter x:Key="HasNoURL" />
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
-        <converters:BoolToVisibilityInvertedConverter x:Key="BoolToVisInverted" />
+        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
 
         <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
             <Setter Property="Height" Value="32" />
@@ -70,7 +70,7 @@
                                     VerticalAlignment="Bottom"
                                     Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
                                     ToolTipService.ToolTip="Paste text from clipboard"
-                                    Visibility="{x:Bind ViewModel.CanSaveImage, Converter={StaticResource BoolToVisInverted}, Mode=OneWay}">
+                                    Visibility="{x:Bind ViewModel.CanSaveImage, Converter={StaticResource BoolToVisibility}, ConverterParameter=True, Mode=OneWay}">
                                     <Viewbox Width="16" Height="16">
                                         <SymbolIcon Symbol="Paste" />
                                     </Viewbox>
