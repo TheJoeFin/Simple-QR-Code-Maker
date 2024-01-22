@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
@@ -12,11 +11,8 @@ using System.Collections.ObjectModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.Storage.Streams;
 using WinRT.Interop;
 using ZXing.QrCode.Internal;
-using static Simple_QR_Code_Maker.Enums;
-using static ZXing.Rendering.SvgRenderer;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
@@ -33,7 +29,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private string placeholderText = "ex: http://www.example.com";
 
-    private string[] placeholdersList =
+    private readonly string[] placeholdersList =
     {
         "http://example.com",
         "https://www.wikipedia.org",
@@ -64,6 +60,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private HistoryItem? selectedHistoryItem = null;
+
+    private MultiLineCodeMode MultiLineCodeMode = MultiLineCodeMode.OneLineOneCode;
 
     partial void OnSelectedHistoryItemChanged(HistoryItem? value)
     {
@@ -164,36 +162,49 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (string.IsNullOrWhiteSpace(UrlText))
             return;
 
-        string[] lines = UrlText.Split('\r');
-
-        foreach (string line in lines)
+        if (MultiLineCodeMode == MultiLineCodeMode.OneLineOneCode)
         {
-            if (string.IsNullOrWhiteSpace(line))
-                continue;
-
-            string textToUse = line.Trim();
-
-            try
-            {
-                WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(
-                    textToUse,
-                    SelectedOption.ErrorCorrectionLevel,
-                    ForegroundColor.ToSystemDrawingColor(),
-                    BackgroundColor.ToSystemDrawingColor());
-                BarcodeImageItem barcodeImageItem = new()
-                {
-                    CodeAsBitmap = bitmap,
-                    CodeAsText = textToUse,
-                };
-
-                QrCodeBitmaps.Add(barcodeImageItem);
-                ShowLengthError = false;
-            }
-            catch (ZXing.WriterException)
-            {
-                ShowLengthError = true;
-            }
+            string[] lines = UrlText.Split('\r');
+            GenerateQrCodesFromLines(lines);
+            return;
         }
+
+        GenerateQrCodeFromOneLine(UrlText);
+    }
+
+    private void GenerateQrCodeFromOneLine(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return;
+
+        string textToUse = text.Trim();
+
+        try
+        {
+            WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(
+                textToUse,
+                SelectedOption.ErrorCorrectionLevel,
+                ForegroundColor.ToSystemDrawingColor(),
+                BackgroundColor.ToSystemDrawingColor());
+            BarcodeImageItem barcodeImageItem = new()
+            {
+                CodeAsBitmap = bitmap,
+                CodeAsText = textToUse,
+            };
+
+            QrCodeBitmaps.Add(barcodeImageItem);
+            ShowLengthError = false;
+        }
+        catch (ZXing.WriterException)
+        {
+            ShowLengthError = true;
+        }
+    }
+
+    private void GenerateQrCodesFromLines(string[] lines)
+    {
+        foreach (string line in lines)
+            GenerateQrCodeFromOneLine(line);
     }
 
     [RelayCommand]
@@ -433,6 +444,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public async void OnNavigatedTo(object parameter)
     {
         await LoadHistory();
+        MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
     }
 
     public void OnNavigatedFrom()

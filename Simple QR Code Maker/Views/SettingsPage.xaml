@@ -4,11 +4,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:Simple_QR_Code_Maker.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Simple_QR_Code_Maker"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xaml="using:Microsoft.UI.Xaml"
     mc:Ignorable="d">
     <Page.Resources>
         <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <converters:MultiLineCodeModeConverter x:Key="MultiLineCodeModeConverter" />
+        <converters:EnumIsEqualConverter x:Key="EnumIsEqualConverter" />
     </Page.Resources>
     <Grid Padding="40,0,0,0">
         <Grid.RowDefinitions>
@@ -38,7 +41,7 @@
                             Command="{x:Bind ViewModel.SwitchThemeCommand}"
                             FontSize="15"
                             GroupName="AppTheme"
-                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
+                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Light, Mode=OneWay}">
                             <RadioButton.CommandParameter>
                                 <xaml:ElementTheme>Light</xaml:ElementTheme>
                             </RadioButton.CommandParameter>
@@ -48,7 +51,7 @@
                             Command="{x:Bind ViewModel.SwitchThemeCommand}"
                             FontSize="15"
                             GroupName="AppTheme"
-                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
+                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Dark, Mode=OneWay}">
                             <RadioButton.CommandParameter>
                                 <xaml:ElementTheme>Dark</xaml:ElementTheme>
                             </RadioButton.CommandParameter>
@@ -58,12 +61,30 @@
                             Command="{x:Bind ViewModel.SwitchThemeCommand}"
                             FontSize="15"
                             GroupName="AppTheme"
-                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
+                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Default, Mode=OneWay}">
                             <RadioButton.CommandParameter>
                                 <xaml:ElementTheme>Default</xaml:ElementTheme>
                             </RadioButton.CommandParameter>
                         </RadioButton>
                     </StackPanel>
+                </StackPanel>
+
+                <TextBlock Text="How to handle multiple lines when making QR Codes" />
+                <StackPanel>
+                    <RadioButton
+                        Command="{x:Bind ViewModel.SwitchMultiLineModeCommand}"
+                        CommandParameter="OneLineOneCode"
+                        Content="One code for each line"
+                        FontSize="15"
+                        GroupName="MultiLineHandling"
+                        IsChecked="{x:Bind ViewModel.MultiLineCodeMode, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=OneLineOneCode, Mode=OneWay}" />
+                    <RadioButton
+                        Command="{x:Bind ViewModel.SwitchMultiLineModeCommand}"
+                        CommandParameter="MultilineOneCode"
+                        Content="Multi-Line in single code"
+                        FontSize="15"
+                        GroupName="MultiLineHandling"
+                        IsChecked="{x:Bind ViewModel.MultiLineCodeMode, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=MultilineOneCode, Mode=OneWay}" />
                 </StackPanel>
 
                 <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />

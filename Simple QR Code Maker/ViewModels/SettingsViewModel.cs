@@ -7,12 +7,13 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 
 using Simple_QR_Code_Maker.Contracts.Services;
+using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Helpers;
 using Windows.ApplicationModel;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-public partial class SettingsViewModel : ObservableRecipient
+public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 {
     private readonly IThemeSelectorService _themeSelectorService;
 
@@ -22,12 +23,33 @@ public partial class SettingsViewModel : ObservableRecipient
     [ObservableProperty]
     private string _versionDescription;
 
+    [ObservableProperty]
+    private MultiLineCodeMode _multiLineCodeMode = MultiLineCodeMode.OneLineOneCode;
+
     private INavigationService NavigationService { get; }
+    public ILocalSettingsService LocalSettingsService { get; }
+
     public ICommand SwitchThemeCommand { get; }
 
-    public SettingsViewModel(IThemeSelectorService themeSelectorService, INavigationService navigationService)
+    [RelayCommand]
+    private async Task SwitchMultiLineMode(object param)
+    {
+        if (param is not string stringMode)
+            return;
+
+        bool parsed = Enum.TryParse(stringMode, out MultiLineCodeMode mode);
+
+        if (!parsed)
+            return;
+
+        MultiLineCodeMode = mode;
+        await LocalSettingsService.SaveSettingAsync(nameof(MultiLineCodeMode), MultiLineCodeMode);
+    }
+
+    public SettingsViewModel(IThemeSelectorService themeSelectorService, INavigationService navigationService, ILocalSettingsService localSettingsService)
     {
         NavigationService = navigationService;
+        LocalSettingsService = localSettingsService;
         _themeSelectorService = themeSelectorService;
         _elementTheme = _themeSelectorService.Theme;
         _versionDescription = GetVersionDescription();
@@ -77,5 +99,15 @@ public partial class SettingsViewModel : ObservableRecipient
     private void GoToMoreInfo()
     {
         NavigationService.NavigateTo(typeof(AboutQrCodesWebViewModel).FullName!);
+    }
+
+    public async void OnNavigatedTo(object parameter)
+    {
+        MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
+    }
+
+    public void OnNavigatedFrom()
+    {
+
     }
 }
