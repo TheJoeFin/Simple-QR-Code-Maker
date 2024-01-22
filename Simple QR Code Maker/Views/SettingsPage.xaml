@@ -96,6 +96,11 @@
                         Text="{x:Bind ViewModel.BaseText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Show warnings when QR Codes are not URLs" />
+                <ToggleSwitch
+                    IsOn="{x:Bind ViewModel.WarnWhenNotUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    OffContent="Not warning"
+                    OnContent="Warning" />
 
                 <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">

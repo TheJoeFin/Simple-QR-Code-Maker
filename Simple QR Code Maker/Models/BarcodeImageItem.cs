@@ -10,6 +10,13 @@ namespace Simple_QR_Code_Maker.Models;
 public class BarcodeImageItem
 {
     public string CodeAsText { get; set; } = string.Empty;
+
+    public bool IsCodeUrl => Uri.IsWellFormedUriString(CodeAsText, UriKind.Absolute);
+
+    public bool IsAppShowingUrlWarnings { get; set; } = true;
+
+    public bool UrlWarning => !IsCodeUrl && IsAppShowingUrlWarnings;
+
     public WriteableBitmap? CodeAsBitmap { get; set; }
 
     public async Task<bool> SaveCodeAsPngFile(StorageFile file)

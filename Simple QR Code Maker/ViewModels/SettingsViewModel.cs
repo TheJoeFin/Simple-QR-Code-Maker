@@ -29,7 +29,10 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private string baseText = string.Empty;
 
-    private readonly DispatcherTimer baseTextDebounceTimer = new();
+    [ObservableProperty]
+    private bool warnWhenNotUrl = true;
+
+    private readonly DispatcherTimer settingChangedDebounceTimer = new();
 
     private INavigationService NavigationService { get; }
     public ILocalSettingsService LocalSettingsService { get; }
@@ -59,9 +62,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         _elementTheme = _themeSelectorService.Theme;
         _versionDescription = GetVersionDescription();
 
-        baseTextDebounceTimer.Interval = TimeSpan.FromMilliseconds(800);
-        baseTextDebounceTimer.Tick -= BaseTextDebounceTimer_Tick;
-        baseTextDebounceTimer.Tick += BaseTextDebounceTimer_Tick;
+        settingChangedDebounceTimer.Interval = TimeSpan.FromMilliseconds(500);
+        settingChangedDebounceTimer.Tick -= settingChangedDebounceTimer_Tick;
+        settingChangedDebounceTimer.Tick += settingChangedDebounceTimer_Tick;
 
         SwitchThemeCommand = new RelayCommand<ElementTheme>(
             async (param) =>
@@ -74,16 +77,23 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
             });
     }
 
-    private async void BaseTextDebounceTimer_Tick(object? sender, object e)
+    private async void settingChangedDebounceTimer_Tick(object? sender, object e)
     {
-        baseTextDebounceTimer.Stop();
+        settingChangedDebounceTimer.Stop();
         await LocalSettingsService.SaveSettingAsync(nameof(BaseText), BaseText);
+        await LocalSettingsService.SaveSettingAsync(nameof(WarnWhenNotUrl), WarnWhenNotUrl);
     }
 
     partial void OnBaseTextChanged(string value)
     {
-        baseTextDebounceTimer.Stop();
-        baseTextDebounceTimer.Start();
+        settingChangedDebounceTimer.Stop();
+        settingChangedDebounceTimer.Start();
+    }
+
+    partial void OnWarnWhenNotUrlChanged(bool value)
+    {
+        settingChangedDebounceTimer.Stop();
+        settingChangedDebounceTimer.Start();
     }
 
     [RelayCommand]
@@ -126,6 +136,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     {
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
+        WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
     }
 
     public void OnNavigatedFrom()

@@ -164,9 +164,10 @@
                                                 Source="{x:Bind CodeAsBitmap}"
                                                 ToolTipService.ToolTip="{x:Bind CodeAsText}" />
                                             <InfoBar
-                                                IsOpen="{x:Bind CodeAsText, Converter={StaticResource HasNoURL}}"
+                                                IsOpen="{x:Bind UrlWarning}"
                                                 Message="QR Code not a URL"
-                                                Severity="Warning" />
+                                                Severity="Warning"
+                                                ToolTipService.ToolTip="This warning can be disabled in settings" />
                                         </Grid>
                                     </DataTemplate>
                                 </GridView.ItemTemplate>

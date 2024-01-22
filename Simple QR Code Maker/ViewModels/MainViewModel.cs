@@ -63,6 +63,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private MultiLineCodeMode MultiLineCodeMode = MultiLineCodeMode.OneLineOneCode;
     private string BaseText = string.Empty;
+    private bool WarnWhenNotUrl = true;
 
     partial void OnSelectedHistoryItemChanged(HistoryItem? value)
     {
@@ -191,6 +192,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             {
                 CodeAsBitmap = bitmap,
                 CodeAsText = textToUse,
+                IsAppShowingUrlWarnings = WarnWhenNotUrl,
             };
 
             QrCodeBitmaps.Add(barcodeImageItem);
@@ -452,6 +454,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
         UrlText = BaseText;
+        WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
     }
 
     public void OnNavigatedFrom()
