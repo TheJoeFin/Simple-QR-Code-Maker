@@ -62,6 +62,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private HistoryItem? selectedHistoryItem = null;
 
     private MultiLineCodeMode MultiLineCodeMode = MultiLineCodeMode.OneLineOneCode;
+    private string BaseText = string.Empty;
 
     partial void OnSelectedHistoryItemChanged(HistoryItem? value)
     {
@@ -326,10 +327,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void AddNewLine()
     {
-        if (string.IsNullOrWhiteSpace(UrlText))
-            UrlText = "https://";
+        string stringToAdd = "https://";
+        if (!string.IsNullOrWhiteSpace(BaseText))
+            stringToAdd = BaseText;
 
-        UrlText += "\rhttps://";
+        if (string.IsNullOrWhiteSpace(UrlText))
+            UrlText = stringToAdd;
+
+        UrlText += $"\r{stringToAdd}";
     }
 
     private async Task SaveSingle(FileKind kindOfFile, BarcodeImageItem imageItem)
@@ -445,6 +450,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         await LoadHistory();
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
+        BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
+        UrlText = BaseText;
     }
 
     public void OnNavigatedFrom()

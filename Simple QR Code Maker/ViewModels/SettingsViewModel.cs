@@ -26,6 +26,11 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private MultiLineCodeMode _multiLineCodeMode = MultiLineCodeMode.OneLineOneCode;
 
+    [ObservableProperty]
+    private string baseText = string.Empty;
+
+    private readonly DispatcherTimer baseTextDebounceTimer = new();
+
     private INavigationService NavigationService { get; }
     public ILocalSettingsService LocalSettingsService { get; }
 
@@ -54,6 +59,10 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         _elementTheme = _themeSelectorService.Theme;
         _versionDescription = GetVersionDescription();
 
+        baseTextDebounceTimer.Interval = TimeSpan.FromMilliseconds(800);
+        baseTextDebounceTimer.Tick -= BaseTextDebounceTimer_Tick;
+        baseTextDebounceTimer.Tick += BaseTextDebounceTimer_Tick;
+
         SwitchThemeCommand = new RelayCommand<ElementTheme>(
             async (param) =>
             {
@@ -63,6 +72,18 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                     await _themeSelectorService.SetThemeAsync(param);
                 }
             });
+    }
+
+    private async void BaseTextDebounceTimer_Tick(object? sender, object e)
+    {
+        baseTextDebounceTimer.Stop();
+        await LocalSettingsService.SaveSettingAsync(nameof(BaseText), BaseText);
+    }
+
+    partial void OnBaseTextChanged(string value)
+    {
+        baseTextDebounceTimer.Stop();
+        baseTextDebounceTimer.Start();
     }
 
     [RelayCommand]
@@ -104,10 +125,10 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     public async void OnNavigatedTo(object parameter)
     {
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
+        BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
     }
 
     public void OnNavigatedFrom()
     {
-
     }
 }

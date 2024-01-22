@@ -69,8 +69,8 @@
                     </StackPanel>
                 </StackPanel>
 
-                <TextBlock Text="How to handle multiple lines when making QR Codes" />
-                <StackPanel>
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="How to handle multiple lines when making QR Codes" />
+                <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                     <RadioButton
                         Command="{x:Bind ViewModel.SwitchMultiLineModeCommand}"
                         CommandParameter="OneLineOneCode"
@@ -87,8 +87,17 @@
                         IsChecked="{x:Bind ViewModel.MultiLineCodeMode, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=MultilineOneCode, Mode=OneWay}" />
                 </StackPanel>
 
-                <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Base text, at start and for newlines" />
+                <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
+                    <TextBox
+                        Width="300"
+                        HorizontalAlignment="Left"
+                        PlaceholderText="ex: https://example.com/"
+                        Text="{x:Bind ViewModel.BaseText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
 
+
+                <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">
                     <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" />
 
