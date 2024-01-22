@@ -69,6 +69,7 @@
                                     Padding="0"
                                     VerticalAlignment="Bottom"
                                     Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
+                                    IsEnabled="{x:Bind ViewModel.CanPasteText, Mode=OneWay}"
                                     ToolTipService.ToolTip="Paste text from clipboard"
                                     Visibility="{x:Bind ViewModel.CanSaveImage, Converter={StaticResource BoolToVisibility}, ConverterParameter=True, Mode=OneWay}">
                                     <Viewbox Width="16" Height="16">

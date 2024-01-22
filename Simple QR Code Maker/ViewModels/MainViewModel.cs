@@ -65,6 +65,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private string BaseText = string.Empty;
     private bool WarnWhenNotUrl = true;
 
+    [ObservableProperty]
+    private bool canPasteText = false;
+
     partial void OnSelectedHistoryItemChanged(HistoryItem? value)
     {
         if (value is null)
@@ -134,6 +137,20 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         NavigationService = navigationService;
         LocalSettingsService = localSettingsService;
+
+        Clipboard.ContentChanged -= Clipboard_ContentChanged;
+        Clipboard.ContentChanged += Clipboard_ContentChanged;
+    }
+
+    private void Clipboard_ContentChanged(object? sender, object e) => CheckCanPasteText();
+    private void CheckCanPasteText()
+    {
+        var clipboardData = Clipboard.GetContent();
+
+        if (clipboardData.Contains(StandardDataFormats.Text))
+            CanPasteText = true;
+        else
+            CanPasteText = false;
     }
 
     ~MainViewModel()
@@ -146,6 +163,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         debounceTimer?.Stop();
         if (debounceTimer is not null)
             debounceTimer.Tick -= DebounceTimer_Tick;
+
+        Clipboard.ContentChanged -= Clipboard_ContentChanged;
     }
 
     private void PlaceholderTextTimer_Tick(object? sender, object e)
