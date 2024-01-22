@@ -76,7 +76,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     public void OnNavigatedTo(object parameter)
     {
-        
+
     }
 
     [RelayCommand]
@@ -179,13 +179,6 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         BitmapImage thisPickedImage = new(uri);
 
         IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(bitmap);
-
-        if (!strings.Any())
-        {
-            InfoBarMessage = "Could not read any codes. Could be there are none present or content failed to read.\rIf you believe this is an issue with the app, please email joe@joefinapps.com";
-            IsInfoBarShowing = true;
-            return;
-        }
 
         ObservableCollection<TextBorder> codeBorders = new();
         foreach ((string, Result) item in strings)

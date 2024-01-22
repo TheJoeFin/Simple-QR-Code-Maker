@@ -86,7 +86,7 @@
                                         <TextBlock
                                             Margin="0,0,0,20"
                                             IsTextSelectionEnabled="True"
-                                            Text="Could be there are none present or content failed to read. If you believe this is an issue with the app, please email joe@joefinapps.com"
+                                            Text="Could be there are none present or content failed to read. If you believe this is an issue with the app, please email Joe@JoeFinApps.com"
                                             TextWrapping="Wrap" />
                                     </InfoBar>
                                 </Grid>
