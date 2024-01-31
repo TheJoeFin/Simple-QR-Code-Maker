@@ -16,6 +16,8 @@ public sealed partial class MainPage : Page
         get;
     }
 
+    private bool _didSetCaretToEnd = false;
+
     public MainPage()
     {
         ViewModel = App.GetService<MainViewModel>();
@@ -25,6 +27,8 @@ public sealed partial class MainPage : Page
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
         UrlTextBox.Focus(FocusState.Programmatic);
+        // set the caret to the end of the text when navigating back to the page
+        UrlTextBox.Select(UrlTextBox.Text.Length, 0);
     }
 
     private async void QrCodeImage_DragStarting(UIElement sender, DragStartingEventArgs args)
@@ -50,5 +54,15 @@ public sealed partial class MainPage : Page
         args.Data.SetStorageItems(new[] { file });
         args.Data.RequestedOperation = DataPackageOperation.Copy;
         deferral.Complete();
+    }
+
+    private void UrlTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        // set the caret to the end of the text when loading for the first time
+        if (!_didSetCaretToEnd)
+        {
+            _didSetCaretToEnd = true;
+            UrlTextBox.Select(UrlTextBox.Text.Length, 0);
+        }
     }
 }

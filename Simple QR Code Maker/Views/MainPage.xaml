@@ -47,6 +47,7 @@
                                 PlaceholderText="{x:Bind ViewModel.PlaceholderText, Mode=OneWay}"
                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                 Text="{x:Bind ViewModel.UrlText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                TextChanged="UrlTextBox_TextChanged"
                                 TextWrapping="NoWrap" />
                             <Grid>
                                 <Button
