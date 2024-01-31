@@ -295,7 +295,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             string? imageNameFileName = $"{qrCodeItem.CodeAsText.ReplaceReservedCharacters()}.svg";
             StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
 
-            bool success = await qrCodeItem.SaveCodeAsSvgFile(file, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor());
+            bool success = await qrCodeItem.SaveCodeAsSvgFile(file, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), selectedOption.ErrorCorrectionLevel);
             if (!success)
                 continue;
 
@@ -408,7 +408,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 break;
             case FileKind.SVG:
                 {
-                    await imageItem.SaveCodeAsSvgFile(file, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor());
+                    await imageItem.SaveCodeAsSvgFile(file, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), selectedOption.ErrorCorrectionLevel);
                 }
                 break;
             default:
