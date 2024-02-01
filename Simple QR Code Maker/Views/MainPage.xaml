@@ -248,14 +248,6 @@
                             </Button>
                         </StackPanel>
 
-                        <InfoBar
-                            x:Name="LenghErrorInfoBar"
-                            Title="Error generating the QR Code"
-                            Margin="20"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Bottom"
-                            IsOpen="{x:Bind ViewModel.ShowLengthError, Mode=OneWay}"
-                            Severity="Error" />
                     </StackPanel>
                 </ScrollViewer>
 
@@ -267,6 +259,15 @@
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
                 </AppBarButton>
 
+                <InfoBar
+                    x:Name="LenghErrorInfoBar"
+                    Title="{x:Bind ViewModel.CodeInfoBarTitle, Mode=OneWay}"
+                    Margin="20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    IsOpen="{x:Bind ViewModel.ShowCodeInfoBar, Mode=TwoWay}"
+                    Message="{x:Bind ViewModel.CodeInfoBarMessage, Mode=OneWay}"
+                    Severity="{x:Bind ViewModel.CodeInfoBarSeverity, Mode=OneWay}" />
             </Grid>
         </SplitView.Content>
         <SplitView.Pane>

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
@@ -41,9 +42,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     };
 
     [ObservableProperty]
-    private bool showLengthError = false;
-
-    [ObservableProperty]
     private Windows.UI.Color backgroundColor = Windows.UI.Color.FromArgb(255, 255, 255, 255);
 
     [ObservableProperty]
@@ -67,6 +65,20 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private bool canPasteText = false;
+
+    [ObservableProperty]
+    private bool showCodeInfoBar = false;
+
+    [ObservableProperty]
+    private InfoBarSeverity codeInfoBarSeverity = InfoBarSeverity.Success;
+
+    [ObservableProperty]
+    private string codeInfoBarTitle = "QR Code copied to clipboard";
+
+    [ObservableProperty]
+    private string codeInfoBarMessage = string.Empty;
+
+    private DispatcherTimer copyInfoBarTimer = new();
 
     partial void OnSelectedHistoryItemChanged(HistoryItem? value)
     {
@@ -129,6 +141,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         debounceTimer.Interval = TimeSpan.FromMilliseconds(600);
         debounceTimer.Tick -= DebounceTimer_Tick;
         debounceTimer.Tick += DebounceTimer_Tick;
+
+        copyInfoBarTimer.Interval = TimeSpan.FromSeconds(10);
+        copyInfoBarTimer.Tick -= CopyInfoBarTimer_Tick;
+        copyInfoBarTimer.Tick += CopyInfoBarTimer_Tick;
 
         placeholderTextTimer.Interval = TimeSpan.FromSeconds(6);
         placeholderTextTimer.Tick -= PlaceholderTextTimer_Tick;
@@ -215,11 +231,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             };
 
             QrCodeBitmaps.Add(barcodeImageItem);
-            ShowLengthError = false;
+            ShowCodeInfoBar = false;
+            CodeInfoBarSeverity = InfoBarSeverity.Informational;
         }
         catch (ZXing.WriterException)
         {
-            ShowLengthError = true;
+            ShowCodeInfoBar = true;
+            CodeInfoBarSeverity = InfoBarSeverity.Error;
+            CodeInfoBarTitle = "Error creating QR Code";
+            CodeInfoBarMessage = "The text you entered is too long for a QR Code. Please try a shorter text.";
         }
     }
 
@@ -270,11 +290,27 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
 
         if (files.Count == 0)
+        {
+            CodeInfoBarMessage = "No QR Codes to copy to the clipboard";
+            ShowCodeInfoBar = true;
+            CodeInfoBarSeverity = InfoBarSeverity.Error;
+            CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
             return;
+        }
 
         DataPackage dataPackage = new();
         dataPackage.SetStorageItems(files);
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+
+        CodeInfoBarMessage = string.Empty;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Success;
+        if (files.Count == 1)
+            CodeInfoBarTitle = "PNG QR Code copied to the clipboard";
+        else
+            CodeInfoBarTitle = $"{files.Count} PNG QR Codes copied to the clipboard";
+
+        copyInfoBarTimer.Start();
     }
 
     [RelayCommand]
@@ -303,12 +339,38 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
 
         if (files.Count == 0)
+        {
+            CodeInfoBarMessage = "No QR Codes to copy to the clipboard";
+            ShowCodeInfoBar = true;
+            CodeInfoBarSeverity = InfoBarSeverity.Error;
+            CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
             return;
+        }
 
         DataPackage dataPackage = new();
         dataPackage.SetStorageItems(files);
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+
+        CodeInfoBarMessage = string.Empty;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Success;
+        if (files.Count == 1)
+            CodeInfoBarTitle = "SVG QR Code copied to the clipboard";
+        else
+            CodeInfoBarTitle = $"{files.Count} SVG QR Codes copied to the clipboard";
+
+        copyInfoBarTimer.Start();
     }
+
+    private void CopyInfoBarTimer_Tick(object? sender, object e)
+    {
+        copyInfoBarTimer.Stop();
+        CodeInfoBarMessage = string.Empty;
+        ShowCodeInfoBar = false;
+        CodeInfoBarSeverity = InfoBarSeverity.Informational;
+        CodeInfoBarTitle = "Copy infobar title";
+    }
+
 
     [RelayCommand]
     private void ToggleHistoryPaneOpen()
