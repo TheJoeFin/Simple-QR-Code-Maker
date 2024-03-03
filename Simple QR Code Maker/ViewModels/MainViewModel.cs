@@ -78,7 +78,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private string codeInfoBarMessage = string.Empty;
 
-    private DispatcherTimer copyInfoBarTimer = new();
+    private readonly DispatcherTimer copyInfoBarTimer = new();
 
     partial void OnSelectedHistoryItemChanged(HistoryItem? value)
     {
@@ -188,7 +188,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         Random random = new();
         PlaceholderText = $"ex: {placeholdersList[random.Next(placeholdersList.Length)]}";
     }
-
 
     private void DebounceTimer_Tick(object? sender, object e)
     {
@@ -331,7 +330,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             string? imageNameFileName = $"{qrCodeItem.CodeAsText.ReplaceReservedCharacters()}.svg";
             StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
 
-            bool success = await qrCodeItem.SaveCodeAsSvgFile(file, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), selectedOption.ErrorCorrectionLevel);
+            bool success = await qrCodeItem.SaveCodeAsSvgFile(file, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), SelectedOption.ErrorCorrectionLevel);
             if (!success)
                 continue;
 
@@ -368,9 +367,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         CodeInfoBarMessage = string.Empty;
         ShowCodeInfoBar = false;
         CodeInfoBarSeverity = InfoBarSeverity.Informational;
-        CodeInfoBarTitle = "Copy infobar title";
+        CodeInfoBarTitle = "Copy infoBar title";
     }
-
 
     [RelayCommand]
     private void ToggleHistoryPaneOpen()
@@ -469,9 +467,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 await imageItem.CodeAsBitmap.SavePngToStorageFile(file);
                 break;
             case FileKind.SVG:
-                {
-                    await imageItem.SaveCodeAsSvgFile(file, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), selectedOption.ErrorCorrectionLevel);
-                }
+                await imageItem.SaveCodeAsSvgFile( file,
+                    ForegroundColor.ToSystemDrawingColor(),
+                    BackgroundColor.ToSystemDrawingColor(),
+                    SelectedOption.ErrorCorrectionLevel);
                 break;
             default:
                 break;
@@ -510,7 +509,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-
     [RelayCommand]
     private async Task SaveSvg()
     {
@@ -520,7 +518,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         SaveCurrentStateToHistory();
 
         if (QrCodeBitmaps.Count == 1)
-
         {
             await SaveSingle(FileKind.SVG, QrCodeBitmaps.First());
             return;
@@ -544,7 +541,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             SaveCurrentStateToHistory();
     }
 
-    private void SaveCurrentStateToHistory()
+    public void SaveCurrentStateToHistory()
     {
         HistoryItem historyItem = new()
         {

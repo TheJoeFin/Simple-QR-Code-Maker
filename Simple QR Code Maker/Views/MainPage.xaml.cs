@@ -51,6 +51,7 @@ public sealed partial class MainPage : Page
             return;
         }
 
+        ViewModel.SaveCurrentStateToHistory();
         args.Data.SetStorageItems(new[] { file });
         args.Data.RequestedOperation = DataPackageOperation.Copy;
         deferral.Complete();
