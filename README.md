@@ -1,4 +1,19 @@
-# Simple QR Code Maker
+<p align="center">
+  <img width="128" align="center" src="images/AppLogo.png">
+</p>
+<h1 align="center">
+  Simple QR Code Maker
+</h1>
+<p align="center">
+  Create and read QR Codes on your PC
+</p>
+<p align="center">
+  <a href="https://apps.microsoft.com/detail/9NCH56G3RQFC?cid=GitHub" target="_blank">
+    <img src="images/storeBadge.png" width="200" alt="Store link" />
+  </a>
+</p>
+
+### Overview
 
 You are going to love how simple this app is!
 
