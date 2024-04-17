@@ -38,7 +38,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     private INavigationService NavigationService { get; }
 
-    private List<string> imageExtensions = new()
+    private readonly List<string> imageExtensions = new()
     {
         ".png",
         ".jpg",
@@ -65,7 +65,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     private void CheckIfCanPaste()
     {
-        var clipboardData = Clipboard.GetContent();
+        DataPackageView clipboardData = Clipboard.GetContent();
 
         if (clipboardData.Contains(StandardDataFormats.StorageItems)
             || clipboardData.Contains(StandardDataFormats.Bitmap))
@@ -83,6 +83,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     private void ClearImages()
     {
         DecodingImageItems.Clear();
+        IsInfoBarShowing = false;
+        InfoBarMessage = string.Empty;
     }
 
     [RelayCommand]
@@ -108,7 +110,6 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             if (stream is not null)
                 OpenAndDecodeBitmap(stream);
         }
-
     }
 
     [RelayCommand]
@@ -117,9 +118,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         bool success = Uri.TryCreate(InfoBarMessage, UriKind.Absolute, out Uri? uri);
 
         if (success && uri is not null)
-        {
             _ = await Launcher.LaunchUriAsync(uri);
-        }
     }
 
     [RelayCommand]
@@ -153,9 +152,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         };
 
         foreach (string extension in imageExtensions)
-        {
             fileOpenPicker.FileTypeFilter.Add(extension);
-        }
 
         Window saveWindow = new();
         IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
