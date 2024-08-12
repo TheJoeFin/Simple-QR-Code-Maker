@@ -1,0 +1,109 @@
+<Project>
+
+  <!--
+    =======================================================================
+    Microsoft.Build.Msix.Packaging.MsixBundle.targets
+    =======================================================================
+    
+    This targets file can be imported at the bottom of the main app project file (.csproj):
+    
+      <Import Project="Microsoft.Build.Msix.Packaging.MsixBundle.targets" />
+    
+    In order to build a .msix bundle, you can use `dotnet build`:
+    
+      dotnet build /t:GenerateMsixBundle -f net7.0-windows10.0.19041.0 <path/to/app.csproj>
+    
+    In order to control the RIDs in the app bundle, you can override them using the $(RuntimeIdentifiers)
+    propertyin your .csproj. Make sure to condition on the Windows TargetFramework:
+    
+      <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+        <RuntimeIdentifiers>win10-x64;win10-x86;win10-arm64</RuntimeIdentifiers>
+      </PropertyGroup>
+  -->
+
+  <!-- Make sure all the available RIDs are specified -->
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows' and '$(RuntimeIdentifiers)' == ''">
+    <RuntimeIdentifiers>win-x64;win-x86;win-arm64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <!-- Make at least one RID is specified for the IDE -->
+  <PropertyGroup Condition=" '$([MSBuild]::GetTargetPlatformIdentifier($(TargetFramework)))' == 'windows' and '$(RuntimeIdentifier)' == '' ">
+    <_SingleProjectHostArchitecture>$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)</_SingleProjectHostArchitecture>
+    <_SingleProjectHostArchitecture>$(_SingleProjectHostArchitecture.ToLower())</_SingleProjectHostArchitecture>
+    <RuntimeIdentifier>win-$(_SingleProjectHostArchitecture)</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <!-- Workaround for https://github.com/microsoft/WindowsAppSDK/issues/3337 -->
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows' and '$(RuntimeIdentifierOverride)' != ''">
+    <RuntimeIdentifier>$(RuntimeIdentifierOverride)</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <!-- This runs inside each publish to determine the output path of the generated .msix -->
+  <Target
+    Name="_GenerateMsixBundlePublish"
+    Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'"
+    DependsOnTargets="Publish"
+    Returns="@(_MsixPackageOutput)">
+
+    <ItemGroup>
+      <_MsixPackageOutput
+        Include="$(AppxPackageOutput)"
+        AppxPackageNameNeutral="$(AppxPackageNameNeutral)"
+        AppxBundleExtension="$(AppxBundleExtension)"
+        AppxPackageConfiguration="$(_AppxPackageConfiguration)" />
+    </ItemGroup>
+
+  </Target>
+
+  <!-- This runs once to build the .msixbundle -->
+  <Target
+    Name="GenerateMsixBundle"
+    Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+
+    <!-- build up the matrix of the project to RID -->
+    <ItemGroup>
+      <_MsixBundleRID Include="$(RuntimeIdentifiers)" />
+      <_MsixBundleProject Include="$(MSBuildProjectFile)" AdditionalProperties="RuntimeIdentifierOverride=%(_MsixBundleRID.Identity)" />
+    </ItemGroup>
+
+    <!-- publish the project for each RID -->
+    <MSBuild
+      Projects="@(_MsixBundleProject)"
+      Targets="_GenerateMsixBundlePublish"
+      BuildInParallel="$(BuildInParallel)">
+      <Output
+        TaskParameter="TargetOutputs"
+        ItemName="_MsixPackageOutput" />
+    </MSBuild>
+
+    <!-- determine all the properties of the .msixbundle -->
+    <PropertyGroup>
+      <AppxPackageNameNeutral>%(_MsixPackageOutput.AppxPackageNameNeutral)</AppxPackageNameNeutral>
+      <AppxBundleExtension>%(_MsixPackageOutput.AppxBundleExtension)</AppxBundleExtension>
+      <AppxPackageConfiguration>%(_MsixPackageOutput.AppxPackageConfiguration)</AppxPackageConfiguration>
+      <_MsixBundlePath>$(PackageOutputPath)$(TargetFramework)\$(AppxPackageNameNeutral)$(AppxPackageConfiguration)$(AppxBundleExtension)</_MsixBundlePath>
+      <_MsixBundleFilesPath>$(IntermediateOutputPath)msixbundle.files</_MsixBundleFilesPath>
+    </PropertyGroup>
+
+    <!-- determine all the files of the .msixbundle -->
+    <ItemGroup>
+      <_MsixBundleFilesLines Include="[Files]" />
+      <_MsixBundleFilesLines Include="@(_MsixPackageOutput->'&quot;%(FullPath)&quot; &quot;%(Filename)%(Extension)&quot;')" />
+    </ItemGroup>
+
+    <!-- write out the files -->
+    <WriteLinesToFile
+      File="$(_MsixBundleFilesPath)"
+      Lines="@(_MsixBundleFilesLines)"
+      Overwrite="True"
+      WriteOnlyWhenDifferent="True" />
+    <ItemGroup>
+      <FileWrites Include="$(_MsixBundleFilesPath)" />
+    </ItemGroup>
+
+    <!-- generate the .msix bundle -->
+    <Exec Command="&quot;$(MakeAppxExeFullPath)&quot; bundle /v /o /f &quot;$(_MsixBundleFilesPath)&quot; /p &quot;$(_MsixBundlePath)&quot;" />
+
+  </Target>
+
+</Project>
