@@ -13,7 +13,7 @@ public class HistoryItem : IEquatable<HistoryItem>
 
     public string CodesContent { get; set; } = string.Empty;
     public Color Foreground { get; set; } = Color.FromArgb(255, 0, 0, 0);
-    public Color Background { get; set; } = Color.FromArgb(255, 255,255,255);
+    public Color Background { get; set; } = Color.FromArgb(255, 255, 255, 255);
 
     public string ErrorCorrectionLevelAsString { get; set; } = "M";
 
@@ -36,14 +36,12 @@ public class HistoryItem : IEquatable<HistoryItem>
         }
     }
 
-
     [JsonConverter(typeof(JsonStringEnumConverter<BarcodeFormat>))]
     public BarcodeFormat Format { get; set; } = BarcodeFormat.QR_CODE;
 
-
     public HistoryItem()
     {
-        
+
     }
 
     public bool Equals(HistoryItem? other)

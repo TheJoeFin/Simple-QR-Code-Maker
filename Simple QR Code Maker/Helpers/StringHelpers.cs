@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace Simple_QR_Code_Maker.Helpers;
 public static partial class StringHelpers
 {
-    public static readonly List<Char> ReservedChars =
+    public static readonly List<char> ReservedChars =
         [' ', '"', '*', '/', ':', '<', '>', '?', '\\', '|', '+', ',', '.', ';', '=', '[', ']', '!', '@'];
 
     public static string ReplaceReservedCharacters(this string stringToClean)
@@ -12,7 +12,7 @@ public static partial class StringHelpers
         StringBuilder sb = new();
         sb.Append(stringToClean);
 
-        foreach (Char reservedChar in ReservedChars)
+        foreach (char reservedChar in ReservedChars)
             sb.Replace(reservedChar, '-');
 
         return TrimMultiSpaceRegex().Replace(sb.ToString(), "-");

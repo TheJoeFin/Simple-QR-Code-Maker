@@ -1,14 +1,11 @@
-﻿using System.Reflection;
-using System.Windows.Input;
-
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
 using Microsoft.UI.Xaml;
-
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Helpers;
+using System.Reflection;
+using System.Windows.Input;
 using Windows.ApplicationModel;
 
 namespace Simple_QR_Code_Maker.ViewModels;
@@ -114,7 +111,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         if (RuntimeHelper.IsMSIX)
         {
-            var packageVersion = Package.Current.Id.Version;
+            PackageVersion packageVersion = Package.Current.Id.Version;
 
             version = new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
         }

@@ -6,7 +6,6 @@ using Simple_QR_Code_Maker.Activation;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Core.Contracts.Services;
 using Simple_QR_Code_Maker.Core.Services;
-using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.Services;
 using Simple_QR_Code_Maker.ViewModels;
@@ -95,7 +94,7 @@ public partial class App : Application
         e.Handled = true;
     }
 
-    protected async override void OnLaunched(LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
 

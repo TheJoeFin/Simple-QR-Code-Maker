@@ -1,10 +1,10 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
-using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Extensions;
+using Simple_QR_Code_Maker.Helpers;
 using Windows.Storage;
-using static ZXing.Rendering.SvgRenderer;
 using Windows.Storage.Streams;
 using ZXing.QrCode.Internal;
+using static ZXing.Rendering.SvgRenderer;
 
 namespace Simple_QR_Code_Maker.Models;
 public class BarcodeImageItem

@@ -1,9 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
-
 using Simple_QR_Code_Maker.Contracts.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Simple_QR_Code_Maker.Services;
 

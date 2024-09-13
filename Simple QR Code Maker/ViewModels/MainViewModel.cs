@@ -25,13 +25,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanSaveImage))]
-    private ObservableCollection<BarcodeImageItem> qrCodeBitmaps = new();
+    private ObservableCollection<BarcodeImageItem> qrCodeBitmaps = [];
 
     [ObservableProperty]
     private string placeholderText = "ex: http://www.example.com";
 
     private readonly string[] placeholdersList =
-    {
+    [
         "http://example.com",
         "https://www.wikipedia.org",
         "https://www.JoeFinApps.com",
@@ -39,7 +39,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         "https://github.com/TheJoeFin/Simple-QR-Code-Maker",
         "https://github.com/TheJoeFin/Text-Grab",
         "https://github.com/TheJoeFin/Simple-Icon-File-Maker"
-    };
+    ];
 
     [ObservableProperty]
     private Windows.UI.Color backgroundColor = Windows.UI.Color.FromArgb(255, 255, 255, 255);
@@ -54,7 +54,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private bool isHistoryPaneOpen = false;
 
     [ObservableProperty]
-    private ObservableCollection<HistoryItem> historyItems = new();
+    private ObservableCollection<HistoryItem> historyItems = [];
 
     [ObservableProperty]
     private HistoryItem? selectedHistoryItem = null;
@@ -94,13 +94,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         SelectedHistoryItem = null;
     }
 
-    public List<ErrorCorrectionOptions> ErrorCorrectionLevels { get; } = new()
-    {
+    public List<ErrorCorrectionOptions> ErrorCorrectionLevels { get; } =
+    [
         new("Low 7%", ErrorCorrectionLevel.L),
         new("Medium 15%", ErrorCorrectionLevel.M),
         new("Quarter 25%", ErrorCorrectionLevel.Q),
         new("High 30%", ErrorCorrectionLevel.H),
-    };
+    ];
 
     partial void OnSelectedOptionChanged(ErrorCorrectionOptions value)
     {
@@ -159,9 +159,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     private void Clipboard_ContentChanged(object? sender, object e) => CheckCanPasteText();
+
     private void CheckCanPasteText()
     {
-        var clipboardData = Clipboard.GetContent();
+        DataPackageView clipboardData = Clipboard.GetContent();
 
         if (clipboardData.Contains(StandardDataFormats.Text))
             CanPasteText = true;
@@ -251,7 +252,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private async Task PasteTextIntoUrlText()
     {
-        var clipboardContent = Clipboard.GetContent();
+        DataPackageView clipboardContent = Clipboard.GetContent();
         if (clipboardContent.Contains(StandardDataFormats.Text))
         {
             string text = await clipboardContent.GetTextAsync();
@@ -272,7 +273,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         SaveCurrentStateToHistory();
 
         StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-        List<StorageFile> files = new();
+        List<StorageFile> files = [];
         foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
         {
             if (qrCodeItem.CodeAsBitmap is null)
@@ -321,7 +322,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         SaveCurrentStateToHistory();
 
         StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-        List<StorageFile> files = new();
+        List<StorageFile> files = [];
         foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
         {
             if (qrCodeItem.CodeAsBitmap is null)
@@ -430,11 +431,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             case FileKind.None:
                 break;
             case FileKind.PNG:
-                savePicker.FileTypeChoices.Add("PNG Image", new List<string>() { ".png" });
+                savePicker.FileTypeChoices.Add("PNG Image", [".png"]);
                 savePicker.DefaultFileExtension = ".png";
                 break;
             case FileKind.SVG:
-                savePicker.FileTypeChoices.Add("SVG Image", new List<string>() { ".svg" });
+                savePicker.FileTypeChoices.Add("SVG Image", [".svg"]);
                 savePicker.DefaultFileExtension = ".svg";
                 break;
             default:
@@ -467,7 +468,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 await imageItem.CodeAsBitmap.SavePngToStorageFile(file);
                 break;
             case FileKind.SVG:
-                await imageItem.SaveCodeAsSvgFile( file,
+                await imageItem.SaveCodeAsSvgFile(file,
                     ForegroundColor.ToSystemDrawingColor(),
                     BackgroundColor.ToSystemDrawingColor(),
                     SelectedOption.ErrorCorrectionLevel);
@@ -551,8 +552,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
         };
 
-        if (HistoryItems.Contains(historyItem))
-            HistoryItems.Remove(historyItem);
+        HistoryItems.Remove(historyItem);
         HistoryItems.Insert(0, historyItem);
 
         LocalSettingsService.SaveSettingAsync(nameof(HistoryItems), HistoryItems);

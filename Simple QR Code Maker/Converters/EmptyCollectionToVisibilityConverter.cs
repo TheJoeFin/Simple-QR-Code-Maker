@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Data;
 
 namespace Simple_QR_Code_Maker.Converters;
 
-class EmptyCollectionToVisibilityConverter : IValueConverter
+internal class EmptyCollectionToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {

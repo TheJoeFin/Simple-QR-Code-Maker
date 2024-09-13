@@ -1,8 +1,8 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using System.Diagnostics;
-using Windows.Storage;
-using Windows.Graphics.Imaging;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
 using Windows.Storage.Streams;
 
 namespace Simple_QR_Code_Maker.Extensions;

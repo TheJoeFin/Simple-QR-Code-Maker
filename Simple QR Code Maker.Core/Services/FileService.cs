@@ -1,7 +1,6 @@
-﻿using System.Text;
+﻿using Simple_QR_Code_Maker.Core.Contracts.Services;
+using System.Text;
 using System.Text.Json;
-
-using Simple_QR_Code_Maker.Core.Contracts.Services;
 
 namespace Simple_QR_Code_Maker.Core.Services;
 
@@ -9,10 +8,10 @@ public class FileService : IFileService
 {
     public T Read<T>(string folderPath, string fileName)
     {
-        var path = Path.Combine(folderPath, fileName);
+        string path = Path.Combine(folderPath, fileName);
         if (File.Exists(path))
         {
-            var json = File.ReadAllText(path);
+            string json = File.ReadAllText(path);
             return JsonSerializer.Deserialize<T>(json);
         }
 
@@ -26,7 +25,7 @@ public class FileService : IFileService
             Directory.CreateDirectory(folderPath);
         }
 
-        var fileContent = JsonSerializer.Serialize(content);
+        string fileContent = JsonSerializer.Serialize(content);
         File.WriteAllText(Path.Combine(folderPath, fileName), fileContent, Encoding.UTF8);
     }
 

@@ -9,7 +9,7 @@ public class DecodingImageItem
     public string ImagePath { get; set; } = string.Empty;
 
     public string FileName => Path.GetFileName(ImagePath);
-    
+
     public BitmapImage? BitmapImage { get; set; }
 
     public List<(string, Result)> Strings { get; set; } = new();
