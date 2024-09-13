@@ -34,17 +34,17 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     private bool canPasteImage = false;
 
     [ObservableProperty]
-    private ObservableCollection<DecodingImageItem> decodingImageItems = new();
+    private ObservableCollection<DecodingImageItem> decodingImageItems = [];
 
     private INavigationService NavigationService { get; }
 
-    private readonly List<string> imageExtensions = new()
-    {
+    private readonly List<string> imageExtensions =
+    [
         ".png",
         ".jpg",
         ".jpeg",
         ".bmp",
-    };
+    ];
 
     public DecodingViewModel(INavigationService navigationService)
     {
@@ -177,7 +177,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(bitmap);
 
-        ObservableCollection<TextBorder> codeBorders = new();
+        ObservableCollection<TextBorder> codeBorders = [];
         foreach ((string, Result) item in strings)
         {
             TextBorder textBorder = new(item.Item2);
@@ -195,7 +195,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         DecodingImageItems.Add(decodingImage);
     }
 
-    private void OpenAndDecodeStorageFiles(IReadOnlyList<IStorageItem> pickedFiles)
+    public void OpenAndDecodeStorageFiles(IReadOnlyList<IStorageItem> pickedFiles)
     {
         foreach (IStorageItem file in pickedFiles)
         {
@@ -219,7 +219,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromImageFile(storageFile);
 
-        ObservableCollection<TextBorder> codeBorders = new();
+        ObservableCollection<TextBorder> codeBorders = [];
         foreach ((string, Result) item in strings)
         {
             TextBorder textBorder = new(item.Item2);

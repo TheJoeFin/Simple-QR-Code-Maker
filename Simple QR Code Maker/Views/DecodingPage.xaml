@@ -31,13 +31,17 @@
                 Orientation="Vertical"
                 Spacing="12">
                 <Border
+                    x:Name="GridViewContainer"
                     Grid.Row="1"
                     MinWidth="300"
                     MinHeight="300"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    AllowDrop="True"
                     Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
-                    CornerRadius="4">
+                    CornerRadius="4"
+                    DragOver="GridViewContainer_DragOver"
+                    Drop="GridViewContainer_Drop">
                     <GridView
                         Grid.Row="1"
                         HorizontalAlignment="Center"
