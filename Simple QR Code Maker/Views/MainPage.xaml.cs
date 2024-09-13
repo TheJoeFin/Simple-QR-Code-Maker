@@ -40,7 +40,7 @@ public sealed partial class MainPage : Page
         StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
         string? imageNameFileName = $"{ToolTipService.GetToolTip(image)}" ?? "QR_Code";
         // remove characters that are not allowed in file names
-        imageNameFileName = imageNameFileName.ReplaceReservedCharacters();
+        imageNameFileName = imageNameFileName.ToSafeFileName();
         imageNameFileName += ".png";
         StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
         bool success = await bitmap.SavePngToStorageFile(file);

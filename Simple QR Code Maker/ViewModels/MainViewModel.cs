@@ -278,7 +278,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             if (qrCodeItem.CodeAsBitmap is null)
                 continue;
 
-            string? imageNameFileName = $"{qrCodeItem.CodeAsText.ReplaceReservedCharacters()}.png";
+            string? imageNameFileName = $"{qrCodeItem.CodeAsText.ToSafeFileName()}.png";
             StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
             bool success = await qrCodeItem.CodeAsBitmap.SavePngToStorageFile(file);
 
@@ -327,7 +327,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             if (qrCodeItem.CodeAsBitmap is null)
                 continue;
 
-            string? imageNameFileName = $"{qrCodeItem.CodeAsText.ReplaceReservedCharacters()}.svg";
+            string? imageNameFileName = $"{qrCodeItem.CodeAsText.ToSafeFileName()}.svg";
             StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
 
             bool success = await qrCodeItem.SaveCodeAsSvgFile(file, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), SelectedOption.ErrorCorrectionLevel);
@@ -440,7 +440,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             default:
                 break;
         }
-        savePicker.SuggestedFileName = imageItem.CodeAsText.ReplaceReservedCharacters();
+        savePicker.SuggestedFileName = imageItem.CodeAsText.ToSafeFileName();
 
         Window saveWindow = new();
         IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
@@ -497,7 +497,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         foreach (BarcodeImageItem imageItem in QrCodeBitmaps)
         {
-            string fileName = imageItem.CodeAsText.ReplaceReservedCharacters();
+            string fileName = imageItem.CodeAsText.ToSafeFileName();
 
             if (string.IsNullOrWhiteSpace(fileName) || imageItem.CodeAsBitmap is null)
                 continue;
