@@ -8,7 +8,6 @@
     xmlns:models="using:Simple_QR_Code_Maker.Models"
     xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
     Name="EncodingPage"
-    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
