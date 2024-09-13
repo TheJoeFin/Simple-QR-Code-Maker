@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
     xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
+    Name="EncodingPage"
     Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
@@ -164,7 +165,37 @@
                                                 CanDrag="True"
                                                 DragStarting="QrCodeImage_DragStarting"
                                                 Source="{x:Bind CodeAsBitmap}"
-                                                ToolTipService.ToolTip="{x:Bind CodeAsText}" />
+                                                ToolTipService.ToolTip="{x:Bind CodeAsText}">
+                                                <Image.ContextFlyout>
+                                                    <MenuFlyout>
+                                                        <MenuFlyoutItem
+                                                            Name="ContextPngBtn"
+                                                            Command="{Binding ElementName=EncodingPage, Path=ViewModel.SaveCodePngContextCommand}"
+                                                            CommandParameter="{x:Bind}"
+                                                            Icon="Save"
+                                                            Text="Save PNG..." />
+                                                        <MenuFlyoutItem
+                                                            Name="ContextCopyPngBtn"
+                                                            Command="{Binding ElementName=EncodingPage, Path=ViewModel.CopyCodePngContextCommand}"
+                                                            CommandParameter="{x:Bind}"
+                                                            Icon="Copy"
+                                                            Text="Copy PNG" />
+                                                        <MenuFlyoutSeparator />
+                                                        <MenuFlyoutItem
+                                                            Name="ContextSvgBtn"
+                                                            Command="{Binding ElementName=EncodingPage, Path=ViewModel.SaveCodeSvgContextCommand}"
+                                                            CommandParameter="{x:Bind}"
+                                                            Icon="Save"
+                                                            Text="Save SVG..." />
+                                                        <MenuFlyoutItem
+                                                            Name="ContextCopySvgBtn"
+                                                            Command="{Binding ElementName=EncodingPage, Path=ViewModel.CopyCodeSvgContextCommand}"
+                                                            CommandParameter="{x:Bind}"
+                                                            Icon="Copy"
+                                                            Text="Copy SVG" />
+                                                    </MenuFlyout>
+                                                </Image.ContextFlyout>
+                                            </Image>
                                             <InfoBar
                                                 IsOpen="{x:Bind UrlWarning}"
                                                 Message="QR Code not a URL"
