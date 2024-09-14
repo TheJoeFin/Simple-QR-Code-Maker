@@ -43,7 +43,7 @@
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.0.240109" />
     <PackageReference Include="Humanizer" Version="2.14.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240829007" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
     <PackageReference Include="System.Text.Json" Version="8.0.4" />
