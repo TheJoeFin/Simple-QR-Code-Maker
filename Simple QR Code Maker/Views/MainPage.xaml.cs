@@ -18,6 +18,8 @@ public sealed partial class MainPage : Page
 
     private bool _didSetCaretToEnd = false;
 
+    private string appStoreUrl = "https://apps.microsoft.com/detail/9nch56g3rqfc";
+
     public MainPage()
     {
         ViewModel = App.GetService<MainViewModel>();
@@ -65,5 +67,17 @@ public sealed partial class MainPage : Page
             _didSetCaretToEnd = true;
             UrlTextBox.Select(UrlTextBox.Text.Length, 0);
         }
+    }
+
+    private void CopyLinkButton_Click(object sender, RoutedEventArgs e)
+    {
+        DataPackage dataPackage = new();
+        dataPackage.SetText(appStoreUrl);
+        Clipboard.SetContent(dataPackage);
+    }
+
+    private async void VisitLinkButton_Click(object sender, RoutedEventArgs e)
+    {
+        _ = await Windows.System.Launcher.LaunchUriAsync(new Uri(appStoreUrl));
     }
 }

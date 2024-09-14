@@ -78,6 +78,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private string codeInfoBarMessage = string.Empty;
 
+    [ObservableProperty]
+    private bool copySharePopupOpen = false;
+
     private readonly DispatcherTimer copyInfoBarTimer = new();
 
     partial void OnSelectedHistoryItemChanged(HistoryItem? value)
@@ -375,6 +378,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private void ToggleHistoryPaneOpen()
     {
         IsHistoryPaneOpen = !IsHistoryPaneOpen;
+    }
+
+    [RelayCommand]
+    private void ShareApp()
+    {
+        CopySharePopupOpen = !CopySharePopupOpen;
     }
 
     [RelayCommand]

@@ -281,13 +281,56 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <AppBarButton
+                <StackPanel
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
-                    Command="{x:Bind ViewModel.ToggleHistoryPaneOpenCommand}"
-                    IsCompact="True">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
-                </AppBarButton>
+                    Orientation="Vertical"
+                    Spacing="-20">
+                    <AppBarButton
+                        Command="{x:Bind ViewModel.ToggleHistoryPaneOpenCommand}"
+                        IsCompact="True"
+                        ToolTipService.ToolTip="History of previously generated QR Codes">
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
+                    </AppBarButton>
+                    <AppBarButton
+                        Command="{x:Bind ViewModel.ShareAppCommand}"
+                        Icon="Share"
+                        IsCompact="True"
+                        ToolTipService.ToolTip="Share Simple Icon File Maker..." />
+                </StackPanel>
+
+                <InfoBar
+                    x:Name="SharePane"
+                    Title="Share Simple QR Code Maker"
+                    Margin="32,20"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                    IsOpen="{x:Bind ViewModel.CopySharePopupOpen, Mode=TwoWay}">
+                    <StackPanel
+                        Padding="16"
+                        Orientation="Vertical"
+                        Spacing="12">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <SymbolIcon Symbol="Shop" />
+                            <TextBlock Text="Link to the Microsoft Store" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <HyperlinkButton HorizontalAlignment="Center" Click="VisitLinkButton_Click">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <SymbolIcon Symbol="Go" />
+                                    <TextBlock Text="Visit" />
+                                </StackPanel>
+                            </HyperlinkButton>
+                            <HyperlinkButton HorizontalAlignment="Center" Click="CopyLinkButton_Click">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <SymbolIcon Symbol="Copy" />
+                                    <TextBlock Text="Copy" />
+                                </StackPanel>
+                            </HyperlinkButton>
+                        </StackPanel>
+                    </StackPanel>
+                </InfoBar>
 
                 <InfoBar
                     x:Name="LenghErrorInfoBar"
