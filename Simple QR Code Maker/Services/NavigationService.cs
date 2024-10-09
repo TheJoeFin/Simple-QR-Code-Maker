@@ -136,20 +136,20 @@ public class NavigationService : INavigationService
 
     private void OnNavigated(object sender, NavigationEventArgs e)
     {
-        if (sender is Frame frame)
+        if (sender is not Frame frame)
+            return;
+
+        bool clearNavigation = (bool)frame.Tag;
+        if (clearNavigation)
         {
-            bool clearNavigation = (bool)frame.Tag;
-            if (clearNavigation)
-            {
-                frame.BackStack.Clear();
-            }
-
-            if (frame.GetPageViewModel() is INavigationAware navigationAware)
-            {
-                navigationAware.OnNavigatedTo(e.Parameter);
-            }
-
-            Navigated?.Invoke(sender, e);
+            frame.BackStack.Clear();
         }
+
+        if (frame.GetPageViewModel() is INavigationAware navigationAware)
+        {
+            navigationAware.OnNavigatedTo(e.Parameter);
+        }
+
+        Navigated?.Invoke(sender, e);
     }
 }
