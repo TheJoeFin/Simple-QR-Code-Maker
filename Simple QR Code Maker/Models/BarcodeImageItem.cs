@@ -44,4 +44,17 @@ public class BarcodeImageItem
 
         return true;
     }
+
+    public string GetCodeAsSvgText(System.Drawing.Color foreground, System.Drawing.Color background, ErrorCorrectionLevel correctionLevel)
+    {
+        try
+        {
+            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background);
+            return svgImage.Content;
+        }
+        catch
+        {
+            return string.Empty;
+        }
+    }
 }

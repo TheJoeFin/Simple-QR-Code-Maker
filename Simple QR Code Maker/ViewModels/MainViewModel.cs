@@ -365,6 +365,54 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         copyInfoBarTimer.Start();
     }
 
+    [RelayCommand]
+    private void CopySvgTextToClipboard()
+    {
+        if (QrCodeBitmaps.Count == 0)
+            return;
+
+        SaveCurrentStateToHistory();
+
+        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
+        List<string> textStrings = [];
+        foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
+        {
+            if (qrCodeItem.CodeAsBitmap is null)
+                continue;
+
+            string? imageNameFileName = $"{qrCodeItem.CodeAsText.ToSafeFileName()}.svg";
+
+            string svgText = qrCodeItem.GetCodeAsSvgText(ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), SelectedOption.ErrorCorrectionLevel);
+            if (string.IsNullOrWhiteSpace(svgText))
+                continue;
+
+            textStrings.Add(svgText);
+        }
+
+        if (textStrings.Count == 0)
+        {
+            CodeInfoBarMessage = "No QR Codes to copy to the clipboard";
+            ShowCodeInfoBar = true;
+            CodeInfoBarSeverity = InfoBarSeverity.Error;
+            CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
+            return;
+        }
+
+        DataPackage dataPackage = new();
+        dataPackage.SetText(string.Join(Environment.NewLine,textStrings));
+        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+
+        CodeInfoBarMessage = string.Empty;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Success;
+        if (textStrings.Count == 1)
+            CodeInfoBarTitle = "SVG QR Code copied to the clipboard";
+        else
+            CodeInfoBarTitle = $"{textStrings.Count} Text of SVGs QR Codes copied to the clipboard";
+
+        copyInfoBarTimer.Start();
+    }
+
     private void CopyInfoBarTimer_Tick(object? sender, object e)
     {
         copyInfoBarTimer.Stop();
@@ -483,10 +531,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         if (files.Count == 0)
         {
-            CodeInfoBarMessage = "No QR Codes to copy to the clipboard";
+            CodeInfoBarMessage = "No QR Code to copy to the clipboard";
             ShowCodeInfoBar = true;
             CodeInfoBarSeverity = InfoBarSeverity.Error;
-            CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
+            CodeInfoBarTitle = "Failed to copy QR Code to the clipboard";
             return;
         }
 
@@ -520,10 +568,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         if (files.Count == 0)
         {
-            CodeInfoBarMessage = "No QR Codes to copy to the clipboard";
+            CodeInfoBarMessage = "No QR Code to copy to the clipboard";
             ShowCodeInfoBar = true;
             CodeInfoBarSeverity = InfoBarSeverity.Error;
-            CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
+            CodeInfoBarTitle = "Failed to copy QR Code to the clipboard";
             return;
         }
 
@@ -535,6 +583,38 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Success;
         CodeInfoBarTitle = "SVG QR Code copied to the clipboard";
+
+        copyInfoBarTimer.Start();
+    }
+
+    [RelayCommand]
+    private void CopyCodeSvgTextContext(object commandParameter)
+    {
+        if (commandParameter is not BarcodeImageItem imageItem)
+            return;
+
+        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
+
+        string? imageNameFileName = $"{imageItem.CodeAsText.ToSafeFileName()}.svg";
+        string svgAsText = imageItem.GetCodeAsSvgText(ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), SelectedOption.ErrorCorrectionLevel);
+
+        if (string.IsNullOrWhiteSpace(svgAsText))
+        {
+            CodeInfoBarMessage = "No QR Code to copy to the clipboard";
+            ShowCodeInfoBar = true;
+            CodeInfoBarSeverity = InfoBarSeverity.Error;
+            CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
+            return;
+        }
+
+        DataPackage dataPackage = new();
+        dataPackage.SetText(svgAsText);
+        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+
+        CodeInfoBarMessage = string.Empty;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Success;
+        CodeInfoBarTitle = "SVG QR Code as Text copied to the clipboard";
 
         copyInfoBarTimer.Start();
     }

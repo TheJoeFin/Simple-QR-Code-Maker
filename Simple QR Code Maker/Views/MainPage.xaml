@@ -192,6 +192,12 @@
                                                             CommandParameter="{x:Bind}"
                                                             Icon="Copy"
                                                             Text="Copy SVG" />
+                                                        <MenuFlyoutItem
+                                                            Name="ContextCopySvgTextBtn"
+                                                            Command="{Binding ElementName=EncodingPage, Path=ViewModel.CopyCodeSvgTextContextCommand}"
+                                                            CommandParameter="{x:Bind}"
+                                                            Icon="Copy"
+                                                            Text="Copy SVG as Text" />
                                                     </MenuFlyout>
                                                 </Image.ContextFlyout>
                                             </Image>
@@ -246,6 +252,10 @@
                                             Command="{x:Bind ViewModel.CopySvgToClipboardCommand}"
                                             Icon="Copy"
                                             Text="Copy all to clipboard" />
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ViewModel.CopySvgTextToClipboardCommand}"
+                                            Icon="Copy"
+                                            Text="Copy all as text to clipboard" />
                                     </MenuFlyout>
                                 </SplitButton.Flyout>
                             </SplitButton>
