@@ -23,7 +23,7 @@
     <AppxBundle>Never</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
     <GenerateAppxPackageOnBuild>True</GenerateAppxPackageOnBuild>
-    <PublishAot>true</PublishAot>
+    <PublishAot>false</PublishAot>
 
     <AppxPackageDir>AppPackages\</AppxPackageDir>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
