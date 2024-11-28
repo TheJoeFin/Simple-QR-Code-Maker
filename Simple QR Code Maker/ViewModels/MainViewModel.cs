@@ -718,7 +718,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
             fileName += extension;
 
-            StorageFile file = await folder.CreateFileAsync(fileName);
+            StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
             await WriteImageToFile(imageItem, file, kindOfFile);
         }
     }
