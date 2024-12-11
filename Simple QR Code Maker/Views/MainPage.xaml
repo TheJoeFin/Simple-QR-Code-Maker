@@ -2,8 +2,8 @@
     x:Class="Simple_QR_Code_Maker.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="using:Simple_QR_Code_Maker.Converters"
     xmlns:controls="using:Simple_QR_Code_Maker.Controls"
+    xmlns:converters="using:Simple_QR_Code_Maker.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
@@ -265,28 +265,22 @@
                             HorizontalAlignment="Center"
                             Orientation="Horizontal"
                             Spacing="10">
-                            <Button Command="{x:Bind ViewModel.OpenFileCommand}" ToolTipService.ToolTip="Open an image to read and extract text from any codes">
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <Viewbox Height="16">
-                                        <controls:ScanIcon />
-                                    </Viewbox>
-                                    <TextBlock Text="Read Codes" />
-                                </StackPanel>
-                            </Button>
-                            <Button
-                                Padding="0"
+                            <controls:IconAndTextButton
+                                Command="{x:Bind ViewModel.OpenFileCommand}"
+                                Text="Read Codes"
+                                ToolTipService.ToolTip="Open an image to read and extract text from any codes">
+                                <controls:IconAndTextButton.Icon>
+                                    <controls:ScanIcon />
+                                </controls:IconAndTextButton.Icon>
+                            </controls:IconAndTextButton>
+                            <controls:IconAndTextButton
                                 Command="{x:Bind ViewModel.GoToSettingsCommand}"
+                                Text="Settings"
                                 ToolTipService.ToolTip="Simple QR Code Maker Settings">
-                                <StackPanel
-                                    Padding="11,5,11,6"
-                                    Orientation="Horizontal"
-                                    Spacing="10">
-                                    <Viewbox Height="16">
-                                        <SymbolIcon Symbol="Setting" />
-                                    </Viewbox>
-                                    <TextBlock Text="Settings" />
-                                </StackPanel>
-                            </Button>
+                                <controls:IconAndTextButton.Icon>
+                                    <SymbolIcon Symbol="Setting" />
+                                </controls:IconAndTextButton.Icon>
+                            </controls:IconAndTextButton>
                         </StackPanel>
 
                     </StackPanel>
