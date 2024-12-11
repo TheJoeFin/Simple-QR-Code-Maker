@@ -362,36 +362,7 @@
                     SelectedItem="{x:Bind ViewModel.SelectedHistoryItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:HistoryItem">
-                            <Grid Margin="2" Padding="0,6">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                </Grid.RowDefinitions>
-                                <TextBlock
-                                    Style="{StaticResource BodyTextStyle}"
-                                    Text="{x:Bind CodesContent}"
-                                    TextTrimming="WordEllipsis" />
-                                <StackPanel
-                                    Grid.Row="1"
-                                    Orientation="Horizontal"
-                                    Spacing="8">
-                                    <Rectangle
-                                        Width="16"
-                                        Height="10"
-                                        Fill="{x:Bind Foreground, Converter={StaticResource ColorToBrush}}" />
-                                    <Rectangle
-                                        Width="16"
-                                        Height="10"
-                                        Fill="{x:Bind Background, Converter={StaticResource ColorToBrush}}" />
-                                    <TextBlock Text="{x:Bind ErrorCorrectionLevelAsString}" />
-                                </StackPanel>
-                                <TextBlock
-                                    Grid.Row="2"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Bind SaveDateAsString, Mode=OneWay}"
-                                    TextTrimming="WordEllipsis" />
-                            </Grid>
+                            <controls:HistoryRowItem Data="{x:Bind}" />
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

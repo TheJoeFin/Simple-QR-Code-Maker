@@ -31,6 +31,7 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Controls\HistoryRowItem.xaml" />
     <None Remove="Controls\IconAndTextButton.xaml" />
     <None Remove="Controls\NewFile1.txt" />
     <None Remove="Controls\TextBorder.xaml" />
@@ -62,6 +63,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\HistoryRowItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\IconAndTextButton.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
