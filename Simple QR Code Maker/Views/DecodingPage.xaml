@@ -46,7 +46,8 @@
                         Grid.Row="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        ItemsSource="{x:Bind ViewModel.DecodingImageItems, Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.DecodingImageItems,
+                                             Mode=OneWay}"
                         ScrollViewer.IsHorizontalScrollChainingEnabled="True"
                         ScrollViewer.IsVerticalScrollChainingEnabled="True"
                         SelectionMode="None">
@@ -84,7 +85,9 @@
                                     <InfoBar
                                         Title="No codes found"
                                         Grid.Row="1"
-                                        IsOpen="{x:Bind CodeBorders.Count, Converter={StaticResource IsZero}, Mode=OneWay}"
+                                        IsOpen="{x:Bind CodeBorders.Count,
+                                                        Converter={StaticResource IsZero},
+                                                        Mode=OneWay}"
                                         Severity="Warning">
                                         <TextBlock
                                             Margin="0,0,0,20"
@@ -108,40 +111,42 @@
                             <SymbolIcon Symbol="Back" />
                         </Viewbox>
                     </Button>
-                    <Button
+                    <controls:IconAndTextButton
                         Command="{x:Bind ViewModel.OpenNewFileCommand}"
-                        IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                        IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning,
+                                           Mode=OneWay,
+                                           Converter={StaticResource BoolNegationConverter}}"
+                        Text="Open..."
                         ToolTipService.ToolTip="Open one or many files to decode the barcodes contained in the image">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <Viewbox Height="14">
-                                <SymbolIcon Symbol="OpenFile" />
-                            </Viewbox>
-                            <TextBlock Text="Open..." />
-                        </StackPanel>
-                    </Button>
-                    <Button
+                        <controls:IconAndTextButton.Icon>
+                            <SymbolIcon Symbol="OpenFile" />
+                        </controls:IconAndTextButton.Icon>
+                    </controls:IconAndTextButton>
+                    <controls:IconAndTextButton
                         Command="{x:Bind ViewModel.OpenFileFromClipboardCommand}"
-                        IsEnabled="{x:Bind ViewModel.CanPasteImage, Mode=OneWay}"
+                        IsEnabled="{x:Bind ViewModel.CanPasteImage,
+                                           Mode=OneWay}"
+                        Text="Paste"
                         ToolTipService.ToolTip="Paste and image or file from your clipboard to try to decode the barcodes">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <Viewbox Height="14">
-                                <SymbolIcon Symbol="Paste" />
-                            </Viewbox>
-                            <TextBlock Text="Paste" />
-                        </StackPanel>
-                    </Button>
-                    <Button
+                        <controls:IconAndTextButton.Icon>
+                            <SymbolIcon Symbol="Paste" />
+                        </controls:IconAndTextButton.Icon>
+                    </controls:IconAndTextButton>
+                    <controls:IconAndTextButton
                         Command="{x:Bind ViewModel.ClearImagesCommand}"
-                        IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                        IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning,
+                                           Mode=OneWay,
+                                           Converter={StaticResource BoolNegationConverter}}"
+                        Text="Clear"
                         ToolTipService.ToolTip="Clear out all the images"
-                        Visibility="{x:Bind ViewModel.DecodingImageItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <Viewbox Height="16">
-                                <SymbolIcon Symbol="Clear" />
-                            </Viewbox>
-                            <TextBlock Text="Clear" />
-                        </StackPanel>
-                    </Button>
+                        Visibility="{x:Bind ViewModel.DecodingImageItems.Count,
+                                            Converter={StaticResource EmptyCollectionToVisibility},
+                                            ConverterParameter=true,
+                                            Mode=OneWay}">
+                        <controls:IconAndTextButton.Icon>
+                            <SymbolIcon Symbol="Clear" />
+                        </controls:IconAndTextButton.Icon>
+                    </controls:IconAndTextButton>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
@@ -155,7 +160,8 @@
             Background="{StaticResource SystemControlBackgroundAltHighBrush}"
             BorderBrush="{StaticResource SystemAccentColor}"
             BorderThickness="3"
-            IsOpen="{x:Bind ViewModel.IsInfoBarShowing, Mode=TwoWay}"
+            IsOpen="{x:Bind ViewModel.IsInfoBarShowing,
+                            Mode=TwoWay}"
             Severity="Informational">
             <StackPanel
                 Margin="12,0"
@@ -165,7 +171,8 @@
                     MaxWidth="500"
                     VerticalAlignment="Center"
                     IsTextSelectionEnabled="True"
-                    Text="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}"
+                    Text="{x:Bind ViewModel.InfoBarMessage,
+                                  Mode=OneWay}"
                     TextWrapping="Wrap" />
                 <StackPanel
                     HorizontalAlignment="Center"
@@ -179,7 +186,9 @@
                         Command="{x:Bind ViewModel.TryLaunchLinkCommand}"
                         Icon="Go"
                         IsCompact="True"
-                        IsEnabled="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay, Converter={StaticResource HasURL}}" />
+                        IsEnabled="{x:Bind ViewModel.InfoBarMessage,
+                                           Mode=OneWay,
+                                           Converter={StaticResource HasURL}}" />
                 </StackPanel>
             </StackPanel>
         </InfoBar>
