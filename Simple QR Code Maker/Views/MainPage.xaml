@@ -176,65 +176,7 @@
                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
                                 <GridView.ItemTemplate>
                                     <DataTemplate x:DataType="models:BarcodeImageItem">
-                                        <Grid
-                                            Margin="4"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center">
-                                            <Image
-                                                x:Name="QrCodeImage"
-                                                Width="285"
-                                                Height="285"
-                                                CanDrag="True"
-                                                DragStarting="QrCodeImage_DragStarting"
-                                                Source="{x:Bind CodeAsBitmap}"
-                                                ToolTipService.ToolTip="{x:Bind CodeAsText}">
-                                                <Image.ContextFlyout>
-                                                    <MenuFlyout>
-                                                        <MenuFlyoutItem
-                                                            Name="ContextPngBtn"
-                                                            Command="{Binding ElementName=EncodingPage,
-                                                                              Path=ViewModel.SaveCodePngContextCommand}"
-                                                            CommandParameter="{x:Bind}"
-                                                            Icon="Save"
-                                                            Text="Save PNG..." />
-                                                        <MenuFlyoutItem
-                                                            Name="ContextCopyPngBtn"
-                                                            Command="{Binding ElementName=EncodingPage,
-                                                                              Path=ViewModel.CopyCodePngContextCommand}"
-                                                            CommandParameter="{x:Bind}"
-                                                            Icon="Copy"
-                                                            Text="Copy PNG" />
-                                                        <MenuFlyoutSeparator />
-                                                        <MenuFlyoutItem
-                                                            Name="ContextSvgBtn"
-                                                            Command="{Binding ElementName=EncodingPage,
-                                                                              Path=ViewModel.SaveCodeSvgContextCommand}"
-                                                            CommandParameter="{x:Bind}"
-                                                            Icon="Save"
-                                                            Text="Save SVG..." />
-                                                        <MenuFlyoutItem
-                                                            Name="ContextCopySvgBtn"
-                                                            Command="{Binding ElementName=EncodingPage,
-                                                                              Path=ViewModel.CopyCodeSvgContextCommand}"
-                                                            CommandParameter="{x:Bind}"
-                                                            Icon="Copy"
-                                                            Text="Copy SVG" />
-                                                        <MenuFlyoutItem
-                                                            Name="ContextCopySvgTextBtn"
-                                                            Command="{Binding ElementName=EncodingPage,
-                                                                              Path=ViewModel.CopyCodeSvgTextContextCommand}"
-                                                            CommandParameter="{x:Bind}"
-                                                            Icon="Copy"
-                                                            Text="Copy SVG as Text" />
-                                                    </MenuFlyout>
-                                                </Image.ContextFlyout>
-                                            </Image>
-                                            <InfoBar
-                                                IsOpen="{x:Bind UrlWarning}"
-                                                Message="QR Code not a URL"
-                                                Severity="Warning"
-                                                ToolTipService.ToolTip="This warning can be disabled in settings" />
-                                        </Grid>
+                                        <controls:QrCodeImageControl Data="{x:Bind}" />
                                     </DataTemplate>
                                 </GridView.ItemTemplate>
                             </GridView>

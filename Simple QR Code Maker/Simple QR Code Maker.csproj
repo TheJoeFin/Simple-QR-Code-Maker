@@ -34,6 +34,7 @@
     <None Remove="Controls\HistoryRowItem.xaml" />
     <None Remove="Controls\IconAndTextButton.xaml" />
     <None Remove="Controls\NewFile1.txt" />
+    <None Remove="Controls\QrCodeImageControl.xaml" />
     <None Remove="Controls\TextBorder.xaml" />
     <None Remove="Views\ShellPage.xaml" />
   </ItemGroup>
@@ -63,6 +64,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\QrCodeImageControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\HistoryRowItem.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
