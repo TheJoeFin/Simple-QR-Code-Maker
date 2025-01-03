@@ -161,9 +161,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
         Clipboard.ContentChanged += Clipboard_ContentChanged;
 
+        WeakReferenceMessenger.Default.Register<RequestShowMessage>(this, OnRequestShowMessage);
+        WeakReferenceMessenger.Default.Register<SaveHistoryMessage>(this, OnSaveHistoryMessage);
+    }
 
-		WeakReferenceMessenger.Default.Register<RequestShowMessage>(this, OnRequestShowMessage);
-	}
+    private void OnSaveHistoryMessage(object recipient, SaveHistoryMessage message)
+    {
+        SaveCurrentStateToHistory();
+    }
 
     private void OnRequestShowMessage(object recipient, RequestShowMessage rsm)
     {

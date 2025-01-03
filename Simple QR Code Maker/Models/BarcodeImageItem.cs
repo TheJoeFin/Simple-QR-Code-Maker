@@ -108,6 +108,7 @@ public partial class BarcodeImageItem : ObservableRecipient
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
 
         WeakReferenceMessenger.Default.Send(new RequestShowMessage("PNG QR Code copied to the clipboard", string.Empty, InfoBarSeverity.Success));
+        WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
     }
 
     [RelayCommand]
@@ -134,6 +135,7 @@ public partial class BarcodeImageItem : ObservableRecipient
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
 
         WeakReferenceMessenger.Default.Send(new RequestShowMessage("SVG QR Code copied to the clipboard", string.Empty, InfoBarSeverity.Success));
+        WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
     }
 
     [RelayCommand]
@@ -155,6 +157,7 @@ public partial class BarcodeImageItem : ObservableRecipient
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
 
         WeakReferenceMessenger.Default.Send(new RequestShowMessage("SVG Text of QR Code copied to the clipboard", string.Empty, InfoBarSeverity.Success));
+        WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
     }
 
     private async Task SaveSingle(FileKind kindOfFile)
@@ -199,12 +202,16 @@ public partial class BarcodeImageItem : ObservableRecipient
                     return;
 
                 await CodeAsBitmap.SavePngToStorageFile(file);
+                WeakReferenceMessenger.Default.Send(new RequestShowMessage("PNG QR Code Saved!", string.Empty, InfoBarSeverity.Success));
+                WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
                 break;
             case FileKind.SVG:
                 await SaveCodeAsSvgFile(file,
                     ForegroundColor.ToSystemDrawingColor(),
                     BackgroundColor.ToSystemDrawingColor(),
                     ErrorCorrection);
+                WeakReferenceMessenger.Default.Send(new RequestShowMessage("PNG QR Code Saved!", string.Empty, InfoBarSeverity.Success));
+                WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
                 break;
             default:
                 break;

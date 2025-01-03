@@ -18,6 +18,7 @@ using Simple_QR_Code_Maker.Helpers;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Simple_QR_Code_Maker.Extensions;
+using CommunityToolkit.Mvvm.Messaging;
 
 
 namespace Simple_QR_Code_Maker.Controls;
@@ -59,7 +60,7 @@ public sealed partial class QrCodeImageControl : UserControl
             return;
         }
 
-        // ViewModel.SaveCurrentStateToHistory();
+        WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
         args.Data.SetStorageItems(new[] { file });
         args.Data.RequestedOperation = DataPackageOperation.Copy;
         deferral.Complete();
