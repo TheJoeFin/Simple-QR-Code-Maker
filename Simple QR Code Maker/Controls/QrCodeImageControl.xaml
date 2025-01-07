@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Simple_QR_Code_Maker.Controls.QrCodeImageControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Simple_QR_Code_Maker.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid
+        Margin="4"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center">
+        <Image
+            x:Name="QrCodeImage"
+            Width="285"
+            Height="285"
+            CanDrag="True"
+            DragStarting="QrCodeImage_DragStarting"
+            Source="{x:Bind Data.CodeAsBitmap,
+                            Mode=OneWay}"
+            ToolTipService.ToolTip="{x:Bind Data.CodeAsText,
+                                            Mode=OneWay}">
+            <Image.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem
+                        Command="{x:Bind Data.SaveCodePngContextCommand,
+                                         Mode=OneWay}"
+                        Icon="Save"
+                        Text="Save PNG..." />
+                    <MenuFlyoutItem
+                        Command="{x:Bind Data.CopyCodePngContextCommand,
+                                         Mode=OneWay}"
+                        Icon="Copy"
+                        Text="Copy PNG" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem
+                        Command="{x:Bind Data.SaveCodeSvgContextCommand,
+                                         Mode=OneWay}"
+                        Icon="Save"
+                        Text="Save SVG..." />
+                    <MenuFlyoutItem
+                        Command="{x:Bind Data.CopyCodeSvgContextCommand,
+                                         Mode=OneWay}"
+                        Icon="Copy"
+                        Text="Copy SVG" />
+                    <MenuFlyoutItem
+                        Command="{x:Bind Data.CopyCodeSvgTextContextCommand,
+                                         Mode=OneWay}"
+                        Icon="Copy"
+                        Text="Copy SVG as Text" />
+                </MenuFlyout>
+            </Image.ContextFlyout>
+        </Image>
+        <InfoBar
+            IsOpen="{x:Bind Data.UrlWarning,
+                            Mode=OneWay}"
+            Message="QR Code not a URL"
+            Severity="Warning"
+            ToolTipService.ToolTip="This warning can be disabled in settings" />
+    </Grid>
+</UserControl>

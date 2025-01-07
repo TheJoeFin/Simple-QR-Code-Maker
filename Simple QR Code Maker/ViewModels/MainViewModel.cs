@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -159,9 +160,30 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
         Clipboard.ContentChanged += Clipboard_ContentChanged;
+
+        WeakReferenceMessenger.Default.Register<RequestShowMessage>(this, OnRequestShowMessage);
+        WeakReferenceMessenger.Default.Register<SaveHistoryMessage>(this, OnSaveHistoryMessage);
     }
 
-    private void Clipboard_ContentChanged(object? sender, object e) => CheckCanPasteText();
+    private void OnSaveHistoryMessage(object recipient, SaveHistoryMessage message)
+    {
+        SaveCurrentStateToHistory();
+    }
+
+    private void OnRequestShowMessage(object recipient, RequestShowMessage rsm)
+    {
+        CodeInfoBarMessage = rsm.Message;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = rsm.Severity;
+        CodeInfoBarTitle = rsm.Title;
+
+        if (rsm.Severity == InfoBarSeverity.Success)
+        {
+            copyInfoBarTimer.Start();
+        }
+    }
+
+	private void Clipboard_ContentChanged(object? sender, object e) => CheckCanPasteText();
 
     private void CheckCanPasteText()
     {
@@ -231,6 +253,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 CodeAsBitmap = bitmap,
                 CodeAsText = textToUse,
                 IsAppShowingUrlWarnings = WarnWhenNotUrl,
+                ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
+                ForegroundColor = ForegroundColor,
+                BackgroundColor = BackgroundColor,
             };
 
             QrCodeBitmaps.Add(barcodeImageItem);
@@ -454,12 +479,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         SaveCurrentStateToHistory();
 
-        if (QrCodeBitmaps.Count == 1)
-        {
-            await SaveSingle(FileKind.PNG, QrCodeBitmaps.First());
-            return;
-        }
-
         await SaveAllFiles(FileKind.PNG);
 
         CodeInfoBarMessage = string.Empty;
@@ -479,12 +498,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         SaveCurrentStateToHistory();
 
-        if (QrCodeBitmaps.Count == 1)
-        {
-            await SaveSingle(FileKind.SVG, QrCodeBitmaps.First());
-            return;
-        }
-
         await SaveAllFiles(FileKind.SVG);
 
         CodeInfoBarMessage = string.Empty;
@@ -494,129 +507,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             CodeInfoBarTitle = "SVG QR Code saved!";
         else
             CodeInfoBarTitle = $"{QrCodeBitmaps.Count} SVG QR Codes saved!";
-    }
-
-    [RelayCommand]
-    private async Task SaveCodePngContext(object commandParameter)
-    {
-        if (commandParameter is not BarcodeImageItem imageItem)
-            return;
-
-        await SaveSingle(FileKind.PNG, imageItem);
-    }
-
-    [RelayCommand]
-    private async Task SaveCodeSvgContext(object commandParameter)
-    {
-        if (commandParameter is not BarcodeImageItem imageItem)
-            return;
-
-        await SaveSingle(FileKind.SVG, imageItem);
-    }
-
-    [RelayCommand]
-    private async Task CopyCodePngContext(object commandParameter)
-    {
-        if (commandParameter is not BarcodeImageItem imageItem || imageItem.CodeAsBitmap is null)
-            return;
-
-        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-        List<StorageFile> files = [];
-
-        string? imageNameFileName = $"{imageItem.CodeAsText.ToSafeFileName()}.png";
-        StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
-        _ = await imageItem.CodeAsBitmap.SavePngToStorageFile(file);
-
-        files.Add(file);
-
-        if (files.Count == 0)
-        {
-            CodeInfoBarMessage = "No QR Code to copy to the clipboard";
-            ShowCodeInfoBar = true;
-            CodeInfoBarSeverity = InfoBarSeverity.Error;
-            CodeInfoBarTitle = "Failed to copy QR Code to the clipboard";
-            return;
-        }
-
-        DataPackage dataPackage = new();
-        dataPackage.SetStorageItems(files);
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
-
-        CodeInfoBarMessage = string.Empty;
-        ShowCodeInfoBar = true;
-        CodeInfoBarSeverity = InfoBarSeverity.Success;
-        CodeInfoBarTitle = "PNG QR Code copied to the clipboard";
-
-        copyInfoBarTimer.Start();
-    }
-
-    [RelayCommand]
-    private async Task CopyCodeSvgContext(object commandParameter)
-    {
-        if (commandParameter is not BarcodeImageItem imageItem)
-            return;
-
-        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-        List<StorageFile> files = [];
-
-        string? imageNameFileName = $"{imageItem.CodeAsText.ToSafeFileName()}.svg";
-        StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
-
-        _ = await imageItem.SaveCodeAsSvgFile(file, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), SelectedOption.ErrorCorrectionLevel);
-
-        files.Add(file);
-
-        if (files.Count == 0)
-        {
-            CodeInfoBarMessage = "No QR Code to copy to the clipboard";
-            ShowCodeInfoBar = true;
-            CodeInfoBarSeverity = InfoBarSeverity.Error;
-            CodeInfoBarTitle = "Failed to copy QR Code to the clipboard";
-            return;
-        }
-
-        DataPackage dataPackage = new();
-        dataPackage.SetStorageItems(files);
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
-
-        CodeInfoBarMessage = string.Empty;
-        ShowCodeInfoBar = true;
-        CodeInfoBarSeverity = InfoBarSeverity.Success;
-        CodeInfoBarTitle = "SVG QR Code copied to the clipboard";
-
-        copyInfoBarTimer.Start();
-    }
-
-    [RelayCommand]
-    private void CopyCodeSvgTextContext(object commandParameter)
-    {
-        if (commandParameter is not BarcodeImageItem imageItem)
-            return;
-
-        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-
-        string? imageNameFileName = $"{imageItem.CodeAsText.ToSafeFileName()}.svg";
-        string svgAsText = imageItem.GetCodeAsSvgText(ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), SelectedOption.ErrorCorrectionLevel);
-
-        if (string.IsNullOrWhiteSpace(svgAsText))
-        {
-            CodeInfoBarMessage = "No QR Code to copy to the clipboard";
-            ShowCodeInfoBar = true;
-            CodeInfoBarSeverity = InfoBarSeverity.Error;
-            CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
-            return;
-        }
-
-        DataPackage dataPackage = new();
-        dataPackage.SetText(svgAsText);
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
-
-        CodeInfoBarMessage = string.Empty;
-        ShowCodeInfoBar = true;
-        CodeInfoBarSeverity = InfoBarSeverity.Success;
-        CodeInfoBarTitle = "SVG QR Code as Text copied to the clipboard";
-
-        copyInfoBarTimer.Start();
     }
 
     [RelayCommand]
@@ -630,42 +520,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             UrlText = stringToAdd;
 
         UrlText += $"\r{stringToAdd}";
-    }
-
-    private async Task SaveSingle(FileKind kindOfFile, BarcodeImageItem imageItem)
-    {
-        FileSavePicker savePicker = new()
-        {
-            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-        };
-
-        switch (kindOfFile)
-        {
-            case FileKind.None:
-                break;
-            case FileKind.PNG:
-                savePicker.FileTypeChoices.Add("PNG Image", [".png"]);
-                savePicker.DefaultFileExtension = ".png";
-                break;
-            case FileKind.SVG:
-                savePicker.FileTypeChoices.Add("SVG Image", [".svg"]);
-                savePicker.DefaultFileExtension = ".svg";
-                break;
-            default:
-                break;
-        }
-        savePicker.SuggestedFileName = imageItem.CodeAsText.ToSafeFileName();
-
-        Window saveWindow = new();
-        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
-        InitializeWithWindow.Initialize(savePicker, windowHandleSave);
-
-        StorageFile file = await savePicker.PickSaveFileAsync();
-
-        if (file is null || imageItem.CodeAsBitmap is null)
-            return;
-
-        await WriteImageToFile(imageItem, file, kindOfFile);
     }
 
     private async Task WriteImageToFile(BarcodeImageItem imageItem, StorageFile file, FileKind kindOfFile)
