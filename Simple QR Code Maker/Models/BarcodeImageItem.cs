@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
+using System.Globalization;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -35,6 +36,10 @@ public partial class BarcodeImageItem : ObservableRecipient
     public Windows.UI.Color BackgroundColor { get; set; }
 
     public QRCode QRCodeDetails => Encoder.encode(CodeAsText, ErrorCorrection);
+
+    public string ToolTipText => $"Smallest recommended size {SmallestSide}, {CodeAsText}";
+
+    public string SmallestSide => BarcodeHelpers.SmallestSideWithUnits(32, QRCodeDetails.Version.DimensionForVersion);
 
     // The contrast ratio between the foreground and background colors.
     // A value of 1:1 is the minimum, and 21:1 is the maximum.

@@ -12,6 +12,10 @@
         Margin="4"
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <Image
             x:Name="QrCodeImage"
             Width="285"
@@ -20,7 +24,7 @@
             DragStarting="QrCodeImage_DragStarting"
             Source="{x:Bind Data.CodeAsBitmap,
                             Mode=OneWay}"
-            ToolTipService.ToolTip="{x:Bind Data.CodeAsText,
+            ToolTipService.ToolTip="{x:Bind Data.ToolTipText,
                                             Mode=OneWay}">
             <Image.ContextFlyout>
                 <MenuFlyout>
@@ -59,5 +63,16 @@
             Message="QR Code not a URL"
             Severity="Warning"
             ToolTipService.ToolTip="This warning can be disabled in settings" />
+        <StackPanel
+            Grid.Row="1"
+            Margin="0"
+            Orientation="Horizontal"
+            Spacing="4">
+            <HyperlinkButton ToolTipService.ToolTip="How was this calculated?">
+                <local:RulerIcon />
+            </HyperlinkButton>
+            <TextBlock VerticalAlignment="Center" Text="Minimum square size: " />
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind Data.SmallestSide, Mode=OneWay}" />
+        </StackPanel>
     </Grid>
 </UserControl>
