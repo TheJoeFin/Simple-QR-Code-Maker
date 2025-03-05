@@ -258,6 +258,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 BackgroundColor = BackgroundColor,
             };
 
+            double ratio = barcodeImageItem.ColorContrastRatio;
+            System.Diagnostics.Debug.WriteLine($"Contrast ratio: {ratio}");
+
             QrCodeBitmaps.Add(barcodeImageItem);
             ShowCodeInfoBar = false;
             CodeInfoBarSeverity = InfoBarSeverity.Informational;

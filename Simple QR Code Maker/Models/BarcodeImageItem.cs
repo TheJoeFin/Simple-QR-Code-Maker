@@ -34,6 +34,14 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public Windows.UI.Color BackgroundColor { get; set; }
 
+    public QRCode QRCodeDetails => Encoder.encode(CodeAsText, ErrorCorrection);
+
+    // The contrast ratio between the foreground and background colors.
+    // A value of 1:1 is the minimum, and 21:1 is the maximum.
+    // The higher the value, the better the contrast.
+    // anything less than 2 will be illegible for most applications
+    public double ColorContrastRatio => ColorHelpers.GetContrastRatio(ForegroundColor, BackgroundColor);
+
     public async Task<bool> SaveCodeAsPngFile(StorageFile file)
     {
         if (CodeAsBitmap is null)
@@ -141,9 +149,6 @@ public partial class BarcodeImageItem : ObservableRecipient
     [RelayCommand]
     private void CopyCodeSvgTextContext()
     {
-        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-
-        string? imageNameFileName = $"{CodeAsText.ToSafeFileName()}.svg";
         string svgAsText = GetCodeAsSvgText(ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), ErrorCorrection);
 
         if (string.IsNullOrWhiteSpace(svgAsText))
