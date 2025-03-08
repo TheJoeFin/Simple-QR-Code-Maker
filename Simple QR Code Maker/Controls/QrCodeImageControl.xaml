@@ -67,12 +67,28 @@
             Grid.Row="1"
             Margin="0"
             Orientation="Horizontal"
-            Spacing="4">
-            <HyperlinkButton ToolTipService.ToolTip="How was this calculated?">
+            Spacing="4"
+            Visibility="{x:Bind Data.SizeTextVisible,
+                                Mode=TwoWay}">
+            <HyperlinkButton Command="{x:Bind Data.FaqButtonCommand, Mode=OneWay}" ToolTipService.ToolTip="How was this calculated?">
                 <local:RulerIcon />
             </HyperlinkButton>
             <TextBlock VerticalAlignment="Center" Text="Minimum size: " />
             <TextBlock VerticalAlignment="Center" Text="{x:Bind Data.SmallestSide, Mode=OneWay}" />
+            <StackPanel.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem
+                        Command="{x:Bind Data.CopySizeTextCommand,
+                                         Mode=OneWay}"
+                        Icon="Copy"
+                        Text="Copy Size" />
+                    <MenuFlyoutItem Command="{x:Bind Data.HideSizeTextCommand, Mode=OneWay}" Text="Hide min. size text">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xED1A;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                </MenuFlyout>
+            </StackPanel.ContextFlyout>
         </StackPanel>
     </Grid>
 </UserControl>

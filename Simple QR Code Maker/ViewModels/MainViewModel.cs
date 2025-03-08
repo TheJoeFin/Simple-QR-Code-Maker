@@ -52,6 +52,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private ErrorCorrectionOptions selectedOption = new("Medium 15%", ErrorCorrectionLevel.M);
 
     [ObservableProperty]
+    private bool isFaqPaneOpen = false;
+
+    [ObservableProperty]
     private bool isHistoryPaneOpen = false;
 
     [ObservableProperty]
@@ -163,6 +166,42 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         WeakReferenceMessenger.Default.Register<RequestShowMessage>(this, OnRequestShowMessage);
         WeakReferenceMessenger.Default.Register<SaveHistoryMessage>(this, OnSaveHistoryMessage);
+        WeakReferenceMessenger.Default.Register<RequestPaneChange>(this, OnRequestPaneChange);
+    }
+
+    private void OnRequestPaneChange(object recipient, RequestPaneChange message)
+    {
+        switch (message.Pane)
+        {
+            case MainViewPanes.History:
+                switch (message.RequestState)
+                {
+                    case PaneState.Open:
+                        IsHistoryPaneOpen = true;
+                        break;
+                    case PaneState.Close:
+                        IsFaqPaneOpen = false;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case MainViewPanes.Faq:
+                switch (message.RequestState)
+                {
+                    case PaneState.Open:
+                        IsFaqPaneOpen = true;
+                        break;
+                    case PaneState.Close:
+                        IsFaqPaneOpen = false;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private void OnSaveHistoryMessage(object recipient, SaveHistoryMessage message)
@@ -448,6 +487,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         ShowCodeInfoBar = false;
         CodeInfoBarSeverity = InfoBarSeverity.Informational;
         CodeInfoBarTitle = "Copy infoBar title";
+    }
+
+    [RelayCommand]
+    private void ToggleFaqPaneOpen()
+    {
+        IsFaqPaneOpen = !IsFaqPaneOpen;
     }
 
     [RelayCommand]

@@ -39,6 +39,9 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public string ToolTipText => $"Smallest recommended size {SmallestSide}, {CodeAsText}";
 
+    [ObservableProperty]
+    public Visibility sizeTextVisible = Visibility.Visible;
+
     public string SmallestSide => BarcodeHelpers.SmallestSideWithUnits(32, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor);
 
     // The contrast ratio between the foreground and background colors.
@@ -84,6 +87,27 @@ public partial class BarcodeImageItem : ObservableRecipient
         {
             return string.Empty;
         }
+    }
+
+    [RelayCommand]
+    private void FaqButton()
+    {
+        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open));
+    }
+
+    [RelayCommand]
+    private void CopySizeText()
+    {
+        DataPackage dataPackage = new();
+        dataPackage.SetText(SmallestSide);
+        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+        WeakReferenceMessenger.Default.Send(new RequestShowMessage("QR Code size copied to the clipboard", string.Empty, InfoBarSeverity.Success));
+    }
+
+    [RelayCommand]
+    private void HideSizeText()
+    {
+        SizeTextVisible = Visibility.Collapsed;
     }
 
     [RelayCommand]
