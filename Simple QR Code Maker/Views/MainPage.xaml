@@ -127,12 +127,7 @@
                                         </Button.Flyout>
                                         <Button.Content>
                                             <Viewbox Width="18" Height="18">
-                                                <FontIcon
-                                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                    Foreground="{x:Bind ForegroundColorPicker.Color,
-                                                                        Mode=OneWay,
-                                                                        Converter={StaticResource ColorToBrush}}"
-                                                    Glyph="&#xED14;" />
+                                                <controls:QrCodeIcon Foreground="{x:Bind ForegroundColorPicker.Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
                                             </Viewbox>
                                         </Button.Content>
                                     </Button>
@@ -292,7 +287,7 @@
                                 Command="{x:Bind ViewModel.ToggleHistoryPaneOpenCommand}"
                                 IsCompact="True"
                                 ToolTipService.ToolTip="History of previously generated QR Codes">
-                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
+                                <controls:HistoryIcon />
                             </AppBarButton>
                             <AppBarButton
                                 Command="{x:Bind ViewModel.ShareAppCommand}"

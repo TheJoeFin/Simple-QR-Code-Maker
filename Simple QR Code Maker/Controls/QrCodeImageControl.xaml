@@ -84,7 +84,7 @@
                         Text="Copy Size" />
                     <MenuFlyoutItem Command="{x:Bind Data.HideSizeTextCommand, Mode=OneWay}" Text="Hide min. size text">
                         <MenuFlyoutItem.Icon>
-                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xED1A;" />
+                            <local:HideIcon />
                         </MenuFlyoutItem.Icon>
                     </MenuFlyoutItem>
                 </MenuFlyout>
