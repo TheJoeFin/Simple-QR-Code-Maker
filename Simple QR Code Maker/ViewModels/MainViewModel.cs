@@ -66,6 +66,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private MultiLineCodeMode MultiLineCodeMode = MultiLineCodeMode.OneLineOneCode;
     private string BaseText = string.Empty;
     private bool WarnWhenNotUrl = true;
+    private bool HideMinimumSizeText = false;
 
     [ObservableProperty]
     private bool canPasteText = false;
@@ -292,6 +293,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 CodeAsBitmap = bitmap,
                 CodeAsText = textToUse,
                 IsAppShowingUrlWarnings = WarnWhenNotUrl,
+                SizeTextVisible = HideMinimumSizeText ? Visibility.Collapsed : Visibility.Visible,
                 ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
                 ForegroundColor = ForegroundColor,
                 BackgroundColor = BackgroundColor,
@@ -632,6 +634,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
         UrlText = BaseText;
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
+        HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
     }
 
     public void OnNavigatedFrom()
