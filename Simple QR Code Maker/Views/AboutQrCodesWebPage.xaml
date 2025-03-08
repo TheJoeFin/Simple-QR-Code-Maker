@@ -17,7 +17,8 @@
                 <Button
                     Margin="{StaticResource XSmallLeftTopRightBottomMargin}"
                     Padding="{StaticResource XXSmallLeftTopRightBottomMargin}"
-                    Command="{x:Bind ViewModel.GoHomeCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.GoHomeCommand,
+                                     Mode=OneWay}"
                     ToolTipService.ToolTip="Back to your Simple QR Code Maker Settings">
                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
                 </Button>
@@ -25,14 +26,16 @@
                     x:Uid="BrowserBackButton"
                     Margin="{StaticResource XSmallLeftTopRightBottomMargin}"
                     Padding="{StaticResource XXSmallLeftTopRightBottomMargin}"
-                    Command="{x:Bind ViewModel.BrowserBackCommand, Mode=OneWay}">
+                    Command="{x:Bind ViewModel.BrowserBackCommand,
+                                     Mode=OneWay}">
                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72B;" />
                 </Button>
                 <Button
                     x:Uid="BrowserForwardButton"
                     Margin="{StaticResource XSmallLeftTopRightBottomMargin}"
                     Padding="{StaticResource XXSmallLeftTopRightBottomMargin}"
-                    Command="{x:Bind ViewModel.BrowserForwardCommand, Mode=OneWay}">
+                    Command="{x:Bind ViewModel.BrowserForwardCommand,
+                                     Mode=OneWay}">
                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72A;" />
                 </Button>
             </StackPanel>
@@ -57,13 +60,15 @@
         <WebView2
             x:Name="WebView"
             Grid.Row="1"
-            Source="{x:Bind ViewModel.Source, Mode=OneWay}" />
+            Source="{x:Bind ViewModel.Source,
+                            Mode=OneWay}" />
 
         <StackPanel
             Grid.Row="1"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}">
+            Visibility="{x:Bind ViewModel.IsLoading,
+                                Mode=OneWay}">
             <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
             <TextBlock x:Uid="WebView_Loading" />
         </StackPanel>
@@ -72,7 +77,8 @@
             Grid.Row="1"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Visibility="{x:Bind ViewModel.HasFailures, Mode=OneWay}">
+            Visibility="{x:Bind ViewModel.HasFailures,
+                                Mode=OneWay}">
             <TextBlock
                 x:Uid="WebView_FailedMessage"
                 HorizontalAlignment="Center"

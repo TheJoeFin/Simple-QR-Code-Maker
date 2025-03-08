@@ -8,10 +8,13 @@ public class RequestPaneChange
 
     public PaneState RequestState { get; set; }
 
-    public RequestPaneChange(MainViewPanes pane, PaneState requestState)
+    public string SearchText { get; set; }
+
+    public RequestPaneChange(MainViewPanes pane, PaneState requestState, string searchText = "")
     {
         Pane = pane;
         RequestState = requestState;
+        SearchText = searchText;
     }
 }
 

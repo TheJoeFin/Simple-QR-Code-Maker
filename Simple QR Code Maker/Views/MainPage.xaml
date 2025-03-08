@@ -30,9 +30,7 @@
         OpenPaneLength="500"
         PanePlacement="Left">
         <SplitView.Pane>
-            <TextBlock>
-                Hello From FAQs pane
-            </TextBlock>
+            <controls:FaqsContent />
         </SplitView.Pane>
         <SplitView.Content>
             <SplitView
@@ -273,7 +271,7 @@
                             <AppBarButton
                                 Command="{x:Bind ViewModel.ToggleFaqPaneOpenCommand}"
                                 IsCompact="True"
-                                ToolTipService.ToolTip="FAQs about QR Codes">
+                                ToolTipService.ToolTip="Frequently Asked Questions about QR Codes">
                                 <SymbolIcon Symbol="Library" />
                             </AppBarButton>
                         </StackPanel>

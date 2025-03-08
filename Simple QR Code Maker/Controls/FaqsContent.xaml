@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Simple_QR_Code_Maker.Controls.FaqsContent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Simple_QR_Code_Maker.Controls"
+    xmlns:m="using:Simple_QR_Code_Maker.Models"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <StackPanel Padding="12,20,20,80" Orientation="Vertical">
+            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Frequently Asked Questions" />
+            <AutoSuggestBox
+                Margin="20,0"
+                PlaceholderText="Search for content in the FAQs..."
+                QueryIcon="Find"
+                Text="{x:Bind ViewModel.SearchText,
+                              Mode=TwoWay}" />
+            <ItemsRepeater Margin="20,0" ItemsSource="{x:Bind ViewModel.FaqItems, Mode=OneWay}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="m:FaqItem">
+                        <StackPanel Padding="6,12" Orientation="Vertical">
+                            <TextBlock
+                                IsTextSelectionEnabled="True"
+                                Style="{StaticResource SubtitleTextBlockStyle}"
+                                Text="{x:Bind Title,
+                                              Mode=OneWay}"
+                                TextWrapping="WrapWholeWords" />
+                            <TextBlock
+                                IsTextSelectionEnabled="True"
+                                Text="{x:Bind Content,
+                                              Mode=OneWay}"
+                                TextWrapping="WrapWholeWords" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
