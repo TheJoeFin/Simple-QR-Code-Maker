@@ -71,7 +71,7 @@
             <HyperlinkButton ToolTipService.ToolTip="How was this calculated?">
                 <local:RulerIcon />
             </HyperlinkButton>
-            <TextBlock VerticalAlignment="Center" Text="Minimum square size: " />
+            <TextBlock VerticalAlignment="Center" Text="Minimum size: " />
             <TextBlock VerticalAlignment="Center" Text="{x:Bind Data.SmallestSide, Mode=OneWay}" />
         </StackPanel>
     </Grid>

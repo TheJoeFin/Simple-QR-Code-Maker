@@ -64,10 +64,32 @@ public static class BarcodeHelpers
         return codeSize;
     }
 
-    public static string SmallestSideWithUnits(double distance, int numberOfBlocks)
+    public static double ContrastRatioLossFrac(double constrastRatio)
+    {
+        double x1 = 21;
+        double y1 = 1;
+        double x2 = 2.5;
+        double y2 = 0.8;
+
+        double slope = (y2 - y1) / (x2 - x1);
+        double yIntercept = y1 - slope * x1;
+
+        return slope * constrastRatio + yIntercept;
+    }
+
+    public static string SmallestSideWithUnits(double distance, int numberOfBlocks, Windows.UI.Color foreground, Windows.UI.Color background)
     {
         bool isMetric = RegionInfo.CurrentRegion.IsMetric;
         double smallestSide = SmallestCodeSide(distance, numberOfBlocks);
+
+        double contrastRatio = ColorHelpers.GetContrastRatio(foreground, background);
+
+        if (contrastRatio < 2.5)
+            return "Color contrast too low";
+
+        double fractionalLoss = ContrastRatioLossFrac(contrastRatio);
+
+        smallestSide /= fractionalLoss;
 
         if (!isMetric)
             return $"{smallestSide:F2} x {smallestSide:F2} in";

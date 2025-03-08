@@ -39,7 +39,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public string ToolTipText => $"Smallest recommended size {SmallestSide}, {CodeAsText}";
 
-    public string SmallestSide => BarcodeHelpers.SmallestSideWithUnits(32, QRCodeDetails.Version.DimensionForVersion);
+    public string SmallestSide => BarcodeHelpers.SmallestSideWithUnits(32, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor);
 
     // The contrast ratio between the foreground and background colors.
     // A value of 1:1 is the minimum, and 21:1 is the maximum.
