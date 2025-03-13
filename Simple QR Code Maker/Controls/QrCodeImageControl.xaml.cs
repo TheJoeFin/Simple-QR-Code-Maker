@@ -1,25 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Simple_QR_Code_Maker.Models;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
+using Simple_QR_Code_Maker.Models;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
-using Simple_QR_Code_Maker.Extensions;
-using CommunityToolkit.Mvvm.Messaging;
-
 
 namespace Simple_QR_Code_Maker.Controls;
 
@@ -34,7 +21,6 @@ public sealed partial class QrCodeImageControl : UserControl
     public static readonly DependencyProperty DataProperty =
         DependencyProperty.Register("Data", typeof(BarcodeImageItem), typeof(QrCodeImageControl), new PropertyMetadata(null));
 
-
     public QrCodeImageControl()
     {
         InitializeComponent();
@@ -47,7 +33,7 @@ public sealed partial class QrCodeImageControl : UserControl
 
         DragOperationDeferral deferral = args.GetDeferral();
         StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-        string? imageNameFileName = $"{ToolTipService.GetToolTip(image)}" ?? "QR_Code";
+        string? imageNameFileName = $"{Data.CodeAsText}" ?? "QR_Code";
         // remove characters that are not allowed in file names
         imageNameFileName = imageNameFileName.ToSafeFileName();
         imageNameFileName += ".png";
