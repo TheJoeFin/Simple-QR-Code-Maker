@@ -58,11 +58,23 @@ public partial class FaqsContentViewModel : ObservableRecipient
         }
     }
 
-    private readonly DispatcherTimer _searchTimer = new();
+    private DispatcherTimer _searchTimer = new();
 
     partial void OnSearchTextChanged(string value)
     {
-        _searchTimer.Stop();
-        _searchTimer.Start();
+        try
+        {
+            _searchTimer.Stop();
+            _searchTimer.Start();
+
+        }
+        catch (Exception)
+        {
+            _searchTimer = new();
+            _searchTimer.Start();
+#if DEBUG
+            throw;
+#endif
+        }
     }
 }
