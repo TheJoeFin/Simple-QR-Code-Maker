@@ -24,327 +24,348 @@
 
     <SplitView
         DisplayMode="Overlay"
-        IsPaneOpen="{x:Bind ViewModel.IsHistoryPaneOpen,
+        IsPaneOpen="{x:Bind ViewModel.IsFaqPaneOpen,
                             Mode=TwoWay,
                             UpdateSourceTrigger=PropertyChanged}"
-        OpenPaneLength="400"
-        PanePlacement="Right">
+        OpenPaneLength="500"
+        PanePlacement="Left">
+        <SplitView.Pane>
+            <controls:FaqsContent />
+        </SplitView.Pane>
         <SplitView.Content>
-            <Grid>
-                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                    <StackPanel
-                        Margin="20"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Orientation="Vertical"
-                        Spacing="12">
-                        <StackPanel
-                            HorizontalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="6">
-                            <TextBox
-                                x:Name="UrlTextBox"
-                                MinWidth="258"
-                                MaxWidth="800"
-                                AcceptsReturn="True"
-                                PlaceholderText="{x:Bind ViewModel.PlaceholderText,
-                                                         Mode=OneWay}"
-                                ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                Text="{x:Bind ViewModel.UrlText,
-                                              Mode=TwoWay,
-                                              UpdateSourceTrigger=PropertyChanged}"
-                                TextChanged="UrlTextBox_TextChanged"
-                                TextWrapping="NoWrap" />
-                            <Grid>
-                                <Button
-                                    Width="36"
-                                    Height="36"
-                                    Margin="0,0,0,-1"
-                                    Padding="0"
-                                    VerticalAlignment="Bottom"
-                                    Command="{x:Bind ViewModel.AddNewLineCommand}"
-                                    ToolTipService.ToolTip="Add a return and start making another QR Code"
-                                    Visibility="{x:Bind ViewModel.CanSaveImage,
-                                                        Converter={StaticResource BoolToVisibility},
-                                                        Mode=OneWay}">
-                                    <Viewbox Width="16" Height="16">
-                                        <SymbolIcon Symbol="Add" />
-                                    </Viewbox>
-                                </Button>
-                                <Button
-                                    Width="36"
-                                    Height="36"
-                                    Margin="0,0,0,-1"
-                                    Padding="0"
-                                    VerticalAlignment="Bottom"
-                                    Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
-                                    IsEnabled="{x:Bind ViewModel.CanPasteText,
-                                                       Mode=OneWay}"
-                                    ToolTipService.ToolTip="Paste text from clipboard"
-                                    Visibility="{x:Bind ViewModel.CanSaveImage,
-                                                        Converter={StaticResource BoolToVisibility},
-                                                        ConverterParameter=True,
-                                                        Mode=OneWay}">
-                                    <Viewbox Width="16" Height="16">
-                                        <SymbolIcon Symbol="Paste" />
-                                    </Viewbox>
-                                </Button>
-                            </Grid>
-                        </StackPanel>
-
-                        <StackPanel
-                            x:Name="QrCodeOptions"
-                            HorizontalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="12"
-                            Visibility="{x:Bind ViewModel.CanSaveImage,
-                                                Mode=OneWay,
-                                                Converter={StaticResource BoolToVisibility}}">
-                            <Button Width="68" ToolTipService.ToolTip="Code Color">
-                                <Button.Flyout>
-                                    <Flyout>
-                                        <ColorPicker
-                                            x:Name="ForegroundColorPicker"
-                                            ColorSpectrumShape="Ring"
-                                            IsAlphaEnabled="False"
-                                            IsMoreButtonVisible="True"
-                                            Color="{x:Bind ViewModel.ForegroundColor,
-                                                           Mode=TwoWay}" />
-                                    </Flyout>
-                                </Button.Flyout>
-                                <Button.Content>
-                                    <Viewbox Width="18" Height="18">
-                                        <FontIcon
-                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                            Foreground="{x:Bind ForegroundColorPicker.Color,
-                                                                Mode=OneWay,
-                                                                Converter={StaticResource ColorToBrush}}"
-                                            Glyph="&#xED14;" />
-                                    </Viewbox>
-                                </Button.Content>
-                            </Button>
-                            <Button Width="68" ToolTipService.ToolTip="Background Color">
-                                <Button.Flyout>
-                                    <Flyout>
-                                        <ColorPicker
-                                            x:Name="BackgroundColorPicker"
-                                            ColorSpectrumShape="Ring"
-                                            IsAlphaEnabled="False"
-                                            IsMoreButtonVisible="True"
-                                            Color="{x:Bind ViewModel.BackgroundColor,
-                                                           Mode=TwoWay}" />
-                                    </Flyout>
-                                </Button.Flyout>
-                                <Button.Content>
-                                    <Rectangle
-                                        Width="16"
-                                        Height="16"
-                                        Fill="{x:Bind BackgroundColorPicker.Color,
-                                                      Mode=OneWay,
-                                                      Converter={StaticResource ColorToBrush}}" />
-                                </Button.Content>
-                            </Button>
-                            <ComboBox
-                                x:Name="ErrorCorrectionComboBox"
-                                Width="136"
-                                ItemsSource="{x:Bind ViewModel.ErrorCorrectionLevels}"
-                                SelectedItem="{x:Bind ViewModel.SelectedOption,
+            <SplitView
+                DisplayMode="Overlay"
+                IsPaneOpen="{x:Bind ViewModel.IsHistoryPaneOpen,
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged}"
+                OpenPaneLength="400"
+                PanePlacement="Right">
+                <SplitView.Content>
+                    <Grid>
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                            <StackPanel
+                                Margin="20"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Orientation="Vertical"
+                                Spacing="12">
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="6">
+                                    <TextBox
+                                        x:Name="UrlTextBox"
+                                        MinWidth="258"
+                                        MaxWidth="800"
+                                        AcceptsReturn="True"
+                                        PlaceholderText="{x:Bind ViewModel.PlaceholderText,
+                                                                 Mode=OneWay}"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                        Text="{x:Bind ViewModel.UrlText,
                                                       Mode=TwoWay,
                                                       UpdateSourceTrigger=PropertyChanged}"
-                                ToolTipService.ToolTip="Level of Error Correction">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="models:ErrorCorrectionOptions">
-                                        <TextBlock Text="{x:Bind Description}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </StackPanel>
+                                        TextChanged="UrlTextBox_TextChanged"
+                                        TextWrapping="NoWrap" />
+                                    <Grid>
+                                        <Button
+                                            Width="36"
+                                            Height="36"
+                                            Margin="0,0,0,-1"
+                                            Padding="0"
+                                            VerticalAlignment="Bottom"
+                                            Command="{x:Bind ViewModel.AddNewLineCommand}"
+                                            ToolTipService.ToolTip="Add a return and start making another QR Code"
+                                            Visibility="{x:Bind ViewModel.CanSaveImage,
+                                                                Converter={StaticResource BoolToVisibility},
+                                                                Mode=OneWay}">
+                                            <Viewbox Width="16" Height="16">
+                                                <SymbolIcon Symbol="Add" />
+                                            </Viewbox>
+                                        </Button>
+                                        <Button
+                                            Width="36"
+                                            Height="36"
+                                            Margin="0,0,0,-1"
+                                            Padding="0"
+                                            VerticalAlignment="Bottom"
+                                            Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
+                                            IsEnabled="{x:Bind ViewModel.CanPasteText,
+                                                               Mode=OneWay}"
+                                            ToolTipService.ToolTip="Paste text from clipboard"
+                                            Visibility="{x:Bind ViewModel.CanSaveImage,
+                                                                Converter={StaticResource BoolToVisibility},
+                                                                ConverterParameter=True,
+                                                                Mode=OneWay}">
+                                            <Viewbox Width="16" Height="16">
+                                                <SymbolIcon Symbol="Paste" />
+                                            </Viewbox>
+                                        </Button>
+                                    </Grid>
+                                </StackPanel>
 
-                        <Border
-                            MinWidth="300"
-                            MinHeight="300"
-                            HorizontalAlignment="Center"
-                            Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
-                            CornerRadius="4">
-                            <GridView
-                                x:Name="ListOfCodes"
-                                Margin="0"
-                                Padding="2,2,0,0"
-                                ItemsSource="{x:Bind ViewModel.QrCodeBitmaps,
-                                                     Mode=OneWay}"
-                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                <GridView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:BarcodeImageItem">
-                                        <controls:QrCodeImageControl Data="{x:Bind}" />
-                                    </DataTemplate>
-                                </GridView.ItemTemplate>
-                            </GridView>
-                        </Border>
+                                <StackPanel
+                                    x:Name="QrCodeOptions"
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="12"
+                                    Visibility="{x:Bind ViewModel.CanSaveImage,
+                                                        Mode=OneWay,
+                                                        Converter={StaticResource BoolToVisibility}}">
+                                    <Button Width="68" ToolTipService.ToolTip="Code Color">
+                                        <Button.Flyout>
+                                            <Flyout>
+                                                <ColorPicker
+                                                    x:Name="ForegroundColorPicker"
+                                                    ColorSpectrumShape="Ring"
+                                                    IsAlphaEnabled="False"
+                                                    IsMoreButtonVisible="True"
+                                                    Color="{x:Bind ViewModel.ForegroundColor,
+                                                                   Mode=TwoWay}" />
+                                            </Flyout>
+                                        </Button.Flyout>
+                                        <Button.Content>
+                                            <Viewbox Width="18" Height="18">
+                                                <controls:QrCodeIcon Foreground="{x:Bind ForegroundColorPicker.Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
+                                            </Viewbox>
+                                        </Button.Content>
+                                    </Button>
+                                    <Button Width="68" ToolTipService.ToolTip="Background Color">
+                                        <Button.Flyout>
+                                            <Flyout>
+                                                <ColorPicker
+                                                    x:Name="BackgroundColorPicker"
+                                                    ColorSpectrumShape="Ring"
+                                                    IsAlphaEnabled="False"
+                                                    IsMoreButtonVisible="True"
+                                                    Color="{x:Bind ViewModel.BackgroundColor,
+                                                                   Mode=TwoWay}" />
+                                            </Flyout>
+                                        </Button.Flyout>
+                                        <Button.Content>
+                                            <Rectangle
+                                                Width="16"
+                                                Height="16"
+                                                Fill="{x:Bind BackgroundColorPicker.Color,
+                                                              Mode=OneWay,
+                                                              Converter={StaticResource ColorToBrush}}" />
+                                        </Button.Content>
+                                    </Button>
+                                    <ComboBox
+                                        x:Name="ErrorCorrectionComboBox"
+                                        Width="136"
+                                        ItemsSource="{x:Bind ViewModel.ErrorCorrectionLevels}"
+                                        SelectedItem="{x:Bind ViewModel.SelectedOption,
+                                                              Mode=TwoWay,
+                                                              UpdateSourceTrigger=PropertyChanged}"
+                                        ToolTipService.ToolTip="Level of Error Correction">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate x:DataType="models:ErrorCorrectionOptions">
+                                                <TextBlock Text="{x:Bind Description}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <Border
+                                    MinWidth="300"
+                                    MinHeight="300"
+                                    HorizontalAlignment="Center"
+                                    Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
+                                    CornerRadius="4">
+                                    <GridView
+                                        x:Name="ListOfCodes"
+                                        Margin="0"
+                                        Padding="2,2,0,0"
+                                        ItemsSource="{x:Bind ViewModel.QrCodeBitmaps,
+                                                             Mode=OneWay}"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                        ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                        <GridView.ItemTemplate>
+                                            <DataTemplate x:DataType="models:BarcodeImageItem">
+                                                <controls:QrCodeImageControl Data="{x:Bind}" />
+                                            </DataTemplate>
+                                        </GridView.ItemTemplate>
+                                    </GridView>
+                                </Border>
+
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="10">
+                                    <TextBlock VerticalAlignment="Center" Text="Save as" />
+                                    <SplitButton
+                                        x:Name="SavePngButton"
+                                        Command="{x:Bind ViewModel.SavePngCommand}"
+                                        Content="PNG"
+                                        IsEnabled="{x:Bind ViewModel.CanSaveImage,
+                                                           Mode=OneWay}"
+                                        ToolTipService.ToolTip="Save code(s) as PNG files">
+                                        <SplitButton.Flyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind ViewModel.SavePngCommand}"
+                                                    Icon="Save"
+                                                    Text="Save all to files (default)" />
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind ViewModel.CopyPngToClipboardCommand}"
+                                                    Icon="Copy"
+                                                    Text="Copy all to clipboard" />
+                                            </MenuFlyout>
+                                        </SplitButton.Flyout>
+                                    </SplitButton>
+                                    <SplitButton
+                                        x:Name="SaveSvgButton"
+                                        Command="{x:Bind ViewModel.SaveSvgCommand}"
+                                        Content="SVG"
+                                        IsEnabled="{x:Bind ViewModel.CanSaveImage,
+                                                           Mode=OneWay}"
+                                        ToolTipService.ToolTip="Save code(s) as SVG files">
+                                        <SplitButton.Flyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind ViewModel.SaveSvgCommand}"
+                                                    Icon="Save"
+                                                    Text="Save all to files (default)" />
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind ViewModel.CopySvgToClipboardCommand}"
+                                                    Icon="Copy"
+                                                    Text="Copy all to clipboard" />
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind ViewModel.CopySvgTextToClipboardCommand}"
+                                                    Icon="Copy"
+                                                    Text="Copy all as text to clipboard" />
+                                            </MenuFlyout>
+                                        </SplitButton.Flyout>
+                                    </SplitButton>
+                                </StackPanel>
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="10">
+                                    <controls:IconAndTextButton
+                                        Command="{x:Bind ViewModel.OpenFileCommand}"
+                                        Text="Read Codes"
+                                        ToolTipService.ToolTip="Open an image to read and extract text from any codes">
+                                        <controls:IconAndTextButton.Icon>
+                                            <controls:ScanIcon />
+                                        </controls:IconAndTextButton.Icon>
+                                    </controls:IconAndTextButton>
+                                    <controls:IconAndTextButton
+                                        Command="{x:Bind ViewModel.GoToSettingsCommand}"
+                                        Text="Settings"
+                                        ToolTipService.ToolTip="Simple QR Code Maker Settings">
+                                        <controls:IconAndTextButton.Icon>
+                                            <SymbolIcon Symbol="Setting" />
+                                        </controls:IconAndTextButton.Icon>
+                                    </controls:IconAndTextButton>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </ScrollViewer>
 
                         <StackPanel
-                            HorizontalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="10">
-                            <TextBlock VerticalAlignment="Center" Text="Save as" />
-                            <SplitButton
-                                x:Name="SavePngButton"
-                                Command="{x:Bind ViewModel.SavePngCommand}"
-                                Content="PNG"
-                                IsEnabled="{x:Bind ViewModel.CanSaveImage,
-                                                   Mode=OneWay}"
-                                ToolTipService.ToolTip="Save code(s) as PNG files">
-                                <SplitButton.Flyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem
-                                            Command="{x:Bind ViewModel.SavePngCommand}"
-                                            Icon="Save"
-                                            Text="Save all to files (default)" />
-                                        <MenuFlyoutItem
-                                            Command="{x:Bind ViewModel.CopyPngToClipboardCommand}"
-                                            Icon="Copy"
-                                            Text="Copy all to clipboard" />
-                                    </MenuFlyout>
-                                </SplitButton.Flyout>
-                            </SplitButton>
-                            <SplitButton
-                                x:Name="SaveSvgButton"
-                                Command="{x:Bind ViewModel.SaveSvgCommand}"
-                                Content="SVG"
-                                IsEnabled="{x:Bind ViewModel.CanSaveImage,
-                                                   Mode=OneWay}"
-                                ToolTipService.ToolTip="Save code(s) as SVG files">
-                                <SplitButton.Flyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem
-                                            Command="{x:Bind ViewModel.SaveSvgCommand}"
-                                            Icon="Save"
-                                            Text="Save all to files (default)" />
-                                        <MenuFlyoutItem
-                                            Command="{x:Bind ViewModel.CopySvgToClipboardCommand}"
-                                            Icon="Copy"
-                                            Text="Copy all to clipboard" />
-                                        <MenuFlyoutItem
-                                            Command="{x:Bind ViewModel.CopySvgTextToClipboardCommand}"
-                                            Icon="Copy"
-                                            Text="Copy all as text to clipboard" />
-                                    </MenuFlyout>
-                                </SplitButton.Flyout>
-                            </SplitButton>
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Orientation="Vertical"
+                            Spacing="-20">
+                            <AppBarButton
+                                Command="{x:Bind ViewModel.ToggleFaqPaneOpenCommand}"
+                                IsCompact="True"
+                                ToolTipService.ToolTip="Frequently Asked Questions about QR Codes">
+                                <SymbolIcon Symbol="Library" />
+                            </AppBarButton>
                         </StackPanel>
+
                         <StackPanel
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Orientation="Vertical"
+                            Spacing="-20">
+                            <AppBarButton
+                                Command="{x:Bind ViewModel.ToggleHistoryPaneOpenCommand}"
+                                IsCompact="True"
+                                ToolTipService.ToolTip="History of previously generated QR Codes">
+                                <controls:HistoryIcon />
+                            </AppBarButton>
+                            <AppBarButton
+                                Command="{x:Bind ViewModel.ShareAppCommand}"
+                                Icon="Share"
+                                IsCompact="True"
+                                ToolTipService.ToolTip="Share Simple Icon File Maker..." />
+                        </StackPanel>
+
+                        <InfoBar
+                            x:Name="SharePane"
+                            Title="Share Simple QR Code Maker"
+                            Margin="32,20"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                            IsOpen="{x:Bind ViewModel.CopySharePopupOpen,
+                                            Mode=TwoWay}">
+                            <StackPanel
+                                Padding="16"
+                                Orientation="Vertical"
+                                Spacing="12">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <SymbolIcon Symbol="Shop" />
+                                    <TextBlock Text="Link to the Microsoft Store" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <HyperlinkButton HorizontalAlignment="Center" Click="VisitLinkButton_Click">
+                                        <StackPanel Orientation="Horizontal" Spacing="12">
+                                            <SymbolIcon Symbol="Go" />
+                                            <TextBlock Text="Visit" />
+                                        </StackPanel>
+                                    </HyperlinkButton>
+                                    <HyperlinkButton HorizontalAlignment="Center" Click="CopyLinkButton_Click">
+                                        <StackPanel Orientation="Horizontal" Spacing="12">
+                                            <SymbolIcon Symbol="Copy" />
+                                            <TextBlock Text="Copy" />
+                                        </StackPanel>
+                                    </HyperlinkButton>
+                                </StackPanel>
+                            </StackPanel>
+                        </InfoBar>
+
+                        <InfoBar
+                            x:Name="LenghErrorInfoBar"
+                            Title="{x:Bind ViewModel.CodeInfoBarTitle,
+                                           Mode=OneWay}"
+                            Margin="20"
                             HorizontalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="10">
-                            <controls:IconAndTextButton
-                                Command="{x:Bind ViewModel.OpenFileCommand}"
-                                Text="Read Codes"
-                                ToolTipService.ToolTip="Open an image to read and extract text from any codes">
-                                <controls:IconAndTextButton.Icon>
-                                    <controls:ScanIcon />
-                                </controls:IconAndTextButton.Icon>
-                            </controls:IconAndTextButton>
-                            <controls:IconAndTextButton
-                                Command="{x:Bind ViewModel.GoToSettingsCommand}"
-                                Text="Settings"
-                                ToolTipService.ToolTip="Simple QR Code Maker Settings">
-                                <controls:IconAndTextButton.Icon>
-                                    <SymbolIcon Symbol="Setting" />
-                                </controls:IconAndTextButton.Icon>
-                            </controls:IconAndTextButton>
-                        </StackPanel>
+                            VerticalAlignment="Bottom"
+                            IsOpen="{x:Bind ViewModel.ShowCodeInfoBar,
+                                            Mode=TwoWay}"
+                            Message="{x:Bind ViewModel.CodeInfoBarMessage,
+                                             Mode=OneWay}"
+                            Severity="{x:Bind ViewModel.CodeInfoBarSeverity,
+                                              Mode=OneWay}" />
+                    </Grid>
+                </SplitView.Content>
+                <SplitView.Pane>
+                    <Grid Padding="24,12">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
 
-                    </StackPanel>
-                </ScrollViewer>
-
-                <StackPanel
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Orientation="Vertical"
-                    Spacing="-20">
-                    <AppBarButton
-                        Command="{x:Bind ViewModel.ToggleHistoryPaneOpenCommand}"
-                        IsCompact="True"
-                        ToolTipService.ToolTip="History of previously generated QR Codes">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
-                    </AppBarButton>
-                    <AppBarButton
-                        Command="{x:Bind ViewModel.ShareAppCommand}"
-                        Icon="Share"
-                        IsCompact="True"
-                        ToolTipService.ToolTip="Share Simple Icon File Maker..." />
-                </StackPanel>
-
-                <InfoBar
-                    x:Name="SharePane"
-                    Title="Share Simple QR Code Maker"
-                    Margin="32,20"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-                    IsOpen="{x:Bind ViewModel.CopySharePopupOpen,
-                                    Mode=TwoWay}">
-                    <StackPanel
-                        Padding="16"
-                        Orientation="Vertical"
-                        Spacing="12">
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <SymbolIcon Symbol="Shop" />
-                            <TextBlock Text="Link to the Microsoft Store" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <HyperlinkButton HorizontalAlignment="Center" Click="VisitLinkButton_Click">
-                                <StackPanel Orientation="Horizontal" Spacing="12">
-                                    <SymbolIcon Symbol="Go" />
-                                    <TextBlock Text="Visit" />
-                                </StackPanel>
-                            </HyperlinkButton>
-                            <HyperlinkButton HorizontalAlignment="Center" Click="CopyLinkButton_Click">
-                                <StackPanel Orientation="Horizontal" Spacing="12">
-                                    <SymbolIcon Symbol="Copy" />
-                                    <TextBlock Text="Copy" />
-                                </StackPanel>
-                            </HyperlinkButton>
-                        </StackPanel>
-                    </StackPanel>
-                </InfoBar>
-
-                <InfoBar
-                    x:Name="LenghErrorInfoBar"
-                    Title="{x:Bind ViewModel.CodeInfoBarTitle,
-                                   Mode=OneWay}"
-                    Margin="20"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom"
-                    IsOpen="{x:Bind ViewModel.ShowCodeInfoBar,
-                                    Mode=TwoWay}"
-                    Message="{x:Bind ViewModel.CodeInfoBarMessage,
-                                     Mode=OneWay}"
-                    Severity="{x:Bind ViewModel.CodeInfoBarSeverity,
-                                      Mode=OneWay}" />
-            </Grid>
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="History" />
+                        <ListView
+                            Grid.Row="1"
+                            ItemsSource="{x:Bind ViewModel.HistoryItems}"
+                            SelectedItem="{x:Bind ViewModel.SelectedHistoryItem,
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:HistoryItem">
+                                    <controls:HistoryRowItem Data="{x:Bind}" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </SplitView.Pane>
+            </SplitView>
         </SplitView.Content>
-        <SplitView.Pane>
-            <Grid Padding="24,12">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="History" />
-                <ListView
-                    Grid.Row="1"
-                    ItemsSource="{x:Bind ViewModel.HistoryItems}"
-                    SelectedItem="{x:Bind ViewModel.SelectedHistoryItem,
-                                          Mode=TwoWay,
-                                          UpdateSourceTrigger=PropertyChanged}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:HistoryItem">
-                            <controls:HistoryRowItem Data="{x:Bind}" />
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-        </SplitView.Pane>
     </SplitView>
 </Page>

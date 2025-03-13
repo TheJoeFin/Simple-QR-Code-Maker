@@ -41,7 +41,10 @@
                             Command="{x:Bind ViewModel.SwitchThemeCommand}"
                             FontSize="15"
                             GroupName="AppTheme"
-                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Light, Mode=OneWay}">
+                            IsChecked="{x:Bind ViewModel.ElementTheme,
+                                               Converter={StaticResource EnumIsEqualConverter},
+                                               ConverterParameter=Light,
+                                               Mode=OneWay}">
                             <RadioButton.CommandParameter>
                                 <xaml:ElementTheme>Light</xaml:ElementTheme>
                             </RadioButton.CommandParameter>
@@ -51,7 +54,10 @@
                             Command="{x:Bind ViewModel.SwitchThemeCommand}"
                             FontSize="15"
                             GroupName="AppTheme"
-                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Dark, Mode=OneWay}">
+                            IsChecked="{x:Bind ViewModel.ElementTheme,
+                                               Converter={StaticResource EnumIsEqualConverter},
+                                               ConverterParameter=Dark,
+                                               Mode=OneWay}">
                             <RadioButton.CommandParameter>
                                 <xaml:ElementTheme>Dark</xaml:ElementTheme>
                             </RadioButton.CommandParameter>
@@ -61,7 +67,10 @@
                             Command="{x:Bind ViewModel.SwitchThemeCommand}"
                             FontSize="15"
                             GroupName="AppTheme"
-                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Default, Mode=OneWay}">
+                            IsChecked="{x:Bind ViewModel.ElementTheme,
+                                               Converter={StaticResource EnumIsEqualConverter},
+                                               ConverterParameter=Default,
+                                               Mode=OneWay}">
                             <RadioButton.CommandParameter>
                                 <xaml:ElementTheme>Default</xaml:ElementTheme>
                             </RadioButton.CommandParameter>
@@ -77,14 +86,20 @@
                         Content="One code for each line"
                         FontSize="15"
                         GroupName="MultiLineHandling"
-                        IsChecked="{x:Bind ViewModel.MultiLineCodeMode, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=OneLineOneCode, Mode=OneWay}" />
+                        IsChecked="{x:Bind ViewModel.MultiLineCodeMode,
+                                           Converter={StaticResource EnumIsEqualConverter},
+                                           ConverterParameter=OneLineOneCode,
+                                           Mode=OneWay}" />
                     <RadioButton
                         Command="{x:Bind ViewModel.SwitchMultiLineModeCommand}"
                         CommandParameter="MultilineOneCode"
                         Content="Multi-Line in single code"
                         FontSize="15"
                         GroupName="MultiLineHandling"
-                        IsChecked="{x:Bind ViewModel.MultiLineCodeMode, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=MultilineOneCode, Mode=OneWay}" />
+                        IsChecked="{x:Bind ViewModel.MultiLineCodeMode,
+                                           Converter={StaticResource EnumIsEqualConverter},
+                                           ConverterParameter=MultilineOneCode,
+                                           Mode=OneWay}" />
                 </StackPanel>
 
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Base text, at start and for newlines" />
@@ -93,14 +108,26 @@
                         Width="300"
                         HorizontalAlignment="Left"
                         PlaceholderText="ex: https://example.com/"
-                        Text="{x:Bind ViewModel.BaseText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{x:Bind ViewModel.BaseText,
+                                      Mode=TwoWay,
+                                      UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Show warnings when QR Codes are not URLs" />
                 <ToggleSwitch
-                    IsOn="{x:Bind ViewModel.WarnWhenNotUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    IsOn="{x:Bind ViewModel.WarnWhenNotUrl,
+                                  Mode=TwoWay,
+                                  UpdateSourceTrigger=PropertyChanged}"
                     OffContent="Not warning"
                     OnContent="Warning" />
+
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Hide minimum size text" />
+                <ToggleSwitch
+                    IsOn="{x:Bind ViewModel.HideMinimumSizeText,
+                                  Mode=TwoWay,
+                                  UpdateSourceTrigger=PropertyChanged}"
+                    OffContent="Showing size text"
+                    OnContent="Hiding size text" />
 
                 <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">
