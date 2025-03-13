@@ -11,7 +11,10 @@
 
     <ScrollViewer>
         <StackPanel Padding="12,20,20,80" Orientation="Vertical">
-            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Frequently Asked Questions" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                Style="{StaticResource SubheaderTextBlockStyle}"
+                Text="Frequently Asked Questions" />
             <AutoSuggestBox
                 Margin="20,0"
                 PlaceholderText="Search for content in the FAQs..."
