@@ -86,6 +86,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private bool copySharePopupOpen = false;
 
+    private double MinSizeScanDistanceScaleFactor = 1;
+
     private readonly DispatcherTimer copyInfoBarTimer = new();
 
     partial void OnSelectedHistoryItemChanged(HistoryItem? value)
@@ -297,6 +299,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
                 ForegroundColor = ForegroundColor,
                 BackgroundColor = BackgroundColor,
+                MaxSizeScaleFactor = MinSizeScanDistanceScaleFactor,
             };
 
             double ratio = barcodeImageItem.ColorContrastRatio;
@@ -634,6 +637,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         UrlText = BaseText;
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
+        MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
 
         // check on text rehydration, could be coming from Reading or Settings
         if (parameter is string textParam && !string.IsNullOrWhiteSpace(textParam))
