@@ -72,9 +72,9 @@ public static class BarcodeHelpers
         double y2 = 0.8;
 
         double slope = (y2 - y1) / (x2 - x1);
-        double yIntercept = y1 - slope * x1;
+        double yIntercept = y1 - (slope * x1);
 
-        return slope * constrastRatio + yIntercept;
+        return (slope * constrastRatio) + yIntercept;
     }
 
     public static string SmallestSideWithUnits(double distance, int numberOfBlocks, Windows.UI.Color foreground, Windows.UI.Color background)

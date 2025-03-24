@@ -6,10 +6,10 @@ namespace Simple_QR_Code_Maker.Controls;
 
 public partial class HistoryIcon : FontIcon
 {
-	public HistoryIcon()
-	{
-		this.FontFamily = (FontFamily)Application.Current.Resources["SymbolThemeFontFamily"];
-		this.Glyph = "\uE81C";
-	}
+    public HistoryIcon()
+    {
+        this.FontFamily = (FontFamily)Application.Current.Resources["SymbolThemeFontFamily"];
+        this.Glyph = "\uE81C";
+    }
 }
 

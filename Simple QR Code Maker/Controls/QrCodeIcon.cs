@@ -6,10 +6,10 @@ namespace Simple_QR_Code_Maker.Controls;
 
 public partial class QrCodeIcon : FontIcon
 {
-	public QrCodeIcon()
-	{
-		this.FontFamily = (FontFamily)Application.Current.Resources["SymbolThemeFontFamily"];
-		this.Glyph = "\uED14";
-	}
+    public QrCodeIcon()
+    {
+        this.FontFamily = (FontFamily)Application.Current.Resources["SymbolThemeFontFamily"];
+        this.Glyph = "\uED14";
+    }
 }
 

@@ -223,7 +223,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-	private void Clipboard_ContentChanged(object? sender, object e) => CheckCanPasteText();
+    private void Clipboard_ContentChanged(object? sender, object e) => CheckCanPasteText();
 
     private void CheckCanPasteText()
     {
@@ -468,7 +468,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
 
         DataPackage dataPackage = new();
-        dataPackage.SetText(string.Join(Environment.NewLine,textStrings));
+        dataPackage.SetText(string.Join(Environment.NewLine, textStrings));
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
 
         CodeInfoBarMessage = string.Empty;

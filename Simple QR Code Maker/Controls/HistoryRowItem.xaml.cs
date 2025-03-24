@@ -7,7 +7,6 @@ namespace Simple_QR_Code_Maker.Controls;
 public sealed partial class HistoryRowItem : UserControl
 {
 
-
     public HistoryItem Data
     {
         get { return (HistoryItem)GetValue(DataProperty); }
@@ -16,8 +15,6 @@ public sealed partial class HistoryRowItem : UserControl
 
     public static readonly DependencyProperty DataProperty =
         DependencyProperty.Register("Data", typeof(HistoryItem), typeof(HistoryRowItem), new PropertyMetadata(null));
-
-
 
     public HistoryRowItem()
     {
