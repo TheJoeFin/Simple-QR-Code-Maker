@@ -40,6 +40,18 @@
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>
+            <TextBlock
+                Padding="24,10"
+                Text="Don't see your question here? Feel free to email me and I'll get you an answer"
+                TextWrapping="Wrap" />
+            <local:IconAndTextButton
+                HorizontalAlignment="Center"
+                Click="IconAndTextButton_Click"
+                Text="Email a Question">
+                <local:IconAndTextButton.Icon>
+                    <SymbolIcon Symbol="Mail" />
+                </local:IconAndTextButton.Icon>
+            </local:IconAndTextButton>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
