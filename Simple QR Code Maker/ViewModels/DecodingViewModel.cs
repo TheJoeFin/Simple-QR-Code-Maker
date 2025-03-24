@@ -166,6 +166,15 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         OpenAndDecodeStorageFiles(pickedFiles);
     }
 
+    [RelayCommand]
+    private void EditQrCode(object parameter)
+    {
+        if (string.IsNullOrWhiteSpace(InfoBarMessage))
+            return;
+
+        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, InfoBarMessage);
+    }
+
     private void OpenAndDecodeBitmap(IRandomAccessStreamWithContentType streamWithContentType)
     {
         Bitmap bitmap = new(streamWithContentType.AsStreamForRead());

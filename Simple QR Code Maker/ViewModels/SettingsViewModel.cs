@@ -34,6 +34,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     private readonly DispatcherTimer settingChangedDebounceTimer = new();
 
+    private string navigationText = string.Empty;
+
     private INavigationService NavigationService { get; }
     public ILocalSettingsService LocalSettingsService { get; }
 
@@ -106,7 +108,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void GoHome()
     {
-        NavigationService.NavigateTo(typeof(MainViewModel).FullName!);
+        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, navigationText);
     }
 
     [RelayCommand]
@@ -145,6 +147,11 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
+
+        if (parameter is string urlText && !string.IsNullOrWhiteSpace(urlText))
+        {
+            navigationText = urlText;
+        }
     }
 
     public void OnNavigatedFrom()

@@ -442,14 +442,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         SaveCurrentStateToHistory();
 
-        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
         List<string> textStrings = [];
         foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
         {
             if (qrCodeItem.CodeAsBitmap is null)
                 continue;
-
-            string? imageNameFileName = $"{qrCodeItem.CodeAsText.ToSafeFileName()}.svg";
 
             string svgText = qrCodeItem.GetCodeAsSvgText(ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), SelectedOption.ErrorCorrectionLevel);
             if (string.IsNullOrWhiteSpace(svgText))
@@ -518,7 +515,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void GoToSettings()
     {
-        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!);
+        // pass the contents of the UrlText to the settings page
+        // so when coming back it can be rehydrated
+        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!, UrlText);
     }
 
     [RelayCommand]
@@ -635,6 +634,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         UrlText = BaseText;
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
+
+        // check on text rehydration, could be coming from Reading or Settings
+        if (parameter is string textParam && !string.IsNullOrWhiteSpace(textParam))
+            UrlText = textParam;
     }
 
     public void OnNavigatedFrom()
