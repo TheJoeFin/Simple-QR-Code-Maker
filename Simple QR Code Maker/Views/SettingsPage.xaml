@@ -141,7 +141,7 @@
                     HorizontalAlignment="Left"
                     IsThumbToolTipEnabled="False"
                     Maximum="5"
-                    Minimum=".1"
+                    Minimum=".35"
                     StepFrequency="0.1"
                     Value="{x:Bind ViewModel.MinSizeScanDistanceScaleFactor,
                                    Mode=TwoWay,
