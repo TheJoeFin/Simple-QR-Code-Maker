@@ -512,7 +512,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void OpenFile()
     {
-        NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!);
+        NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!, UrlText);
     }
 
     [RelayCommand]

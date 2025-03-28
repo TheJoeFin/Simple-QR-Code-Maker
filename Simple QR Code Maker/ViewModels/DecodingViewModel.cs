@@ -36,6 +36,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private ObservableCollection<DecodingImageItem> decodingImageItems = [];
 
+    private string passedUrl = string.Empty;
+
     private INavigationService NavigationService { get; }
 
     private readonly List<string> imageExtensions =
@@ -76,7 +78,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     public void OnNavigatedTo(object parameter)
     {
-
+        if (parameter is string url)
+            passedUrl = url;
     }
 
     [RelayCommand]
@@ -124,8 +127,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void GoBack()
     {
-        if (NavigationService.CanGoBack)
-            NavigationService.GoBack();
+        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, passedUrl);
     }
 
     [RelayCommand]
