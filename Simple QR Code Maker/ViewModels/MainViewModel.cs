@@ -638,6 +638,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
         MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
+        if (MinSizeScanDistanceScaleFactor < 0.35)
+        {
+            MinSizeScanDistanceScaleFactor = 1;
+            // reset to 1 if the value is too small, this can happen when settings are reset
+            await LocalSettingsService.SaveSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
+        }
 
         // check on text rehydration, could be coming from Reading or Settings
         if (parameter is string textParam && !string.IsNullOrWhiteSpace(textParam))
