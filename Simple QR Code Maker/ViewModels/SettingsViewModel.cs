@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Helpers;
+using System.Globalization;
 using System.Reflection;
 using System.Windows.Input;
 using Windows.ApplicationModel;
@@ -32,7 +33,15 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private bool hideMinimumSizeText = false;
 
+    [ObservableProperty]
+    private double minSizeScanDistanceScaleFactor = 1.0;
+
+    [ObservableProperty]
+    private string maxScanDistanceText = "36in or 1m";
+
     private readonly DispatcherTimer settingChangedDebounceTimer = new();
+
+    private string navigationText = string.Empty;
 
     private INavigationService NavigationService { get; }
     public ILocalSettingsService LocalSettingsService { get; }
@@ -83,6 +92,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         await LocalSettingsService.SaveSettingAsync(nameof(BaseText), BaseText);
         await LocalSettingsService.SaveSettingAsync(nameof(WarnWhenNotUrl), WarnWhenNotUrl);
         await LocalSettingsService.SaveSettingAsync(nameof(HideMinimumSizeText), HideMinimumSizeText);
+        await LocalSettingsService.SaveSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
     }
 
     partial void OnBaseTextChanged(string value)
@@ -103,10 +113,36 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         settingChangedDebounceTimer.Start();
     }
 
+    partial void OnMinSizeScanDistanceScaleFactorChanged(double value)
+    {
+        settingChangedDebounceTimer.Stop();
+        settingChangedDebounceTimer.Start();
+
+        bool isMetric = RegionInfo.CurrentRegion.IsMetric;
+
+        if (isMetric) {
+            if (value == 1)
+                MaxScanDistanceText = $"{value} meter";
+            else
+                MaxScanDistanceText = $"{value} meters";
+        }
+        else
+        {
+            if (value > 1)
+            {
+                MaxScanDistanceText = $"{Math.Round(value * 3,1)} feet";
+            }
+            else
+            {
+                MaxScanDistanceText = $"{Math.Round(value * 36, 0)} inches";
+            }
+        }
+    }
+
     [RelayCommand]
     private void GoHome()
     {
-        NavigationService.NavigateTo(typeof(MainViewModel).FullName!);
+        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, navigationText);
     }
 
     [RelayCommand]
@@ -145,6 +181,12 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
+        MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
+
+        if (parameter is string urlText && !string.IsNullOrWhiteSpace(urlText))
+        {
+            navigationText = urlText;
+        }
     }
 
     public void OnNavigatedFrom()

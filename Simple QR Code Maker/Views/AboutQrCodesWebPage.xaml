@@ -20,7 +20,11 @@
                     Command="{x:Bind ViewModel.GoHomeCommand,
                                      Mode=OneWay}"
                     ToolTipService.ToolTip="Back to your Simple QR Code Maker Settings">
-                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72B;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
+                        <TextBlock Text="Back to Settings" />
+                    </StackPanel>
                 </Button>
                 <Button
                     x:Uid="BrowserBackButton"

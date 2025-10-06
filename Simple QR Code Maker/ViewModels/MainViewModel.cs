@@ -86,6 +86,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private bool copySharePopupOpen = false;
 
+    private double MinSizeScanDistanceScaleFactor = 1;
+
     private readonly DispatcherTimer copyInfoBarTimer = new();
 
     partial void OnSelectedHistoryItemChanged(HistoryItem? value)
@@ -223,7 +225,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-	private void Clipboard_ContentChanged(object? sender, object e) => CheckCanPasteText();
+    private void Clipboard_ContentChanged(object? sender, object e) => CheckCanPasteText();
 
     private void CheckCanPasteText()
     {
@@ -297,6 +299,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
                 ForegroundColor = ForegroundColor,
                 BackgroundColor = BackgroundColor,
+                MaxSizeScaleFactor = MinSizeScanDistanceScaleFactor,
             };
 
             double ratio = barcodeImageItem.ColorContrastRatio;
@@ -442,14 +445,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         SaveCurrentStateToHistory();
 
-        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
         List<string> textStrings = [];
         foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
         {
             if (qrCodeItem.CodeAsBitmap is null)
                 continue;
-
-            string? imageNameFileName = $"{qrCodeItem.CodeAsText.ToSafeFileName()}.svg";
 
             string svgText = qrCodeItem.GetCodeAsSvgText(ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), SelectedOption.ErrorCorrectionLevel);
             if (string.IsNullOrWhiteSpace(svgText))
@@ -468,7 +468,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
 
         DataPackage dataPackage = new();
-        dataPackage.SetText(string.Join(Environment.NewLine,textStrings));
+        dataPackage.SetText(string.Join(Environment.NewLine, textStrings));
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
 
         CodeInfoBarMessage = string.Empty;
@@ -512,13 +512,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void OpenFile()
     {
-        NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!);
+        NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!, UrlText);
     }
 
     [RelayCommand]
     private void GoToSettings()
     {
-        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!);
+        // pass the contents of the UrlText to the settings page
+        // so when coming back it can be rehydrated
+        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!, UrlText);
     }
 
     [RelayCommand]
@@ -635,6 +637,17 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         UrlText = BaseText;
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
+        MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
+        if (MinSizeScanDistanceScaleFactor < 0.35)
+        {
+            MinSizeScanDistanceScaleFactor = 1;
+            // reset to 1 if the value is too small, this can happen when settings are reset
+            await LocalSettingsService.SaveSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
+        }
+
+        // check on text rehydration, could be coming from Reading or Settings
+        if (parameter is string textParam && !string.IsNullOrWhiteSpace(textParam))
+            UrlText = textParam;
     }
 
     public void OnNavigatedFrom()

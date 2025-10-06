@@ -60,11 +60,16 @@ public static class BarcodeHelpers
         int padding = 2 * 2;
 
         double blockSize = (distance + 2.721) / 1759.1;
+
+        // check if the block size is too small for normal printer
+        if (blockSize < 0.007)
+            return 0;
+
         double codeSize = blockSize * (numberOfBlocks + padding);
         return codeSize;
     }
 
-    public static double ContrastRatioLossFrac(double constrastRatio)
+    public static double ContrastRatioLossFrac(double contrastRatio)
     {
         double x1 = 21;
         double y1 = 1;
@@ -72,15 +77,18 @@ public static class BarcodeHelpers
         double y2 = 0.8;
 
         double slope = (y2 - y1) / (x2 - x1);
-        double yIntercept = y1 - slope * x1;
+        double yIntercept = y1 - (slope * x1);
 
-        return slope * constrastRatio + yIntercept;
+        return (slope * contrastRatio) + yIntercept;
     }
 
     public static string SmallestSideWithUnits(double distance, int numberOfBlocks, Windows.UI.Color foreground, Windows.UI.Color background)
     {
         bool isMetric = RegionInfo.CurrentRegion.IsMetric;
         double smallestSide = SmallestCodeSide(distance, numberOfBlocks);
+
+        if (smallestSide == 0)
+            return "Error at selected max distance.";
 
         double contrastRatio = ColorHelpers.GetContrastRatio(foreground, background);
 

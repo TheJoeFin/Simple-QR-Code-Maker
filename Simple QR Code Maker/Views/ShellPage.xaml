@@ -19,7 +19,8 @@
             Canvas.ZIndex="0"
             Command="{x:Bind ViewModel.BackCommand}"
             Icon="Back"
-            IsEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
+            IsEnabled="{x:Bind ViewModel.IsBackEnabled,
+                               Mode=OneWay}"
             Style="{StaticResource NavigationBackButtonSmallStyle}"
             Visibility="Collapsed" />
         <StackPanel

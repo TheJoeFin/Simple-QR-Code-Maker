@@ -16,10 +16,10 @@ public partial class FaqsContentViewModel : ObservableRecipient
 
     public FaqsContentViewModel()
     {
-        _searchTimer.Tick += _searchTimer_Tick; ;
-        _searchTimer.Interval = TimeSpan.FromMilliseconds(500);
+        searchTimer.Tick += SearchTimer_Tick; ;
+        searchTimer.Interval = TimeSpan.FromMilliseconds(500);
 
-        foreach (var item in FaqItem.AllFaqs)
+        foreach (FaqItem item in FaqItem.AllFaqs)
             FaqItems.Add(item);
 
         WeakReferenceMessenger.Default.Register<RequestPaneChange>(this, OnRequestPaneChange);
@@ -31,13 +31,13 @@ public partial class FaqsContentViewModel : ObservableRecipient
             SearchText = message.SearchText;
     }
 
-    private void _searchTimer_Tick(object? sender, object e)
+    private void SearchTimer_Tick(object? sender, object e)
     {
-        _searchTimer.Stop();
+        searchTimer.Stop();
 
         FaqItems.Clear();
 
-        foreach (var item in FaqItem.AllFaqs)
+        foreach (FaqItem item in FaqItem.AllFaqs)
         {
             if (string.IsNullOrWhiteSpace(SearchText))
             {
@@ -58,20 +58,20 @@ public partial class FaqsContentViewModel : ObservableRecipient
         }
     }
 
-    private DispatcherTimer _searchTimer = new();
+    private DispatcherTimer searchTimer = new();
 
     partial void OnSearchTextChanged(string value)
     {
         try
         {
-            _searchTimer.Stop();
-            _searchTimer.Start();
+            searchTimer.Stop();
+            searchTimer.Start();
 
         }
         catch (Exception)
         {
-            _searchTimer = new();
-            _searchTimer.Start();
+            searchTimer = new();
+            searchTimer.Start();
 #if DEBUG
             throw;
 #endif

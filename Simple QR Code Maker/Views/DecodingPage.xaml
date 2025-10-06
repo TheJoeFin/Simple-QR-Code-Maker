@@ -179,16 +179,23 @@
                     Orientation="Horizontal"
                     Spacing="12">
                     <AppBarButton
+                        Command="{x:Bind ViewModel.EditQrCodeCommand}"
+                        Icon="Edit"
+                        IsCompact="True"
+                        ToolTipService.ToolTip="Edit this text as a new QR Code" />
+                    <AppBarButton
                         Command="{x:Bind ViewModel.AddMessageToClipboardCommand}"
                         Icon="Copy"
-                        IsCompact="True" />
+                        IsCompact="True"
+                        ToolTipService.ToolTip="Copy the encoded text to the clipboard" />
                     <AppBarButton
                         Command="{x:Bind ViewModel.TryLaunchLinkCommand}"
                         Icon="Go"
                         IsCompact="True"
                         IsEnabled="{x:Bind ViewModel.InfoBarMessage,
                                            Mode=OneWay,
-                                           Converter={StaticResource HasURL}}" />
+                                           Converter={StaticResource HasURL}}"
+                        ToolTipService.ToolTip="Try to go to the URL" />
                 </StackPanel>
             </StackPanel>
         </InfoBar>

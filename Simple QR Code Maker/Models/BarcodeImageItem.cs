@@ -41,7 +41,9 @@ public partial class BarcodeImageItem : ObservableRecipient
     [ObservableProperty]
     public Visibility sizeTextVisible = Visibility.Visible;
 
-    public string SmallestSide => BarcodeHelpers.SmallestSideWithUnits(32, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor);
+    public double MaxSizeScaleFactor { get; set; }
+
+    public string SmallestSide => BarcodeHelpers.SmallestSideWithUnits(32 * MaxSizeScaleFactor, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor);
 
     // The contrast ratio between the foreground and background colors.
     // A value of 1:1 is the minimum, and 21:1 is the maximum.

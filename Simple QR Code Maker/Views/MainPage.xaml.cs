@@ -1,11 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Simple_QR_Code_Maker.Extensions;
-using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage;
 
 namespace Simple_QR_Code_Maker.Views;
 
@@ -18,7 +14,7 @@ public sealed partial class MainPage : Page
 
     private bool _didSetCaretToEnd = false;
 
-    private string appStoreUrl = "https://apps.microsoft.com/detail/9nch56g3rqfc";
+    private readonly string appStoreUrl = "https://apps.microsoft.com/detail/9nch56g3rqfc";
 
     public MainPage()
     {
