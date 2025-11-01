@@ -45,7 +45,7 @@ public static class BarcodeHelpers
             // Get the QR code details to calculate module size
             QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
             int moduleCount = qrCode.Version.DimensionForVersion;
-            OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels);
+            OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
         }
         
         using MemoryStream ms = new();
@@ -57,7 +57,7 @@ public static class BarcodeHelpers
         return bitmapImage;
     }
 
-    private static void OverlayLogoOnQrCode(Bitmap qrCodeBitmap, Bitmap logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels)
+    private static void OverlayLogoOnQrCode(Bitmap qrCodeBitmap, Bitmap logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels, System.Drawing.Color backgroundColor)
     {
         // Calculate the pixel size of each QR code module
         // The total size includes the margin on both sides
@@ -124,11 +124,11 @@ public static class BarcodeHelpers
      g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
   g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 
-        // Always draw the white punchout background (covers QR code modules)
-using SolidBrush whiteBrush = new(System.Drawing.Color.White);
-        g.FillRectangle(whiteBrush, punchoutX, punchoutY, punchoutSize, punchoutSize);
+        // Draw the punchout background with the same color as the QR code background
+        using SolidBrush backgroundBrush = new(backgroundColor);
+    g.FillRectangle(backgroundBrush, punchoutX, punchoutY, punchoutSize, punchoutSize);
 
-        // Draw the logo scaled to fit within or extend beyond the punchout
+     // Draw the logo scaled to fit within or extend beyond the punchout
         g.DrawImage(logo, logoX, logoY, logoWidth, logoHeight);
     }
 
@@ -222,13 +222,13 @@ using SolidBrush whiteBrush = new(System.Drawing.Color.White);
             // Get the QR code details to calculate module size
             QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
             int moduleCount = qrCode.Version.DimensionForVersion;
-            svg = EmbedLogoInSvg(svg, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels);
+            svg = EmbedLogoInSvg(svg, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
         }
 
         return svg;
     }
 
-    private static SvgImage EmbedLogoInSvg(SvgImage svg, Bitmap logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels)
+    private static SvgImage EmbedLogoInSvg(SvgImage svg, Bitmap logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels, System.Drawing.Color backgroundColor)
     {
         const int svgSize = 1024; // Should match the encoding options Width/Height
    
@@ -309,13 +309,16 @@ int punchoutSizePixels = (int)(svgSize * (sizePercentage / 100.0));
         resizedLogo.Dispose();
 
   // Build the SVG logo element with punchout background and logo
+        // Convert the background color to RGB format for SVG
+  string backgroundColorHex = $"rgb({backgroundColor.R},{backgroundColor.G},{backgroundColor.B})";
+        
     string logoSvgElement = $@"
   <!-- Logo punchout background -->
-  <rect x=""{punchoutX}"" y=""{punchoutY}"" width=""{punchoutSize}"" height=""{punchoutSize}"" fill=""white""/>
+  <rect x=""{punchoutX}"" y=""{punchoutY}"" width=""{punchoutSize}"" height=""{punchoutSize}"" fill=""{backgroundColorHex}""/>
   <!-- Logo image -->
   <image x=""{logoX}"" y=""{logoY}"" width=""{logoWidth}"" height=""{logoHeight}"" href=""data:image/png;base64,{base64Logo}""/>";
 
-     // Find the closing </svg> tag and insert the logo before it
+        // Find the closing </svg> tag and insert the logo before it
         string modifiedContent = svg.Content.Replace("</svg>", logoSvgElement + "\n</svg>");
    
         return new SvgImage(modifiedContent);
