@@ -262,6 +262,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             debounceTimer.Tick -= DebounceTimer_Tick;
 
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
+        
+        // Dispose of the logo image
+        LogoImage?.Dispose();
     }
 
     private void PlaceholderTextTimer_Tick(object? sender, object e)
@@ -613,6 +616,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         try
         {
+            // Dispose of the old logo if it exists
+            LogoImage?.Dispose();
             LogoImage = new System.Drawing.Bitmap(file.Path);
         }
         catch (Exception ex)
