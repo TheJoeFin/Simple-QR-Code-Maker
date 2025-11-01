@@ -190,7 +190,7 @@
                                     Visibility="{x:Bind ViewModel.HasLogo,
                                                         Mode=OneWay,
                                                         Converter={StaticResource BoolToVisibility}}">
-                                    <TextBlock VerticalAlignment="Center" Text="Logo Size:" />
+                                    <TextBlock VerticalAlignment="Center" Text="Punchout Size:" />
                                     <Slider
                                         x:Name="LogoSizeSlider"
                                         Width="200"
@@ -200,7 +200,7 @@
                                         StepFrequency="1"
                                         TickFrequency="5"
                                         TickPlacement="BottomRight"
-                                        ToolTipService.ToolTip="Adjust logo size"
+                                        ToolTipService.ToolTip="Adjust the size of the area covered by the logo (white background space)"
                                         Value="{x:Bind ViewModel.LogoSizePercentage,
                                                       Mode=TwoWay}" />
                                     <TextBlock VerticalAlignment="Center">
@@ -216,7 +216,7 @@
                                     Visibility="{x:Bind ViewModel.HasLogo,
                                                         Mode=OneWay,
                                                         Converter={StaticResource BoolToVisibility}}">
-                                    <TextBlock VerticalAlignment="Center" Text="Logo Padding:" />
+                                    <TextBlock VerticalAlignment="Center" Text="Logo Size:" />
                                     <Slider
                                         x:Name="LogoPaddingSlider"
                                         Width="200"
@@ -225,7 +225,7 @@
                                         StepFrequency="1"
                                         TickFrequency="8"
                                         TickPlacement="BottomRight"
-                                        ToolTipService.ToolTip="Adjust padding around logo (negative values crop into logo)"
+                                        ToolTipService.ToolTip="Adjust logo size within punchout (positive = smaller logo with padding, negative = larger logo)"
                                         Value="{x:Bind ViewModel.LogoPaddingPixels,
                                                       Mode=TwoWay}" />
                                     <TextBlock VerticalAlignment="Center">
