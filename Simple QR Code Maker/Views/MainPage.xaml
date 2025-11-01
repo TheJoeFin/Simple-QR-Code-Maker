@@ -164,6 +164,23 @@
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
+                                    <Button
+                                        Width="68"
+                                        Command="{x:Bind ViewModel.SelectLogoCommand}"
+                                        ToolTipService.ToolTip="Add Logo">
+                                        <Button.Content>
+                                            <SymbolIcon Symbol="Pictures" />
+                                        </Button.Content>
+                                    </Button>
+                                    <Button
+                                        Width="68"
+                                        Command="{x:Bind ViewModel.RemoveLogoCommand}"
+                                        IsEnabled="{x:Bind ViewModel.HasLogo, Mode=OneWay}"
+                                        ToolTipService.ToolTip="Remove Logo">
+                                        <Button.Content>
+                                            <SymbolIcon Symbol="Delete" />
+                                        </Button.Content>
+                                    </Button>
                                 </StackPanel>
 
                                 <Border

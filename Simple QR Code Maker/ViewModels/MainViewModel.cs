@@ -86,6 +86,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private bool copySharePopupOpen = false;
 
+    [ObservableProperty]
+    private System.Drawing.Bitmap? logoImage = null;
+
+    [ObservableProperty]
+    private bool hasLogo = false;
+
     private double MinSizeScanDistanceScaleFactor = 1;
 
     private readonly DispatcherTimer copyInfoBarTimer = new();
@@ -126,6 +132,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     partial void OnForegroundColorChanged(Windows.UI.Color value)
     {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
+    partial void OnLogoImageChanged(System.Drawing.Bitmap? value)
+    {
+        HasLogo = value != null;
         debounceTimer.Stop();
         debounceTimer.Start();
     }
@@ -289,7 +302,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 textToUse,
                 SelectedOption.ErrorCorrectionLevel,
                 ForegroundColor.ToSystemDrawingColor(),
-                BackgroundColor.ToSystemDrawingColor());
+                BackgroundColor.ToSystemDrawingColor(),
+                LogoImage);
             BarcodeImageItem barcodeImageItem = new()
             {
                 CodeAsBitmap = bitmap,
@@ -300,6 +314,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 ForegroundColor = ForegroundColor,
                 BackgroundColor = BackgroundColor,
                 MaxSizeScaleFactor = MinSizeScanDistanceScaleFactor,
+                LogoImage = LogoImage,
             };
 
             double ratio = barcodeImageItem.ColorContrastRatio;
@@ -572,6 +587,49 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             UrlText = stringToAdd;
 
         UrlText += $"\r{stringToAdd}";
+    }
+
+    [RelayCommand]
+    private async Task SelectLogo()
+    {
+        FileOpenPicker openPicker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+        };
+        openPicker.FileTypeFilter.Add(".png");
+        openPicker.FileTypeFilter.Add(".jpg");
+        openPicker.FileTypeFilter.Add(".jpeg");
+        openPicker.FileTypeFilter.Add(".bmp");
+        openPicker.FileTypeFilter.Add(".gif");
+
+        Window window = new();
+        IntPtr windowHandle = WindowNative.GetWindowHandle(window);
+        InitializeWithWindow.Initialize(openPicker, windowHandle);
+
+        StorageFile file = await openPicker.PickSingleFileAsync();
+
+        if (file == null)
+            return;
+
+        try
+        {
+            LogoImage = new System.Drawing.Bitmap(file.Path);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to load logo image: {ex.Message}");
+            CodeInfoBarMessage = "Failed to load the selected image";
+            ShowCodeInfoBar = true;
+            CodeInfoBarSeverity = InfoBarSeverity.Error;
+            CodeInfoBarTitle = "Error loading logo";
+        }
+    }
+
+    [RelayCommand]
+    private void RemoveLogo()
+    {
+        LogoImage?.Dispose();
+        LogoImage = null;
     }
 
     private async Task WriteImageToFile(BarcodeImageItem imageItem, StorageFile file, FileKind kindOfFile)

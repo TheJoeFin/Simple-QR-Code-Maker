@@ -14,7 +14,7 @@ namespace Simple_QR_Code_Maker.Helpers;
 
 public static class BarcodeHelpers
 {
-    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background)
+    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null)
     {
         BitmapRenderer bitmapRenderer = new()
         {
@@ -38,6 +38,13 @@ public static class BarcodeHelpers
         barcodeWriter.Options = encodingOptions;
 
         using Bitmap bitmap = barcodeWriter.Write(text);
+        
+        // If a logo is provided, overlay it on the center of the QR code
+        if (logoImage != null)
+        {
+            OverlayLogoOnQrCode(bitmap, logoImage);
+        }
+        
         using MemoryStream ms = new();
         bitmap.Save(ms, ImageFormat.Png);
         WriteableBitmap bitmapImage = new(encodingOptions.Width, encodingOptions.Height);
@@ -45,6 +52,31 @@ public static class BarcodeHelpers
         bitmapImage.SetSource(ms.AsRandomAccessStream());
 
         return bitmapImage;
+    }
+
+    private static void OverlayLogoOnQrCode(Bitmap qrCode, Bitmap logo)
+    {
+        // Calculate the size of the logo (typically 20-30% of QR code size to maintain scannability)
+        int logoSize = Math.Min(qrCode.Width, qrCode.Height) / 5; // 20% of QR code size
+        
+        // Calculate the position to center the logo
+        int x = (qrCode.Width - logoSize) / 2;
+        int y = (qrCode.Height - logoSize) / 2;
+
+        using Graphics g = Graphics.FromImage(qrCode);
+        // Set high quality rendering
+        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+        g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+
+        // Draw a white background circle/rectangle behind the logo for better visibility
+        int padding = 8;
+        using SolidBrush whiteBrush = new(System.Drawing.Color.White);
+        g.FillRectangle(whiteBrush, x - padding, y - padding, logoSize + (padding * 2), logoSize + (padding * 2));
+
+        // Draw the logo
+        g.DrawImage(logo, x, y, logoSize, logoSize);
     }
 
     /// <summary>
@@ -106,7 +138,7 @@ public static class BarcodeHelpers
         return $"{smallestSideCm:F2} x {smallestSideCm:F2} cm";
     }
 
-    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background)
+    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null)
     {
         SvgRenderer svgRenderer = new()
         {
@@ -131,7 +163,43 @@ public static class BarcodeHelpers
 
         SvgImage svg = barcodeWriter.Write(text);
 
+        // If a logo is provided, embed it in the SVG
+        if (logoImage != null)
+        {
+            svg = EmbedLogoInSvg(svg, logoImage);
+        }
+
         return svg;
+    }
+
+    private static SvgImage EmbedLogoInSvg(SvgImage svg, Bitmap logo)
+    {
+        // Convert logo to base64 for embedding
+        string base64Logo;
+        using (MemoryStream ms = new())
+        {
+            logo.Save(ms, ImageFormat.Png);
+            byte[] imageBytes = ms.ToArray();
+            base64Logo = Convert.ToBase64String(imageBytes);
+        }
+
+        // Calculate logo dimensions (20% of SVG size)
+        int logoSize = 1024 / 5; // 20% of 1024
+        int x = (1024 - logoSize) / 2;
+        int y = (1024 - logoSize) / 2;
+        int padding = 8;
+
+        // Insert the logo into the SVG content
+        string logoSvgElement = $@"
+  <!-- Logo background -->
+  <rect x=""{x - padding}"" y=""{y - padding}"" width=""{logoSize + (padding * 2)}"" height=""{logoSize + (padding * 2)}"" fill=""white""/>
+  <!-- Logo image -->
+  <image x=""{x}"" y=""{y}"" width=""{logoSize}"" height=""{logoSize}"" href=""data:image/png;base64,{base64Logo}""/>";
+
+        // Find the closing </svg> tag and insert the logo before it
+        string modifiedContent = svg.Content.Replace("</svg>", logoSvgElement + "\n</svg>");
+        
+        return new SvgImage(modifiedContent);
     }
 
     public static IEnumerable<(string, Result)> GetStringsFromImageFile(StorageFile storageFile)
