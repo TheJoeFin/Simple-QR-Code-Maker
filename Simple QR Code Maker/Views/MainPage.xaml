@@ -209,6 +209,31 @@
                                     </TextBlock>
                                 </StackPanel>
 
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="12"
+                                    Visibility="{x:Bind ViewModel.HasLogo,
+                                                        Mode=OneWay,
+                                                        Converter={StaticResource BoolToVisibility}}">
+                                    <TextBlock VerticalAlignment="Center" Text="Logo Padding:" />
+                                    <Slider
+                                        x:Name="LogoPaddingSlider"
+                                        Width="200"
+                                        Maximum="32"
+                                        Minimum="-32"
+                                        StepFrequency="1"
+                                        TickFrequency="8"
+                                        TickPlacement="BottomRight"
+                                        ToolTipService.ToolTip="Adjust padding around logo (negative values crop into logo)"
+                                        Value="{x:Bind ViewModel.LogoPaddingPixels,
+                                                      Mode=TwoWay}" />
+                                    <TextBlock VerticalAlignment="Center">
+                                        <Run Text="{x:Bind ViewModel.LogoPaddingPixels, Mode=OneWay}" />
+                                        <Run Text="px" />
+                                    </TextBlock>
+                                </StackPanel>
+
                                 <Border
                                     MinWidth="300"
                                     MinHeight="300"

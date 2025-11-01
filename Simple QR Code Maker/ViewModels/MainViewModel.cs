@@ -95,6 +95,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private double logoSizePercentage = 20.0; // Default 20% of QR code size
 
+    [ObservableProperty]
+    private double logoPaddingPixels = 8.0; // Default 8 pixels padding around logo
+
     public double MaxLogoSizePercentage => GetMaxLogoSizeForErrorCorrection();
 
     private double MinSizeScanDistanceScaleFactor = 1;
@@ -158,6 +161,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     partial void OnLogoSizePercentageChanged(double value)
     {
         debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
+    partial void OnLogoPaddingPixelsChanged(double value)
+    {
+   debounceTimer.Stop();
         debounceTimer.Start();
     }
 
@@ -342,7 +351,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 ForegroundColor.ToSystemDrawingColor(),
                 BackgroundColor.ToSystemDrawingColor(),
                 LogoImage,
-                LogoSizePercentage);
+                LogoSizePercentage,
+                LogoPaddingPixels);
             BarcodeImageItem barcodeImageItem = new()
             {
                 CodeAsBitmap = bitmap,
@@ -355,6 +365,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 MaxSizeScaleFactor = MinSizeScanDistanceScaleFactor,
                 LogoImage = LogoImage,
                 LogoSizePercentage = LogoSizePercentage,
+                LogoPaddingPixels = LogoPaddingPixels,
             };
 
             double ratio = barcodeImageItem.ColorContrastRatio;
