@@ -164,16 +164,18 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private double GetMaxLogoSizeForErrorCorrection()
     {
         // Error correction allows us to obscure a percentage of the QR code
-        // We use a conservative estimate (80% of the theoretical maximum)
-        // to ensure reliable scanning
-        return SelectedOption.ErrorCorrectionLevel switch
-        {
-            ErrorCorrectionLevel.L => 7.0 * 0.8,   // ~5.6% max
-            ErrorCorrectionLevel.M => 15.0 * 0.8,  // ~12% max
-            ErrorCorrectionLevel.Q => 25.0 * 0.8,  // ~20% max
-            ErrorCorrectionLevel.H => 30.0 * 0.8,  // ~24% max
-            _ => 20.0
-        };
+        // We use 95% of the theoretical maximum to allow larger logos
+        // while still maintaining reliable scanning
+        if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.L)
+            return 7.0 * 0.95;   // ~6.65% max (increased from ~5.6%)
+        else if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.M)
+            return 15.0 * 0.95;  // ~14.25% max (increased from ~12%)
+        else if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.Q)
+ return 25.0 * 0.95;  // ~23.75% max (increased from ~20%)
+  else if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.H)
+ return 30.0 * 0.95;  // ~28.5% max (increased from ~24%)
+        else
+     return 20.0;
     }
 
     public bool CanSaveImage { get => !string.IsNullOrWhiteSpace(UrlText); }

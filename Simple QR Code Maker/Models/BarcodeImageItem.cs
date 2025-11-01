@@ -130,6 +130,12 @@ public partial class BarcodeImageItem : ObservableRecipient
     [RelayCommand]
     private async Task CopyCodePngContext()
     {
+        if (CodeAsBitmap is null)
+        {
+            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to copy QR Code to the clipboard", "No QR Code to copy to the clipboard", InfoBarSeverity.Error));
+            return;
+        }
+
         StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
         List<StorageFile> files = [];
 
