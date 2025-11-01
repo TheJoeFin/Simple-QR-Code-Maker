@@ -16,7 +16,7 @@ public static class BarcodeHelpers
 {
     private const int LOGO_PADDING = 8;
     
-    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null)
+    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0)
     {
         BitmapRenderer bitmapRenderer = new()
         {
@@ -44,7 +44,7 @@ public static class BarcodeHelpers
         // If a logo is provided, overlay it on the center of the QR code
         if (logoImage != null)
         {
-            OverlayLogoOnQrCode(bitmap, logoImage);
+            OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage);
         }
         
         using MemoryStream ms = new();
@@ -56,10 +56,10 @@ public static class BarcodeHelpers
         return bitmapImage;
     }
 
-    private static void OverlayLogoOnQrCode(Bitmap qrCode, Bitmap logo)
+    private static void OverlayLogoOnQrCode(Bitmap qrCode, Bitmap logo, double sizePercentage = 20.0)
     {
-        // Calculate the maximum size of the logo (20% of QR code size to maintain scannability)
-        int maxLogoSize = Math.Min(qrCode.Width, qrCode.Height) / 5;
+        // Calculate the maximum size of the logo based on the size percentage
+        int maxLogoSize = (int)(Math.Min(qrCode.Width, qrCode.Height) * (sizePercentage / 100.0));
         
         // Calculate logo dimensions preserving aspect ratio
         float aspectRatio = (float)logo.Width / logo.Height;
@@ -160,7 +160,7 @@ public static class BarcodeHelpers
         return $"{smallestSideCm:F2} x {smallestSideCm:F2} cm";
     }
 
-    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null)
+    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0)
     {
         SvgRenderer svgRenderer = new()
         {
@@ -188,26 +188,17 @@ public static class BarcodeHelpers
         // If a logo is provided, embed it in the SVG
         if (logoImage != null)
         {
-            svg = EmbedLogoInSvg(svg, logoImage);
+            svg = EmbedLogoInSvg(svg, logoImage, logoSizePercentage);
         }
 
         return svg;
     }
 
-    private static SvgImage EmbedLogoInSvg(SvgImage svg, Bitmap logo)
+    private static SvgImage EmbedLogoInSvg(SvgImage svg, Bitmap logo, double sizePercentage = 20.0)
     {
-        // Convert logo to base64 for embedding
-        string base64Logo;
-        using (MemoryStream ms = new())
-        {
-            logo.Save(ms, ImageFormat.Png);
-            byte[] imageBytes = ms.ToArray();
-            base64Logo = Convert.ToBase64String(imageBytes);
-        }
-
-        // Calculate logo dimensions preserving aspect ratio (20% of SVG size)
+        // Calculate logo dimensions preserving aspect ratio
         const int svgSize = 1024; // Should match the encoding options Width/Height
-        int maxLogoSize = svgSize / 5; // 20% of SVG size
+        int maxLogoSize = (int)(svgSize * (sizePercentage / 100.0));
         
         // Calculate logo dimensions preserving aspect ratio
         float aspectRatio = (float)logo.Width / logo.Height;
@@ -223,6 +214,27 @@ public static class BarcodeHelpers
             logoHeight = maxLogoSize;
             logoWidth = (int)(maxLogoSize * aspectRatio);
         }
+        
+        // Resize the logo before encoding to reduce SVG file size
+        Bitmap resizedLogo = new(logoWidth, logoHeight);
+        using (Graphics g = Graphics.FromImage(resizedLogo))
+        {
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            g.DrawImage(logo, 0, 0, logoWidth, logoHeight);
+        }
+        
+        // Convert resized logo to base64 for embedding
+        string base64Logo;
+        using (MemoryStream ms = new())
+        {
+            resizedLogo.Save(ms, ImageFormat.Png);
+            byte[] imageBytes = ms.ToArray();
+            base64Logo = Convert.ToBase64String(imageBytes);
+        }
+        resizedLogo.Dispose();
         
         // Calculate centered position
         int x = (svgSize - logoWidth) / 2;

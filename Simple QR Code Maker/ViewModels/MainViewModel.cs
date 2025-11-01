@@ -92,6 +92,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private bool hasLogo = false;
 
+    [ObservableProperty]
+    private double logoSizePercentage = 20.0; // Default 20% of QR code size
+
+    public double MaxLogoSizePercentage => GetMaxLogoSizeForErrorCorrection();
+
     private double MinSizeScanDistanceScaleFactor = 1;
 
     private readonly DispatcherTimer copyInfoBarTimer = new();
@@ -120,6 +125,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     partial void OnSelectedOptionChanged(ErrorCorrectionOptions value)
     {
+        // Ensure logo size doesn't exceed the new error correction level's maximum
+        if (LogoSizePercentage > MaxLogoSizePercentage)
+        {
+            LogoSizePercentage = MaxLogoSizePercentage;
+        }
+        OnPropertyChanged(nameof(MaxLogoSizePercentage));
+        
         debounceTimer.Stop();
         debounceTimer.Start();
     }
@@ -141,6 +153,27 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         HasLogo = value != null;
         debounceTimer.Stop();
         debounceTimer.Start();
+    }
+
+    partial void OnLogoSizePercentageChanged(double value)
+    {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
+    private double GetMaxLogoSizeForErrorCorrection()
+    {
+        // Error correction allows us to obscure a percentage of the QR code
+        // We use a conservative estimate (80% of the theoretical maximum)
+        // to ensure reliable scanning
+        return SelectedOption.ErrorCorrectionLevel switch
+        {
+            ErrorCorrectionLevel.L => 7.0 * 0.8,   // ~5.6% max
+            ErrorCorrectionLevel.M => 15.0 * 0.8,  // ~12% max
+            ErrorCorrectionLevel.Q => 25.0 * 0.8,  // ~20% max
+            ErrorCorrectionLevel.H => 30.0 * 0.8,  // ~24% max
+            _ => 20.0
+        };
     }
 
     public bool CanSaveImage { get => !string.IsNullOrWhiteSpace(UrlText); }
@@ -306,7 +339,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 SelectedOption.ErrorCorrectionLevel,
                 ForegroundColor.ToSystemDrawingColor(),
                 BackgroundColor.ToSystemDrawingColor(),
-                LogoImage);
+                LogoImage,
+                LogoSizePercentage);
             BarcodeImageItem barcodeImageItem = new()
             {
                 CodeAsBitmap = bitmap,
@@ -318,6 +352,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 BackgroundColor = BackgroundColor,
                 MaxSizeScaleFactor = MinSizeScanDistanceScaleFactor,
                 LogoImage = LogoImage,
+                LogoSizePercentage = LogoSizePercentage,
             };
 
             double ratio = barcodeImageItem.ColorContrastRatio;
