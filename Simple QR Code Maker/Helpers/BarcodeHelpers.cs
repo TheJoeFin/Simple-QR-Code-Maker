@@ -14,6 +14,8 @@ namespace Simple_QR_Code_Maker.Helpers;
 
 public static class BarcodeHelpers
 {
+    private const int LOGO_PADDING = 8;
+    
     public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null)
     {
         BitmapRenderer bitmapRenderer = new()
@@ -71,9 +73,8 @@ public static class BarcodeHelpers
         g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 
         // Draw a white background circle/rectangle behind the logo for better visibility
-        int padding = 8;
         using SolidBrush whiteBrush = new(System.Drawing.Color.White);
-        g.FillRectangle(whiteBrush, x - padding, y - padding, logoSize + (padding * 2), logoSize + (padding * 2));
+        g.FillRectangle(whiteBrush, x - LOGO_PADDING, y - LOGO_PADDING, logoSize + (LOGO_PADDING * 2), logoSize + (LOGO_PADDING * 2));
 
         // Draw the logo
         g.DrawImage(logo, x, y, logoSize, logoSize);
@@ -184,15 +185,15 @@ public static class BarcodeHelpers
         }
 
         // Calculate logo dimensions (20% of SVG size)
-        int logoSize = 1024 / 5; // 20% of 1024
-        int x = (1024 - logoSize) / 2;
-        int y = (1024 - logoSize) / 2;
-        int padding = 8;
+        const int svgSize = 1024; // Should match the encoding options Width/Height
+        int logoSize = svgSize / 5; // 20% of SVG size
+        int x = (svgSize - logoSize) / 2;
+        int y = (svgSize - logoSize) / 2;
 
         // Insert the logo into the SVG content
         string logoSvgElement = $@"
   <!-- Logo background -->
-  <rect x=""{x - padding}"" y=""{y - padding}"" width=""{logoSize + (padding * 2)}"" height=""{logoSize + (padding * 2)}"" fill=""white""/>
+  <rect x=""{x - LOGO_PADDING}"" y=""{y - LOGO_PADDING}"" width=""{logoSize + (LOGO_PADDING * 2)}"" height=""{logoSize + (LOGO_PADDING * 2)}"" fill=""white""/>
   <!-- Logo image -->
   <image x=""{x}"" y=""{y}"" width=""{logoSize}"" height=""{logoSize}"" href=""data:image/png;base64,{base64Logo}""/>";
 

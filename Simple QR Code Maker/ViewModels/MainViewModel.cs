@@ -618,7 +618,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         {
             // Dispose of the old logo if it exists
             LogoImage?.Dispose();
-            LogoImage = new System.Drawing.Bitmap(file.Path);
+            
+            // Use stream to access file instead of direct path for better compatibility
+            using var stream = await file.OpenReadAsync();
+            LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
         }
         catch (Exception ex)
         {
