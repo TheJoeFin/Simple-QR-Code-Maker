@@ -58,12 +58,33 @@ public static class BarcodeHelpers
 
     private static void OverlayLogoOnQrCode(Bitmap qrCode, Bitmap logo)
     {
-        // Calculate the size of the logo (typically 20-30% of QR code size to maintain scannability)
-        int logoSize = Math.Min(qrCode.Width, qrCode.Height) / 5; // 20% of QR code size
+        // Calculate the maximum size of the logo (20% of QR code size to maintain scannability)
+        int maxLogoSize = Math.Min(qrCode.Width, qrCode.Height) / 5;
+        
+        // Calculate logo dimensions preserving aspect ratio
+        float aspectRatio = (float)logo.Width / logo.Height;
+        int logoWidth, logoHeight;
+        
+        if (aspectRatio > 1) // Wider than tall
+        {
+            logoWidth = maxLogoSize;
+            logoHeight = (int)(maxLogoSize / aspectRatio);
+        }
+        else // Taller than wide or square
+        {
+            logoHeight = maxLogoSize;
+            logoWidth = (int)(maxLogoSize * aspectRatio);
+        }
         
         // Calculate the position to center the logo
-        int x = (qrCode.Width - logoSize) / 2;
-        int y = (qrCode.Height - logoSize) / 2;
+        int x = (qrCode.Width - logoWidth) / 2;
+        int y = (qrCode.Height - logoHeight) / 2;
+        
+        // Calculate background rectangle size (fits the actual logo dimensions)
+        int bgWidth = logoWidth + (LOGO_PADDING * 2);
+        int bgHeight = logoHeight + (LOGO_PADDING * 2);
+        int bgX = x - LOGO_PADDING;
+        int bgY = y - LOGO_PADDING;
 
         using Graphics g = Graphics.FromImage(qrCode);
         // Set high quality rendering
@@ -72,12 +93,12 @@ public static class BarcodeHelpers
         g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
         g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 
-        // Draw a white background circle/rectangle behind the logo for better visibility
+        // Draw a white background rectangle behind the logo for better visibility
         using SolidBrush whiteBrush = new(System.Drawing.Color.White);
-        g.FillRectangle(whiteBrush, x - LOGO_PADDING, y - LOGO_PADDING, logoSize + (LOGO_PADDING * 2), logoSize + (LOGO_PADDING * 2));
+        g.FillRectangle(whiteBrush, bgX, bgY, bgWidth, bgHeight);
 
-        // Draw the logo
-        g.DrawImage(logo, x, y, logoSize, logoSize);
+        // Draw the logo with preserved aspect ratio
+        g.DrawImage(logo, x, y, logoWidth, logoHeight);
     }
 
     /// <summary>
@@ -184,18 +205,41 @@ public static class BarcodeHelpers
             base64Logo = Convert.ToBase64String(imageBytes);
         }
 
-        // Calculate logo dimensions (20% of SVG size)
+        // Calculate logo dimensions preserving aspect ratio (20% of SVG size)
         const int svgSize = 1024; // Should match the encoding options Width/Height
-        int logoSize = svgSize / 5; // 20% of SVG size
-        int x = (svgSize - logoSize) / 2;
-        int y = (svgSize - logoSize) / 2;
+        int maxLogoSize = svgSize / 5; // 20% of SVG size
+        
+        // Calculate logo dimensions preserving aspect ratio
+        float aspectRatio = (float)logo.Width / logo.Height;
+        int logoWidth, logoHeight;
+        
+        if (aspectRatio > 1) // Wider than tall
+        {
+            logoWidth = maxLogoSize;
+            logoHeight = (int)(maxLogoSize / aspectRatio);
+        }
+        else // Taller than wide or square
+        {
+            logoHeight = maxLogoSize;
+            logoWidth = (int)(maxLogoSize * aspectRatio);
+        }
+        
+        // Calculate centered position
+        int x = (svgSize - logoWidth) / 2;
+        int y = (svgSize - logoHeight) / 2;
+        
+        // Calculate background rectangle size
+        int bgWidth = logoWidth + (LOGO_PADDING * 2);
+        int bgHeight = logoHeight + (LOGO_PADDING * 2);
+        int bgX = x - LOGO_PADDING;
+        int bgY = y - LOGO_PADDING;
 
         // Insert the logo into the SVG content
         string logoSvgElement = $@"
   <!-- Logo background -->
-  <rect x=""{x - LOGO_PADDING}"" y=""{y - LOGO_PADDING}"" width=""{logoSize + (LOGO_PADDING * 2)}"" height=""{logoSize + (LOGO_PADDING * 2)}"" fill=""white""/>
-  <!-- Logo image -->
-  <image x=""{x}"" y=""{y}"" width=""{logoSize}"" height=""{logoSize}"" href=""data:image/png;base64,{base64Logo}""/>";
+  <rect x=""{bgX}"" y=""{bgY}"" width=""{bgWidth}"" height=""{bgHeight}"" fill=""white""/>
+  <!-- Logo image with preserved aspect ratio -->
+  <image x=""{x}"" y=""{y}"" width=""{logoWidth}"" height=""{logoHeight}"" href=""data:image/png;base64,{base64Logo}""/>";
 
         // Find the closing </svg> tag and insert the logo before it
         string modifiedContent = svg.Content.Replace("</svg>", logoSvgElement + "\n</svg>");
