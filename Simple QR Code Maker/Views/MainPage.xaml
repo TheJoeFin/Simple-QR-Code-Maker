@@ -164,6 +164,49 @@
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
+                                    <Button
+                                        Width="68"
+                                        Command="{x:Bind ViewModel.SelectLogoCommand}"
+                                        ToolTipService.ToolTip="Add Logo">
+                                        <Button.Content>
+                                            <SymbolIcon Symbol="Pictures" />
+                                        </Button.Content>
+                                    </Button>
+                                    <Button
+                                        Width="68"
+                                        Command="{x:Bind ViewModel.RemoveLogoCommand}"
+                                        IsEnabled="{x:Bind ViewModel.HasLogo, Mode=OneWay}"
+                                        ToolTipService.ToolTip="Remove Logo">
+                                        <Button.Content>
+                                            <SymbolIcon Symbol="Delete" />
+                                        </Button.Content>
+                                    </Button>
+                                </StackPanel>
+
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="12"
+                                    Visibility="{x:Bind ViewModel.HasLogo,
+                                                        Mode=OneWay,
+                                                        Converter={StaticResource BoolToVisibility}}">
+                                    <TextBlock VerticalAlignment="Center" Text="Logo Size:" />
+                                    <Slider
+                                        x:Name="LogoSizeSlider"
+                                        Width="200"
+                                        Maximum="{x:Bind ViewModel.MaxLogoSizePercentage,
+                                                        Mode=OneWay}"
+                                        Minimum="5"
+                                        StepFrequency="1"
+                                        TickFrequency="5"
+                                        TickPlacement="BottomRight"
+                                        ToolTipService.ToolTip="Adjust logo size"
+                                        Value="{x:Bind ViewModel.LogoSizePercentage,
+                                                      Mode=TwoWay}" />
+                                    <TextBlock VerticalAlignment="Center">
+                                        <Run Text="{x:Bind ViewModel.LogoSizePercentage, Mode=OneWay}" />
+                                        <Run Text="%" />
+                                    </TextBlock>
                                 </StackPanel>
 
                                 <Border

@@ -86,6 +86,17 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private bool copySharePopupOpen = false;
 
+    [ObservableProperty]
+    private System.Drawing.Bitmap? logoImage = null;
+
+    [ObservableProperty]
+    private bool hasLogo = false;
+
+    [ObservableProperty]
+    private double logoSizePercentage = 20.0; // Default 20% of QR code size
+
+    public double MaxLogoSizePercentage => GetMaxLogoSizeForErrorCorrection();
+
     private double MinSizeScanDistanceScaleFactor = 1;
 
     private readonly DispatcherTimer copyInfoBarTimer = new();
@@ -114,6 +125,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     partial void OnSelectedOptionChanged(ErrorCorrectionOptions value)
     {
+        // Ensure logo size doesn't exceed the new error correction level's maximum
+        if (LogoSizePercentage > MaxLogoSizePercentage)
+        {
+            LogoSizePercentage = MaxLogoSizePercentage;
+        }
+        OnPropertyChanged(nameof(MaxLogoSizePercentage));
+        
         debounceTimer.Stop();
         debounceTimer.Start();
     }
@@ -128,6 +146,34 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         debounceTimer.Stop();
         debounceTimer.Start();
+    }
+
+    partial void OnLogoImageChanged(System.Drawing.Bitmap? value)
+    {
+        HasLogo = value != null;
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
+    partial void OnLogoSizePercentageChanged(double value)
+    {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
+    private double GetMaxLogoSizeForErrorCorrection()
+    {
+        // Error correction allows us to obscure a percentage of the QR code
+        // We use a conservative estimate (80% of the theoretical maximum)
+        // to ensure reliable scanning
+        return SelectedOption.ErrorCorrectionLevel switch
+        {
+            ErrorCorrectionLevel.L => 7.0 * 0.8,   // ~5.6% max
+            ErrorCorrectionLevel.M => 15.0 * 0.8,  // ~12% max
+            ErrorCorrectionLevel.Q => 25.0 * 0.8,  // ~20% max
+            ErrorCorrectionLevel.H => 30.0 * 0.8,  // ~24% max
+            _ => 20.0
+        };
     }
 
     public bool CanSaveImage { get => !string.IsNullOrWhiteSpace(UrlText); }
@@ -249,6 +295,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             debounceTimer.Tick -= DebounceTimer_Tick;
 
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
+        
+        // Dispose of the logo image
+        LogoImage?.Dispose();
     }
 
     private void PlaceholderTextTimer_Tick(object? sender, object e)
@@ -289,7 +338,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 textToUse,
                 SelectedOption.ErrorCorrectionLevel,
                 ForegroundColor.ToSystemDrawingColor(),
-                BackgroundColor.ToSystemDrawingColor());
+                BackgroundColor.ToSystemDrawingColor(),
+                LogoImage,
+                LogoSizePercentage);
             BarcodeImageItem barcodeImageItem = new()
             {
                 CodeAsBitmap = bitmap,
@@ -300,6 +351,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 ForegroundColor = ForegroundColor,
                 BackgroundColor = BackgroundColor,
                 MaxSizeScaleFactor = MinSizeScanDistanceScaleFactor,
+                LogoImage = LogoImage,
+                LogoSizePercentage = LogoSizePercentage,
             };
 
             double ratio = barcodeImageItem.ColorContrastRatio;
@@ -572,6 +625,54 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             UrlText = stringToAdd;
 
         UrlText += $"\r{stringToAdd}";
+    }
+
+    [RelayCommand]
+    private async Task SelectLogo()
+    {
+        FileOpenPicker openPicker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+        };
+        openPicker.FileTypeFilter.Add(".png");
+        openPicker.FileTypeFilter.Add(".jpg");
+        openPicker.FileTypeFilter.Add(".jpeg");
+        openPicker.FileTypeFilter.Add(".bmp");
+        openPicker.FileTypeFilter.Add(".gif");
+
+        Window window = new();
+        IntPtr windowHandle = WindowNative.GetWindowHandle(window);
+        InitializeWithWindow.Initialize(openPicker, windowHandle);
+
+        StorageFile file = await openPicker.PickSingleFileAsync();
+
+        if (file == null)
+            return;
+
+        try
+        {
+            // Dispose of the old logo if it exists
+            LogoImage?.Dispose();
+            
+            // Use stream to access file instead of direct path for better compatibility
+            using var stream = await file.OpenReadAsync();
+            LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to load logo image: {ex.Message}");
+            CodeInfoBarMessage = "Failed to load the selected image";
+            ShowCodeInfoBar = true;
+            CodeInfoBarSeverity = InfoBarSeverity.Error;
+            CodeInfoBarTitle = "Error loading logo";
+        }
+    }
+
+    [RelayCommand]
+    private void RemoveLogo()
+    {
+        LogoImage?.Dispose();
+        LogoImage = null;
     }
 
     private async Task WriteImageToFile(BarcodeImageItem imageItem, StorageFile file, FileKind kindOfFile)
