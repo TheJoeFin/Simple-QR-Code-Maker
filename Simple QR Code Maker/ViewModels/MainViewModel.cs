@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using WinRT.Interop;
 using ZXing.QrCode.Internal;
 
@@ -93,10 +94,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private bool hasLogo = false;
 
     [ObservableProperty]
-    private double logoSizePercentage = 20.0; // Default 20% of QR code size
+    private double logoSizePercentage = 14.0;
 
     [ObservableProperty]
-    private double logoPaddingPixels = 8.0; // Default 8 pixels padding around logo
+    private double logoPaddingPixels = 4.0;
 
     public double MaxLogoSizePercentage => GetMaxLogoSizeForErrorCorrection();
 
@@ -134,7 +135,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoSizePercentage = MaxLogoSizePercentage;
         }
         OnPropertyChanged(nameof(MaxLogoSizePercentage));
-        
+
         debounceTimer.Stop();
         debounceTimer.Start();
     }
@@ -166,7 +167,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     partial void OnLogoPaddingPixelsChanged(double value)
     {
-   debounceTimer.Stop();
+        debounceTimer.Stop();
         debounceTimer.Start();
     }
 
@@ -175,19 +176,21 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         // Error correction allows us to obscure a percentage of the QR code
         // We use 95% of the theoretical maximum to allow larger logos
         // while still maintaining reliable scanning
+        return 50.0;
+
         if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.L)
-            return 7.0 * 0.95;   // ~6.65% max (increased from ~5.6%)
+            return 6.0;   // ~6.65% max (increased from ~5.6%)
         else if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.M)
-            return 15.0 * 0.95;  // ~14.25% max (increased from ~12%)
+            return 14.0;  // ~14.25% max (increased from ~12%)
         else if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.Q)
- return 25.0 * 0.95;  // ~23.75% max (increased from ~20%)
-  else if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.H)
- return 30.0 * 0.95;  // ~28.5% max (increased from ~24%)
+            return 23.0;  // ~23.75% max (increased from ~20%)
+        else if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.H)
+            return 27.0;  // ~28.5% max (increased from ~24%)
         else
-     return 20.0;
+            return 20.0;
     }
 
-    public bool CanSaveImage { get => !string.IsNullOrWhiteSpace(UrlText); }
+    public bool CanSaveImage => !string.IsNullOrWhiteSpace(UrlText);
 
     partial void OnUrlTextChanged(string value)
     {
@@ -264,10 +267,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    private void OnSaveHistoryMessage(object recipient, SaveHistoryMessage message)
-    {
-        SaveCurrentStateToHistory();
-    }
+    private void OnSaveHistoryMessage(object recipient, SaveHistoryMessage message) => SaveCurrentStateToHistory();
 
     private void OnRequestShowMessage(object recipient, RequestShowMessage rsm)
     {
@@ -306,7 +306,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             debounceTimer.Tick -= DebounceTimer_Tick;
 
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
-        
+
         // Dispose of the logo image
         LogoImage?.Dispose();
     }
@@ -558,36 +558,22 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private void ToggleFaqPaneOpen()
-    {
-        IsFaqPaneOpen = !IsFaqPaneOpen;
-    }
+    private void ToggleFaqPaneOpen() => IsFaqPaneOpen = !IsFaqPaneOpen;
 
     [RelayCommand]
-    private void ToggleHistoryPaneOpen()
-    {
-        IsHistoryPaneOpen = !IsHistoryPaneOpen;
-    }
+    private void ToggleHistoryPaneOpen() => IsHistoryPaneOpen = !IsHistoryPaneOpen;
 
     [RelayCommand]
-    private void ShareApp()
-    {
-        CopySharePopupOpen = !CopySharePopupOpen;
-    }
+    private void ShareApp() => CopySharePopupOpen = !CopySharePopupOpen;
 
     [RelayCommand]
-    private void OpenFile()
-    {
-        NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!, UrlText);
-    }
+    private void OpenFile() => NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!, UrlText);
 
     [RelayCommand]
-    private void GoToSettings()
-    {
+    private void GoToSettings() =>
         // pass the contents of the UrlText to the settings page
         // so when coming back it can be rehydrated
         NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!, UrlText);
-    }
 
     [RelayCommand]
     private async Task SavePng()
@@ -666,9 +652,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         {
             // Dispose of the old logo if it exists
             LogoImage?.Dispose();
-            
+
             // Use stream to access file instead of direct path for better compatibility
-            using var stream = await file.OpenReadAsync();
+            using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
             LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
         }
         catch (Exception ex)
