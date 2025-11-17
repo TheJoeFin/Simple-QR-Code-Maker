@@ -14,6 +14,27 @@ namespace Simple_QR_Code_Maker.Helpers;
 
 public static class BarcodeHelpers
 {
+    /// <summary>
+    /// Calculate the maximum safe logo size percentage based on QR code error correction level and version
+    /// </summary>
+    /// <param name="text">The text to encode in the QR code</param>
+    /// <param name="correctionLevel">The error correction level</param>
+    /// <returns>Maximum safe logo size as a percentage (0-100)</returns>
+    // public static int GetMaxLogoSizePercentage(string text, ErrorCorrectionLevel correctionLevel)
+    public static int GetMaxLogoSizePercentage(ErrorCorrectionLevel correctionLevel)
+    {
+        // Error correction capacity by level (percentage of code that can be damaged and still readable)
+        // These are the theoretical maximum recovery percentages
+        return correctionLevel.ToString() switch
+        {
+            "L" => 20,  // Low: ~7%
+            "M" => 23,  // Medium: ~15%
+            "Q" => 35,  // Quartile: ~25%
+            "H" => 40,  // High: ~30%
+            _ => 20
+        };
+    }
+
     public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0)
     {
         BitmapRenderer bitmapRenderer = new()
@@ -32,7 +53,7 @@ public static class BarcodeHelpers
         {
             Width = 1024,
             Height = 1024,
-            Margin = 0,
+            Margin = 2,
         };
         encodingOptions.Hints.Add(EncodeHintType.ERROR_CORRECTION, correctionLevel);
         barcodeWriter.Options = encodingOptions;
@@ -338,9 +359,9 @@ public static class BarcodeHelpers
             AutoRotate = true,
             Options =
             {
-                TryHarder = true,
-                TryInverted = true,
-            }
+      TryHarder = true,
+   TryInverted = true,
+}
         };
 
         Result[] results = barcodeReader.DecodeMultiple(bitmap);
