@@ -134,7 +134,7 @@
                                     <ComboBox
                                         x:Name="ErrorCorrectionComboBox"
                                         Width="136"
-                                        ItemsSource="{x:Bind ViewModel.ErrorCorrectionLevels}"
+                                        ItemsSource="{x:Bind ViewModel.ErrorCorrectionLevels, Mode=OneWay}"
                                         SelectedItem="{x:Bind ViewModel.SelectedOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         ToolTipService.ToolTip="Level of Error Correction">
                                         <ComboBox.ItemTemplate>
@@ -145,7 +145,9 @@
                                     </ComboBox>
                                     <SplitButton Command="{x:Bind ViewModel.SelectLogoCommand}" ToolTipService.ToolTip="Add image to the center of the QR Code">
                                         <SplitButton.Content>
-                                            <SymbolIcon Symbol="Pictures" />
+                                            <Viewbox Height="16" Margin="1">
+                                                <SymbolIcon Symbol="Pictures" />
+                                            </Viewbox>
                                         </SplitButton.Content>
                                         <SplitButton.Flyout>
                                             <Flyout>
@@ -161,19 +163,19 @@
                                                         <TextBlock
                                                             FontSize="12"
                                                             FontWeight="SemiBold"
-                                                            Text="Image Size" />
+                                                            Text="Image Size (blocks)" />
                                                         <Slider
                                                             x:Name="LogoSizeSliderFlyout"
-                                                            Maximum="{x:Bind ViewModel.MaxLogoSizePercentage, Mode=OneWay}"
-                                                            Minimum="5"
+                                                            Maximum="{x:Bind ViewModel.LogoSizeMaxPercentage, Mode=OneWay}"
+                                                            Minimum="7"
                                                             StepFrequency="1"
-                                                            TickFrequency="5"
+                                                            TickFrequency="2"
                                                             TickPlacement="BottomRight"
-                                                            ToolTipService.ToolTip="Adjust the size of the area covered by the logo (background space)"
+                                                            ToolTipService.ToolTip="Adjust the logo size relative to the size of the QR Code"
                                                             Value="{x:Bind ViewModel.LogoSizePercentage, Mode=TwoWay}" />
                                                         <TextBlock HorizontalAlignment="Center" FontSize="12">
                                                             <Run Text="{x:Bind ViewModel.LogoSizePercentage, Mode=OneWay}" />
-                                                            <Run Text="%" />
+                                                            <Run Text="percent" />
                                                         </TextBlock>
                                                     </StackPanel>
 
@@ -181,15 +183,15 @@
                                                         <TextBlock
                                                             FontSize="12"
                                                             FontWeight="SemiBold"
-                                                            Text="Space around image" />
+                                                            Text="Scale image" />
                                                         <Slider
                                                             x:Name="LogoPaddingSliderFlyout"
-                                                            Maximum="32"
-                                                            Minimum="-32"
+                                                            Maximum="20"
+                                                            Minimum="-20"
                                                             StepFrequency="1"
                                                             TickFrequency="8"
                                                             TickPlacement="BottomRight"
-                                                            ToolTipService.ToolTip="Adjust how much space is around the image (positive = smaller logo with space, negative = larger logo)"
+                                                            ToolTipService.ToolTip="Scale the logo image to fit it better in the space (positive = smaller logo with space, negative = larger logo)"
                                                             Value="{x:Bind ViewModel.LogoPaddingPixels, Mode=TwoWay}" />
                                                         <TextBlock HorizontalAlignment="Center" FontSize="12">
                                                             <Run Text="{x:Bind ViewModel.LogoPaddingPixels, Mode=OneWay}" />
@@ -231,14 +233,16 @@
                                     <SplitButton
                                         x:Name="SavePngButton"
                                         Command="{x:Bind ViewModel.SavePngCommand}"
-                                        Content="PNG"
                                         IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}"
                                         ToolTipService.ToolTip="Save code(s) as PNG files">
+                                        <SplitButton.Content>
+                                            <controls:IconAndTextContent ContentText="PNG" Icon="Save" />
+                                        </SplitButton.Content>
                                         <SplitButton.Flyout>
                                             <MenuFlyout>
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind ViewModel.SavePngCommand}"
-                                                    Icon="Save"
+                                                    Icon="SaveLocal"
                                                     Text="Save all to files (default)" />
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind ViewModel.CopyPngToClipboardCommand}"
@@ -250,14 +254,16 @@
                                     <SplitButton
                                         x:Name="SaveSvgButton"
                                         Command="{x:Bind ViewModel.SaveSvgCommand}"
-                                        Content="SVG"
                                         IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}"
                                         ToolTipService.ToolTip="Save code(s) as SVG files">
+                                        <SplitButton.Content>
+                                            <controls:IconAndTextContent ContentText="SVG" Icon="Save" />
+                                        </SplitButton.Content>
                                         <SplitButton.Flyout>
                                             <MenuFlyout>
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind ViewModel.SaveSvgCommand}"
-                                                    Icon="Save"
+                                                    Icon="SaveLocal"
                                                     Text="Save all to files (default)" />
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind ViewModel.CopySvgToClipboardCommand}"

@@ -94,12 +94,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private bool hasLogo = false;
 
     [ObservableProperty]
-    private double logoSizePercentage = 14.0;
-
-    [ObservableProperty]
     private double logoPaddingPixels = 4.0;
 
-    public double MaxLogoSizePercentage => GetMaxLogoSizeForErrorCorrection();
+    [ObservableProperty]
+    private double logoSizePercentage = 15;
+
+    [ObservableProperty]
+    private double logoSizeMaxPercentage = 20;
 
     private double MinSizeScanDistanceScaleFactor = 1;
 
@@ -119,7 +120,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         SelectedHistoryItem = null;
     }
 
-    public List<ErrorCorrectionOptions> ErrorCorrectionLevels { get; } =
+    public ObservableCollection<ErrorCorrectionOptions> ErrorCorrectionLevels { get; set; } = new(allCorrectionLevels);
+
+    private static readonly List<ErrorCorrectionOptions> allCorrectionLevels =
     [
         new("Low 7%", ErrorCorrectionLevel.L),
         new("Medium 15%", ErrorCorrectionLevel.M),
@@ -130,11 +133,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     partial void OnSelectedOptionChanged(ErrorCorrectionOptions value)
     {
         // Ensure logo size doesn't exceed the new error correction level's maximum
-        if (LogoSizePercentage > MaxLogoSizePercentage)
+        if (logoSizePercentage > logoSizeMaxPercentage)
         {
-            LogoSizePercentage = MaxLogoSizePercentage;
+            logoSizePercentage = logoSizeMaxPercentage;
         }
-        OnPropertyChanged(nameof(MaxLogoSizePercentage));
+        OnPropertyChanged(nameof(logoSizeMaxPercentage));
+
+        LogoSizeMaxPercentage = BarcodeHelpers.GetMaxLogoSizePercentage(value.ErrorCorrectionLevel);
 
         debounceTimer.Stop();
         debounceTimer.Start();
@@ -155,6 +160,26 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     partial void OnLogoImageChanged(System.Drawing.Bitmap? value)
     {
         HasLogo = value != null;
+
+
+        if (HasLogo)
+        {
+            if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.L && ErrorCorrectionLevels.Count > 1)
+            {
+                SelectedOption = ErrorCorrectionLevels[1];
+            }
+
+            if (ErrorCorrectionLevels.Count > 0 
+                && ErrorCorrectionLevels[0].ErrorCorrectionLevel == ErrorCorrectionLevel.L)
+                ErrorCorrectionLevels.RemoveAt(0);
+        }
+        else
+        {
+            if (ErrorCorrectionLevels.Count == 3)
+                ErrorCorrectionLevels.Insert(0,new("Low 7%", ErrorCorrectionLevel.L));
+        }
+
+
         debounceTimer.Stop();
         debounceTimer.Start();
     }
@@ -171,29 +196,19 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         debounceTimer.Start();
     }
 
-    private double GetMaxLogoSizeForErrorCorrection()
-    {
-        // Error correction allows us to obscure a percentage of the QR code
-        // We use 95% of the theoretical maximum to allow larger logos
-        // while still maintaining reliable scanning
-        return 50.0;
-
-        if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.L)
-            return 6.0;   // ~6.65% max (increased from ~5.6%)
-        else if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.M)
-            return 14.0;  // ~14.25% max (increased from ~12%)
-        else if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.Q)
-            return 23.0;  // ~23.75% max (increased from ~20%)
-        else if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.H)
-            return 27.0;  // ~28.5% max (increased from ~24%)
-        else
-            return 20.0;
-    }
-
     public bool CanSaveImage => !string.IsNullOrWhiteSpace(UrlText);
 
     partial void OnUrlTextChanged(string value)
     {
+        // Update max logo size when text changes (affects QR version/density)
+        OnPropertyChanged(nameof(logoSizeMaxPercentage));
+       
+        // Ensure current logo size doesn't exceed the new maximum
+        if (logoSizePercentage > logoSizeMaxPercentage)
+        {
+            logoSizePercentage = logoSizeMaxPercentage;
+        }
+
         debounceTimer.Stop();
         debounceTimer.Start();
     }
@@ -645,7 +660,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         StorageFile file = await openPicker.PickSingleFileAsync();
 
-        if (file == null)
+        if (file is null)
             return;
 
         try
@@ -732,6 +747,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public async void OnNavigatedTo(object parameter)
     {
         await LoadHistory();
+        CheckCanPasteText();
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
         UrlText = BaseText;
