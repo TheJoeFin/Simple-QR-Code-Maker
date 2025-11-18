@@ -42,6 +42,8 @@ public class HistoryItem : IEquatable<HistoryItem>
     public string? LogoImagePath { get; set; }
     
     public double LogoSizePercentage { get; set; } = 15;
+    
+    public double LogoPaddingPixels { get; set; } = 4.0;
 
     public HistoryItem()
     {

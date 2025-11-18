@@ -131,6 +131,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
         
         LogoSizePercentage = value.LogoSizePercentage;
+        LogoPaddingPixels = value.LogoPaddingPixels;
 
         SelectedHistoryItem = null;
     }
@@ -855,6 +856,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
             LogoImagePath = logoImagePath,
             LogoSizePercentage = LogoSizePercentage,
+            LogoPaddingPixels = LogoPaddingPixels,
         };
 
         HistoryItems.Remove(historyItem);
