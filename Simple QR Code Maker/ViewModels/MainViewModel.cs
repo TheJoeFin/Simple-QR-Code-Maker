@@ -10,6 +10,7 @@ using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
+using System.IO;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -116,8 +117,44 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         ForegroundColor = value.Foreground;
         BackgroundColor = value.Background;
         SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == value.ErrorCorrection);
+        
+        // Restore logo image and size if available
+        if (!string.IsNullOrEmpty(value.LogoImagePath))
+        {
+            _ = LoadLogoFromHistory(value.LogoImagePath);
+        }
+        else
+        {
+            // Clear logo if history item has no logo
+            LogoImage?.Dispose();
+            LogoImage = null;
+        }
+        
+        LogoSizePercentage = value.LogoSizePercentage;
 
         SelectedHistoryItem = null;
+    }
+    
+    private async Task LoadLogoFromHistory(string logoPath)
+    {
+        try
+        {
+            if (File.Exists(logoPath))
+            {
+                // Dispose old logo first
+                LogoImage?.Dispose();
+                
+                StorageFile file = await StorageFile.GetFileFromPathAsync(logoPath);
+                using var stream = await file.OpenReadAsync();
+                LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to load logo from history: {ex.Message}");
+            LogoImage?.Dispose();
+            LogoImage = null;
+        }
     }
 
     public ObservableCollection<ErrorCorrectionOptions> ErrorCorrectionLevels { get; set; } = new(allCorrectionLevels);
@@ -282,7 +319,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    private void OnSaveHistoryMessage(object recipient, SaveHistoryMessage message) => SaveCurrentStateToHistory();
+    private async void OnSaveHistoryMessage(object recipient, SaveHistoryMessage message) => await SaveCurrentStateToHistory();
 
     private void OnRequestShowMessage(object recipient, RequestShowMessage rsm)
     {
@@ -426,7 +463,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (QrCodeBitmaps.Count == 0)
             return;
 
-        SaveCurrentStateToHistory();
+        await SaveCurrentStateToHistory();
 
         StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
         List<StorageFile> files = [];
@@ -475,7 +512,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (QrCodeBitmaps.Count == 0)
             return;
 
-        SaveCurrentStateToHistory();
+        await SaveCurrentStateToHistory();
 
         StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
         List<StorageFile> files = [];
@@ -519,12 +556,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private void CopySvgTextToClipboard()
+    private async Task CopySvgTextToClipboard()
     {
         if (QrCodeBitmaps.Count == 0)
             return;
 
-        SaveCurrentStateToHistory();
+        await SaveCurrentStateToHistory();
 
         List<string> textStrings = [];
         foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
@@ -596,7 +633,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (QrCodeBitmaps.Count == 0)
             return;
 
-        SaveCurrentStateToHistory();
+        await SaveCurrentStateToHistory();
 
         await SaveAllFiles(FileKind.PNG);
 
@@ -615,7 +652,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (QrCodeBitmaps.Count == 0)
             return;
 
-        SaveCurrentStateToHistory();
+        await SaveCurrentStateToHistory();
 
         await SaveAllFiles(FileKind.SVG);
 
@@ -769,23 +806,61 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public void OnNavigatedFrom()
     {
         if (!string.IsNullOrWhiteSpace(UrlText))
-            SaveCurrentStateToHistory();
+            _ = SaveCurrentStateToHistory();
     }
 
-    public void SaveCurrentStateToHistory()
+    public async Task SaveCurrentStateToHistory()
     {
+        string? logoImagePath = null;
+        
+        // Save logo image to local app storage if present
+        if (LogoImage != null)
+        {
+            try
+            {
+                StorageFolder logoFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("LogoImages", CreationCollisionOption.OpenIfExists);
+                string fileName = $"logo_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.png";
+                StorageFile logoFile = await logoFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                
+                using (var stream = await logoFile.OpenAsync(FileAccessMode.ReadWrite))
+                {
+                    using (var outputStream = stream.GetOutputStreamAt(0))
+                    {
+                        using (var dataWriter = new DataWriter(outputStream))
+                        {
+                            using (MemoryStream ms = new())
+                            {
+                                LogoImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                                byte[] bytes = ms.ToArray();
+                                dataWriter.WriteBytes(bytes);
+                                await dataWriter.StoreAsync();
+                            }
+                        }
+                    }
+                }
+                
+                logoImagePath = logoFile.Path;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to save logo image: {ex.Message}");
+            }
+        }
+        
         HistoryItem historyItem = new()
         {
             CodesContent = UrlText,
             Foreground = ForegroundColor,
             Background = BackgroundColor,
             ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
+            LogoImagePath = logoImagePath,
+            LogoSizePercentage = LogoSizePercentage,
         };
 
         HistoryItems.Remove(historyItem);
         HistoryItems.Insert(0, historyItem);
 
-        LocalSettingsService.SaveSettingAsync(nameof(HistoryItems), HistoryItems);
+        await LocalSettingsService.SaveSettingAsync(nameof(HistoryItems), HistoryItems);
     }
 
     private async Task LoadHistory()
