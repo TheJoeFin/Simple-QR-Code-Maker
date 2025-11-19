@@ -102,6 +102,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private double logoSizeMaxPercentage = 20;
+    
+    private string? currentLogoPath = null;
 
     private double MinSizeScanDistanceScaleFactor = 1;
 
@@ -148,6 +150,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 StorageFile file = await StorageFile.GetFileFromPathAsync(logoPath);
                 using var stream = await file.OpenReadAsync();
                 LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+                currentLogoPath = logoPath;
             }
         }
         catch (Exception ex)
@@ -155,6 +158,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             System.Diagnostics.Debug.WriteLine($"Failed to load logo from history: {ex.Message}");
             LogoImage?.Dispose();
             LogoImage = null;
+            currentLogoPath = null;
         }
     }
 
@@ -620,13 +624,32 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private void ShareApp() => CopySharePopupOpen = !CopySharePopupOpen;
 
     [RelayCommand]
-    private void OpenFile() => NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!, UrlText);
+    private void OpenFile() => NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!, CreateCurrentStateHistoryItem());
 
     [RelayCommand]
     private void GoToSettings() =>
-        // pass the contents of the UrlText to the settings page
-        // so when coming back it can be rehydrated
-        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!, UrlText);
+        // pass the current state as a HistoryItem to the settings page
+        // so when coming back it can be fully restored
+        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!, CreateCurrentStateHistoryItem());
+    
+    private HistoryItem CreateCurrentStateHistoryItem()
+    {
+        return new HistoryItem
+        {
+            CodesContent = UrlText,
+            Foreground = ForegroundColor,
+            Background = BackgroundColor,
+            ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
+            LogoImagePath = LogoImage != null ? GetCurrentLogoPath() : null,
+            LogoSizePercentage = LogoSizePercentage,
+            LogoPaddingPixels = LogoPaddingPixels,
+        };
+    }
+    
+    private string? GetCurrentLogoPath()
+    {
+        return currentLogoPath;
+    }
 
     [RelayCommand]
     private async Task SavePng()
@@ -725,6 +748,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         LogoImage?.Dispose();
         LogoImage = null;
+        currentLogoPath = null;
     }
 
     private async Task WriteImageToFile(BarcodeImageItem imageItem, StorageFile file, FileKind kindOfFile)
@@ -799,9 +823,40 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             await LocalSettingsService.SaveSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
         }
 
-        // check on text rehydration, could be coming from Reading or Settings
-        if (parameter is string textParam && !string.IsNullOrWhiteSpace(textParam))
+        // Check if parameter is a HistoryItem with full state restoration
+        if (parameter is HistoryItem historyItem)
+        {
+            RestoreFromHistoryItem(historyItem);
+        }
+        // Otherwise check for text rehydration from other pages
+        else if (parameter is string textParam && !string.IsNullOrWhiteSpace(textParam))
+        {
             UrlText = textParam;
+        }
+    }
+    
+    private void RestoreFromHistoryItem(HistoryItem historyItem)
+    {
+        UrlText = historyItem.CodesContent;
+        ForegroundColor = historyItem.Foreground;
+        BackgroundColor = historyItem.Background;
+        SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == historyItem.ErrorCorrection);
+        
+        // Restore logo image and settings if available
+        if (!string.IsNullOrEmpty(historyItem.LogoImagePath))
+        {
+            _ = LoadLogoFromHistory(historyItem.LogoImagePath);
+        }
+        else
+        {
+            // Clear logo if history item has no logo
+            LogoImage?.Dispose();
+            LogoImage = null;
+            currentLogoPath = null;
+        }
+        
+        LogoSizePercentage = historyItem.LogoSizePercentage;
+        LogoPaddingPixels = historyItem.LogoPaddingPixels;
     }
 
     public void OnNavigatedFrom()
@@ -841,6 +896,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 }
                 
                 logoImagePath = logoFile.Path;
+                currentLogoPath = logoImagePath; // Update current logo path
             }
             catch (Exception ex)
             {
@@ -854,7 +910,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             Foreground = ForegroundColor,
             Background = BackgroundColor,
             ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
-            LogoImagePath = logoImagePath,
+            LogoImagePath = logoImagePath ?? currentLogoPath, // Use saved path or current path
             LogoSizePercentage = LogoSizePercentage,
             LogoPaddingPixels = LogoPaddingPixels,
         };
