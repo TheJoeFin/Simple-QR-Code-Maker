@@ -862,23 +862,80 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         HistoryItems.Remove(historyItem);
         HistoryItems.Insert(0, historyItem);
 
-        await LocalSettingsService.SaveSettingAsync(nameof(HistoryItems), HistoryItems);
+        await SaveHistoryToFile();
+    }
+
+    private async Task SaveHistoryToFile()
+    {
+        try
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile historyFile = await localFolder.CreateFileAsync("History.json", CreationCollisionOption.ReplaceExisting);
+            
+            string json = System.Text.Json.JsonSerializer.Serialize(HistoryItems, new System.Text.Json.JsonSerializerOptions 
+            { 
+                WriteIndented = true 
+            });
+            
+            await FileIO.WriteTextAsync(historyFile, json);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to save history to file: {ex.Message}");
+        }
     }
 
     private async Task LoadHistory()
     {
-        ObservableCollection<HistoryItem>? prevHistory = null;
-
+        ObservableCollection<HistoryItem>? historyFromFile = null;
+        
+        // First, try to load from file (new location)
         try
         {
-            prevHistory = await LocalSettingsService.ReadSettingAsync<ObservableCollection<HistoryItem>>(nameof(HistoryItems));
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile historyFile = await localFolder.GetFileAsync("History.json");
+            string json = await FileIO.ReadTextAsync(historyFile);
+            historyFromFile = System.Text.Json.JsonSerializer.Deserialize<ObservableCollection<HistoryItem>>(json);
+        }
+        catch
+        {
+            // File doesn't exist yet, that's okay
+        }
+
+        // If we found history in the file, use it
+        if (historyFromFile != null && historyFromFile.Count > 0)
+        {
+            foreach (HistoryItem hisItem in historyFromFile)
+                HistoryItems.Add(hisItem);
+            return;
+        }
+
+        // Otherwise, try to migrate from old settings location
+        ObservableCollection<HistoryItem>? historyFromSettings = null;
+        try
+        {
+            historyFromSettings = await LocalSettingsService.ReadSettingAsync<ObservableCollection<HistoryItem>>(nameof(HistoryItems));
         }
         catch { }
 
-        if (prevHistory is null || prevHistory.Count == 0)
-            return;
-
-        foreach (HistoryItem hisItem in prevHistory)
-            HistoryItems.Add(hisItem);
+        if (historyFromSettings != null && historyFromSettings.Count > 0)
+        {
+            // Migrate: add to collection and save to file
+            foreach (HistoryItem hisItem in historyFromSettings)
+                HistoryItems.Add(hisItem);
+            
+            // Save to new file location
+            await SaveHistoryToFile();
+            
+            // Clear from old settings location to free up space
+            try
+            {
+                await LocalSettingsService.SaveSettingAsync(nameof(HistoryItems), new ObservableCollection<HistoryItem>());
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to clear old history from settings: {ex.Message}");
+            }
+        }
     }
 }
