@@ -94,9 +94,9 @@
                                     x:Name="QrCodeOptions"
                                     HorizontalAlignment="Center"
                                     Orientation="Horizontal"
-                                    Spacing="12"
+                                    Spacing="6"
                                     Visibility="{x:Bind ViewModel.CanSaveImage, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
-                                    <Button Width="68" ToolTipService.ToolTip="Code Color">
+                                    <Button Width="48" ToolTipService.ToolTip="Code Color">
                                         <Button.Flyout>
                                             <Flyout>
                                                 <ColorPicker
@@ -113,7 +113,7 @@
                                             </Viewbox>
                                         </Button.Content>
                                     </Button>
-                                    <Button Width="68" ToolTipService.ToolTip="Background Color">
+                                    <Button Width="48" ToolTipService.ToolTip="Background Color">
                                         <Button.Flyout>
                                             <Flyout>
                                                 <ColorPicker
