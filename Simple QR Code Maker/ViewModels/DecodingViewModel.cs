@@ -36,7 +36,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private ObservableCollection<DecodingImageItem> decodingImageItems = [];
 
-    private string passedUrl = string.Empty;
+    private HistoryItem? navigationHistoryItem = null;
 
     private INavigationService NavigationService { get; }
 
@@ -78,8 +78,16 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     public void OnNavigatedTo(object parameter)
     {
-        if (parameter is string url)
-            passedUrl = url;
+        // Store the HistoryItem to pass back when returning to main page
+        if (parameter is HistoryItem historyItem)
+        {
+            navigationHistoryItem = historyItem;
+        }
+        // For backward compatibility, also handle string parameter
+        else if (parameter is string url)
+        {
+            navigationHistoryItem = new HistoryItem { CodesContent = url };
+        }
     }
 
     [RelayCommand]
@@ -127,7 +135,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void GoBack()
     {
-        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, passedUrl);
+        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, navigationHistoryItem);
     }
 
     [RelayCommand]
@@ -174,7 +182,21 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         if (string.IsNullOrWhiteSpace(InfoBarMessage))
             return;
 
-        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, InfoBarMessage);
+        // Create a new HistoryItem with the decoded text, preserving other state if available
+        var editHistoryItem = navigationHistoryItem != null 
+            ? new HistoryItem 
+            {
+                CodesContent = InfoBarMessage,
+                Foreground = navigationHistoryItem.Foreground,
+                Background = navigationHistoryItem.Background,
+                ErrorCorrection = navigationHistoryItem.ErrorCorrection,
+                LogoImagePath = navigationHistoryItem.LogoImagePath,
+                LogoSizePercentage = navigationHistoryItem.LogoSizePercentage,
+                LogoPaddingPixels = navigationHistoryItem.LogoPaddingPixels,
+            }
+            : new HistoryItem { CodesContent = InfoBarMessage };
+            
+        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, editHistoryItem);
     }
 
     private void OpenAndDecodeBitmap(IRandomAccessStreamWithContentType streamWithContentType)

@@ -33,6 +33,7 @@
     <None Remove="Controls\FaqsContent.xaml" />
     <None Remove="Controls\HistoryRowItem.xaml" />
     <None Remove="Controls\IconAndTextButton.xaml" />
+    <None Remove="Controls\IconAndTextContent.xaml" />
     <None Remove="Controls\NewFile1.txt" />
     <None Remove="Controls\QrCodeImageControl.xaml" />
     <None Remove="Controls\TextBorder.xaml" />
@@ -47,15 +48,15 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
     <PackageReference Include="Humanizer" Version="2.14.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.6584" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250916003" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.6901" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251106002" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.0" />
-    <PackageReference Include="System.Text.Json" Version="9.0.9" />
-    <PackageReference Include="WinUIEx" Version="2.8.0" />
-    <PackageReference Include="ZXing.Net" Version="0.16.10" />
-    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.13" />
+    <PackageReference Include="System.Text.Json" Version="10.0.0" />
+    <PackageReference Include="WinUIEx" Version="2.9.0" />
+    <PackageReference Include="ZXing.Net" Version="0.16.11" />
+    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.14" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,6 +66,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\IconAndTextContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\FaqsContent.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

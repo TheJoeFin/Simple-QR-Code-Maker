@@ -10,9 +10,11 @@ using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
+using System.IO;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using WinRT.Interop;
 using ZXing.QrCode.Internal;
 
@@ -86,6 +88,23 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private bool copySharePopupOpen = false;
 
+    [ObservableProperty]
+    private System.Drawing.Bitmap? logoImage = null;
+
+    [ObservableProperty]
+    private bool hasLogo = false;
+
+    [ObservableProperty]
+    private double logoPaddingPixels = 4.0;
+
+    [ObservableProperty]
+    private double logoSizePercentage = 15;
+
+    [ObservableProperty]
+    private double logoSizeMaxPercentage = 20;
+    
+    private string? currentLogoPath = null;
+
     private double MinSizeScanDistanceScaleFactor = 1;
 
     private readonly DispatcherTimer copyInfoBarTimer = new();
@@ -100,11 +119,52 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         ForegroundColor = value.Foreground;
         BackgroundColor = value.Background;
         SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == value.ErrorCorrection);
+        
+        // Restore logo image and size if available
+        if (!string.IsNullOrEmpty(value.LogoImagePath))
+        {
+            _ = LoadLogoFromHistory(value.LogoImagePath);
+        }
+        else
+        {
+            // Clear logo if history item has no logo
+            LogoImage?.Dispose();
+            LogoImage = null;
+        }
+        
+        LogoSizePercentage = value.LogoSizePercentage;
+        LogoPaddingPixels = value.LogoPaddingPixels;
 
         SelectedHistoryItem = null;
     }
+    
+    private async Task LoadLogoFromHistory(string logoPath)
+    {
+        try
+        {
+            if (File.Exists(logoPath))
+            {
+                // Dispose old logo first
+                LogoImage?.Dispose();
+                
+                StorageFile file = await StorageFile.GetFileFromPathAsync(logoPath);
+                using var stream = await file.OpenReadAsync();
+                LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+                currentLogoPath = logoPath;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to load logo from history: {ex.Message}");
+            LogoImage?.Dispose();
+            LogoImage = null;
+            currentLogoPath = null;
+        }
+    }
 
-    public List<ErrorCorrectionOptions> ErrorCorrectionLevels { get; } =
+    public ObservableCollection<ErrorCorrectionOptions> ErrorCorrectionLevels { get; set; } = new(allCorrectionLevels);
+
+    private static readonly List<ErrorCorrectionOptions> allCorrectionLevels =
     [
         new("Low 7%", ErrorCorrectionLevel.L),
         new("Medium 15%", ErrorCorrectionLevel.M),
@@ -114,6 +174,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     partial void OnSelectedOptionChanged(ErrorCorrectionOptions value)
     {
+        // Ensure logo size doesn't exceed the new error correction level's maximum
+        if (logoSizePercentage > logoSizeMaxPercentage)
+        {
+            logoSizePercentage = logoSizeMaxPercentage;
+        }
+        OnPropertyChanged(nameof(logoSizeMaxPercentage));
+
+        LogoSizeMaxPercentage = BarcodeHelpers.GetMaxLogoSizePercentage(value.ErrorCorrectionLevel);
+
         debounceTimer.Stop();
         debounceTimer.Start();
     }
@@ -130,10 +199,58 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         debounceTimer.Start();
     }
 
-    public bool CanSaveImage { get => !string.IsNullOrWhiteSpace(UrlText); }
+    partial void OnLogoImageChanged(System.Drawing.Bitmap? value)
+    {
+        HasLogo = value != null;
+
+
+        if (HasLogo)
+        {
+            if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.L && ErrorCorrectionLevels.Count > 1)
+            {
+                SelectedOption = ErrorCorrectionLevels[1];
+            }
+
+            if (ErrorCorrectionLevels.Count > 0 
+                && ErrorCorrectionLevels[0].ErrorCorrectionLevel == ErrorCorrectionLevel.L)
+                ErrorCorrectionLevels.RemoveAt(0);
+        }
+        else
+        {
+            if (ErrorCorrectionLevels.Count == 3)
+                ErrorCorrectionLevels.Insert(0,new("Low 7%", ErrorCorrectionLevel.L));
+        }
+
+
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
+    partial void OnLogoSizePercentageChanged(double value)
+    {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
+    partial void OnLogoPaddingPixelsChanged(double value)
+    {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
+    public bool CanSaveImage => !string.IsNullOrWhiteSpace(UrlText);
 
     partial void OnUrlTextChanged(string value)
     {
+        // Update max logo size when text changes (affects QR version/density)
+        OnPropertyChanged(nameof(logoSizeMaxPercentage));
+       
+        // Ensure current logo size doesn't exceed the new maximum
+        if (logoSizePercentage > logoSizeMaxPercentage)
+        {
+            logoSizePercentage = logoSizeMaxPercentage;
+        }
+
         debounceTimer.Stop();
         debounceTimer.Start();
     }
@@ -207,10 +324,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    private void OnSaveHistoryMessage(object recipient, SaveHistoryMessage message)
-    {
-        SaveCurrentStateToHistory();
-    }
+    private async void OnSaveHistoryMessage(object recipient, SaveHistoryMessage message) => await SaveCurrentStateToHistory();
 
     private void OnRequestShowMessage(object recipient, RequestShowMessage rsm)
     {
@@ -249,6 +363,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             debounceTimer.Tick -= DebounceTimer_Tick;
 
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
+
+        // Dispose of the logo image
+        LogoImage?.Dispose();
     }
 
     private void PlaceholderTextTimer_Tick(object? sender, object e)
@@ -289,17 +406,23 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 textToUse,
                 SelectedOption.ErrorCorrectionLevel,
                 ForegroundColor.ToSystemDrawingColor(),
-                BackgroundColor.ToSystemDrawingColor());
+                BackgroundColor.ToSystemDrawingColor(),
+                LogoImage,
+                LogoSizePercentage,
+                LogoPaddingPixels);
             BarcodeImageItem barcodeImageItem = new()
             {
                 CodeAsBitmap = bitmap,
                 CodeAsText = textToUse,
                 IsAppShowingUrlWarnings = WarnWhenNotUrl,
-                SizeTextVisible = HideMinimumSizeText ? Visibility.Collapsed : Visibility.Visible,
+                SizeTextVisible = (HideMinimumSizeText || LogoImage != null) ? Visibility.Collapsed : Visibility.Visible,
                 ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
                 ForegroundColor = ForegroundColor,
                 BackgroundColor = BackgroundColor,
                 MaxSizeScaleFactor = MinSizeScanDistanceScaleFactor,
+                LogoImage = LogoImage,
+                LogoSizePercentage = LogoSizePercentage,
+                LogoPaddingPixels = LogoPaddingPixels,
             };
 
             double ratio = barcodeImageItem.ColorContrastRatio;
@@ -345,7 +468,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (QrCodeBitmaps.Count == 0)
             return;
 
-        SaveCurrentStateToHistory();
+        await SaveCurrentStateToHistory();
 
         StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
         List<StorageFile> files = [];
@@ -394,7 +517,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (QrCodeBitmaps.Count == 0)
             return;
 
-        SaveCurrentStateToHistory();
+        await SaveCurrentStateToHistory();
 
         StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
         List<StorageFile> files = [];
@@ -438,12 +561,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private void CopySvgTextToClipboard()
+    private async Task CopySvgTextToClipboard()
     {
         if (QrCodeBitmaps.Count == 0)
             return;
 
-        SaveCurrentStateToHistory();
+        await SaveCurrentStateToHistory();
 
         List<string> textStrings = [];
         foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
@@ -492,35 +615,40 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private void ToggleFaqPaneOpen()
-    {
-        IsFaqPaneOpen = !IsFaqPaneOpen;
-    }
+    private void ToggleFaqPaneOpen() => IsFaqPaneOpen = !IsFaqPaneOpen;
 
     [RelayCommand]
-    private void ToggleHistoryPaneOpen()
-    {
-        IsHistoryPaneOpen = !IsHistoryPaneOpen;
-    }
+    private void ToggleHistoryPaneOpen() => IsHistoryPaneOpen = !IsHistoryPaneOpen;
 
     [RelayCommand]
-    private void ShareApp()
-    {
-        CopySharePopupOpen = !CopySharePopupOpen;
-    }
+    private void ShareApp() => CopySharePopupOpen = !CopySharePopupOpen;
 
     [RelayCommand]
-    private void OpenFile()
-    {
-        NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!, UrlText);
-    }
+    private void OpenFile() => NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!, CreateCurrentStateHistoryItem());
 
     [RelayCommand]
-    private void GoToSettings()
+    private void GoToSettings() =>
+        // pass the current state as a HistoryItem to the settings page
+        // so when coming back it can be fully restored
+        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!, CreateCurrentStateHistoryItem());
+    
+    private HistoryItem CreateCurrentStateHistoryItem()
     {
-        // pass the contents of the UrlText to the settings page
-        // so when coming back it can be rehydrated
-        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!, UrlText);
+        return new HistoryItem
+        {
+            CodesContent = UrlText,
+            Foreground = ForegroundColor,
+            Background = BackgroundColor,
+            ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
+            LogoImagePath = LogoImage != null ? GetCurrentLogoPath() : null,
+            LogoSizePercentage = LogoSizePercentage,
+            LogoPaddingPixels = LogoPaddingPixels,
+        };
+    }
+    
+    private string? GetCurrentLogoPath()
+    {
+        return currentLogoPath;
     }
 
     [RelayCommand]
@@ -529,7 +657,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (QrCodeBitmaps.Count == 0)
             return;
 
-        SaveCurrentStateToHistory();
+        await SaveCurrentStateToHistory();
 
         await SaveAllFiles(FileKind.PNG);
 
@@ -548,7 +676,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (QrCodeBitmaps.Count == 0)
             return;
 
-        SaveCurrentStateToHistory();
+        await SaveCurrentStateToHistory();
 
         await SaveAllFiles(FileKind.SVG);
 
@@ -572,6 +700,55 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             UrlText = stringToAdd;
 
         UrlText += $"\r{stringToAdd}";
+    }
+
+    [RelayCommand]
+    private async Task SelectLogo()
+    {
+        FileOpenPicker openPicker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+        };
+        openPicker.FileTypeFilter.Add(".png");
+        openPicker.FileTypeFilter.Add(".jpg");
+        openPicker.FileTypeFilter.Add(".jpeg");
+        openPicker.FileTypeFilter.Add(".bmp");
+        openPicker.FileTypeFilter.Add(".gif");
+
+        Window window = new();
+        IntPtr windowHandle = WindowNative.GetWindowHandle(window);
+        InitializeWithWindow.Initialize(openPicker, windowHandle);
+
+        StorageFile file = await openPicker.PickSingleFileAsync();
+
+        if (file is null)
+            return;
+
+        try
+        {
+            // Dispose of the old logo if it exists
+            LogoImage?.Dispose();
+
+            // Use stream to access file instead of direct path for better compatibility
+            using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
+            LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to load logo image: {ex.Message}");
+            CodeInfoBarMessage = "Failed to load the selected image";
+            ShowCodeInfoBar = true;
+            CodeInfoBarSeverity = InfoBarSeverity.Error;
+            CodeInfoBarTitle = "Error loading logo";
+        }
+    }
+
+    [RelayCommand]
+    private void RemoveLogo()
+    {
+        LogoImage?.Dispose();
+        LogoImage = null;
+        currentLogoPath = null;
     }
 
     private async Task WriteImageToFile(BarcodeImageItem imageItem, StorageFile file, FileKind kindOfFile)
@@ -632,6 +809,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public async void OnNavigatedTo(object parameter)
     {
         await LoadHistory();
+        CheckCanPasteText();
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
         UrlText = BaseText;
@@ -645,47 +823,175 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             await LocalSettingsService.SaveSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
         }
 
-        // check on text rehydration, could be coming from Reading or Settings
-        if (parameter is string textParam && !string.IsNullOrWhiteSpace(textParam))
+        // Check if parameter is a HistoryItem with full state restoration
+        if (parameter is HistoryItem historyItem)
+        {
+            RestoreFromHistoryItem(historyItem);
+        }
+        // Otherwise check for text rehydration from other pages
+        else if (parameter is string textParam && !string.IsNullOrWhiteSpace(textParam))
+        {
             UrlText = textParam;
+        }
+    }
+    
+    private void RestoreFromHistoryItem(HistoryItem historyItem)
+    {
+        UrlText = historyItem.CodesContent;
+        ForegroundColor = historyItem.Foreground;
+        BackgroundColor = historyItem.Background;
+        SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == historyItem.ErrorCorrection);
+        
+        // Restore logo image and settings if available
+        if (!string.IsNullOrEmpty(historyItem.LogoImagePath))
+        {
+            _ = LoadLogoFromHistory(historyItem.LogoImagePath);
+        }
+        else
+        {
+            // Clear logo if history item has no logo
+            LogoImage?.Dispose();
+            LogoImage = null;
+            currentLogoPath = null;
+        }
+        
+        LogoSizePercentage = historyItem.LogoSizePercentage;
+        LogoPaddingPixels = historyItem.LogoPaddingPixels;
     }
 
     public void OnNavigatedFrom()
     {
         if (!string.IsNullOrWhiteSpace(UrlText))
-            SaveCurrentStateToHistory();
+            _ = SaveCurrentStateToHistory();
     }
 
-    public void SaveCurrentStateToHistory()
+    public async Task SaveCurrentStateToHistory()
     {
+        string? logoImagePath = null;
+        
+        // Save logo image to local app storage if present
+        if (LogoImage != null)
+        {
+            try
+            {
+                StorageFolder logoFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("LogoImages", CreationCollisionOption.OpenIfExists);
+                string fileName = $"logo_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.png";
+                StorageFile logoFile = await logoFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                
+                using (var stream = await logoFile.OpenAsync(FileAccessMode.ReadWrite))
+                {
+                    using (var outputStream = stream.GetOutputStreamAt(0))
+                    {
+                        using (var dataWriter = new DataWriter(outputStream))
+                        {
+                            using (MemoryStream ms = new())
+                            {
+                                LogoImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                                byte[] bytes = ms.ToArray();
+                                dataWriter.WriteBytes(bytes);
+                                await dataWriter.StoreAsync();
+                            }
+                        }
+                    }
+                }
+                
+                logoImagePath = logoFile.Path;
+                currentLogoPath = logoImagePath; // Update current logo path
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to save logo image: {ex.Message}");
+            }
+        }
+        
         HistoryItem historyItem = new()
         {
             CodesContent = UrlText,
             Foreground = ForegroundColor,
             Background = BackgroundColor,
             ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
+            LogoImagePath = logoImagePath ?? currentLogoPath, // Use saved path or current path
+            LogoSizePercentage = LogoSizePercentage,
+            LogoPaddingPixels = LogoPaddingPixels,
         };
 
         HistoryItems.Remove(historyItem);
         HistoryItems.Insert(0, historyItem);
 
-        LocalSettingsService.SaveSettingAsync(nameof(HistoryItems), HistoryItems);
+        await SaveHistoryToFile();
+    }
+
+    private async Task SaveHistoryToFile()
+    {
+        try
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile historyFile = await localFolder.CreateFileAsync("History.json", CreationCollisionOption.ReplaceExisting);
+            
+            string json = System.Text.Json.JsonSerializer.Serialize(HistoryItems, new System.Text.Json.JsonSerializerOptions 
+            { 
+                WriteIndented = true 
+            });
+            
+            await FileIO.WriteTextAsync(historyFile, json);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to save history to file: {ex.Message}");
+        }
     }
 
     private async Task LoadHistory()
     {
-        ObservableCollection<HistoryItem>? prevHistory = null;
-
+        ObservableCollection<HistoryItem>? historyFromFile = null;
+        
+        // First, try to load from file (new location)
         try
         {
-            prevHistory = await LocalSettingsService.ReadSettingAsync<ObservableCollection<HistoryItem>>(nameof(HistoryItems));
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile historyFile = await localFolder.GetFileAsync("History.json");
+            string json = await FileIO.ReadTextAsync(historyFile);
+            historyFromFile = System.Text.Json.JsonSerializer.Deserialize<ObservableCollection<HistoryItem>>(json);
+        }
+        catch
+        {
+            // File doesn't exist yet, that's okay
+        }
+
+        // If we found history in the file, use it
+        if (historyFromFile != null && historyFromFile.Count > 0)
+        {
+            foreach (HistoryItem hisItem in historyFromFile)
+                HistoryItems.Add(hisItem);
+            return;
+        }
+
+        // Otherwise, try to migrate from old settings location
+        ObservableCollection<HistoryItem>? historyFromSettings = null;
+        try
+        {
+            historyFromSettings = await LocalSettingsService.ReadSettingAsync<ObservableCollection<HistoryItem>>(nameof(HistoryItems));
         }
         catch { }
 
-        if (prevHistory is null || prevHistory.Count == 0)
-            return;
-
-        foreach (HistoryItem hisItem in prevHistory)
-            HistoryItems.Add(hisItem);
+        if (historyFromSettings != null && historyFromSettings.Count > 0)
+        {
+            // Migrate: add to collection and save to file
+            foreach (HistoryItem hisItem in historyFromSettings)
+                HistoryItems.Add(hisItem);
+            
+            // Save to new file location
+            await SaveHistoryToFile();
+            
+            // Clear from old settings location to free up space
+            try
+            {
+                await LocalSettingsService.SaveSettingAsync(nameof(HistoryItems), new ObservableCollection<HistoryItem>());
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to clear old history from settings: {ex.Message}");
+            }
+        }
     }
 }

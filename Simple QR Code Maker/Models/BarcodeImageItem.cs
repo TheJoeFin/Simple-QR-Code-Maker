@@ -34,6 +34,12 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public Windows.UI.Color BackgroundColor { get; set; }
 
+    public System.Drawing.Bitmap? LogoImage { get; set; }
+
+    public double LogoSizePercentage { get; set; } = 20.0;
+
+    public double LogoPaddingPixels { get; set; } = 8.0;
+
     public QRCode QRCodeDetails => Encoder.encode(CodeAsText, ErrorCorrection);
 
     public string ToolTipText => $"Smallest recommended size {SmallestSide}, {CodeAsText}";
@@ -63,7 +69,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     {
         try
         {
-            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background);
+            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels);
             using IRandomAccessStream randomAccessStream = await file.OpenAsync(FileAccessMode.ReadWrite);
             DataWriter dataWriter = new(randomAccessStream);
             dataWriter.WriteString(svgImage.Content);
@@ -81,7 +87,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     {
         try
         {
-            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background);
+            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels);
             return svgImage.Content;
         }
         catch
@@ -126,6 +132,12 @@ public partial class BarcodeImageItem : ObservableRecipient
     [RelayCommand]
     private async Task CopyCodePngContext()
     {
+        if (CodeAsBitmap is null)
+        {
+            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to copy QR Code to the clipboard", "No QR Code to copy to the clipboard", InfoBarSeverity.Error));
+            return;
+        }
+
         StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
         List<StorageFile> files = [];
 
