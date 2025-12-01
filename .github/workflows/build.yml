@@ -12,24 +12,27 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: windows-latest
+build:
+  runs-on: windows-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v6
+  steps:
+  - name: Checkout code
+    uses: actions/checkout@v6
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: '9.0.x'
+  - name: Setup .NET
+    uses: actions/setup-dotnet@v5
+    with:
+      dotnet-version: '9.0.x'
 
-    - name: Restore dependencies
-      run: dotnet restore "Simple QR Code Maker.sln"
+  - name: Add MSBuild to PATH
+    uses: microsoft/setup-msbuild@v2
 
-    - name: Build solution
-      run: dotnet build "Simple QR Code Maker.sln" --configuration Release --no-restore
+  - name: Restore dependencies
+    run: msbuild "Simple QR Code Maker.sln" /t:Restore /p:Configuration=Release
+
+  - name: Build solution
+    run: msbuild "Simple QR Code Maker.sln" /p:Configuration=Release /p:Platform=x64
