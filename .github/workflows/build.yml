@@ -23,16 +23,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v6
 
-  - name: Setup .NET
-    uses: actions/setup-dotnet@v5
-    with:
-      dotnet-version: '9.0.x'
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '9.0.x'
 
-  - name: Add MSBuild to PATH
-    uses: microsoft/setup-msbuild@v2
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
 
-  - name: Restore dependencies
-    run: msbuild "Simple QR Code Maker.sln" /t:Restore /p:Configuration=Release
+    - name: Restore dependencies
+      run: msbuild "Simple QR Code Maker.sln" /t:Restore /p:Configuration=Release
 
-  - name: Build solution
-    run: msbuild "Simple QR Code Maker.sln" /p:Configuration=Release /p:Platform=x64
+    - name: Build solution
+      run: msbuild "Simple QR Code Maker.sln" /p:Configuration=Release /p:Platform=x64
