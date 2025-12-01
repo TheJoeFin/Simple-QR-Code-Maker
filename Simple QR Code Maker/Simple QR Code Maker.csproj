@@ -21,7 +21,6 @@
     <WindowsAppSdkSelfContained>True</WindowsAppSdkSelfContained>
     <AppxBundle>Never</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
-    <GenerateAppxPackageOnBuild>True</GenerateAppxPackageOnBuild>
 
     <AppxPackageDir>AppPackages\</AppxPackageDir>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
