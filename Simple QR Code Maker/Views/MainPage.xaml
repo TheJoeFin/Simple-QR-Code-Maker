@@ -163,7 +163,7 @@
                                                         <TextBlock
                                                             FontSize="12"
                                                             FontWeight="SemiBold"
-                                                            Text="Image Size (blocks)" />
+                                                            Text="Image Size" />
                                                         <Slider
                                                             x:Name="LogoSizeSliderFlyout"
                                                             Maximum="{x:Bind ViewModel.LogoSizeMaxPercentage, Mode=OneWay}"
@@ -183,7 +183,7 @@
                                                         <TextBlock
                                                             FontSize="12"
                                                             FontWeight="SemiBold"
-                                                            Text="Scale image" />
+                                                            Text="Padding around image" />
                                                         <Slider
                                                             x:Name="LogoPaddingSliderFlyout"
                                                             Maximum="20"
