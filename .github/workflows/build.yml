@@ -27,9 +27,12 @@ jobs:
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '9.0.x'
-
-    - name: Restore dependencies
-      run: dotnet restore "Simple QR Code Maker.sln"
+            
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+      
+    - name: Restore
+      run: msbuild "Simple QR Code Maker.sln" /t:Restore /p:Configuration=${{ matrix.configuration }}
       
     - name: Build
-      run: dotnet build "Simple QR Code Maker.sln" --configuration Release --no-restore /p:PublishReadyToRun=false
+      run: msbuild "Simple QR Code Maker.sln" /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
