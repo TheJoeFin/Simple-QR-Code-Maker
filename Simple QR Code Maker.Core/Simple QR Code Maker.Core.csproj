@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>Simple_QR_Code_Maker.Core</RootNamespace>
-    <Platforms>x86;x64;arm64;AnyCPU</Platforms>
+    <Platforms>x64;arm64</Platforms>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
