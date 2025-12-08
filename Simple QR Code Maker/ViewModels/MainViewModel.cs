@@ -10,7 +10,9 @@ using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Text.Json;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -870,33 +872,26 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         string? logoImagePath = null;
         
         // Save logo image to local app storage if present
-        if (LogoImage != null)
+        if (LogoImage is not null)
         {
             try
             {
                 StorageFolder logoFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("LogoImages", CreationCollisionOption.OpenIfExists);
                 string fileName = $"logo_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.png";
                 StorageFile logoFile = await logoFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-                
-                using (var stream = await logoFile.OpenAsync(FileAccessMode.ReadWrite))
-                {
-                    using (var outputStream = stream.GetOutputStreamAt(0))
-                    {
-                        using (var dataWriter = new DataWriter(outputStream))
-                        {
-                            using (MemoryStream ms = new())
-                            {
-                                LogoImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                                byte[] bytes = ms.ToArray();
-                                dataWriter.WriteBytes(bytes);
-                                await dataWriter.StoreAsync();
-                            }
-                        }
-                    }
-                }
-                
+
+                using IRandomAccessStream stream = await logoFile.OpenAsync(FileAccessMode.ReadWrite);
+
+                using IOutputStream outputStream = stream.GetOutputStreamAt(0);
+                using DataWriter dataWriter = new(outputStream);
+                using MemoryStream ms = new();
+                LogoImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                byte[] bytes = ms.ToArray();
+                dataWriter.WriteBytes(bytes);
+                await dataWriter.StoreAsync();
+
                 logoImagePath = logoFile.Path;
-                currentLogoPath = logoImagePath; // Update current logo path
+                currentLogoPath = logoImagePath;
             }
             catch (Exception ex)
             {
@@ -927,11 +922,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
             StorageFile historyFile = await localFolder.CreateFileAsync("History.json", CreationCollisionOption.ReplaceExisting);
-            
-            string json = System.Text.Json.JsonSerializer.Serialize(HistoryItems, new System.Text.Json.JsonSerializerOptions 
-            { 
-                WriteIndented = true 
-            });
+
+            string json = JsonSerializer.Serialize(HistoryItems, HistoryJsonContext.Default.ObservableCollectionHistoryItem);
             
             await FileIO.WriteTextAsync(historyFile, json);
         }
@@ -951,7 +943,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
             StorageFile historyFile = await localFolder.GetFileAsync("History.json");
             string json = await FileIO.ReadTextAsync(historyFile);
-            historyFromFile = System.Text.Json.JsonSerializer.Deserialize<ObservableCollection<HistoryItem>>(json);
+            historyFromFile = JsonSerializer.Deserialize(json, HistoryJsonContext.Default.ObservableCollectionHistoryItem);
         }
         catch
         {
