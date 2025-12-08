@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Helpers;
+using Simple_QR_Code_Maker.Models;
 using System.Globalization;
 using System.Reflection;
 using System.Windows.Input;
@@ -41,7 +42,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     private readonly DispatcherTimer settingChangedDebounceTimer = new();
 
-    private string navigationText = string.Empty;
+    private HistoryItem? navigationHistoryItem = null;
 
     private INavigationService NavigationService { get; }
     public ILocalSettingsService LocalSettingsService { get; }
@@ -142,7 +143,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void GoHome()
     {
-        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, navigationText);
+        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, navigationHistoryItem);
     }
 
     [RelayCommand]
@@ -183,9 +184,15 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
         MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
 
-        if (parameter is string urlText && !string.IsNullOrWhiteSpace(urlText))
+        // Store the HistoryItem to pass back when returning to main page
+        if (parameter is HistoryItem historyItem)
         {
-            navigationText = urlText;
+            navigationHistoryItem = historyItem;
+        }
+        // For backward compatibility, also handle string parameter
+        else if (parameter is string urlText && !string.IsNullOrWhiteSpace(urlText))
+        {
+            navigationHistoryItem = new HistoryItem { CodesContent = urlText };
         }
     }
 

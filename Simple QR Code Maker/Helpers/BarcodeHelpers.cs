@@ -14,7 +14,28 @@ namespace Simple_QR_Code_Maker.Helpers;
 
 public static class BarcodeHelpers
 {
-    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background)
+    /// <summary>
+    /// Calculate the maximum safe logo size percentage based on QR code error correction level and version
+    /// </summary>
+    /// <param name="text">The text to encode in the QR code</param>
+    /// <param name="correctionLevel">The error correction level</param>
+    /// <returns>Maximum safe logo size as a percentage (0-100)</returns>
+    // public static int GetMaxLogoSizePercentage(string text, ErrorCorrectionLevel correctionLevel)
+    public static int GetMaxLogoSizePercentage(ErrorCorrectionLevel correctionLevel)
+    {
+        // Error correction capacity by level (percentage of code that can be damaged and still readable)
+        // These are the theoretical maximum recovery percentages
+        return correctionLevel.ToString() switch
+        {
+            "L" => 20,  // Low: ~7%
+            "M" => 23,  // Medium: ~15%
+            "Q" => 35,  // Quartile: ~25%
+            "H" => 40,  // High: ~30%
+            _ => 20
+        };
+    }
+
+    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0)
     {
         BitmapRenderer bitmapRenderer = new()
         {
@@ -38,6 +59,16 @@ public static class BarcodeHelpers
         barcodeWriter.Options = encodingOptions;
 
         using Bitmap bitmap = barcodeWriter.Write(text);
+
+        // If a logo is provided, overlay it on the center of the QR code
+        if (logoImage != null)
+        {
+            // Get the QR code details to calculate module size
+            QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
+            int moduleCount = qrCode.Version.DimensionForVersion;
+            OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
+        }
+
         using MemoryStream ms = new();
         bitmap.Save(ms, ImageFormat.Png);
         WriteableBitmap bitmapImage = new(encodingOptions.Width, encodingOptions.Height);
@@ -45,6 +76,81 @@ public static class BarcodeHelpers
         bitmapImage.SetSource(ms.AsRandomAccessStream());
 
         return bitmapImage;
+    }
+
+    private static void OverlayLogoOnQrCode(Bitmap qrCodeBitmap, Bitmap logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels, System.Drawing.Color backgroundColor)
+    {
+        // Calculate the pixel size of each QR code module
+        // The total size includes the margin on both sides
+        int totalModules = moduleCount + (margin * 2);
+        double modulePixelSize = (double)qrCodeBitmap.Width / totalModules;
+
+        // Calculate the punchout space size based on the size percentage
+        // This is the area that will be covered (blocking QR code modules)
+        int punchoutSizePixels = (int)(Math.Min(qrCodeBitmap.Width, qrCodeBitmap.Height) * (sizePercentage / 100.0));
+
+        // Round the punchout size to the nearest module boundary
+        int punchoutSizeModules = (int)Math.Round(punchoutSizePixels / modulePixelSize);
+        // Ensure it's at least 1 module and odd number for better centering
+        if (punchoutSizeModules < 1) punchoutSizeModules = 1;
+        if (punchoutSizeModules % 2 == 0) punchoutSizeModules++; // Make it odd for symmetry
+
+        // Convert back to pixels, aligned to module boundaries
+        int punchoutSize = (int)(punchoutSizeModules * modulePixelSize);
+
+        // Calculate the position to center the punchout area
+        int punchoutX = (qrCodeBitmap.Width - punchoutSize) / 2;
+        int punchoutY = (qrCodeBitmap.Height - punchoutSize) / 2;
+
+        // Convert padding to actual pixels
+        // Positive padding = logo smaller than punchout (adds white space)
+        // Negative padding = logo larger than punchout (logo extends beyond white background)
+        int paddingPixels = (int)Math.Round(logoPaddingPixels);
+
+        // Calculate the actual logo display size
+        // Logo fills the punchout area minus the padding on all sides
+        int logoDisplayWidth = Math.Max(1, punchoutSize - (Math.Abs(paddingPixels) * 2));
+        int logoDisplayHeight = Math.Max(1, punchoutSize - (Math.Abs(paddingPixels) * 2));
+
+        // If padding is negative, logo is larger than punchout
+        if (paddingPixels < 0)
+        {
+            logoDisplayWidth = punchoutSize + (Math.Abs(paddingPixels) * 2);
+            logoDisplayHeight = punchoutSize + (Math.Abs(paddingPixels) * 2);
+        }
+
+        // Calculate logo dimensions preserving aspect ratio
+        float aspectRatio = (float)logo.Width / logo.Height;
+        int logoWidth, logoHeight;
+
+        if (aspectRatio > 1) // Wider than tall
+        {
+            logoWidth = logoDisplayWidth;
+            logoHeight = (int)(logoDisplayWidth / aspectRatio);
+        }
+        else // Taller than wide or square
+        {
+            logoHeight = logoDisplayHeight;
+            logoWidth = (int)(logoDisplayHeight * aspectRatio);
+        }
+
+        // Center the logo within the punchout area (or offset if larger)
+        int logoX = punchoutX + (punchoutSize - logoWidth) / 2;
+        int logoY = punchoutY + (punchoutSize - logoHeight) / 2;
+
+        using Graphics g = Graphics.FromImage(qrCodeBitmap);
+        // Set high quality rendering
+        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+        g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+
+        // Draw the punchout background with the same color as the QR code background
+        using SolidBrush backgroundBrush = new(backgroundColor);
+        g.FillRectangle(backgroundBrush, punchoutX, punchoutY, punchoutSize, punchoutSize);
+
+        // Draw the logo scaled to fit within or extend beyond the punchout
+        g.DrawImage(logo, logoX, logoY, logoWidth, logoHeight);
     }
 
     /// <summary>
@@ -106,7 +212,7 @@ public static class BarcodeHelpers
         return $"{smallestSideCm:F2} x {smallestSideCm:F2} cm";
     }
 
-    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background)
+    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0)
     {
         SvgRenderer svgRenderer = new()
         {
@@ -131,7 +237,112 @@ public static class BarcodeHelpers
 
         SvgImage svg = barcodeWriter.Write(text);
 
+        // If a logo is provided, embed it in the SVG
+        if (logoImage != null)
+        {
+            // Get the QR code details to calculate module size
+            QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
+            int moduleCount = qrCode.Version.DimensionForVersion;
+            svg = EmbedLogoInSvg(svg, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
+        }
+
         return svg;
+    }
+
+    private static SvgImage EmbedLogoInSvg(SvgImage svg, Bitmap logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels, System.Drawing.Color backgroundColor)
+    {
+        const int svgSize = 1024; // Should match the encoding options Width/Height
+
+        // Calculate the pixel size of each QR code module
+        int totalModules = moduleCount + (margin * 2);
+        double modulePixelSize = (double)svgSize / totalModules;
+
+        // Calculate the punchout space size based on the size percentage
+        // This is the area that will be covered (blocking QR code modules)
+        int punchoutSizePixels = (int)(svgSize * (sizePercentage / 100.0));
+
+        // Round the punchout size to the nearest module boundary
+        int punchoutSizeModules = (int)Math.Round(punchoutSizePixels / modulePixelSize);
+        if (punchoutSizeModules < 1) punchoutSizeModules = 1;
+        if (punchoutSizeModules % 2 == 0) punchoutSizeModules++;
+
+        int punchoutSize = (int)(punchoutSizeModules * modulePixelSize);
+
+        // Calculate the position to center the punchout area
+        int punchoutX = (svgSize - punchoutSize) / 2;
+        int punchoutY = (svgSize - punchoutSize) / 2;
+
+        // Convert padding to actual pixels
+        // Positive padding = logo smaller than punchout (adds white space)
+        // Negative padding = logo larger than punchout (logo extends beyond white background)
+        int paddingPixels = (int)Math.Round(logoPaddingPixels);
+
+        // Calculate the actual logo display size
+        // Logo fills the punchout area minus the padding on all sides
+        int logoDisplayWidth = Math.Max(1, punchoutSize - (Math.Abs(paddingPixels) * 2));
+        int logoDisplayHeight = Math.Max(1, punchoutSize - (Math.Abs(paddingPixels) * 2));
+
+        // If padding is negative, logo is larger than punchout
+        if (paddingPixels < 0)
+        {
+            logoDisplayWidth = punchoutSize + (Math.Abs(paddingPixels) * 2);
+            logoDisplayHeight = punchoutSize + (Math.Abs(paddingPixels) * 2);
+        }
+
+        // Calculate logo dimensions preserving aspect ratio
+        float aspectRatio = (float)logo.Width / logo.Height;
+        int logoWidth, logoHeight;
+
+        if (aspectRatio > 1) // Wider than tall
+        {
+            logoWidth = logoDisplayWidth;
+            logoHeight = (int)(logoDisplayWidth / aspectRatio);
+        }
+        else // Taller than wide or square
+        {
+            logoHeight = logoDisplayHeight;
+            logoWidth = (int)(logoDisplayHeight * aspectRatio);
+        }
+
+        // Center the logo within the punchout area (or offset if larger)
+        int logoX = punchoutX + (punchoutSize - logoWidth) / 2;
+        int logoY = punchoutY + (punchoutSize - logoHeight) / 2;
+
+        // Resize the logo to the display size before encoding to reduce SVG file size
+        Bitmap resizedLogo = new(logoWidth, logoHeight);
+        using (Graphics g = Graphics.FromImage(resizedLogo))
+        {
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            g.DrawImage(logo, 0, 0, logoWidth, logoHeight);
+        }
+
+        // Convert resized logo to base64 for embedding
+        string base64Logo;
+        using (MemoryStream ms = new())
+        {
+            resizedLogo.Save(ms, ImageFormat.Png);
+            byte[] imageBytes = ms.ToArray();
+            base64Logo = Convert.ToBase64String(imageBytes);
+        }
+        resizedLogo.Dispose();
+
+        // Build the SVG logo element with punchout background and logo
+        // Convert the background color to RGB format for SVG
+        string backgroundColorHex = $"rgb({backgroundColor.R},{backgroundColor.G},{backgroundColor.B})";
+
+        string logoSvgElement = $@"
+  <!-- Logo punchout background -->
+  <rect x=""{punchoutX}"" y=""{punchoutY}"" width=""{punchoutSize}"" height=""{punchoutSize}"" fill=""{backgroundColorHex}""/>
+  <!-- Logo image -->
+  <image x=""{logoX}"" y=""{logoY}"" width=""{logoWidth}"" height=""{logoHeight}"" href=""data:image/png;base64,{base64Logo}""/>";
+
+        // Find the closing </svg> tag and insert the logo before it
+        string modifiedContent = svg.Content.Replace("</svg>", logoSvgElement + "\n</svg>");
+
+        return new SvgImage(modifiedContent);
     }
 
     public static IEnumerable<(string, Result)> GetStringsFromImageFile(StorageFile storageFile)
@@ -148,14 +359,14 @@ public static class BarcodeHelpers
             AutoRotate = true,
             Options =
             {
-                TryHarder = true,
-                TryInverted = true,
-            }
+      TryHarder = true,
+   TryInverted = true,
+}
         };
 
         Result[] results = barcodeReader.DecodeMultiple(bitmap);
 
-        List<(string, Result)> strings = new();
+        List<(string, Result)> strings = [];
 
         if (results == null || results.Length == 0)
             return strings;
