@@ -10,8 +10,6 @@ using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Text.Json;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
@@ -104,7 +102,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private double logoSizeMaxPercentage = 20;
-    
+
     private string? currentLogoPath = null;
 
     private double MinSizeScanDistanceScaleFactor = 1;
@@ -121,7 +119,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         ForegroundColor = value.Foreground;
         BackgroundColor = value.Background;
         SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == value.ErrorCorrection);
-        
+
         // Restore logo image and size if available
         if (!string.IsNullOrEmpty(value.LogoImagePath))
         {
@@ -133,13 +131,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoImage?.Dispose();
             LogoImage = null;
         }
-        
+
         LogoSizePercentage = value.LogoSizePercentage;
         LogoPaddingPixels = value.LogoPaddingPixels;
 
         SelectedHistoryItem = null;
     }
-    
+
     private async Task LoadLogoFromHistory(string logoPath)
     {
         try
@@ -148,9 +146,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             {
                 // Dispose old logo first
                 LogoImage?.Dispose();
-                
+
                 StorageFile file = await StorageFile.GetFileFromPathAsync(logoPath);
-                using var stream = await file.OpenReadAsync();
+                using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
                 LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
                 currentLogoPath = logoPath;
             }
@@ -205,7 +203,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         HasLogo = value != null;
 
-
         if (HasLogo)
         {
             if (SelectedOption.ErrorCorrectionLevel == ErrorCorrectionLevel.L && ErrorCorrectionLevels.Count > 1)
@@ -213,16 +210,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 SelectedOption = ErrorCorrectionLevels[1];
             }
 
-            if (ErrorCorrectionLevels.Count > 0 
+            if (ErrorCorrectionLevels.Count > 0
                 && ErrorCorrectionLevels[0].ErrorCorrectionLevel == ErrorCorrectionLevel.L)
                 ErrorCorrectionLevels.RemoveAt(0);
         }
         else
         {
             if (ErrorCorrectionLevels.Count == 3)
-                ErrorCorrectionLevels.Insert(0,new("Low 7%", ErrorCorrectionLevel.L));
+                ErrorCorrectionLevels.Insert(0, new("Low 7%", ErrorCorrectionLevel.L));
         }
-
 
         debounceTimer.Stop();
         debounceTimer.Start();
@@ -246,7 +242,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         // Update max logo size when text changes (affects QR version/density)
         OnPropertyChanged(nameof(logoSizeMaxPercentage));
-       
+
         // Ensure current logo size doesn't exceed the new maximum
         if (logoSizePercentage > logoSizeMaxPercentage)
         {
@@ -633,7 +629,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         // pass the current state as a HistoryItem to the settings page
         // so when coming back it can be fully restored
         NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!, CreateCurrentStateHistoryItem());
-    
+
     private HistoryItem CreateCurrentStateHistoryItem()
     {
         return new HistoryItem
@@ -647,11 +643,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoPaddingPixels = LogoPaddingPixels,
         };
     }
-    
-    private string? GetCurrentLogoPath()
-    {
-        return currentLogoPath;
-    }
+
+    private string? GetCurrentLogoPath() => currentLogoPath;
 
     [RelayCommand]
     private async Task SavePng()
@@ -836,14 +829,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             UrlText = textParam;
         }
     }
-    
+
     private void RestoreFromHistoryItem(HistoryItem historyItem)
     {
         UrlText = historyItem.CodesContent;
         ForegroundColor = historyItem.Foreground;
         BackgroundColor = historyItem.Background;
         SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == historyItem.ErrorCorrection);
-        
+
         // Restore logo image and settings if available
         if (!string.IsNullOrEmpty(historyItem.LogoImagePath))
         {
@@ -856,7 +849,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoImage = null;
             currentLogoPath = null;
         }
-        
+
         LogoSizePercentage = historyItem.LogoSizePercentage;
         LogoPaddingPixels = historyItem.LogoPaddingPixels;
     }
@@ -870,7 +863,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public async Task SaveCurrentStateToHistory()
     {
         string? logoImagePath = null;
-        
+
         // Save logo image to local app storage if present
         if (LogoImage is not null)
         {
@@ -898,7 +891,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 System.Diagnostics.Debug.WriteLine($"Failed to save logo image: {ex.Message}");
             }
         }
-        
+
         HistoryItem historyItem = new()
         {
             CodesContent = UrlText,
@@ -924,7 +917,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             StorageFile historyFile = await localFolder.CreateFileAsync("History.json", CreationCollisionOption.ReplaceExisting);
 
             string json = JsonSerializer.Serialize(HistoryItems, HistoryJsonContext.Default.ObservableCollectionHistoryItem);
-            
+
             await FileIO.WriteTextAsync(historyFile, json);
         }
         catch (Exception ex)
@@ -936,7 +929,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private async Task LoadHistory()
     {
         ObservableCollection<HistoryItem>? historyFromFile = null;
-        
+
         // First, try to load from file (new location)
         try
         {
@@ -962,23 +955,33 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         ObservableCollection<HistoryItem>? historyFromSettings = null;
         try
         {
-            historyFromSettings = await LocalSettingsService.ReadSettingAsync<ObservableCollection<HistoryItem>>(nameof(HistoryItems));
+            // Read raw JSON string from settings instead of using generic deserialization
+            // The generic ReadSettingAsync doesn't use HistoryJsonContext, causing custom converters to fail
+            string? historyJson = await LocalSettingsService.ReadSettingAsync<string>(nameof(HistoryItems));
+            if (!string.IsNullOrEmpty(historyJson))
+            {
+                // Use the proper JSON context with custom converters (ColorJsonConverter, etc.)
+                historyFromSettings = JsonSerializer.Deserialize(historyJson, HistoryJsonContext.Default.ObservableCollectionHistoryItem);
+            }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to read history from settings: {ex.Message}");
+        }
 
         if (historyFromSettings != null && historyFromSettings.Count > 0)
         {
             // Migrate: add to collection and save to file
             foreach (HistoryItem hisItem in historyFromSettings)
                 HistoryItems.Add(hisItem);
-            
+
             // Save to new file location
             await SaveHistoryToFile();
-            
+
             // Clear from old settings location to free up space
             try
             {
-                await LocalSettingsService.SaveSettingAsync(nameof(HistoryItems), new ObservableCollection<HistoryItem>());
+                await LocalSettingsService.SaveSettingAsync<string?>(nameof(HistoryItems), null);
             }
             catch (Exception ex)
             {
