@@ -387,7 +387,7 @@
                         <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="History" />
                         <ListView
                             Grid.Row="1"
-                            ItemsSource="{x:Bind ViewModel.HistoryItems}"
+                            ItemsSource="{x:Bind ViewModel.HistoryItems, Mode=OneWay}"
                             SelectedItem="{x:Bind ViewModel.SelectedHistoryItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:HistoryItem">

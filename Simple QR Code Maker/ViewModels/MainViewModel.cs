@@ -10,6 +10,8 @@ using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
@@ -155,7 +157,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Failed to load logo from history: {ex.Message}");
+            Debug.WriteLine($"Failed to load logo from history: {ex.Message}");
             LogoImage?.Dispose();
             LogoImage = null;
             currentLogoPath = null;
@@ -424,7 +426,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             };
 
             double ratio = barcodeImageItem.ColorContrastRatio;
-            System.Diagnostics.Debug.WriteLine($"Contrast ratio: {ratio}");
+            Debug.WriteLine($"Contrast ratio: {ratio}");
 
             QrCodeBitmaps.Add(barcodeImageItem);
             ShowCodeInfoBar = false;
@@ -727,10 +729,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             // Use stream to access file instead of direct path for better compatibility
             using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
             LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+
+            // FIX: Store the selected file path so it can be saved to history
+            currentLogoPath = file.Path;
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Failed to load logo image: {ex.Message}");
+            Debug.WriteLine($"Failed to load logo image: {ex.Message}");
             CodeInfoBarMessage = "Failed to load the selected image";
             ShowCodeInfoBar = true;
             CodeInfoBarSeverity = InfoBarSeverity.Error;
@@ -804,6 +809,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public async void OnNavigatedTo(object parameter)
     {
         await LoadHistory();
+
+        // Force property change notification to refresh UI bindings after history loads
+        OnPropertyChanged(nameof(HistoryItems));
+
         CheckCanPasteText();
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
@@ -888,7 +897,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Failed to save logo image: {ex.Message}");
+                Debug.WriteLine($"Failed to save logo image: {ex.Message}");
             }
         }
 
@@ -909,84 +918,27 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         await SaveHistoryToFile();
     }
 
+    [RequiresUnreferencedCode("Calls HistoryStorageHelper.SaveHistoryAsync")]
     private async Task SaveHistoryToFile()
     {
         try
         {
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile historyFile = await localFolder.CreateFileAsync("History.json", CreationCollisionOption.ReplaceExisting);
-
-            string json = JsonSerializer.Serialize(HistoryItems, HistoryJsonContext.Default.ObservableCollectionHistoryItem);
-
-            await FileIO.WriteTextAsync(historyFile, json);
+            await HistoryStorageHelper.SaveHistoryAsync(HistoryItems);
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Failed to save history to file: {ex.Message}");
+            Debug.WriteLine($"❌ Failed to save history: {ex.Message}");
         }
     }
 
+    [RequiresUnreferencedCode("Calls HistoryStorageHelper.LoadHistoryAsync")]
     private async Task LoadHistory()
     {
-        ObservableCollection<HistoryItem>? historyFromFile = null;
+        ObservableCollection<HistoryItem> loadedHistory = await HistoryStorageHelper.LoadHistoryAsync();
 
-        // First, try to load from file (new location)
-        try
+        foreach (HistoryItem item in loadedHistory)
         {
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile historyFile = await localFolder.GetFileAsync("History.json");
-            string json = await FileIO.ReadTextAsync(historyFile);
-            historyFromFile = JsonSerializer.Deserialize(json, HistoryJsonContext.Default.ObservableCollectionHistoryItem);
-        }
-        catch
-        {
-            // File doesn't exist yet, that's okay
-        }
-
-        // If we found history in the file, use it
-        if (historyFromFile != null && historyFromFile.Count > 0)
-        {
-            foreach (HistoryItem hisItem in historyFromFile)
-                HistoryItems.Add(hisItem);
-            return;
-        }
-
-        // Otherwise, try to migrate from old settings location
-        ObservableCollection<HistoryItem>? historyFromSettings = null;
-        try
-        {
-            // Read raw JSON string from settings instead of using generic deserialization
-            // The generic ReadSettingAsync doesn't use HistoryJsonContext, causing custom converters to fail
-            string? historyJson = await LocalSettingsService.ReadSettingAsync<string>(nameof(HistoryItems));
-            if (!string.IsNullOrEmpty(historyJson))
-            {
-                // Use the proper JSON context with custom converters (ColorJsonConverter, etc.)
-                historyFromSettings = JsonSerializer.Deserialize(historyJson, HistoryJsonContext.Default.ObservableCollectionHistoryItem);
-            }
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Failed to read history from settings: {ex.Message}");
-        }
-
-        if (historyFromSettings != null && historyFromSettings.Count > 0)
-        {
-            // Migrate: add to collection and save to file
-            foreach (HistoryItem hisItem in historyFromSettings)
-                HistoryItems.Add(hisItem);
-
-            // Save to new file location
-            await SaveHistoryToFile();
-
-            // Clear from old settings location to free up space
-            try
-            {
-                await LocalSettingsService.SaveSettingAsync<string?>(nameof(HistoryItems), null);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Failed to clear old history from settings: {ex.Message}");
-            }
+            HistoryItems.Add(item);
         }
     }
 }
