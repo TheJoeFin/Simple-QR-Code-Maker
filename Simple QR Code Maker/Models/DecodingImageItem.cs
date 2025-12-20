@@ -20,12 +20,15 @@ public partial class DecodingImageItem : ObservableObject
 
     public List<(string, Result)> Strings { get; set; } = new();
 
-    [ObservableProperty]
-    private ObservableCollection<TextBorder> codeBorders = new();
+        [ObservableProperty]
+        private ObservableCollection<TextBorder> codeBorders = new();
 
-    public MagickImage? OriginalMagickImage { get; set; }
+        [ObservableProperty]
+        private bool isNoCodesWarningDismissed = false;
 
-    public MagickImage? ProcessedMagickImage { get; set; }
+        public MagickImage? OriginalMagickImage { get; set; }
 
-    public bool HasProcessedImage => ProcessedMagickImage != null;
-}
+        public MagickImage? ProcessedMagickImage { get; set; }
+
+        public bool HasProcessedImage => ProcessedMagickImage != null;
+    }

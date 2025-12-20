@@ -1,5 +1,6 @@
 ﻿<Page
     x:Class="Simple_QR_Code_Maker.Views.DecodingPage"
+    x:Name="DecodingPageRoot"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Simple_QR_Code_Maker.Controls"
@@ -14,7 +15,10 @@
         <converters:TextHasURLConverter x:Key="HasURL" />
         <converters:IsZeroConverter x:Key="IsZero" />
         <converters:EmptyCollectionToVisibilityConverter x:Key="EmptyCollectionToVisibility" />
+        <converters:BoolToAdvancedToolsMessageConverter x:Key="BoolToAdvancedToolsMessageConverter" />
+        <converters:NoCodesWarningVisibilityConverter x:Key="NoCodesWarningVisibilityConverter" />
         <toolkitConverters:BoolNegationConverter x:Key="BoolNegationConverter" />
+        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Page.Resources>
 
     <Grid>
@@ -58,17 +62,13 @@
                         SelectionMode="None">
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="models:DecodingImageItem">
-                                <Grid
+                                <StackPanel
                                     MaxWidth="400"
-                                    MaxHeight="400"
-                                    Margin="20">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
+                                    Margin="20"
+                                    Spacing="8">
                                     <TextBlock x:Name="ImageTextName" Text="{x:Bind FileName, Mode=OneWay}" />
-                                    <Viewbox Grid.Row="1">
-                                        <Grid>
+                                    <Viewbox MaxHeight="400">
+                                        <Grid x:Name="ImageContainer" PointerPressed="ImageContainer_PointerPressed">
                                             <Image x:Name="ImageWithBarcodes" Source="{x:Bind BitmapImage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <ItemsControl ItemsSource="{x:Bind CodeBorders, Mode=OneWay}">
                                                 <ItemsControl.ItemsPanel>
@@ -87,18 +87,43 @@
                                             </ItemsControl>
                                         </Grid>
                                     </Viewbox>
+
+                                    <!--  Info Button (shown when warning is dismissed and no codes found)  -->
+                                    <HyperlinkButton
+                                        x:Name="ShowInfoButton"
+                                        HorizontalAlignment="Center"
+                                        Click="ShowNoCodesInfo_Click"
+                                        Tag="{x:Bind}"
+                                        Visibility="Collapsed">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <FontIcon FontSize="16" Glyph="&#xE946;" />
+                                            <TextBlock Text="Why no codes detected?" />
+                                        </StackPanel>
+                                        <HyperlinkButton.Resources>
+                                            <SolidColorBrush x:Key="HyperlinkButtonForeground" Color="{ThemeResource SystemAccentColor}" />
+                                        </HyperlinkButton.Resources>
+                                    </HyperlinkButton>
+
+                                    <!--  Warning InfoBar (below image, shown when no codes and not dismissed)  -->
                                     <InfoBar
+                                        x:Name="NoCodesInfoBar"
                                         Title="No codes found"
-                                        Grid.Row="1"
-                                        IsOpen="{x:Bind CodeBorders.Count, Converter={StaticResource IsZero}, Mode=OneWay}"
-                                        Severity="Warning">
+                                        IsClosable="False"
+                                        IsOpen="True"
+                                        Severity="Warning"
+                                        Visibility="{x:Bind CodeBorders.Count, Mode=OneWay, Converter={StaticResource NoCodesWarningVisibilityConverter}}">
+                                        <InfoBar.ActionButton>
+                                            <Button
+                                                Click="DismissNoCodesWarning_Click"
+                                                Content="Dismiss"
+                                                Tag="{x:Bind}" />
+                                        </InfoBar.ActionButton>
                                         <TextBlock
-                                            Margin="0,0,0,20"
                                             IsTextSelectionEnabled="True"
-                                            Text="Could be there are none present or content failed to read. If you believe this is an issue with the app, please email Joe@JoeFinApps.com"
+                                            Text="{Binding ElementName=DecodingPageRoot, Path=ViewModel.IsAdvancedToolsVisible, Converter={StaticResource BoolToAdvancedToolsMessageConverter}, Mode=OneWay}"
                                             TextWrapping="Wrap" />
                                     </InfoBar>
-                                </Grid>
+                                </StackPanel>
                             </DataTemplate>
                         </GridView.ItemTemplate>
                     </GridView>
@@ -123,50 +148,47 @@
                             <SymbolIcon Symbol="OpenFile" />
                         </controls:IconAndTextButton.Icon>
                     </controls:IconAndTextButton>
-                    <controls:IconAndTextButton
-                        Command="{x:Bind ViewModel.OpenFileFromClipboardCommand}"
-                        IsEnabled="{x:Bind ViewModel.CanPasteImage, Mode=OneWay}"
-                        Text="Paste"
-                        ToolTipService.ToolTip="Paste and image or file from your clipboard to try to decode the barcodes">
-                        <controls:IconAndTextButton.Icon>
-                            <SymbolIcon Symbol="Paste" />
-                        </controls:IconAndTextButton.Icon>
-                    </controls:IconAndTextButton>
-                    <controls:IconAndTextButton
-                        Command="{x:Bind ViewModel.ClearImagesCommand}"
-                        IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                        Text="Clear"
-                        ToolTipService.ToolTip="Clear out all the images"
-                                        Visibility="{x:Bind ViewModel.DecodingImageItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
-                                        <controls:IconAndTextButton.Icon>
-                                            <SymbolIcon Symbol="Clear" />
-                                        </controls:IconAndTextButton.Icon>
-                                    </controls:IconAndTextButton>
-                                    <controls:IconAndTextButton
-                                        Command="{x:Bind ViewModel.ToggleAdvancedToolsCommand}"
-                                        Text="Advanced Tools"
-                                        ToolTipService.ToolTip="Toggle advanced image processing tools"
-                                        Visibility="{x:Bind ViewModel.DecodingImageItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
-                                        <controls:IconAndTextButton.Icon>
-                                            <SymbolIcon Symbol="Repair" />
-                                        </controls:IconAndTextButton.Icon>
-                                    </controls:IconAndTextButton>
-                                </StackPanel>
+                                <controls:IconAndTextButton
+                                    Command="{x:Bind ViewModel.OpenFileFromClipboardCommand}"
+                                    IsEnabled="{x:Bind ViewModel.CanPasteImage, Mode=OneWay}"
+                                    Text="Paste"
+                                    ToolTipService.ToolTip="Paste and image or file from your clipboard to try to decode the barcodes">
+                                    <controls:IconAndTextButton.Icon>
+                                        <SymbolIcon Symbol="Paste" />
+                                    </controls:IconAndTextButton.Icon>
+                                </controls:IconAndTextButton>
+                                <controls:IconAndTextButton
+                                    Command="{x:Bind ViewModel.ClearImagesCommand}"
+                                    IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    Text="Clear"
+                                    ToolTipService.ToolTip="Clear out all the images"
+                                    Visibility="{x:Bind ViewModel.DecodingImageItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
+                                    <controls:IconAndTextButton.Icon>
+                                        <SymbolIcon Symbol="Clear" />
+                                    </controls:IconAndTextButton.Icon>
+                                </controls:IconAndTextButton>
+                                <ToggleButton
+                                    IsChecked="{x:Bind ViewModel.IsAdvancedToolsVisible, Mode=TwoWay}"
+                                    ToolTipService.ToolTip="Toggle advanced image processing tools"
+                                    Visibility="{x:Bind ViewModel.DecodingImageItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <SymbolIcon Symbol="Repair" />
+                                        <TextBlock Text="Advanced Tools" />
+                                    </StackPanel>
+                                </ToggleButton>
                             </StackPanel>
-                        </ScrollViewer>
+                        </StackPanel>
+                    </ScrollViewer>
 
                         <!--  Advanced Tools Panel on the right  -->
                         <Border
                             Grid.Column="1"
                             Width="350"
-                            Padding="12"
                             Background="{ThemeResource LayerFillColorDefaultBrush}"
                             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1,0,0,0"
                             Visibility="{x:Bind ViewModel.IsAdvancedToolsVisible, Mode=OneWay}">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <controls:AdvancedToolsUserControl x:Name="AdvancedToolsPanel" />
-                            </ScrollViewer>
+                            <controls:AdvancedToolsUserControl x:Name="AdvancedToolsPanel" />
                         </Border>
 
                         <InfoBar

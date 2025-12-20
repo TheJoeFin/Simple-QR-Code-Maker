@@ -184,13 +184,16 @@ public partial class AdvancedToolsViewModel : ObservableObject
 
     public void SetColorFromPoint(Point point)
     {
-        if (processedImage == null)
+        // Use original image for color sampling
+        var imageToSample = originalImage ?? processedImage;
+
+        if (imageToSample == null)
             return;
 
-        if (point.X < 0 || point.X >= processedImage.Width || point.Y < 0 || point.Y >= processedImage.Height)
+        if (point.X < 0 || point.X >= imageToSample.Width || point.Y < 0 || point.Y >= imageToSample.Height)
             return;
 
-        var pixels = processedImage.GetPixels();
+        var pixels = imageToSample.GetPixels();
         var pixel = pixels.GetPixel(point.X, point.Y);
         var color = pixel.ToColor();
 
@@ -198,14 +201,14 @@ public partial class AdvancedToolsViewModel : ObservableObject
         {
             SelectedBlackPointColor = new MagickColor(color.R, color.G, color.B, color.A);
             IsEyedropperBlackMode = false;
+            ApplyProcessing();
         }
         else if (IsEyedropperWhiteMode)
         {
             SelectedWhitePointColor = new MagickColor(color.R, color.G, color.B, color.A);
             IsEyedropperWhiteMode = false;
+            ApplyProcessing();
         }
-
-        ApplyProcessing();
     }
 
     private bool AllCornersSet()

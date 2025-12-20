@@ -20,8 +20,16 @@
         </Style>
     </UserControl.Resources>
 
-    <StackPanel Spacing="12">
-        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Advanced Image Processing Tools" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Scrollable Content  -->
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="12,12,12,0">
+            <StackPanel Spacing="12">
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Advanced Image Processing Tools" />
 
         <StackPanel
             Padding="12"
@@ -121,26 +129,68 @@
             Spacing="8">
             <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Eyedropper Tools" />
 
-            <StackPanel Orientation="Horizontal" Spacing="8">
-                <Button
-                    Command="{x:Bind ViewModel.ToggleEyedropperBlackModeCommand}"
-                    ToolTipService.ToolTip="Click to enable eyedropper, then click on the image to select the black point">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon Glyph="&#xEF3C;" />
-                        <TextBlock Text="Pick Black Point" />
-                    </StackPanel>
-                </Button>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button
+                        Command="{x:Bind ViewModel.ToggleEyedropperBlackModeCommand}"
+                        ToolTipService.ToolTip="Click to enable eyedropper, then click on the image to select the black point">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon Glyph="&#xEF3C;" />
+                            <TextBlock Text="Pick Black Point" />
+                        </StackPanel>
+                    </Button>
 
-                <Button
-                    Command="{x:Bind ViewModel.ToggleEyedropperWhiteModeCommand}"
-                    ToolTipService.ToolTip="Click to enable eyedropper, then click on the image to select the white point">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon Glyph="&#xEF3C;" />
-                        <TextBlock Text="Pick White Point" />
+                    <Button
+                        Command="{x:Bind ViewModel.ToggleEyedropperWhiteModeCommand}"
+                        ToolTipService.ToolTip="Click to enable eyedropper, then click on the image to select the white point">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon Glyph="&#xEF3C;" />
+                            <TextBlock Text="Pick White Point" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <InfoBar
+                    IsClosable="False"
+                    IsOpen="{x:Bind ViewModel.IsEyedropperBlackMode, Mode=OneWay}"
+                    Message="Click on the image to select the black point"
+                    Severity="Informational" />
+
+                <InfoBar
+                    IsClosable="False"
+                    IsOpen="{x:Bind ViewModel.IsEyedropperWhiteMode, Mode=OneWay}"
+                    Message="Click on the image to select the white point"
+                    Severity="Informational" />
+
+                <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                    <StackPanel Spacing="4" Visibility="{x:Bind ViewModel.SelectedBlackPointColor, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                        <TextBlock Text="Black Point Color" FontSize="12" />
+                        <Border
+                            Width="60"
+                            Height="30"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <Border.Background>
+                                <SolidColorBrush Color="Black" />
+                            </Border.Background>
+                        </Border>
                     </StackPanel>
-                </Button>
+
+                    <StackPanel Spacing="4" Visibility="{x:Bind ViewModel.SelectedWhitePointColor, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                        <TextBlock Text="White Point Color" FontSize="12" />
+                        <Border
+                            Width="60"
+                            Height="30"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <Border.Background>
+                                <SolidColorBrush Color="White" />
+                            </Border.Background>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
 
         <StackPanel
             Padding="12"
@@ -184,31 +234,41 @@
                 </Grid>
             </StackPanel>
 
-            <Button
-                Command="{x:Bind ViewModel.ClearPerspectiveCornersCommand}"
-                Content="Clear Corner Selection"
-                ToolTipService.ToolTip="Clear all selected corners to start over" />
-        </StackPanel>
-
-                            <StackPanel Orientation="Horizontal" Spacing="12">
-                                <Button
-                                    Command="{x:Bind ViewModel.ApplyProcessingCommand}"
-                                    Style="{StaticResource AccentButtonStyle}"
-                                    ToolTipService.ToolTip="Apply all selected adjustments to the image">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <SymbolIcon Symbol="Accept" />
-                                        <TextBlock Text="Apply Changes" />
-                                    </StackPanel>
-                                </Button>
-
-                                <Button
-                                    Command="{x:Bind ViewModel.ResetAllSettingsCommand}"
-                                    ToolTipService.ToolTip="Reset all settings to default values">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <SymbolIcon Symbol="Refresh" />
-                                        <TextBlock Text="Reset All" />
-                                    </StackPanel>
-                                </Button>
-                            </StackPanel>
+                        <Button
+                            Command="{x:Bind ViewModel.ClearPerspectiveCornersCommand}"
+                            Content="Clear Corner Selection"
+                            ToolTipService.ToolTip="Clear all selected corners to start over" />
+                    </StackPanel>
                         </StackPanel>
-</UserControl>
+                    </ScrollViewer>
+
+                    <!--  Fixed Action Buttons  -->
+                    <StackPanel
+                        Grid.Row="1"
+                        Padding="12"
+                        Background="{ThemeResource LayerFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="0,1,0,0"
+                        Orientation="Horizontal"
+                        Spacing="12">
+                        <Button
+                            Command="{x:Bind ViewModel.ApplyProcessingCommand}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            ToolTipService.ToolTip="Apply all selected adjustments to the image">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <SymbolIcon Symbol="Accept" />
+                                <TextBlock Text="Apply Changes" />
+                            </StackPanel>
+                        </Button>
+
+                        <Button
+                            Command="{x:Bind ViewModel.ResetAllSettingsCommand}"
+                            ToolTipService.ToolTip="Reset all settings to default values">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <SymbolIcon Symbol="Refresh" />
+                                <TextBlock Text="Reset All" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </UserControl>
