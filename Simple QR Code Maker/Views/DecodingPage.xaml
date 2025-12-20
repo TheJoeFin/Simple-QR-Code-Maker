@@ -18,8 +18,14 @@
     </Page.Resources>
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
         <ScrollViewer
             x:Name="ImageScrollViewer"
+            Grid.Column="0"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto"
             ZoomMode="Disabled">
@@ -46,8 +52,7 @@
                         Grid.Row="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        ItemsSource="{x:Bind ViewModel.DecodingImageItems,
-                                             Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.DecodingImageItems, Mode=OneWay}"
                         ScrollViewer.IsHorizontalScrollChainingEnabled="True"
                         ScrollViewer.IsVerticalScrollChainingEnabled="True"
                         SelectionMode="None">
@@ -85,9 +90,7 @@
                                     <InfoBar
                                         Title="No codes found"
                                         Grid.Row="1"
-                                        IsOpen="{x:Bind CodeBorders.Count,
-                                                        Converter={StaticResource IsZero},
-                                                        Mode=OneWay}"
+                                        IsOpen="{x:Bind CodeBorders.Count, Converter={StaticResource IsZero}, Mode=OneWay}"
                                         Severity="Warning">
                                         <TextBlock
                                             Margin="0,0,0,20"
@@ -113,9 +116,7 @@
                     </Button>
                     <controls:IconAndTextButton
                         Command="{x:Bind ViewModel.OpenNewFileCommand}"
-                        IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning,
-                                           Mode=OneWay,
-                                           Converter={StaticResource BoolNegationConverter}}"
+                        IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                         Text="Open..."
                         ToolTipService.ToolTip="Open one or many files to decode the barcodes contained in the image">
                         <controls:IconAndTextButton.Icon>
@@ -124,8 +125,7 @@
                     </controls:IconAndTextButton>
                     <controls:IconAndTextButton
                         Command="{x:Bind ViewModel.OpenFileFromClipboardCommand}"
-                        IsEnabled="{x:Bind ViewModel.CanPasteImage,
-                                           Mode=OneWay}"
+                        IsEnabled="{x:Bind ViewModel.CanPasteImage, Mode=OneWay}"
                         Text="Paste"
                         ToolTipService.ToolTip="Paste and image or file from your clipboard to try to decode the barcodes">
                         <controls:IconAndTextButton.Icon>
@@ -134,34 +134,52 @@
                     </controls:IconAndTextButton>
                     <controls:IconAndTextButton
                         Command="{x:Bind ViewModel.ClearImagesCommand}"
-                        IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning,
-                                           Mode=OneWay,
-                                           Converter={StaticResource BoolNegationConverter}}"
+                        IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                         Text="Clear"
                         ToolTipService.ToolTip="Clear out all the images"
-                        Visibility="{x:Bind ViewModel.DecodingImageItems.Count,
-                                            Converter={StaticResource EmptyCollectionToVisibility},
-                                            ConverterParameter=true,
-                                            Mode=OneWay}">
-                        <controls:IconAndTextButton.Icon>
-                            <SymbolIcon Symbol="Clear" />
-                        </controls:IconAndTextButton.Icon>
-                    </controls:IconAndTextButton>
-                </StackPanel>
-            </StackPanel>
-        </ScrollViewer>
-        <InfoBar
-            x:Name="QrCodeInfoBar"
-            Title="QR Code Content"
-            Grid.Row="1"
-            Margin="20"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            Background="{StaticResource SystemControlBackgroundAltHighBrush}"
-            BorderBrush="{StaticResource SystemAccentColor}"
+                                        Visibility="{x:Bind ViewModel.DecodingImageItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
+                                        <controls:IconAndTextButton.Icon>
+                                            <SymbolIcon Symbol="Clear" />
+                                        </controls:IconAndTextButton.Icon>
+                                    </controls:IconAndTextButton>
+                                    <controls:IconAndTextButton
+                                        Command="{x:Bind ViewModel.ToggleAdvancedToolsCommand}"
+                                        Text="Advanced Tools"
+                                        ToolTipService.ToolTip="Toggle advanced image processing tools"
+                                        Visibility="{x:Bind ViewModel.DecodingImageItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
+                                        <controls:IconAndTextButton.Icon>
+                                            <SymbolIcon Symbol="Repair" />
+                                        </controls:IconAndTextButton.Icon>
+                                    </controls:IconAndTextButton>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <!--  Advanced Tools Panel on the right  -->
+                        <Border
+                            Grid.Column="1"
+                            Width="350"
+                            Padding="12"
+                            Background="{ThemeResource LayerFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1,0,0,0"
+                            Visibility="{x:Bind ViewModel.IsAdvancedToolsVisible, Mode=OneWay}">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <controls:AdvancedToolsUserControl x:Name="AdvancedToolsPanel" />
+                            </ScrollViewer>
+                        </Border>
+
+                        <InfoBar
+                            x:Name="QrCodeInfoBar"
+                            Title="QR Code Content"
+                            Grid.Column="0"
+                            Margin="20"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            Background="{StaticResource SystemControlBackgroundAltHighBrush}"
+                            BorderBrush="{StaticResource SystemAccentColor}"
             BorderThickness="3"
-            IsOpen="{x:Bind ViewModel.IsInfoBarShowing,
-                            Mode=TwoWay}"
+            IsOpen="{x:Bind ViewModel.IsInfoBarShowing, Mode=TwoWay}"
             Severity="Informational">
             <StackPanel
                 Margin="12,0"
@@ -171,8 +189,7 @@
                     MaxWidth="500"
                     VerticalAlignment="Center"
                     IsTextSelectionEnabled="True"
-                    Text="{x:Bind ViewModel.InfoBarMessage,
-                                  Mode=OneWay}"
+                    Text="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}"
                     TextWrapping="Wrap" />
                 <StackPanel
                     HorizontalAlignment="Center"
@@ -192,9 +209,7 @@
                         Command="{x:Bind ViewModel.TryLaunchLinkCommand}"
                         Icon="Go"
                         IsCompact="True"
-                        IsEnabled="{x:Bind ViewModel.InfoBarMessage,
-                                           Mode=OneWay,
-                                           Converter={StaticResource HasURL}}"
+                        IsEnabled="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay, Converter={StaticResource HasURL}}"
                         ToolTipService.ToolTip="Try to go to the URL" />
                 </StackPanel>
             </StackPanel>

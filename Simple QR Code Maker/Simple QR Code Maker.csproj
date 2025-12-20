@@ -17,6 +17,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Controls\AdvancedToolsControl.xaml" />
+    <None Remove="Controls\AdvancedToolsUserControl.xaml" />
     <None Remove="Controls\FaqsContent.xaml" />
     <None Remove="Controls\HistoryRowItem.xaml" />
     <None Remove="Controls\IconAndTextButton.xaml" />
@@ -35,6 +37,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
     <PackageReference Include="Humanizer" Version="3.0.1" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.10.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7175" />
@@ -53,6 +56,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\AdvancedToolsUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\IconAndTextContent.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -96,6 +102,10 @@
 
     <ItemGroup>
       <CustomAdditionalCompileInputs Remove="Views\ShellPage.xaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Remove="Controls\AdvancedToolsControl.xaml" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,19 +1,31 @@
-﻿using Microsoft.UI.Xaml.Media.Imaging;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using ImageMagick;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Controls;
 using System.Collections.ObjectModel;
 using ZXing;
 
 namespace Simple_QR_Code_Maker.Models;
-public class DecodingImageItem
+
+public partial class DecodingImageItem : ObservableObject
 {
     public string ImagePath { get; set; } = string.Empty;
 
     public string FileName => Path.GetFileName(ImagePath);
 
-    public BitmapImage? BitmapImage { get; set; }
+    [ObservableProperty]
+    private BitmapImage? bitmapImage;
+
+    public BitmapImage? ProcessedBitmapImage { get; set; }
 
     public List<(string, Result)> Strings { get; set; } = new();
 
-    public ObservableCollection<TextBorder> CodeBorders { get; set; } = new();
+    [ObservableProperty]
+    private ObservableCollection<TextBorder> codeBorders = new();
 
+    public MagickImage? OriginalMagickImage { get; set; }
+
+    public MagickImage? ProcessedMagickImage { get; set; }
+
+    public bool HasProcessedImage => ProcessedMagickImage != null;
 }

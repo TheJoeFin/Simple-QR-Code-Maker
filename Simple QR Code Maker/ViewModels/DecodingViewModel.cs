@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ImageMagick;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Contracts.Services;
@@ -35,6 +36,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private ObservableCollection<DecodingImageItem> decodingImageItems = [];
+
+    [ObservableProperty]
+    private bool isAdvancedToolsVisible = false;
+
+    [ObservableProperty]
+    private DecodingImageItem? selectedDecodingImageItem = null;
 
     private HistoryItem? navigationHistoryItem = null;
 
@@ -96,6 +103,46 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         DecodingImageItems.Clear();
         IsInfoBarShowing = false;
         InfoBarMessage = string.Empty;
+        IsAdvancedToolsVisible = false;
+        SelectedDecodingImageItem = null;
+    }
+
+    [RelayCommand]
+    private void ToggleAdvancedTools()
+    {
+        IsAdvancedToolsVisible = !IsAdvancedToolsVisible;
+    }
+
+    [RelayCommand]
+    private async Task ApplyAdvancedToolsAndRedecode(DecodingImageItem item)
+    {
+        if (item?.ProcessedMagickImage == null)
+            return;
+
+        var bitmap = ImageProcessingHelper.ConvertToBitmap(item.ProcessedMagickImage);
+
+        string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}_processed.png");
+        bitmap.Save(cachePath);
+
+        Uri uri = new($"{cachePath}?tick={DateTimeOffset.Now.Ticks}");
+        BitmapImage processedBitmapImage = new(uri)
+        {
+            CreateOptions = BitmapCreateOptions.IgnoreImageCache
+        };
+
+        IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(bitmap);
+
+        ObservableCollection<TextBorder> codeBorders = [];
+        foreach ((string, Result) resultItem in strings)
+        {
+            TextBorder textBorder = new(resultItem.Item2);
+            textBorder.TextBorder_Click += TextBorder_TextBorder_Click;
+            codeBorders.Add(textBorder);
+        }
+
+        item.ProcessedBitmapImage = processedBitmapImage;
+        item.CodeBorders = codeBorders;
+        item.BitmapImage = processedBitmapImage;
     }
 
     [RelayCommand]
@@ -266,11 +313,15 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             codeBorders.Add(textBorder);
         }
 
+        var bitmap = new Bitmap(storageFile.Path);
+        var magickImage = ImageProcessingHelper.LoadImageFromBitmap(bitmap);
+
         DecodingImageItem decodingImage = new()
         {
             ImagePath = storageFile.Path,
             BitmapImage = thisPickedImage,
             CodeBorders = codeBorders,
+            OriginalMagickImage = magickImage,
         };
 
         return decodingImage;

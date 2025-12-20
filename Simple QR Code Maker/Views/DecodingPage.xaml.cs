@@ -19,6 +19,45 @@ public sealed partial class DecodingPage : Page
     {
         ViewModel = App.GetService<DecodingViewModel>();
         InitializeComponent();
+
+        AdvancedToolsPanel.ViewModel.ImageProcessed += AdvancedToolsViewModel_ImageProcessed;
+        ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        ViewModel.DecodingImageItems.CollectionChanged += DecodingImageItems_CollectionChanged;
+    }
+
+    private void DecodingImageItems_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && ViewModel.DecodingImageItems.Count > 0)
+        {
+            ViewModel.SelectedDecodingImageItem = ViewModel.DecodingImageItems[0];
+
+            if (ViewModel.SelectedDecodingImageItem?.OriginalMagickImage != null)
+            {
+                AdvancedToolsPanel.ViewModel.SetOriginalImage(ViewModel.SelectedDecodingImageItem.OriginalMagickImage);
+            }
+        }
+    }
+
+    private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ViewModel.DecodingImageItems) && ViewModel.DecodingImageItems.Count > 0)
+        {
+            ViewModel.SelectedDecodingImageItem = ViewModel.DecodingImageItems[0];
+
+            if (ViewModel.SelectedDecodingImageItem?.OriginalMagickImage != null)
+            {
+                AdvancedToolsPanel.ViewModel.SetOriginalImage(ViewModel.SelectedDecodingImageItem.OriginalMagickImage);
+            }
+        }
+    }
+
+    private async void AdvancedToolsViewModel_ImageProcessed(object? sender, ImageMagick.MagickImage e)
+    {
+        if (ViewModel.SelectedDecodingImageItem != null)
+        {
+            ViewModel.SelectedDecodingImageItem.ProcessedMagickImage = e;
+            await ViewModel.ApplyAdvancedToolsAndRedecodeCommand.ExecuteAsync(ViewModel.SelectedDecodingImageItem);
+        }
     }
 
     private void GridViewContainer_DragOver(object sender, DragEventArgs e)
