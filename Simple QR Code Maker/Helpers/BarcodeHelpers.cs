@@ -357,11 +357,13 @@ public static class BarcodeHelpers
         BarcodeReader barcodeReader = new()
         {
             AutoRotate = true,
-            Options =
+            Options = new DecodingOptions
             {
-      TryHarder = true,
-   TryInverted = true,
-}
+                TryHarder = true,
+                TryInverted = true,
+                PossibleFormats = [BarcodeFormat.QR_CODE, BarcodeFormat.DATA_MATRIX, BarcodeFormat.AZTEC, BarcodeFormat.PDF_417],
+                PureBarcode = false,
+            }
         };
 
         Result[] results = barcodeReader.DecodeMultiple(bitmap);

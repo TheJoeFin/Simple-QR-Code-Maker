@@ -205,8 +205,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}.png");
         bitmap.Save(cachePath);
 
-        Uri uri = new(cachePath);
-        BitmapImage thisPickedImage = new(uri);
+        Uri uri = new($"{cachePath}?tick={DateTimeOffset.Now.Ticks}");
+        BitmapImage thisPickedImage = new(uri)
+        {
+            CreateOptions = BitmapCreateOptions.IgnoreImageCache
+        };
 
         IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(bitmap);
 
@@ -243,12 +246,15 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     private DecodingImageItem? GetDecodingImageItemFromStorageFile(StorageFile storageFile)
     {
-        Uri uri = new(storageFile.Path);
+        Uri uri = new($"{storageFile.Path}?tick={DateTimeOffset.Now.Ticks}");
 
         if (!imageExtensions.Contains(Path.GetExtension(storageFile.Path).ToLowerInvariant()))
             return null;
 
-        BitmapImage thisPickedImage = new(uri);
+        BitmapImage thisPickedImage = new(uri)
+        {
+            CreateOptions = BitmapCreateOptions.IgnoreImageCache
+        };
 
         IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromImageFile(storageFile);
 
