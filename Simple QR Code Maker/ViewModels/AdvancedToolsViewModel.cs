@@ -2,63 +2,116 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ImageMagick;
 using System.Drawing;
-using Windows.Storage;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
 public partial class AdvancedToolsViewModel : ObservableObject
 {
     [ObservableProperty]
-    private bool isGrayscaleEnabled = false;
+    public partial bool IsGrayscaleEnabled { get; set; } = false;
 
     [ObservableProperty]
-    private double contrastValue = 0.0;
+    public partial double ContrastValue { get; set; } = 0.0;
 
     [ObservableProperty]
-    private double blackPointLevel = 0.0;
+    public partial double BlackPointLevel { get; set; } = 0.0;
 
     [ObservableProperty]
-    private double whitePointLevel = 100.0;
+    public partial double WhitePointLevel { get; set; } = 100.0;
 
     [ObservableProperty]
-    private bool isPerspectiveCorrectionMode = false;
+    public partial bool IsPerspectiveCorrectionMode { get; set; } = false;
+
+    partial void OnIsPerspectiveCorrectionModeChanged(bool value)
+    {
+        if (value)
+        {
+            // Deactivate other tools when perspective correction is enabled
+            IsEyedropperBlackMode = false;
+            IsEyedropperWhiteMode = false;
+            System.Diagnostics.Debug.WriteLine("Perspective Correction Mode activated - other tools deactivated");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("Perspective Correction Mode deactivated");
+        }
+    }
 
     [ObservableProperty]
-    private Point? topLeftCorner = null;
+    public partial Point? TopLeftCorner { get; set; } = null;
 
     [ObservableProperty]
-    private Point? topRightCorner = null;
+    public partial Point? TopRightCorner { get; set; } = null;
 
     [ObservableProperty]
-    private Point? bottomRightCorner = null;
+    public partial Point? BottomRightCorner { get; set; } = null;
 
     [ObservableProperty]
-    private Point? bottomLeftCorner = null;
+    public partial Point? BottomLeftCorner { get; set; } = null;
+
+    public string CurrentCornerInstruction
+    {
+        get
+        {
+            if (!IsPerspectiveCorrectionMode) return string.Empty;
+            if (TopLeftCorner == null) return "1. Select Top-Left corner";
+            if (TopRightCorner == null) return "2. Select Top-Right corner";
+            if (BottomRightCorner == null) return "3. Select Bottom-Right corner";
+            if (BottomLeftCorner == null) return "4. Select Bottom-Left corner";
+            return "? All corners selected! Click 'Apply Changes' to process.";
+        }
+    }
+
+    public int CurrentCornerNumber
+    {
+        get
+        {
+            if (TopLeftCorner == null) return 1;
+            if (TopRightCorner == null) return 2;
+            if (BottomRightCorner == null) return 3;
+            if (BottomLeftCorner == null) return 4;
+            return 0; // All complete
+        }
+    }
+
+    public bool IsCornerSelectionComplete => CurrentCornerNumber == 0;
 
     [ObservableProperty]
-    private int borderPixels = 20;
+    public partial int BorderPixels { get; set; } = 20;
 
     [ObservableProperty]
-    private MagickColor? selectedBlackPointColor = null;
+    public partial MagickColor? SelectedBlackPointColor { get; set; } = null;
 
     [ObservableProperty]
-    private MagickColor? selectedWhitePointColor = null;
+    public partial MagickColor? SelectedWhitePointColor { get; set; } = null;
 
     [ObservableProperty]
-    private bool isEyedropperBlackMode = false;
+    public partial bool IsEyedropperBlackMode { get; set; } = false;
 
     [ObservableProperty]
-    private bool isEyedropperWhiteMode = false;
+    public partial bool IsEyedropperWhiteMode { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool IsProcessing { get; set; } = false;
 
     private MagickImage? originalImage = null;
     private MagickImage? processedImage = null;
 
     public event EventHandler<MagickImage>? ImageProcessed;
+    public event EventHandler? PerspectiveCornersClearedRequested;
 
     public void SetOriginalImage(MagickImage image)
     {
-        originalImage = (MagickImage)image.Clone();
-        processedImage = (MagickImage)image.Clone();
+        // Ensure EXIF orientation is applied to avoid coordinate misalignment
+        var orientedImage = (MagickImage)image.Clone();
+        orientedImage.AutoOrient();
+
+        originalImage = orientedImage;
+        processedImage = (MagickImage)orientedImage.Clone();
+
+        System.Diagnostics.Debug.WriteLine($"AdvancedToolsViewModel: Set original image");
+        System.Diagnostics.Debug.WriteLine($"  Dimensions: {orientedImage.Width}x{orientedImage.Height}");
+        System.Diagnostics.Debug.WriteLine($"  AutoOrient applied to ensure correct rotation");
     }
 
     [RelayCommand]
@@ -79,74 +132,143 @@ public partial class AdvancedToolsViewModel : ObservableObject
         IsEyedropperBlackMode = false;
         IsEyedropperWhiteMode = false;
 
+        // Notify property changes for computed properties
+        OnPropertyChanged(nameof(CurrentCornerInstruction));
+        OnPropertyChanged(nameof(CurrentCornerNumber));
+        OnPropertyChanged(nameof(IsCornerSelectionComplete));
+
+        // Safely invoke events
+        try
+        {
+            PerspectiveCornersClearedRequested?.Invoke(this, EventArgs.Empty);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error clearing perspective corners: {ex.Message}");
+        }
+
         if (originalImage != null)
         {
-            processedImage = (MagickImage)originalImage.Clone();
-            ImageProcessed?.Invoke(this, processedImage);
+            try
+            {
+                processedImage = (MagickImage)originalImage.Clone();
+                ImageProcessed?.Invoke(this, processedImage);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error processing image on reset: {ex.Message}");
+            }
         }
     }
 
     [RelayCommand]
-    private void ApplyProcessing()
+    private async Task ApplyProcessingAsync()
     {
         if (originalImage == null)
             return;
 
-        processedImage = (MagickImage)originalImage.Clone();
+        IsProcessing = true;
 
-        if (IsGrayscaleEnabled)
+        try
         {
-            processedImage = Helpers.ImageProcessingHelper.ApplyGrayscale(processedImage);
-        }
+            // Perform image processing on a background thread
+            await Task.Run(() =>
+            {
+                MagickImage tempProcessedImage = (MagickImage)originalImage.Clone();
 
-        if (Math.Abs(ContrastValue) > 0.01)
+                if (IsGrayscaleEnabled)
+                {
+                    tempProcessedImage = Helpers.ImageProcessingHelper.ApplyGrayscale(tempProcessedImage);
+                }
+
+                if (Math.Abs(ContrastValue) > 0.01)
+                {
+                    tempProcessedImage = Helpers.ImageProcessingHelper.AdjustContrast(tempProcessedImage, ContrastValue);
+                }
+
+                if (SelectedBlackPointColor != null)
+                {
+                    tempProcessedImage = Helpers.ImageProcessingHelper.SetBlackPoint(tempProcessedImage, SelectedBlackPointColor);
+                }
+
+                if (SelectedWhitePointColor != null)
+                {
+                    tempProcessedImage = Helpers.ImageProcessingHelper.SetWhitePoint(tempProcessedImage, SelectedWhitePointColor);
+                }
+
+                if (Math.Abs(BlackPointLevel) > 0.01 || Math.Abs(WhitePointLevel - 100.0) > 0.01)
+                {
+                    tempProcessedImage = Helpers.ImageProcessingHelper.AdjustLevels(tempProcessedImage, BlackPointLevel, WhitePointLevel);
+                }
+
+                if (IsPerspectiveCorrectionMode && AllCornersSet())
+                {
+                    try
+                    {
+                        tempProcessedImage = Helpers.ImageProcessingHelper.CorrectPerspectiveDistortion(
+                            tempProcessedImage,
+                            TopLeftCorner!.Value,
+                            TopRightCorner!.Value,
+                            BottomRightCorner!.Value,
+                            BottomLeftCorner!.Value,
+                            BorderPixels);
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Perspective correction validation failed: {ex.Message}");
+                        throw new InvalidOperationException($"Perspective correction failed: {ex.Message}", ex);
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Perspective correction failed: {ex.Message}");
+                        throw;
+                    }
+                }
+
+                processedImage = tempProcessedImage;
+            });
+
+            // Raise event on UI thread
+            ImageProcessed?.Invoke(this, processedImage);
+        }
+        finally
         {
-            processedImage = Helpers.ImageProcessingHelper.AdjustContrast(processedImage, ContrastValue);
+            IsProcessing = false;
         }
-
-        if (SelectedBlackPointColor != null)
-        {
-            processedImage = Helpers.ImageProcessingHelper.SetBlackPoint(processedImage, SelectedBlackPointColor);
-        }
-
-        if (SelectedWhitePointColor != null)
-        {
-            processedImage = Helpers.ImageProcessingHelper.SetWhitePoint(processedImage, SelectedWhitePointColor);
-        }
-
-        if (Math.Abs(BlackPointLevel) > 0.01 || Math.Abs(WhitePointLevel - 100.0) > 0.01)
-        {
-            processedImage = Helpers.ImageProcessingHelper.AdjustLevels(processedImage, BlackPointLevel, WhitePointLevel);
-        }
-
-        if (IsPerspectiveCorrectionMode && AllCornersSet())
-        {
-            processedImage = Helpers.ImageProcessingHelper.CorrectPerspectiveDistortion(
-                processedImage,
-                TopLeftCorner!.Value,
-                TopRightCorner!.Value,
-                BottomRightCorner!.Value,
-                BottomLeftCorner!.Value,
-                BorderPixels);
-        }
-
-        ImageProcessed?.Invoke(this, processedImage);
     }
 
     [RelayCommand]
     private void ToggleEyedropperBlackMode()
     {
         IsEyedropperBlackMode = !IsEyedropperBlackMode;
+
         if (IsEyedropperBlackMode)
+        {
+            // Deactivate other tools
             IsEyedropperWhiteMode = false;
+            if (IsPerspectiveCorrectionMode)
+            {
+                IsPerspectiveCorrectionMode = false;
+                System.Diagnostics.Debug.WriteLine("Black Point Eyedropper activated - Perspective Correction deactivated");
+            }
+        }
     }
 
     [RelayCommand]
     private void ToggleEyedropperWhiteMode()
     {
         IsEyedropperWhiteMode = !IsEyedropperWhiteMode;
+
         if (IsEyedropperWhiteMode)
+        {
+            // Deactivate other tools
             IsEyedropperBlackMode = false;
+            if (IsPerspectiveCorrectionMode)
+            {
+                IsPerspectiveCorrectionMode = false;
+                System.Diagnostics.Debug.WriteLine("White Point Eyedropper activated - Perspective Correction deactivated");
+            }
+        }
     }
 
     [RelayCommand]
@@ -156,6 +278,12 @@ public partial class AdvancedToolsViewModel : ObservableObject
         TopRightCorner = null;
         BottomRightCorner = null;
         BottomLeftCorner = null;
+
+        OnPropertyChanged(nameof(CurrentCornerInstruction));
+        OnPropertyChanged(nameof(CurrentCornerNumber));
+        OnPropertyChanged(nameof(IsCornerSelectionComplete));
+
+        PerspectiveCornersClearedRequested?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetCornerPoint(Point point, int cornerIndex)
@@ -176,16 +304,19 @@ public partial class AdvancedToolsViewModel : ObservableObject
                 break;
         }
 
-        if (AllCornersSet())
-        {
-            ApplyProcessing();
-        }
+        // Notify UI about instruction changes
+        OnPropertyChanged(nameof(CurrentCornerInstruction));
+        OnPropertyChanged(nameof(CurrentCornerNumber));
+        OnPropertyChanged(nameof(IsCornerSelectionComplete));
+
+        // Don't auto-apply processing - let user click "Apply Changes" button
+        // This prevents UI blocking when selecting the 4th corner
     }
 
-    public void SetColorFromPoint(Point point)
+    public async void SetColorFromPoint(Point point)
     {
         // Use original image for color sampling
-        var imageToSample = originalImage ?? processedImage;
+        MagickImage? imageToSample = originalImage ?? processedImage;
 
         if (imageToSample == null)
             return;
@@ -193,21 +324,24 @@ public partial class AdvancedToolsViewModel : ObservableObject
         if (point.X < 0 || point.X >= imageToSample.Width || point.Y < 0 || point.Y >= imageToSample.Height)
             return;
 
-        var pixels = imageToSample.GetPixels();
-        var pixel = pixels.GetPixel(point.X, point.Y);
-        var color = pixel.ToColor();
+        IPixelCollection<ushort> pixels = imageToSample.GetPixels();
+        IPixel<ushort> pixel = pixels.GetPixel(point.X, point.Y);
+        IMagickColor<ushort>? color = pixel.ToColor();
+
+        if (color is null)
+            return;
 
         if (IsEyedropperBlackMode)
         {
             SelectedBlackPointColor = new MagickColor(color.R, color.G, color.B, color.A);
             IsEyedropperBlackMode = false;
-            ApplyProcessing();
+            await ApplyProcessingAsync();
         }
         else if (IsEyedropperWhiteMode)
         {
             SelectedWhitePointColor = new MagickColor(color.R, color.G, color.B, color.A);
             IsEyedropperWhiteMode = false;
-            ApplyProcessing();
+            await ApplyProcessingAsync();
         }
     }
 
@@ -217,8 +351,5 @@ public partial class AdvancedToolsViewModel : ObservableObject
                BottomRightCorner.HasValue && BottomLeftCorner.HasValue;
     }
 
-    public MagickImage? GetProcessedImage()
-    {
-        return processedImage;
-    }
+    public MagickImage? GetProcessedImage() => processedImage;
 }

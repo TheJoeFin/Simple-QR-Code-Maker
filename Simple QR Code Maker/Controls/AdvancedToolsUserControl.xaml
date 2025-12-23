@@ -205,13 +205,65 @@
                 IsChecked="{x:Bind ViewModel.IsPerspectiveCorrectionMode, Mode=TwoWay}"
                 ToolTipService.ToolTip="Enable to select the 4 corners of the QR code for perspective correction" />
 
-            <TextBlock
-                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                Text="Click on the image to select corners in order: Top-Left, Top-Right, Bottom-Right, Bottom-Left"
-                TextWrapping="Wrap"
-                Visibility="{x:Bind ViewModel.IsPerspectiveCorrectionMode, Mode=OneWay}" />
+            <InfoBar
+                IsClosable="False"
+                IsOpen="{x:Bind ViewModel.IsPerspectiveCorrectionMode, Mode=OneWay}"
+                Message="Click on the image to mark each corner in sequence"
+                Severity="Informational" />
 
-            <StackPanel Spacing="4">
+            <!-- Current step indicator -->
+            <StackPanel 
+                Margin="0,8,0,0" 
+                Orientation="Horizontal" 
+                Spacing="8" 
+                Visibility="{x:Bind ViewModel.IsPerspectiveCorrectionMode, Mode=OneWay}">
+
+                <!-- Number badge -->
+                <Border
+                    Width="28"
+                    Height="28"
+                    Background="{ThemeResource SystemAccentColor}"
+                    CornerRadius="14"
+                    Visibility="{x:Bind ViewModel.IsCornerSelectionComplete, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=inverse}">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="14"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Text="{x:Bind ViewModel.CurrentCornerNumber, Mode=OneWay}" />
+                </Border>
+
+                <!-- Success checkmark -->
+                <Border
+                    Width="28"
+                    Height="28"
+                    Background="{ThemeResource SystemFillColorSuccessBrush}"
+                    CornerRadius="14"
+                    Visibility="{x:Bind ViewModel.IsCornerSelectionComplete, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <FontIcon 
+                        FontSize="14" 
+                        Foreground="White" 
+                        Glyph="&#xE73E;" />
+                </Border>
+
+                <!-- Instruction text -->
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontWeight="SemiBold"
+                    Foreground="{ThemeResource SystemAccentColor}"
+                    Text="{x:Bind ViewModel.CurrentCornerInstruction, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.IsCornerSelectionComplete, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=inverse}" />
+
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontWeight="SemiBold"
+                    Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                    Text="{x:Bind ViewModel.CurrentCornerInstruction, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.IsCornerSelectionComplete, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </StackPanel>
+
+            <StackPanel Spacing="4" Visibility="{x:Bind ViewModel.IsPerspectiveCorrectionMode, Mode=OneWay}">
                 <TextBlock Text="Border Size (pixels)" />
                 <Grid ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
@@ -253,16 +305,25 @@
                         Spacing="12">
                         <Button
                             Command="{x:Bind ViewModel.ApplyProcessingCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                             Style="{StaticResource AccentButtonStyle}"
                             ToolTipService.ToolTip="Apply all selected adjustments to the image">
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <SymbolIcon Symbol="Accept" />
+                                <ProgressRing 
+                                    Width="16" 
+                                    Height="16" 
+                                    IsActive="{x:Bind ViewModel.IsProcessing, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <SymbolIcon 
+                                    Symbol="Accept"
+                                    Visibility="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=inverse}" />
                                 <TextBlock Text="Apply Changes" />
                             </StackPanel>
                         </Button>
 
                         <Button
                             Command="{x:Bind ViewModel.ResetAllSettingsCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                             ToolTipService.ToolTip="Reset all settings to default values">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <SymbolIcon Symbol="Refresh" />

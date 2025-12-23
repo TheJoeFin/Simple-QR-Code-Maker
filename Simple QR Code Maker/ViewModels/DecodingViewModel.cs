@@ -268,30 +268,34 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             codeBorders.Add(textBorder);
         }
 
+        // Load as MagickImage and apply EXIF orientation
+        var magickImage = ImageProcessingHelper.LoadImageFromBitmap(bitmap);
+
         DecodingImageItem decodingImage = new()
         {
             ImagePath = cachePath,
             BitmapImage = thisPickedImage,
             CodeBorders = codeBorders,
+            OriginalMagickImage = magickImage,
         };
 
         DecodingImageItems.Add(decodingImage);
     }
 
-    public void OpenAndDecodeStorageFiles(IReadOnlyList<IStorageItem> pickedFiles)
+    public async void OpenAndDecodeStorageFiles(IReadOnlyList<IStorageItem> pickedFiles)
     {
         foreach (IStorageItem file in pickedFiles)
         {
             if (file is not StorageFile storageFile)
                 continue;
 
-            DecodingImageItem? decodedItem = GetDecodingImageItemFromStorageFile(storageFile);
+            DecodingImageItem? decodedItem = await GetDecodingImageItemFromStorageFileAsync(storageFile);
             if (decodedItem is not null)
                 DecodingImageItems.Add(decodedItem);
         }
     }
 
-    private DecodingImageItem? GetDecodingImageItemFromStorageFile(StorageFile storageFile)
+    private async Task<DecodingImageItem?> GetDecodingImageItemFromStorageFileAsync(StorageFile storageFile)
     {
         Uri uri = new($"{storageFile.Path}?tick={DateTimeOffset.Now.Ticks}");
 
@@ -313,8 +317,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             codeBorders.Add(textBorder);
         }
 
-        var bitmap = new Bitmap(storageFile.Path);
-        var magickImage = ImageProcessingHelper.LoadImageFromBitmap(bitmap);
+        // Load image using ImageProcessingHelper which handles EXIF orientation properly
+        var magickImage = await ImageProcessingHelper.LoadImageFromStorageFile(storageFile);
 
         DecodingImageItem decodingImage = new()
         {

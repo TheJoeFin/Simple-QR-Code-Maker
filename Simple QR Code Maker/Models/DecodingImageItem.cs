@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using ImageMagick;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Controls;
 using System.Collections.ObjectModel;
@@ -11,7 +12,7 @@ public partial class DecodingImageItem : ObservableObject
 {
     public string ImagePath { get; set; } = string.Empty;
 
-    public string FileName => Path.GetFileName(ImagePath);
+    public string FileName => System.IO.Path.GetFileName(ImagePath);
 
     [ObservableProperty]
     private BitmapImage? bitmapImage;
@@ -31,4 +32,10 @@ public partial class DecodingImageItem : ObservableObject
         public MagickImage? ProcessedMagickImage { get; set; }
 
         public bool HasProcessedImage => ProcessedMagickImage != null;
+
+        [ObservableProperty]
+        private ObservableCollection<UIElement> perspectiveCornerMarkers = new();
+
+        [ObservableProperty]
+        private int currentCornerIndex = 0;
     }

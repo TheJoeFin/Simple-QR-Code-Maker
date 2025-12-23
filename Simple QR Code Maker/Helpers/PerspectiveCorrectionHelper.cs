@@ -10,8 +10,8 @@ namespace Simple_QR_Code_Maker.Helpers;
 
 public class PerspectiveCorrectionHelper
 {
-    private readonly List<System.Drawing.Point> corners = new();
-    private readonly List<Ellipse> cornerMarkers = new();
+    private readonly List<System.Drawing.Point> corners = [];
+    private readonly List<Ellipse> cornerMarkers = [];
     private readonly Action<System.Drawing.Point, int> onCornerSelected;
 
     public PerspectiveCorrectionHelper(Action<System.Drawing.Point, int> cornerSelectedCallback)
@@ -36,7 +36,7 @@ public class PerspectiveCorrectionHelper
         cornerMarkers.Clear();
     }
 
-    public Ellipse CreateCornerMarker(System.Drawing.Point point, int index)
+    public static Ellipse CreateCornerMarker(System.Drawing.Point point, int index)
     {
         var marker = new Ellipse
         {
@@ -107,6 +107,6 @@ public class PerspectiveCorrectionHelper
 
     public List<System.Drawing.Point> GetAllCorners()
     {
-        return new List<System.Drawing.Point>(corners);
+        return [.. corners];
     }
 }
