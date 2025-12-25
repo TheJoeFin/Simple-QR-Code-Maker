@@ -8,18 +8,24 @@ namespace Simple_QR_Code_Maker.ViewModels;
 public partial class AdvancedToolsViewModel : ObservableObject
 {
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial bool IsGrayscaleEnabled { get; set; } = false;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial double ContrastValue { get; set; } = 0.0;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial double BlackPointLevel { get; set; } = 0.0;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial double WhitePointLevel { get; set; } = 100.0;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
+    [NotifyPropertyChangedFor(nameof(IsAnyToolActive))]
     public partial bool IsPerspectiveCorrectionMode { get; set; } = false;
 
     partial void OnIsPerspectiveCorrectionModeChanged(bool value)
@@ -38,15 +44,31 @@ public partial class AdvancedToolsViewModel : ObservableObject
     }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CurrentCornerInstruction))]
+    [NotifyPropertyChangedFor(nameof(CurrentCornerNumber))]
+    [NotifyPropertyChangedFor(nameof(IsCornerSelectionComplete))]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial Point? TopLeftCorner { get; set; } = null;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CurrentCornerInstruction))]
+    [NotifyPropertyChangedFor(nameof(CurrentCornerNumber))]
+    [NotifyPropertyChangedFor(nameof(IsCornerSelectionComplete))]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial Point? TopRightCorner { get; set; } = null;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CurrentCornerInstruction))]
+    [NotifyPropertyChangedFor(nameof(CurrentCornerNumber))]
+    [NotifyPropertyChangedFor(nameof(IsCornerSelectionComplete))]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial Point? BottomRightCorner { get; set; } = null;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CurrentCornerInstruction))]
+    [NotifyPropertyChangedFor(nameof(CurrentCornerNumber))]
+    [NotifyPropertyChangedFor(nameof(IsCornerSelectionComplete))]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial Point? BottomLeftCorner { get; set; } = null;
 
     public string CurrentCornerInstruction
@@ -80,19 +102,69 @@ public partial class AdvancedToolsViewModel : ObservableObject
     public partial int BorderPixels { get; set; } = 20;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial MagickColor? SelectedBlackPointColor { get; set; } = null;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial MagickColor? SelectedWhitePointColor { get; set; } = null;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsAnyToolActive))]
     public partial bool IsEyedropperBlackMode { get; set; } = false;
 
+    partial void OnIsEyedropperBlackModeChanged(bool value)
+    {
+        if (value)
+        {
+            // Deactivate other tools
+            IsEyedropperWhiteMode = false;
+            if (IsPerspectiveCorrectionMode)
+            {
+                IsPerspectiveCorrectionMode = false;
+                System.Diagnostics.Debug.WriteLine("Black Point Eyedropper activated - other tools deactivated");
+            }
+        }
+    }
+
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsAnyToolActive))]
     public partial bool IsEyedropperWhiteMode { get; set; } = false;
+
+    partial void OnIsEyedropperWhiteModeChanged(bool value)
+    {
+        if (value)
+        {
+            // Deactivate other tools
+            IsEyedropperBlackMode = false;
+            if (IsPerspectiveCorrectionMode)
+            {
+                IsPerspectiveCorrectionMode = false;
+                System.Diagnostics.Debug.WriteLine("White Point Eyedropper activated - other tools deactivated");
+            }
+        }
+    }
 
     [ObservableProperty]
     public partial bool IsProcessing { get; set; } = false;
+
+    // Track if there are pending changes that need to be applied
+    public bool HasPendingChanges
+    {
+        get
+        {
+            // Check if any setting has been changed from default
+            bool hasBasicChanges = IsGrayscaleEnabled || Math.Abs(ContrastValue) > 0.01;
+            bool hasLevelChanges = Math.Abs(BlackPointLevel) > 0.01 || Math.Abs(WhitePointLevel - 100.0) > 0.01;
+            bool hasEyedropperChanges = SelectedBlackPointColor != null || SelectedWhitePointColor != null;
+            bool hasPerspectiveChanges = IsPerspectiveCorrectionMode && AllCornersSet();
+
+            return hasBasicChanges || hasLevelChanges || hasEyedropperChanges || hasPerspectiveChanges;
+        }
+    }
+
+    // Track if any interactive tool is currently active
+    public bool IsAnyToolActive => IsEyedropperBlackMode || IsEyedropperWhiteMode || IsPerspectiveCorrectionMode;
 
     private MagickImage? originalImage = null;
     private MagickImage? processedImage = null;
@@ -136,6 +208,8 @@ public partial class AdvancedToolsViewModel : ObservableObject
         OnPropertyChanged(nameof(CurrentCornerInstruction));
         OnPropertyChanged(nameof(CurrentCornerNumber));
         OnPropertyChanged(nameof(IsCornerSelectionComplete));
+        OnPropertyChanged(nameof(HasPendingChanges));
+        OnPropertyChanged(nameof(IsAnyToolActive));
 
         // Safely invoke events
         try
@@ -238,40 +312,6 @@ public partial class AdvancedToolsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void ToggleEyedropperBlackMode()
-    {
-        IsEyedropperBlackMode = !IsEyedropperBlackMode;
-
-        if (IsEyedropperBlackMode)
-        {
-            // Deactivate other tools
-            IsEyedropperWhiteMode = false;
-            if (IsPerspectiveCorrectionMode)
-            {
-                IsPerspectiveCorrectionMode = false;
-                System.Diagnostics.Debug.WriteLine("Black Point Eyedropper activated - Perspective Correction deactivated");
-            }
-        }
-    }
-
-    [RelayCommand]
-    private void ToggleEyedropperWhiteMode()
-    {
-        IsEyedropperWhiteMode = !IsEyedropperWhiteMode;
-
-        if (IsEyedropperWhiteMode)
-        {
-            // Deactivate other tools
-            IsEyedropperBlackMode = false;
-            if (IsPerspectiveCorrectionMode)
-            {
-                IsPerspectiveCorrectionMode = false;
-                System.Diagnostics.Debug.WriteLine("White Point Eyedropper activated - Perspective Correction deactivated");
-            }
-        }
-    }
-
-    [RelayCommand]
     private void ClearPerspectiveCorners()
     {
         TopLeftCorner = null;
@@ -279,10 +319,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
         BottomRightCorner = null;
         BottomLeftCorner = null;
 
-        OnPropertyChanged(nameof(CurrentCornerInstruction));
-        OnPropertyChanged(nameof(CurrentCornerNumber));
-        OnPropertyChanged(nameof(IsCornerSelectionComplete));
-
+        // Property changes are now handled by NotifyPropertyChangedFor attributes
         PerspectiveCornersClearedRequested?.Invoke(this, EventArgs.Empty);
     }
 
@@ -304,11 +341,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
                 break;
         }
 
-        // Notify UI about instruction changes
-        OnPropertyChanged(nameof(CurrentCornerInstruction));
-        OnPropertyChanged(nameof(CurrentCornerNumber));
-        OnPropertyChanged(nameof(IsCornerSelectionComplete));
-
+        // Property changes are now handled by NotifyPropertyChangedFor attributes
         // Don't auto-apply processing - let user click "Apply Changes" button
         // This prevents UI blocking when selecting the 4th corner
     }
@@ -335,13 +368,11 @@ public partial class AdvancedToolsViewModel : ObservableObject
         {
             SelectedBlackPointColor = new MagickColor(color.R, color.G, color.B, color.A);
             IsEyedropperBlackMode = false;
-            await ApplyProcessingAsync();
         }
         else if (IsEyedropperWhiteMode)
         {
             SelectedWhitePointColor = new MagickColor(color.R, color.G, color.B, color.A);
             IsEyedropperWhiteMode = false;
-            await ApplyProcessingAsync();
         }
     }
 

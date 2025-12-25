@@ -274,7 +274,7 @@ public sealed partial class DecodingPage : Page
                 Debug.WriteLine($"{indent}    Stretch={vb.Stretch}");
             }
 
-            element = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(element) as FrameworkElement;
+            element = VisualTreeHelper.GetParent(element) as FrameworkElement;
             level++;
         }
         Debug.WriteLine($"");
@@ -287,7 +287,7 @@ public sealed partial class DecodingPage : Page
 
         while (parent != null)
         {
-            parent = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(parent) as FrameworkElement;
+            parent = VisualTreeHelper.GetParent(parent) as FrameworkElement;
             if (parent is Viewbox vb)
             {
                 scalingViewbox = vb;
