@@ -249,9 +249,17 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     private void OpenAndDecodeBitmap(IRandomAccessStreamWithContentType streamWithContentType)
     {
-        Bitmap bitmap = new(streamWithContentType.AsStreamForRead());
+        Bitmap rawBitmap = new(streamWithContentType.AsStreamForRead());
+
+        // Load as MagickImage and apply EXIF orientation
+        var magickImage = ImageProcessingHelper.LoadImageFromBitmap(rawBitmap);
+
+        // Convert the oriented MagickImage to a Bitmap for ZXing decoding
+        // so that ResultPoints are in the same coordinate space as the displayed image
+        var orientedBitmap = ImageProcessingHelper.ConvertToBitmap(magickImage);
+
         string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}.png");
-        bitmap.Save(cachePath);
+        orientedBitmap.Save(cachePath);
 
         Uri uri = new($"{cachePath}?tick={DateTimeOffset.Now.Ticks}");
         BitmapImage thisPickedImage = new(uri)
@@ -259,7 +267,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             CreateOptions = BitmapCreateOptions.IgnoreImageCache
         };
 
-        IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(bitmap);
+        IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(orientedBitmap);
 
         ObservableCollection<TextBorder> codeBorders = [];
         foreach ((string, Result) item in strings)
@@ -268,9 +276,6 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             textBorder.TextBorder_Click += TextBorder_TextBorder_Click;
             codeBorders.Add(textBorder);
         }
-
-        // Load as MagickImage and apply EXIF orientation
-        var magickImage = ImageProcessingHelper.LoadImageFromBitmap(bitmap);
 
         DecodingImageItem decodingImage = new()
         {
@@ -301,17 +306,26 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     private async Task<DecodingImageItem?> GetDecodingImageItemFromStorageFileAsync(StorageFile storageFile)
     {
-        Uri uri = new($"{storageFile.Path}?tick={DateTimeOffset.Now.Ticks}");
-
         if (!imageExtensions.Contains(Path.GetExtension(storageFile.Path).ToLowerInvariant()))
             return null;
 
+        // Load image using ImageProcessingHelper which handles EXIF orientation properly
+        var magickImage = await ImageProcessingHelper.LoadImageFromStorageFile(storageFile);
+
+        // Convert the oriented MagickImage to a Bitmap for ZXing decoding
+        // so that ResultPoints are in the same coordinate space as the displayed image
+        var orientedBitmap = ImageProcessingHelper.ConvertToBitmap(magickImage);
+
+        string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}.png");
+        orientedBitmap.Save(cachePath);
+
+        Uri uri = new($"{cachePath}?tick={DateTimeOffset.Now.Ticks}");
         BitmapImage thisPickedImage = new(uri)
         {
             CreateOptions = BitmapCreateOptions.IgnoreImageCache
         };
 
-        IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromImageFile(storageFile);
+        IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(orientedBitmap);
 
         ObservableCollection<TextBorder> codeBorders = [];
         foreach ((string, Result) item in strings)
@@ -320,9 +334,6 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             textBorder.TextBorder_Click += TextBorder_TextBorder_Click;
             codeBorders.Add(textBorder);
         }
-
-        // Load image using ImageProcessingHelper which handles EXIF orientation properly
-        var magickImage = await ImageProcessingHelper.LoadImageFromStorageFile(storageFile);
 
         DecodingImageItem decodingImage = new()
         {
