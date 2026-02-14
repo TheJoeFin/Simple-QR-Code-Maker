@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using ImageMagick;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -40,6 +41,9 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private bool isAdvancedToolsVisible = false;
+
+    [ObservableProperty]
+    private bool isFaqPaneOpen = false;
 
     public bool HasImage => CurrentDecodingItem is not null;
 
@@ -111,6 +115,16 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     private void ToggleAdvancedTools()
     {
         IsAdvancedToolsVisible = !IsAdvancedToolsVisible;
+    }
+
+    [RelayCommand]
+    private void ToggleFaqPaneOpen() => IsFaqPaneOpen = !IsFaqPaneOpen;
+
+    [RelayCommand]
+    private void OpenFaqWithSearch(string searchText)
+    {
+        IsFaqPaneOpen = true;
+        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, searchText));
     }
 
     [RelayCommand]
