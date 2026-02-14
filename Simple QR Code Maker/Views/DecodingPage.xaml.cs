@@ -78,10 +78,18 @@ public sealed partial class DecodingPage : Page
 
     private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(ViewModel.CurrentDecodingItem) &&
-            ViewModel.CurrentDecodingItem?.OriginalMagickImage != null)
+        if (e.PropertyName == nameof(ViewModel.CurrentDecodingItem))
         {
-            AdvancedToolsPanel.ViewModel.SetOriginalImage(ViewModel.CurrentDecodingItem.OriginalMagickImage);
+            if (ViewModel.CurrentDecodingItem?.OriginalMagickImage != null)
+            {
+                AdvancedToolsPanel.ViewModel.SetOriginalImage(ViewModel.CurrentDecodingItem.OriginalMagickImage);
+            }
+            else if (ViewModel.CurrentDecodingItem is null)
+            {
+                // Image was cleared — reset all advanced tools state and cursor
+                AdvancedToolsPanel.ViewModel.ClearAll();
+                this.ProtectedCursor = null;
+            }
         }
 
         if (e.PropertyName is nameof(ViewModel.HasImage) or nameof(ViewModel.CurrentDecodingItem))

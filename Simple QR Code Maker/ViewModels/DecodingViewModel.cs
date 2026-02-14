@@ -101,6 +101,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     private void ClearImages()
     {
         CurrentDecodingItem = null;
+        PickedImage = null;
         IsInfoBarShowing = false;
         InfoBarMessage = string.Empty;
         IsAdvancedToolsVisible = false;

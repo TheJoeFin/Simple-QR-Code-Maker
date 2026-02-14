@@ -435,4 +435,38 @@ public partial class AdvancedToolsViewModel : ObservableObject
     }
 
     public MagickImage? GetProcessedImage() => processedImage;
+
+    /// <summary>
+    /// Clears all state including internal images. Used when the current image is
+    /// removed (e.g. the user clicks Clear) so that stale settings and images do
+    /// not carry over to the next image.
+    /// </summary>
+    public void ClearAll()
+    {
+        IsGrayscaleEnabled = false;
+        ContrastValue = 0.0;
+        BlackPointLevel = 0.0;
+        WhitePointLevel = 100.0;
+        IsPerspectiveCorrectionMode = false;
+        TopLeftCorner = null;
+        TopRightCorner = null;
+        BottomRightCorner = null;
+        BottomLeftCorner = null;
+        BorderPixels = 20;
+        SelectedBlackPointColor = null;
+        SelectedWhitePointColor = null;
+        IsEyedropperBlackMode = false;
+        IsEyedropperWhiteMode = false;
+        IsProcessing = false;
+
+        trueOriginalImage = null;
+        baselineImage = null;
+        processedImage = null;
+
+        OnPropertyChanged(nameof(CurrentCornerInstruction));
+        OnPropertyChanged(nameof(CurrentCornerNumber));
+        OnPropertyChanged(nameof(IsCornerSelectionComplete));
+        OnPropertyChanged(nameof(HasPendingChanges));
+        OnPropertyChanged(nameof(IsAnyToolActive));
+    }
 }
