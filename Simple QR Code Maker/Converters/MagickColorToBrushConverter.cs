@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Media;
 
 namespace Simple_QR_Code_Maker.Converters;
 
-public class MagickColorToBrushConverter : IValueConverter
+public partial class MagickColorToBrushConverter : IValueConverter
 {
     public object? Convert(object value, Type targetType, object parameter, string language)
     {

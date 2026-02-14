@@ -6,145 +6,139 @@
     xmlns:converters="using:Simple_QR_Code_Maker.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:Simple_QR_Code_Maker.Models"
     xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
     x:Name="DecodingPageRoot"
     mc:Ignorable="d">
 
     <Page.Resources>
         <converters:TextHasURLConverter x:Key="HasURL" />
-        <converters:IsZeroConverter x:Key="IsZero" />
-        <converters:EmptyCollectionToVisibilityConverter x:Key="EmptyCollectionToVisibility" />
         <converters:BoolToAdvancedToolsMessageConverter x:Key="BoolToAdvancedToolsMessageConverter" />
         <converters:NoCodesWarningVisibilityConverter x:Key="NoCodesWarningVisibilityConverter" />
+        <converters:BoolToAlignmentConverter x:Key="BoolToAlignmentConverter" />
         <toolkitConverters:BoolNegationConverter x:Key="BoolNegationConverter" />
         <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Page.Resources>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+    <SplitView
+        DisplayMode="Inline"
+        IsPaneOpen="{x:Bind ViewModel.IsAdvancedToolsVisible, Mode=TwoWay}"
+        OpenPaneLength="350"
+        PanePlacement="Right">
+        <SplitView.Pane>
+            <Border
+                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1,0,0,0">
+                <controls:AdvancedToolsUserControl x:Name="AdvancedToolsPanel" />
+            </Border>
+        </SplitView.Pane>
 
-        <ScrollViewer
-            x:Name="ImageScrollViewer"
-            Grid.Column="0"
-            HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Auto"
-            ZoomMode="Disabled">
-            <StackPanel
-                x:Name="ContentArea"
-                Margin="20"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Orientation="Vertical"
-                Spacing="12">
-                <Border
-                    x:Name="GridViewContainer"
-                    Grid.Row="1"
-                    MinWidth="300"
-                    MinHeight="300"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
+        <SplitView.Content>
+            <Grid
+                Name="BaseGrid"
+                HorizontalAlignment="{x:Bind ViewModel.HasImage, Mode=OneWay, Converter={StaticResource BoolToAlignmentConverter}}"
+                VerticalAlignment="{x:Bind ViewModel.HasImage, Mode=OneWay, Converter={StaticResource BoolToAlignmentConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="ImageRow" Height="auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid
+                    x:Name="DropContainer"
+                    Grid.Row="0"
                     AllowDrop="True"
-                    Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
-                    CornerRadius="4"
-                    DragOver="GridViewContainer_DragOver"
-                    Drop="GridViewContainer_Drop">
-                    <GridView
-                        Grid.Row="1"
+                    DragOver="DropContainer_DragOver"
+                    Drop="DropContainer_Drop">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Margin="20,20,20,0"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        ItemsSource="{x:Bind ViewModel.DecodingImageItems, Mode=OneWay}"
-                        ScrollViewer.IsHorizontalScrollChainingEnabled="True"
-                        ScrollViewer.IsVerticalScrollChainingEnabled="True"
-                        SelectionMode="None">
-                        <GridView.ItemTemplate>
-                            <DataTemplate x:DataType="models:DecodingImageItem">
-                                <StackPanel
-                                    MaxWidth="450"
-                                    Margin="20"
-                                    Spacing="8">
-                                    <TextBlock x:Name="ImageTextName" Text="{x:Bind FileName, Mode=OneWay}" />
-                                    <Border
-                                        Width="400"
-                                        Height="400"
-                                        HorizontalAlignment="Center">
-                                        <Viewbox Stretch="Uniform">
-                                            <Grid x:Name="ImageContainer" PointerPressed="ImageContainer_PointerPressed">
-                                                <Image x:Name="ImageWithBarcodes" Source="{x:Bind BitmapImage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                <ItemsControl ItemsSource="{x:Bind CodeBorders, Mode=OneWay}">
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <Canvas Width="{Binding ImageWithBarcodes.Width}" Height="{Binding ImageWithBarcodes.Height}" />
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <ContentControl />
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
-                                                <ItemsControl IsHitTestVisible="False" ItemsSource="{x:Bind PerspectiveCornerMarkers, Mode=OneWay}">
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <Canvas Width="{Binding ImageWithBarcodes.Width}" Height="{Binding ImageWithBarcodes.Height}" />
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <ContentControl Content="{Binding}" />
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
-                                            </Grid>
-                                        </Viewbox>
-                                    </Border>
+                        Text="{x:Bind ViewModel.CurrentDecodingItem.FileName, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.HasImage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                                    <!--  Info Button (shown when warning is dismissed and no codes found)  -->
-                                    <HyperlinkButton
-                                        x:Name="ShowInfoButton"
-                                        HorizontalAlignment="Center"
-                                        Click="ShowNoCodesInfo_Click"
-                                        Tag="{x:Bind}"
-                                        Visibility="Collapsed">
-                                        <StackPanel Orientation="Horizontal" Spacing="6">
-                                            <FontIcon FontSize="16" Glyph="&#xE946;" />
-                                            <TextBlock Text="Why no codes detected?" />
-                                        </StackPanel>
-                                        <HyperlinkButton.Resources>
-                                            <SolidColorBrush x:Key="HyperlinkButtonForeground" Color="{ThemeResource SystemAccentColor}" />
-                                        </HyperlinkButton.Resources>
-                                    </HyperlinkButton>
+                    <Grid
+                        Grid.Row="1"
+                        MinWidth="300"
+                        MinHeight="300"
+                        Margin="0"
+                        Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
+                        CornerRadius="4">
+                        <ScrollView
+                            x:Name="ImageScrollView"
+                            ContentOrientation="None"
+                            HorizontalScrollBarVisibility="Auto"
+                            VerticalScrollBarVisibility="Auto"
+                            ZoomMode="Enabled">
+                            <Viewbox Stretch="Uniform">
 
-                                    <!--  Warning InfoBar (below image, shown when no codes and not dismissed)  -->
-                                    <InfoBar
-                                        x:Name="NoCodesInfoBar"
-                                        Title="No codes found"
-                                        IsClosable="False"
-                                        IsOpen="True"
-                                        Severity="Warning"
-                                        Visibility="{x:Bind CodeBorders.Count, Mode=OneWay, Converter={StaticResource NoCodesWarningVisibilityConverter}}">
-                                        <InfoBar.ActionButton>
-                                            <Button
-                                                Click="DismissNoCodesWarning_Click"
-                                                Content="Dismiss"
-                                                Tag="{x:Bind}" />
-                                        </InfoBar.ActionButton>
-                                        <TextBlock
-                                            IsTextSelectionEnabled="True"
-                                            Text="{Binding ElementName=DecodingPageRoot, Path=ViewModel.IsAdvancedToolsVisible, Converter={StaticResource BoolToAdvancedToolsMessageConverter}, Mode=OneWay}"
-                                            TextWrapping="Wrap" />
-                                    </InfoBar>
-                                </StackPanel>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
-                </Border>
+                                <Grid x:Name="ImageContainer" PointerPressed="ImageContainer_PointerPressed">
+                                    <Image
+                                        x:Name="ImageWithBarcodes"
+                                        Width="{x:Bind ViewModel.CurrentDecodingItem.ImagePixelWidth, Mode=OneWay}"
+                                        Height="{x:Bind ViewModel.CurrentDecodingItem.ImagePixelHeight, Mode=OneWay}"
+                                        Source="{x:Bind ViewModel.CurrentDecodingItem.BitmapImage, Mode=OneWay}" />
+                                    <ItemsControl
+                                        Width="{x:Bind ViewModel.CurrentDecodingItem.ImagePixelWidth, Mode=OneWay}"
+                                        Height="{x:Bind ViewModel.CurrentDecodingItem.ImagePixelHeight, Mode=OneWay}"
+                                        ItemsSource="{x:Bind ViewModel.CurrentDecodingItem.CodeBorders, Mode=OneWay}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <Canvas />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <ContentControl />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <ItemsControl
+                                        Width="{x:Bind ViewModel.CurrentDecodingItem.ImagePixelWidth, Mode=OneWay}"
+                                        Height="{x:Bind ViewModel.CurrentDecodingItem.ImagePixelHeight, Mode=OneWay}"
+                                        IsHitTestVisible="False"
+                                        ItemsSource="{x:Bind ViewModel.CurrentDecodingItem.PerspectiveCornerMarkers, Mode=OneWay}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <Canvas />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <ContentControl Content="{Binding}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
+                            </Viewbox>
+                        </ScrollView>
+                    </Grid>
+
+                    <!--  Warning InfoBar (below image, shown when no codes found)  -->
+                    <InfoBar
+                        x:Name="NoCodesInfoBar"
+                        Title="No codes found"
+                        Grid.Row="2"
+                        Margin="20,0"
+                        IsClosable="True"
+                        IsOpen="{x:Bind ViewModel.CurrentDecodingItem.CodeBorders.Count, Mode=OneWay, Converter={StaticResource NoCodesWarningVisibilityConverter}}"
+                        Severity="Warning"
+                        Visibility="{x:Bind ViewModel.HasImage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Text="{x:Bind ViewModel.IsAdvancedToolsVisible, Converter={StaticResource BoolToAdvancedToolsMessageConverter}, Mode=OneWay}"
+                            TextWrapping="Wrap" />
+                    </InfoBar>
+                </Grid>
 
                 <StackPanel
-                    Grid.Row="0"
+                    Grid.Row="1"
+                    Margin="12"
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="12">
@@ -157,7 +151,7 @@
                         Command="{x:Bind ViewModel.OpenNewFileCommand}"
                         IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                         Text="Open..."
-                        ToolTipService.ToolTip="Open one or many files to decode the barcodes contained in the image">
+                        ToolTipService.ToolTip="Open a file to decode the barcodes contained in the image">
                         <controls:IconAndTextButton.Icon>
                             <SymbolIcon Symbol="OpenFile" />
                         </controls:IconAndTextButton.Icon>
@@ -166,7 +160,7 @@
                         Command="{x:Bind ViewModel.OpenFileFromClipboardCommand}"
                         IsEnabled="{x:Bind ViewModel.CanPasteImage, Mode=OneWay}"
                         Text="Paste"
-                        ToolTipService.ToolTip="Paste and image or file from your clipboard to try to decode the barcodes">
+                        ToolTipService.ToolTip="Paste an image or file from your clipboard to try to decode the barcodes">
                         <controls:IconAndTextButton.Icon>
                             <SymbolIcon Symbol="Paste" />
                         </controls:IconAndTextButton.Icon>
@@ -175,8 +169,8 @@
                         Command="{x:Bind ViewModel.ClearImagesCommand}"
                         IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                         Text="Clear"
-                        ToolTipService.ToolTip="Clear out all the images"
-                        Visibility="{x:Bind ViewModel.DecodingImageItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
+                        ToolTipService.ToolTip="Clear out the image"
+                        Visibility="{x:Bind ViewModel.HasImage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                         <controls:IconAndTextButton.Icon>
                             <SymbolIcon Symbol="Clear" />
                         </controls:IconAndTextButton.Icon>
@@ -184,71 +178,60 @@
                     <ToggleButton
                         IsChecked="{x:Bind ViewModel.IsAdvancedToolsVisible, Mode=TwoWay}"
                         ToolTipService.ToolTip="Toggle advanced image processing tools"
-                        Visibility="{x:Bind ViewModel.DecodingImageItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
+                        Visibility="{x:Bind ViewModel.HasImage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <SymbolIcon Symbol="Repair" />
                             <TextBlock Text="Advanced Tools" />
                         </StackPanel>
                     </ToggleButton>
                 </StackPanel>
-            </StackPanel>
-        </ScrollViewer>
 
-        <!--  Advanced Tools Panel on the right  -->
-        <Border
-            Grid.Column="1"
-            Width="350"
-            Background="{ThemeResource LayerFillColorDefaultBrush}"
-            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-            BorderThickness="1,0,0,0"
-            Visibility="{x:Bind ViewModel.IsAdvancedToolsVisible, Mode=OneWay}">
-            <controls:AdvancedToolsUserControl x:Name="AdvancedToolsPanel" />
-        </Border>
-
-        <InfoBar
-            x:Name="QrCodeInfoBar"
-            Title="QR Code Content"
-            Grid.Column="0"
-            Margin="20"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            Background="{StaticResource SystemControlBackgroundAltHighBrush}"
-            BorderBrush="{StaticResource SystemAccentColor}"
-            BorderThickness="3"
-            IsOpen="{x:Bind ViewModel.IsInfoBarShowing, Mode=TwoWay}"
-            Severity="Informational">
-            <StackPanel
-                Margin="12,0"
-                Orientation="Vertical"
-                Spacing="12">
-                <TextBlock
-                    MaxWidth="500"
-                    VerticalAlignment="Center"
-                    IsTextSelectionEnabled="True"
-                    Text="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}"
-                    TextWrapping="Wrap" />
-                <StackPanel
+                <InfoBar
+                    x:Name="QrCodeInfoBar"
+                    Title="QR Code Content"
+                    Grid.Row="0"
+                    Margin="20"
                     HorizontalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="12">
-                    <AppBarButton
-                        Command="{x:Bind ViewModel.EditQrCodeCommand}"
-                        Icon="Edit"
-                        IsCompact="True"
-                        ToolTipService.ToolTip="Edit this text as a new QR Code" />
-                    <AppBarButton
-                        Command="{x:Bind ViewModel.AddMessageToClipboardCommand}"
-                        Icon="Copy"
-                        IsCompact="True"
-                        ToolTipService.ToolTip="Copy the encoded text to the clipboard" />
-                    <AppBarButton
-                        Command="{x:Bind ViewModel.TryLaunchLinkCommand}"
-                        Icon="Go"
-                        IsCompact="True"
-                        IsEnabled="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay, Converter={StaticResource HasURL}}"
-                        ToolTipService.ToolTip="Try to go to the URL" />
-                </StackPanel>
-            </StackPanel>
-        </InfoBar>
-    </Grid>
+                    VerticalAlignment="Top"
+                    Background="{StaticResource SystemControlBackgroundAltHighBrush}"
+                    BorderBrush="{StaticResource SystemAccentColor}"
+                    BorderThickness="3"
+                    IsOpen="{x:Bind ViewModel.IsInfoBarShowing, Mode=TwoWay}"
+                    Severity="Informational">
+                    <StackPanel
+                        Margin="12,0"
+                        Orientation="Vertical"
+                        Spacing="12">
+                        <TextBlock
+                            MaxWidth="500"
+                            VerticalAlignment="Center"
+                            IsTextSelectionEnabled="True"
+                            Text="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}"
+                            TextWrapping="Wrap" />
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="12">
+                            <AppBarButton
+                                Command="{x:Bind ViewModel.EditQrCodeCommand}"
+                                Icon="Edit"
+                                IsCompact="True"
+                                ToolTipService.ToolTip="Edit this text as a new QR Code" />
+                            <AppBarButton
+                                Command="{x:Bind ViewModel.AddMessageToClipboardCommand}"
+                                Icon="Copy"
+                                IsCompact="True"
+                                ToolTipService.ToolTip="Copy the encoded text to the clipboard" />
+                            <AppBarButton
+                                Command="{x:Bind ViewModel.TryLaunchLinkCommand}"
+                                Icon="Go"
+                                IsCompact="True"
+                                IsEnabled="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay, Converter={StaticResource HasURL}}"
+                                ToolTipService.ToolTip="Try to go to the URL" />
+                        </StackPanel>
+                    </StackPanel>
+                </InfoBar>
+            </Grid>
+        </SplitView.Content>
+    </SplitView>
 </Page>

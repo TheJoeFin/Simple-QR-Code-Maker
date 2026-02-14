@@ -15,27 +15,33 @@ public partial class DecodingImageItem : ObservableObject
     public string FileName => System.IO.Path.GetFileName(ImagePath);
 
     [ObservableProperty]
-    private BitmapImage? bitmapImage;
+    public partial BitmapImage? BitmapImage { get; set; }
+
+    [ObservableProperty]
+    public partial int ImagePixelWidth { get; set; }
+
+    [ObservableProperty]
+    public partial int ImagePixelHeight { get; set; }
 
     public BitmapImage? ProcessedBitmapImage { get; set; }
 
     public List<(string, Result)> Strings { get; set; } = new();
 
-        [ObservableProperty]
-        private ObservableCollection<TextBorder> codeBorders = new();
+    [ObservableProperty]
+    public partial ObservableCollection<TextBorder> CodeBorders { get; set; } = new();
 
-        [ObservableProperty]
-        private bool isNoCodesWarningDismissed = false;
+    [ObservableProperty]
+    public partial bool IsNoCodesWarningDismissed { get; set; } = false;
 
-        public MagickImage? OriginalMagickImage { get; set; }
+    public MagickImage? OriginalMagickImage { get; set; }
 
-        public MagickImage? ProcessedMagickImage { get; set; }
+    public MagickImage? ProcessedMagickImage { get; set; }
 
-        public bool HasProcessedImage => ProcessedMagickImage != null;
+    public bool HasProcessedImage => ProcessedMagickImage != null;
 
-        [ObservableProperty]
-        private ObservableCollection<UIElement> perspectiveCornerMarkers = new();
+    [ObservableProperty]
+    public partial ObservableCollection<UIElement> PerspectiveCornerMarkers { get; set; } = new();
 
-        [ObservableProperty]
-        private int currentCornerIndex = 0;
+    [ObservableProperty]
+    public partial int CurrentCornerIndex { get; set; } = 0;
     }

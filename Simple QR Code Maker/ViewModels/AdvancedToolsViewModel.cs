@@ -166,7 +166,17 @@ public partial class AdvancedToolsViewModel : ObservableObject
     // Track if any interactive tool is currently active
     public bool IsAnyToolActive => IsEyedropperBlackMode || IsEyedropperWhiteMode || IsPerspectiveCorrectionMode;
 
-    private MagickImage? originalImage = null;
+    /// <summary>
+    /// The unmodified original image. Only used by "Reset All" to restore the baseline.
+    /// </summary>
+    private MagickImage? trueOriginalImage = null;
+
+    /// <summary>
+    /// The cumulative baseline. Each successful Apply advances this to include all
+    /// previously-applied changes. New pending changes are applied on top of this.
+    /// </summary>
+    private MagickImage? baselineImage = null;
+
     private MagickImage? processedImage = null;
 
     public event EventHandler<MagickImage>? ImageProcessed;
@@ -178,7 +188,8 @@ public partial class AdvancedToolsViewModel : ObservableObject
         var orientedImage = (MagickImage)image.Clone();
         orientedImage.AutoOrient();
 
-        originalImage = orientedImage;
+        trueOriginalImage = orientedImage;
+        baselineImage = (MagickImage)orientedImage.Clone();
         processedImage = (MagickImage)orientedImage.Clone();
 
         System.Diagnostics.Debug.WriteLine($"AdvancedToolsViewModel: Set original image");
@@ -221,11 +232,13 @@ public partial class AdvancedToolsViewModel : ObservableObject
             System.Diagnostics.Debug.WriteLine($"Error clearing perspective corners: {ex.Message}");
         }
 
-        if (originalImage != null)
+        if (trueOriginalImage != null)
         {
             try
             {
-                processedImage = (MagickImage)originalImage.Clone();
+                // Reset All reverts the baseline back to the true original
+                baselineImage = (MagickImage)trueOriginalImage.Clone();
+                processedImage = (MagickImage)trueOriginalImage.Clone();
                 ImageProcessed?.Invoke(this, processedImage);
             }
             catch (Exception ex)
@@ -238,54 +251,69 @@ public partial class AdvancedToolsViewModel : ObservableObject
     [RelayCommand]
     private async Task ApplyProcessingAsync()
     {
-        if (originalImage == null)
+        if (baselineImage == null)
             return;
 
         IsProcessing = true;
 
         try
         {
-            // Perform image processing on a background thread
+            // Capture current settings before they are reset
+            bool grayscale = IsGrayscaleEnabled;
+            double contrast = ContrastValue;
+            MagickColor? blackColor = SelectedBlackPointColor;
+            MagickColor? whiteColor = SelectedWhitePointColor;
+            double blackLevel = BlackPointLevel;
+            double whiteLevel = WhitePointLevel;
+            bool doPerspective = IsPerspectiveCorrectionMode && AllCornersSet();
+            Point? tl = TopLeftCorner;
+            Point? tr = TopRightCorner;
+            Point? br = BottomRightCorner;
+            Point? bl = BottomLeftCorner;
+            int border = BorderPixels;
+
+            // Perform image processing on a background thread.
+            // Apply only the current pending changes on top of the baseline.
             await Task.Run(() =>
             {
-                MagickImage tempProcessedImage = (MagickImage)originalImage.Clone();
+                MagickImage tempProcessedImage = (MagickImage)baselineImage.Clone();
 
-                if (IsGrayscaleEnabled)
+                if (grayscale)
                 {
                     tempProcessedImage = Helpers.ImageProcessingHelper.ApplyGrayscale(tempProcessedImage);
                 }
 
-                if (Math.Abs(ContrastValue) > 0.01)
+                if (Math.Abs(contrast) > 0.01)
                 {
-                    tempProcessedImage = Helpers.ImageProcessingHelper.AdjustContrast(tempProcessedImage, ContrastValue);
+                    tempProcessedImage = Helpers.ImageProcessingHelper.AdjustContrast(tempProcessedImage, contrast);
                 }
 
-                if (SelectedBlackPointColor != null)
+                if (blackColor != null)
                 {
-                    tempProcessedImage = Helpers.ImageProcessingHelper.SetBlackPoint(tempProcessedImage, SelectedBlackPointColor);
+                    tempProcessedImage = Helpers.ImageProcessingHelper.SetBlackPoint(tempProcessedImage, blackColor);
                 }
 
-                if (SelectedWhitePointColor != null)
+                if (whiteColor != null)
                 {
-                    tempProcessedImage = Helpers.ImageProcessingHelper.SetWhitePoint(tempProcessedImage, SelectedWhitePointColor);
+                    tempProcessedImage = Helpers.ImageProcessingHelper.SetWhitePoint(tempProcessedImage, whiteColor);
                 }
 
-                if (Math.Abs(BlackPointLevel) > 0.01 || Math.Abs(WhitePointLevel - 100.0) > 0.01)
+                if (Math.Abs(blackLevel) > 0.01 || Math.Abs(whiteLevel - 100.0) > 0.01)
                 {
-                    tempProcessedImage = Helpers.ImageProcessingHelper.AdjustLevels(tempProcessedImage, BlackPointLevel, WhitePointLevel);
+                    tempProcessedImage = Helpers.ImageProcessingHelper.AdjustLevels(tempProcessedImage, blackLevel, whiteLevel);
                 }
 
-                if (IsPerspectiveCorrectionMode && AllCornersSet())
+                if (doPerspective)
                 {
                     try
                     {
                         tempProcessedImage = Helpers.ImageProcessingHelper.CorrectPerspectiveDistortion(
                             tempProcessedImage,
-                            TopLeftCorner!.Value,
-                            TopRightCorner!.Value,
-                            BottomRightCorner!.Value,
-                            BottomLeftCorner!.Value,
-                            BorderPixels);
+                            tl!.Value,
+                            tr!.Value,
+                            br!.Value,
+                            bl!.Value,
+                            border);
                     }
                     catch (ArgumentException ex)
                     {
@@ -302,6 +330,12 @@ public partial class AdvancedToolsViewModel : ObservableObject
                 processedImage = tempProcessedImage;
             });
 
+            // Advance the baseline so the next Apply builds on this result
+            baselineImage = (MagickImage)processedImage!.Clone();
+
+            // Reset the settings that were just applied so they don't stack
+            ResetPendingSettings();
+
             // Raise event on UI thread
             ImageProcessed?.Invoke(this, processedImage);
         }
@@ -309,6 +343,24 @@ public partial class AdvancedToolsViewModel : ObservableObject
         {
             IsProcessing = false;
         }
+    }
+
+    /// <summary>
+    /// Resets all tool settings back to defaults after a successful apply,
+    /// so they are not re-applied on the next Apply click.
+    /// </summary>
+    private void ResetPendingSettings()
+    {
+        IsGrayscaleEnabled = false;
+        ContrastValue = 0.0;
+        BlackPointLevel = 0.0;
+        WhitePointLevel = 100.0;
+        SelectedBlackPointColor = null;
+        SelectedWhitePointColor = null;
+
+        // Perspective corners and mode are cleared via the ImageProcessed
+        // handler in DecodingPage.xaml.cs, so we don't reset them here
+        // to avoid double-clearing.
     }
 
     [RelayCommand]
@@ -348,8 +400,8 @@ public partial class AdvancedToolsViewModel : ObservableObject
 
     public async void SetColorFromPoint(Point point)
     {
-        // Use original image for color sampling
-        MagickImage? imageToSample = originalImage ?? processedImage;
+        // Use baseline image for color sampling (reflects cumulative changes)
+        MagickImage? imageToSample = baselineImage ?? processedImage;
 
         if (imageToSample == null)
             return;

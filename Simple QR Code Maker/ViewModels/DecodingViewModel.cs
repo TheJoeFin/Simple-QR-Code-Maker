@@ -35,13 +35,13 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     private bool canPasteImage = false;
 
     [ObservableProperty]
-    private ObservableCollection<DecodingImageItem> decodingImageItems = [];
+    [NotifyPropertyChangedFor(nameof(HasImage))]
+    private DecodingImageItem? currentDecodingItem = null;
 
     [ObservableProperty]
     private bool isAdvancedToolsVisible = false;
 
-    [ObservableProperty]
-    private DecodingImageItem? selectedDecodingImageItem = null;
+    public bool HasImage => CurrentDecodingItem is not null;
 
     private HistoryItem? navigationHistoryItem = null;
 
@@ -100,11 +100,10 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void ClearImages()
     {
-        DecodingImageItems.Clear();
+        CurrentDecodingItem = null;
         IsInfoBarShowing = false;
         InfoBarMessage = string.Empty;
         IsAdvancedToolsVisible = false;
-        SelectedDecodingImageItem = null;
     }
 
     [RelayCommand]
@@ -142,13 +141,15 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         item.ProcessedBitmapImage = processedBitmapImage;
         item.CodeBorders = codeBorders;
+        item.ImagePixelWidth = (int)item.ProcessedMagickImage.Width;
+        item.ImagePixelHeight = (int)item.ProcessedMagickImage.Height;
         item.BitmapImage = processedBitmapImage;
     }
 
     [RelayCommand]
     private async Task OpenFileFromClipboard()
     {
-        DecodingImageItems.Clear();
+        CurrentDecodingItem = null;
         DataPackageView clipboardData = Clipboard.GetContent();
 
         if (clipboardData.Contains(StandardDataFormats.StorageItems))
@@ -200,7 +201,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     private async Task OpenNewFile()
     {
         PickedImage = null;
-        DecodingImageItems.Clear();
+        CurrentDecodingItem = null;
         IsInfoBarShowing = false;
 
         FileOpenPicker fileOpenPicker = new()
@@ -215,12 +216,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
         InitializeWithWindow.Initialize(fileOpenPicker, windowHandleSave);
 
-        IReadOnlyList<StorageFile>? pickedFiles = await fileOpenPicker.PickMultipleFilesAsync();
+        StorageFile? pickedFile = await fileOpenPicker.PickSingleFileAsync();
 
-        if (pickedFiles is null || pickedFiles.Count == 0)
+        if (pickedFile is null)
             return;
 
-        OpenAndDecodeStorageFiles(pickedFiles);
+        await OpenAndDecodeStorageFile(pickedFile);
     }
 
     [RelayCommand]
@@ -275,24 +276,27 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         {
             ImagePath = cachePath,
             BitmapImage = thisPickedImage,
+            ImagePixelWidth = (int)magickImage.Width,
+            ImagePixelHeight = (int)magickImage.Height,
             CodeBorders = codeBorders,
             OriginalMagickImage = magickImage,
         };
 
-        DecodingImageItems.Add(decodingImage);
+        CurrentDecodingItem = decodingImage;
     }
 
     public async void OpenAndDecodeStorageFiles(IReadOnlyList<IStorageItem> pickedFiles)
     {
-        foreach (IStorageItem file in pickedFiles)
-        {
-            if (file is not StorageFile storageFile)
-                continue;
+        IStorageItem? first = pickedFiles.FirstOrDefault();
+        if (first is StorageFile storageFile)
+            await OpenAndDecodeStorageFile(storageFile);
+    }
 
-            DecodingImageItem? decodedItem = await GetDecodingImageItemFromStorageFileAsync(storageFile);
-            if (decodedItem is not null)
-                DecodingImageItems.Add(decodedItem);
-        }
+    public async Task OpenAndDecodeStorageFile(StorageFile storageFile)
+    {
+        DecodingImageItem? decodedItem = await GetDecodingImageItemFromStorageFileAsync(storageFile);
+        if (decodedItem is not null)
+            CurrentDecodingItem = decodedItem;
     }
 
     private async Task<DecodingImageItem?> GetDecodingImageItemFromStorageFileAsync(StorageFile storageFile)
@@ -324,6 +328,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         {
             ImagePath = storageFile.Path,
             BitmapImage = thisPickedImage,
+            ImagePixelWidth = (int)magickImage.Width,
+            ImagePixelHeight = (int)magickImage.Height,
             CodeBorders = codeBorders,
             OriginalMagickImage = magickImage,
         };
@@ -344,5 +350,6 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     {
         IsInfoBarShowing = false;
         PickedImage = null;
+        CurrentDecodingItem = null;
     }
 }
