@@ -687,6 +687,48 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
+    private async Task SavePngAsZip()
+    {
+        if (QrCodeBitmaps.Count == 0)
+            return;
+
+        await SaveCurrentStateToHistory();
+
+        bool saved = await SaveAllFilesAsZip(FileKind.PNG);
+        if (!saved)
+            return;
+
+        CodeInfoBarMessage = string.Empty;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Success;
+        if (QrCodeBitmaps.Count == 1)
+            CodeInfoBarTitle = "PNG QR Code saved to zip!";
+        else
+            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} PNG QR Codes saved to zip!";
+    }
+
+    [RelayCommand]
+    private async Task SaveSvgAsZip()
+    {
+        if (QrCodeBitmaps.Count == 0)
+            return;
+
+        await SaveCurrentStateToHistory();
+
+        bool saved = await SaveAllFilesAsZip(FileKind.SVG);
+        if (!saved)
+            return;
+
+        CodeInfoBarMessage = string.Empty;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Success;
+        if (QrCodeBitmaps.Count == 1)
+            CodeInfoBarTitle = "SVG QR Code saved to zip!";
+        else
+            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} SVG QR Codes saved to zip!";
+    }
+
+    [RelayCommand]
     private void AddNewLine()
     {
         string stringToAdd = "https://";
@@ -804,6 +846,62 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
             await WriteImageToFile(imageItem, file, kindOfFile);
         }
+    }
+
+    public async Task<bool> SaveAllFilesAsZip(FileKind kindOfFile)
+    {
+        FileSavePicker savePicker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+            SuggestedFileName = $"QR Codes {DateTime.Now:yyyy-MM-dd}",
+        };
+        savePicker.FileTypeChoices.Add("ZIP Archive", [".zip"]);
+
+        Window saveWindow = new();
+        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
+        InitializeWithWindow.Initialize(savePicker, windowHandleSave);
+
+        StorageFile zipFile = await savePicker.PickSaveFileAsync();
+
+        if (zipFile is null)
+            return false;
+
+        string extension = $".{kindOfFile.ToString().ToLower()}";
+
+        using MemoryStream zipStream = new();
+        using (System.IO.Compression.ZipArchive archive = new(zipStream, System.IO.Compression.ZipArchiveMode.Create, true))
+        {
+            foreach (BarcodeImageItem imageItem in QrCodeBitmaps)
+            {
+                string fileName = imageItem.CodeAsText.ToSafeFileName();
+
+                if (string.IsNullOrWhiteSpace(fileName) || imageItem.CodeAsBitmap is null)
+                    continue;
+
+                fileName += extension;
+
+                // Write to a temp StorageFile, then copy bytes into the zip entry
+                StorageFolder tempFolder = ApplicationData.Current.LocalCacheFolder;
+                StorageFile tempFile = await tempFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                await WriteImageToFile(imageItem, tempFile, kindOfFile);
+
+                System.IO.Compression.ZipArchiveEntry entry = archive.CreateEntry(fileName, System.IO.Compression.CompressionLevel.Optimal);
+                using Stream entryStream = entry.Open();
+                using IRandomAccessStreamWithContentType fileStream = await tempFile.OpenReadAsync();
+                await fileStream.AsStreamForRead().CopyToAsync(entryStream);
+            }
+        }
+
+        // Write the zip MemoryStream to the chosen StorageFile
+        using (IRandomAccessStream outputStream = await zipFile.OpenAsync(FileAccessMode.ReadWrite))
+        {
+            outputStream.Size = 0;
+            using Stream output = outputStream.AsStreamForWrite();
+            zipStream.Position = 0;
+            await zipStream.CopyToAsync(output);
+        }
+
+        return true;
     }
 
     public async void OnNavigatedTo(object parameter)

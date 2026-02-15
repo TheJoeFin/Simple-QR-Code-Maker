@@ -245,6 +245,10 @@
                                                     Icon="SaveLocal"
                                                     Text="Save all to files (default)" />
                                                 <MenuFlyoutItem
+                                                    Command="{x:Bind ViewModel.SavePngAsZipCommand}"
+                                                    Icon="SaveLocal"
+                                                    Text="Save all to zip" />
+                                                <MenuFlyoutItem
                                                     Command="{x:Bind ViewModel.CopyPngToClipboardCommand}"
                                                     Icon="Copy"
                                                     Text="Copy all to clipboard" />
@@ -265,6 +269,10 @@
                                                     Command="{x:Bind ViewModel.SaveSvgCommand}"
                                                     Icon="SaveLocal"
                                                     Text="Save all to files (default)" />
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind ViewModel.SaveSvgAsZipCommand}"
+                                                    Icon="SaveLocal"
+                                                    Text="Save all to zip" />
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind ViewModel.CopySvgToClipboardCommand}"
                                                     Icon="Copy"
