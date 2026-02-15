@@ -51,7 +51,7 @@
                     <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Basic Adjustments" />
                     <TextBlock
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="Apply grayscale conversion and adjust contrast for better QR code detection"
+                        Text="Apply grayscale, invert, and contrast adjustments for better QR code detection"
                         TextWrapping="Wrap" />
 
                     <CheckBox
@@ -59,6 +59,12 @@
                         Content="Convert to Grayscale"
                         IsChecked="{x:Bind ViewModel.IsGrayscaleEnabled, Mode=TwoWay}"
                         ToolTipService.ToolTip="Convert the image to grayscale for better QR code detection" />
+
+                    <CheckBox
+                        x:Name="InvertCheckBox"
+                        Content="Invert Colors"
+                        IsChecked="{x:Bind ViewModel.IsInvertEnabled, Mode=TwoWay}"
+                        ToolTipService.ToolTip="Invert image colors, useful for light QR codes on dark backgrounds" />
 
                     <StackPanel Spacing="4">
                         <TextBlock Text="Contrast" />

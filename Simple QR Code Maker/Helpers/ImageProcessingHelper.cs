@@ -13,6 +13,13 @@ public static class ImageProcessingHelper
         return result;
     }
 
+    public static MagickImage InvertColors(MagickImage image)
+    {
+        var result = (MagickImage)image.Clone();
+        result.Negate();
+        return result;
+    }
+
     public static MagickImage AdjustContrast(MagickImage image, double contrastValue)
     {
         var result = (MagickImage)image.Clone();

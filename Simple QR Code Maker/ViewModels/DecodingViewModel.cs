@@ -45,6 +45,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private bool isFaqPaneOpen = false;
 
+    [ObservableProperty]
+    private bool isLoading = false;
+
+    [ObservableProperty]
+    private string loadingMessage = string.Empty;
+
     public bool HasImage => CurrentDecodingItem is not null;
 
     private HistoryItem? navigationHistoryItem = null;
@@ -133,6 +139,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         if (item?.ProcessedMagickImage == null)
             return;
 
+        IsLoading = true;
+        LoadingMessage = "Applying adjustments…";
+
+        try
+        {
         var bitmap = ImageProcessingHelper.ConvertToBitmap(item.ProcessedMagickImage);
 
         string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}_processed.png");
@@ -159,11 +170,22 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         item.ImagePixelWidth = (int)item.ProcessedMagickImage.Width;
         item.ImagePixelHeight = (int)item.ProcessedMagickImage.Height;
         item.BitmapImage = processedBitmapImage;
+        }
+        finally
+        {
+            IsLoading = false;
+            LoadingMessage = string.Empty;
+        }
     }
 
     [RelayCommand]
     private async Task OpenFileFromClipboard()
     {
+        IsLoading = true;
+        LoadingMessage = "Opening image from clipboard…";
+
+        try
+        {
         CurrentDecodingItem = null;
         DataPackageView clipboardData = Clipboard.GetContent();
 
@@ -182,12 +204,18 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             IRandomAccessStreamWithContentType stream = await bitmapStreamRef.OpenReadAsync();
 
             if (stream is not null)
-                OpenAndDecodeBitmap(stream);
-        }
-    }
+                        OpenAndDecodeBitmap(stream);
+                    }
+                    }
+                    finally
+                    {
+                        IsLoading = false;
+                        LoadingMessage = string.Empty;
+                    }
+                }
 
-    [RelayCommand]
-    private async Task TryLaunchLink()
+                [RelayCommand]
+                private async Task TryLaunchLink()
     {
         bool success = Uri.TryCreate(InfoBarMessage, UriKind.Absolute, out Uri? uri);
 
@@ -219,6 +247,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         CurrentDecodingItem = null;
         IsInfoBarShowing = false;
 
+        IsLoading = true;
+        LoadingMessage = "Opening image…";
+
+        try
+        {
         FileOpenPicker fileOpenPicker = new()
         {
             SuggestedStartLocation = PickerLocationId.Downloads,
@@ -237,6 +270,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             return;
 
         await OpenAndDecodeStorageFile(pickedFile);
+        }
+        finally
+        {
+            IsLoading = false;
+            LoadingMessage = string.Empty;
+        }
     }
 
     [RelayCommand]
@@ -314,9 +353,20 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     public async Task OpenAndDecodeStorageFile(StorageFile storageFile)
     {
-        DecodingImageItem? decodedItem = await GetDecodingImageItemFromStorageFileAsync(storageFile);
-        if (decodedItem is not null)
-            CurrentDecodingItem = decodedItem;
+        IsLoading = true;
+        LoadingMessage = "Opening image\u2026";
+
+        try
+        {
+            DecodingImageItem? decodedItem = await GetDecodingImageItemFromStorageFileAsync(storageFile);
+            if (decodedItem is not null)
+                CurrentDecodingItem = decodedItem;
+        }
+        finally
+        {
+            IsLoading = false;
+            LoadingMessage = string.Empty;
+        }
     }
 
     private async Task<DecodingImageItem?> GetDecodingImageItemFromStorageFileAsync(StorageFile storageFile)

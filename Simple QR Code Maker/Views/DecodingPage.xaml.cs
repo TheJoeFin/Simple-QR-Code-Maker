@@ -20,6 +20,8 @@ public sealed partial class DecodingPage : Page
         get;
     }
 
+    private bool isPointerOverImage;
+
     public DecodingPage()
     {
         ViewModel = App.GetService<DecodingViewModel>();
@@ -64,9 +66,11 @@ public sealed partial class DecodingPage : Page
 
     private void UpdateCursorForModes()
     {
-        if (AdvancedToolsPanel.ViewModel.IsEyedropperBlackMode ||
+        bool isToolActive = AdvancedToolsPanel.ViewModel.IsEyedropperBlackMode ||
             AdvancedToolsPanel.ViewModel.IsEyedropperWhiteMode ||
-            AdvancedToolsPanel.ViewModel.IsPerspectiveCorrectionMode)
+            AdvancedToolsPanel.ViewModel.IsPerspectiveCorrectionMode;
+
+        if (isToolActive && isPointerOverImage)
         {
             this.ProtectedCursor = Microsoft.UI.Input.InputSystemCursor.Create(Microsoft.UI.Input.InputSystemCursorShape.Cross);
         }
@@ -74,6 +78,18 @@ public sealed partial class DecodingPage : Page
         {
             this.ProtectedCursor = null;
         }
+    }
+
+    private void ImageContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        isPointerOverImage = true;
+        UpdateCursorForModes();
+    }
+
+    private void ImageContainer_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        isPointerOverImage = false;
+        UpdateCursorForModes();
     }
 
     private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -88,6 +104,7 @@ public sealed partial class DecodingPage : Page
             {
                 // Image was cleared — reset all advanced tools state and cursor
                 AdvancedToolsPanel.ViewModel.ClearAll();
+                isPointerOverImage = false;
                 this.ProtectedCursor = null;
             }
         }

@@ -13,6 +13,10 @@ public partial class AdvancedToolsViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
+    public partial bool IsInvertEnabled { get; set; } = false;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial double ContrastValue { get; set; } = 0.0;
 
     [ObservableProperty]
@@ -154,7 +158,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
         get
         {
             // Check if any setting has been changed from default
-            bool hasBasicChanges = IsGrayscaleEnabled || Math.Abs(ContrastValue) > 0.01;
+            bool hasBasicChanges = IsGrayscaleEnabled || IsInvertEnabled || Math.Abs(ContrastValue) > 0.01;
             bool hasLevelChanges = Math.Abs(BlackPointLevel) > 0.01 || Math.Abs(WhitePointLevel - 100.0) > 0.01;
             bool hasEyedropperChanges = SelectedBlackPointColor != null || SelectedWhitePointColor != null;
             bool hasPerspectiveChanges = IsPerspectiveCorrectionMode && AllCornersSet();
@@ -201,6 +205,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     private void ResetAllSettings()
     {
         IsGrayscaleEnabled = false;
+        IsInvertEnabled = false;
         ContrastValue = 0.0;
         BlackPointLevel = 0.0;
         WhitePointLevel = 100.0;
@@ -260,6 +265,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
         {
             // Capture current settings before they are reset
             bool grayscale = IsGrayscaleEnabled;
+            bool invert = IsInvertEnabled;
             double contrast = ContrastValue;
             MagickColor? blackColor = SelectedBlackPointColor;
             MagickColor? whiteColor = SelectedWhitePointColor;
@@ -281,6 +287,11 @@ public partial class AdvancedToolsViewModel : ObservableObject
                 if (grayscale)
                 {
                     tempProcessedImage = Helpers.ImageProcessingHelper.ApplyGrayscale(tempProcessedImage);
+                }
+
+                if (invert)
+                {
+                    tempProcessedImage = Helpers.ImageProcessingHelper.InvertColors(tempProcessedImage);
                 }
 
                 if (Math.Abs(contrast) > 0.01)
@@ -352,6 +363,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     private void ResetPendingSettings()
     {
         IsGrayscaleEnabled = false;
+        IsInvertEnabled = false;
         ContrastValue = 0.0;
         BlackPointLevel = 0.0;
         WhitePointLevel = 100.0;
@@ -444,6 +456,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     public void ClearAll()
     {
         IsGrayscaleEnabled = false;
+        IsInvertEnabled = false;
         ContrastValue = 0.0;
         BlackPointLevel = 0.0;
         WhitePointLevel = 100.0;
