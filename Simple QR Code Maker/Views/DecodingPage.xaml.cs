@@ -106,6 +106,11 @@ public sealed partial class DecodingPage : Page
                 AdvancedToolsPanel.ViewModel.ClearAll();
                 isPointerOverImage = false;
                 this.ProtectedCursor = null;
+
+                // Reset the ScrollView zoom and scroll position so the
+                // container shrinks back to its default 300×300 size.
+                ImageScrollView.ZoomTo(1, null);
+                ImageScrollView.ScrollTo(0, 0);
             }
         }
 

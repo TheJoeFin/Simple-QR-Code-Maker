@@ -47,8 +47,8 @@
                         <!--  Loading Overlay  -->
                         <Grid
                             x:Name="LoadingOverlay"
-                            Canvas.ZIndex="100"
                             Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                            Canvas.ZIndex="100"
                             Opacity="0.92"
                             Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel
@@ -105,6 +105,8 @@
                                         x:Name="ImageScrollView"
                                         ContentOrientation="None"
                                         HorizontalScrollBarVisibility="Auto"
+                                        MaxZoomFactor="10"
+                                        MinZoomFactor="0.9"
                                         VerticalScrollBarVisibility="Auto"
                                         ZoomMode="Enabled">
                                         <Viewbox Stretch="Uniform">
@@ -215,7 +217,7 @@
                                         <SymbolIcon Symbol="Paste" />
                                     </controls:IconAndTextButton.Icon>
                                 </controls:IconAndTextButton>
-                                <controls:IconAndTextButton
+                                <!--<controls:IconAndTextButton
                                     Command="{x:Bind ViewModel.ClearImagesCommand}"
                                     IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                                     Text="Clear"
@@ -224,7 +226,7 @@
                                     <controls:IconAndTextButton.Icon>
                                         <SymbolIcon Symbol="Clear" />
                                     </controls:IconAndTextButton.Icon>
-                                </controls:IconAndTextButton>
+                                </controls:IconAndTextButton>-->
                                 <ToggleButton
                                     IsChecked="{x:Bind ViewModel.IsAdvancedToolsVisible, Mode=TwoWay}"
                                     ToolTipService.ToolTip="Toggle advanced image processing tools"

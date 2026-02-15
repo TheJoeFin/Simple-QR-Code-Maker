@@ -30,6 +30,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     private bool isInfoBarShowing = false;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasImage))]
     private BitmapImage? pickedImage;
 
     [ObservableProperty]
@@ -115,11 +116,28 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void ClearImages()
     {
+        // Release resources on the current item before discarding it
+        if (CurrentDecodingItem is not null)
+        {
+            CurrentDecodingItem.BitmapImage = null;
+            CurrentDecodingItem.ProcessedBitmapImage = null;
+            CurrentDecodingItem.CodeBorders.Clear();
+            CurrentDecodingItem.PerspectiveCornerMarkers.Clear();
+            CurrentDecodingItem.CurrentCornerIndex = 0;
+            CurrentDecodingItem.OriginalMagickImage = null;
+            CurrentDecodingItem.ProcessedMagickImage = null;
+        }
+
+        // Setting to null triggers AdvancedToolsViewModel.ClearAll() via PropertyChanged
         CurrentDecodingItem = null;
+
         PickedImage = null;
         IsInfoBarShowing = false;
         InfoBarMessage = string.Empty;
         IsAdvancedToolsVisible = false;
+        IsFaqPaneOpen = false;
+        IsLoading = false;
+        LoadingMessage = string.Empty;
     }
 
     [RelayCommand]
