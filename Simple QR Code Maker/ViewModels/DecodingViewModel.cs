@@ -93,7 +93,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             CanPasteImage = false;
     }
 
-    public void OnNavigatedTo(object parameter)
+    public async void OnNavigatedTo(object parameter)
     {
         // Store the HistoryItem to pass back when returning to main page
         if (parameter is HistoryItem historyItem)
@@ -104,6 +104,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         else if (parameter is string url)
         {
             navigationHistoryItem = new HistoryItem { CodesContent = url };
+        }
+        // Handle a shared or opened image file
+        else if (parameter is StorageFile storageFile)
+        {
+            await OpenAndDecodeStorageFile(storageFile);
         }
     }
 

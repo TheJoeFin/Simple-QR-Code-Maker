@@ -54,6 +54,7 @@ public partial class App : Application
             services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
 
             // Other Activation Handlers
+            services.AddTransient<IActivationHandler, ShareTargetActivationHandler>();
 
             // Services
             services.AddTransient<IWebViewService, WebViewService>();
@@ -98,6 +99,18 @@ public partial class App : Application
     {
         base.OnLaunched(args);
 
-        await App.GetService<IActivationService>().ActivateAsync(args);
+        // Check if the app was activated via share target or other non-launch activation.
+        var appInstance = Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent();
+        var activatedArgs = appInstance.GetActivatedEventArgs();
+
+        if (activatedArgs?.Kind == Microsoft.Windows.AppLifecycle.ExtendedActivationKind.ShareTarget
+            && activatedArgs.Data is Windows.ApplicationModel.Activation.ShareTargetActivatedEventArgs shareArgs)
+        {
+            await App.GetService<IActivationService>().ActivateAsync(shareArgs);
+        }
+        else
+        {
+            await App.GetService<IActivationService>().ActivateAsync(args);
+        }
     }
 }
