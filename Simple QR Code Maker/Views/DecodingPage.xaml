@@ -245,8 +245,8 @@
                                 Margin="20"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
-                                Background="{StaticResource SystemControlBackgroundAltHighBrush}"
-                                BorderBrush="{StaticResource SystemAccentColor}"
+                                Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                                BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
                                 BorderThickness="3"
                                 IsOpen="{x:Bind ViewModel.IsInfoBarShowing, Mode=TwoWay}"
                                 Severity="Informational">
