@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -102,6 +103,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private bool hasLogo = false;
+
+    [ObservableProperty]
+    private BitmapImage? logoPreviewImage = null;
+
+    [ObservableProperty]
+    private bool isBackgroundRemovalAvailable = false;
 
     [ObservableProperty]
     private double logoPaddingPixels = 4.0;
@@ -230,8 +237,39 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 ErrorCorrectionLevels.Insert(0, new("Low 7%", ErrorCorrectionLevel.L));
         }
 
+        _ = UpdateLogoPreviewImageAsync(value);
+
         debounceTimer.Stop();
         debounceTimer.Start();
+    }
+
+    private async Task UpdateLogoPreviewImageAsync(System.Drawing.Bitmap? bitmap)
+    {
+        if (bitmap is null)
+        {
+            LogoPreviewImage = null;
+            return;
+        }
+
+        try
+        {
+            using MemoryStream ms = new();
+            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            ms.Position = 0;
+
+            BitmapImage bitmapImage = new();
+            using InMemoryRandomAccessStream randomAccessStream = new();
+            await randomAccessStream.WriteAsync(ms.ToArray().AsBuffer());
+            randomAccessStream.Seek(0);
+            await bitmapImage.SetSourceAsync(randomAccessStream);
+
+            LogoPreviewImage = bitmapImage;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to create logo preview: {ex.Message}");
+            LogoPreviewImage = null;
+        }
     }
 
     partial void OnLogoSizePercentageChanged(double value)
@@ -364,6 +402,19 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         {
             Debug.WriteLine($"Failed to check clipboard: {ex.Message}");
             CanPasteText = false;
+        }
+    }
+
+    private async Task CheckBackgroundRemovalAvailability()
+    {
+        try
+        {
+            IsBackgroundRemovalAvailable = await BackgroundRemovalHelper.CheckIsAvailableAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Background removal check failed: {ex.Message}");
+            IsBackgroundRemovalAvailable = false;
         }
     }
 
@@ -895,6 +946,64 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         currentLogoPath = null;
     }
 
+    [RelayCommand]
+    private async Task RemoveLogoBackground()
+    {
+        if (LogoImage is null)
+            return;
+
+        Controls.RemoveBackgroundDialog dialog = new(LogoImage)
+        {
+            XamlRoot = App.MainWindow.Content.XamlRoot,
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary && dialog.ResultBitmap is not null)
+        {
+            LogoImage?.Dispose();
+            LogoImage = dialog.ResultBitmap;
+
+            // Persist the background-removed logo to disk so currentLogoPath
+            // is valid for SaveHistoryOnShutdown and CreateCurrentStateHistoryItem.
+            await SaveLogoImageToDisk();
+        }
+    }
+
+    /// <summary>
+    /// Saves the current <see cref="LogoImage"/> to the local LogoImages folder
+    /// and updates <see cref="currentLogoPath"/>.
+    /// </summary>
+    private async Task<string?> SaveLogoImageToDisk()
+    {
+        if (LogoImage is null)
+            return null;
+
+        try
+        {
+            StorageFolder logoFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("LogoImages", CreationCollisionOption.OpenIfExists);
+            string fileName = $"logo_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.png";
+            StorageFile logoFile = await logoFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+
+            using IRandomAccessStream stream = await logoFile.OpenAsync(FileAccessMode.ReadWrite);
+            using IOutputStream outputStream = stream.GetOutputStreamAt(0);
+            using DataWriter dataWriter = new(outputStream);
+            using MemoryStream ms = new();
+            LogoImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            byte[] bytes = ms.ToArray();
+            dataWriter.WriteBytes(bytes);
+            await dataWriter.StoreAsync();
+
+            currentLogoPath = logoFile.Path;
+            return logoFile.Path;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to save logo image: {ex.Message}");
+            return null;
+        }
+    }
+
     private async Task WriteImageToFile(BarcodeImageItem imageItem, StorageFile file, FileKind kindOfFile)
     {
         switch (kindOfFile)
@@ -1091,6 +1200,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         OnPropertyChanged(nameof(HistoryItems));
 
         CheckCanPasteText();
+        _ = CheckBackgroundRemovalAvailability();
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
         UrlText = BaseText;
@@ -1203,37 +1313,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
+    [RelayCommand]
     public async Task SaveCurrentStateToHistory()
     {
-        string? logoImagePath = null;
-
         // Save logo image to local app storage if present
-        if (LogoImage is not null)
-        {
-            try
-            {
-                StorageFolder logoFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("LogoImages", CreationCollisionOption.OpenIfExists);
-                string fileName = $"logo_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.png";
-                StorageFile logoFile = await logoFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-
-                using IRandomAccessStream stream = await logoFile.OpenAsync(FileAccessMode.ReadWrite);
-
-                using IOutputStream outputStream = stream.GetOutputStreamAt(0);
-                using DataWriter dataWriter = new(outputStream);
-                using MemoryStream ms = new();
-                LogoImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                byte[] bytes = ms.ToArray();
-                dataWriter.WriteBytes(bytes);
-                await dataWriter.StoreAsync();
-
-                logoImagePath = logoFile.Path;
-                currentLogoPath = logoImagePath;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Failed to save logo image: {ex.Message}");
-            }
-        }
+        string? logoImagePath = await SaveLogoImageToDisk();
 
         HistoryItem historyItem = new()
         {

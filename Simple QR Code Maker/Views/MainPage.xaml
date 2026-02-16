@@ -17,6 +17,7 @@
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
         <converters:EmptyStringToCollapsedConverter x:Key="EmptyStringToCollapsed" />
         <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+        <converters:EmptyCollectionToVisibilityConverter x:Key="EmptyCollectionToVisibility" />
 
         <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
             <Setter Property="Height" Value="32" />
@@ -152,11 +153,33 @@
                                         </SplitButton.Content>
                                         <SplitButton.Flyout>
                                             <Flyout>
-                                                <StackPanel Width="120" Spacing="12">
+                                                <StackPanel Width="160" Spacing="12">
+                                                    <Border
+                                                        HorizontalAlignment="Center"
+                                                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="4"
+                                                        Visibility="{x:Bind ViewModel.HasLogo, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
+                                                        <Image
+                                                            MaxWidth="120"
+                                                            MaxHeight="120"
+                                                            Source="{x:Bind ViewModel.LogoPreviewImage, Mode=OneWay}"
+                                                            Stretch="Uniform" />
+                                                    </Border>
                                                     <Button Command="{x:Bind ViewModel.RemoveLogoCommand}" IsEnabled="{x:Bind ViewModel.HasLogo, Mode=OneWay}">
                                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                                             <SymbolIcon Symbol="Delete" />
                                                             <TextBlock Text="Remove" />
+                                                        </StackPanel>
+                                                    </Button>
+                                                    <Button
+                                                        Command="{x:Bind ViewModel.RemoveLogoBackgroundCommand}"
+                                                        IsEnabled="{x:Bind ViewModel.HasLogo, Mode=OneWay}"
+                                                        ToolTipService.ToolTip="Use on-device AI to remove the background from the logo image"
+                                                        Visibility="{x:Bind ViewModel.IsBackgroundRemovalAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
+                                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                                            <FontIcon FontSize="16" Glyph="&#xE945;" />
+                                                            <TextBlock Text="Remove BG" />
                                                         </StackPanel>
                                                     </Button>
 
@@ -227,14 +250,15 @@
                                 </Border>
 
                                 <StackPanel
+                                    x:Name="SaveButtonsPanel"
                                     HorizontalAlignment="Center"
                                     Orientation="Horizontal"
-                                    Spacing="10">
+                                    Spacing="10"
+                                    Visibility="{x:Bind ViewModel.QrCodeBitmaps.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
                                     <TextBlock VerticalAlignment="Center" Text="Save as" />
                                     <SplitButton
                                         x:Name="SavePngButton"
                                         Command="{x:Bind ViewModel.SavePngCommand}"
-                                        IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}"
                                         ToolTipService.ToolTip="Save code(s) as PNG files">
                                         <SplitButton.Content>
                                             <controls:IconAndTextContent ContentText="PNG" Icon="Save" />
@@ -259,7 +283,6 @@
                                     <SplitButton
                                         x:Name="SaveSvgButton"
                                         Command="{x:Bind ViewModel.SaveSvgCommand}"
-                                        IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}"
                                         ToolTipService.ToolTip="Save code(s) as SVG files">
                                         <SplitButton.Content>
                                             <controls:IconAndTextContent ContentText="SVG" Icon="Save" />
@@ -288,7 +311,6 @@
                                     <SplitButton
                                         x:Name="SaveBothButton"
                                         Command="{x:Bind ViewModel.SaveBothCommand}"
-                                        IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}"
                                         ToolTipService.ToolTip="Save code(s) as both PNG and SVG files"
                                         Visibility="{x:Bind ViewModel.ShowSaveBothButton, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
                                         <SplitButton.Content>
@@ -426,11 +448,35 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="History" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="History" />
+                        <HyperlinkButton
+                            HorizontalAlignment="Right"
+                            Command="{x:Bind ViewModel.SaveCurrentStateToHistoryCommand}"
+                            IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}"
+                            ToolTipService.ToolTip="Save current QR code to history">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <SymbolIcon Symbol="Save" />
+                                <TextBlock Text="Save to history" />
+                            </StackPanel>
+                        </HyperlinkButton>
+                        <TextBlock
+                            Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="No history yet. Save or copy a QR code to see it here."
+                            TextAlignment="Center"
+                            TextWrapping="Wrap"
+                            Visibility="{x:Bind ViewModel.HistoryItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, Mode=OneWay}" />
                         <ListView
                             Grid.Row="1"
                             ItemsSource="{x:Bind ViewModel.HistoryItems, Mode=OneWay}"
-                            SelectedItem="{x:Bind ViewModel.SelectedHistoryItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            SelectedItem="{x:Bind ViewModel.SelectedHistoryItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{x:Bind ViewModel.HistoryItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:HistoryItem">
                                     <controls:HistoryRowItem Data="{x:Bind}" />
