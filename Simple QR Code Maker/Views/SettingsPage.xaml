@@ -155,6 +155,32 @@
                                    Mode=TwoWay,
                                    UpdateSourceTrigger=PropertyChanged}" />
 
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Quick default save location" />
+                <TextBlock
+                    Margin="{StaticResource XSmallTopMargin}"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Style="{ThemeResource BodyTextBlockStyle}"
+                    Text="When set, saving will skip the folder picker and save directly to this folder."
+                    TextWrapping="Wrap" />
+                <StackPanel
+                    Margin="{StaticResource SmallTopBottomMargin}"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <TextBox
+                        Width="400"
+                        HorizontalAlignment="Left"
+                        IsReadOnly="True"
+                        PlaceholderText="No folder selected"
+                        Text="{x:Bind ViewModel.QuickSaveLocation, Mode=OneWay}" />
+                    <Button
+                        Command="{x:Bind ViewModel.BrowseQuickSaveLocationCommand}"
+                        Content="Browse..." />
+                    <Button
+                        Command="{x:Bind ViewModel.ClearQuickSaveLocationCommand}"
+                        Content="Clear"
+                        IsEnabled="{x:Bind ViewModel.HasQuickSaveLocation, Mode=OneWay}" />
+                </StackPanel>
+
                 <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">
                     <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" />

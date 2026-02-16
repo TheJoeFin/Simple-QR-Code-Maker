@@ -15,6 +15,7 @@
     <Page.Resources>
         <converters:TextHasNoURLConverter x:Key="HasNoURL" />
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
+        <converters:EmptyStringToCollapsedConverter x:Key="EmptyStringToCollapsed" />
         <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
 
         <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
@@ -408,7 +409,14 @@
                             VerticalAlignment="Bottom"
                             IsOpen="{x:Bind ViewModel.ShowCodeInfoBar, Mode=TwoWay}"
                             Message="{x:Bind ViewModel.CodeInfoBarMessage, Mode=OneWay}"
-                            Severity="{x:Bind ViewModel.CodeInfoBarSeverity, Mode=OneWay}" />
+                            Severity="{x:Bind ViewModel.CodeInfoBarSeverity, Mode=OneWay}">
+                            <InfoBar.Content>
+                                <HyperlinkButton
+                                    Command="{x:Bind ViewModel.OpenSavedFolderCommand}"
+                                    Content="Open folder"
+                                    Visibility="{x:Bind ViewModel.SavedFolderPath, Converter={StaticResource EmptyStringToCollapsed}, Mode=OneWay}" />
+                            </InfoBar.Content>
+                        </InfoBar>
                     </Grid>
                 </SplitView.Content>
                 <SplitView.Pane>

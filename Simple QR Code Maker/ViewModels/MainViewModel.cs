@@ -71,6 +71,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private string BaseText = string.Empty;
     private bool WarnWhenNotUrl = true;
     private bool HideMinimumSizeText = false;
+    private string QuickSaveLocation = string.Empty;
 
     [ObservableProperty]
     private bool showSaveBothButton = false;
@@ -89,6 +90,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private string codeInfoBarMessage = string.Empty;
+
+    [ObservableProperty]
+    private string savedFolderPath = string.Empty;
 
     [ObservableProperty]
     private bool copySharePopupOpen = false;
@@ -610,9 +614,19 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         copyInfoBarTimer.Stop();
         CodeInfoBarMessage = string.Empty;
+        SavedFolderPath = string.Empty;
         ShowCodeInfoBar = false;
         CodeInfoBarSeverity = InfoBarSeverity.Informational;
         CodeInfoBarTitle = "Copy infoBar title";
+    }
+
+    [RelayCommand]
+    private async Task OpenSavedFolder()
+    {
+        if (string.IsNullOrWhiteSpace(SavedFolderPath))
+            return;
+
+        await Windows.System.Launcher.LaunchFolderPathAsync(SavedFolderPath);
     }
 
     [RelayCommand]
@@ -657,15 +671,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         await SaveCurrentStateToHistory();
 
-        await SaveAllFiles(FileKind.PNG);
+        string? savedFolder = await SaveAllFiles(FileKind.PNG);
 
-        CodeInfoBarMessage = string.Empty;
-        ShowCodeInfoBar = true;
-        CodeInfoBarSeverity = InfoBarSeverity.Success;
-        if (QrCodeBitmaps.Count == 1)
-            CodeInfoBarTitle = "PNG QR Code saved!";
-        else
-            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} PNG QR Codes saved!";
+        if (savedFolder is null)
+            return;
+
+        ShowSaveSuccessInfoBar(
+            QrCodeBitmaps.Count == 1 ? "PNG QR Code saved!" : $"{QrCodeBitmaps.Count} PNG QR Codes saved!",
+            savedFolder);
     }
 
     [RelayCommand]
@@ -676,15 +689,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         await SaveCurrentStateToHistory();
 
-        await SaveAllFiles(FileKind.SVG);
+        string? savedFolder = await SaveAllFiles(FileKind.SVG);
 
-        CodeInfoBarMessage = string.Empty;
-        ShowCodeInfoBar = true;
-        CodeInfoBarSeverity = InfoBarSeverity.Success;
-        if (QrCodeBitmaps.Count == 1)
-            CodeInfoBarTitle = "SVG QR Code saved!";
-        else
-            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} SVG QR Codes saved!";
+        if (savedFolder is null)
+            return;
+
+        ShowSaveSuccessInfoBar(
+            QrCodeBitmaps.Count == 1 ? "SVG QR Code saved!" : $"{QrCodeBitmaps.Count} SVG QR Codes saved!",
+            savedFolder);
     }
 
     [RelayCommand]
@@ -737,16 +749,16 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         await SaveCurrentStateToHistory();
 
-        await SaveAllFiles(FileKind.PNG);
-        await SaveAllFiles(FileKind.SVG);
+        string? savedFolder = await SaveAllFiles(FileKind.PNG);
 
-        CodeInfoBarMessage = string.Empty;
-        ShowCodeInfoBar = true;
-        CodeInfoBarSeverity = InfoBarSeverity.Success;
-        if (QrCodeBitmaps.Count == 1)
-            CodeInfoBarTitle = "PNG and SVG QR Code saved!";
-        else
-            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} PNG and SVG QR Codes saved!";
+        if (savedFolder is null)
+            return;
+
+        await SaveAllFiles(FileKind.SVG, savedFolder);
+
+        ShowSaveSuccessInfoBar(
+            QrCodeBitmaps.Count == 1 ? "PNG and SVG QR Code saved!" : $"{QrCodeBitmaps.Count} PNG and SVG QR Codes saved!",
+            savedFolder);
     }
 
     [RelayCommand]
@@ -912,21 +924,34 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    public async Task SaveAllFiles(FileKind kindOfFile)
+    public async Task<string?> SaveAllFiles(FileKind kindOfFile, string? overrideFolderPath = null)
     {
-        FolderPicker folderPicker = new()
+        StorageFolder? folder = null;
+
+        if (overrideFolderPath is not null)
         {
-            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-        };
+            folder = await StorageFolder.GetFolderFromPathAsync(overrideFolderPath);
+        }
+        else if (!string.IsNullOrWhiteSpace(QuickSaveLocation) && Directory.Exists(QuickSaveLocation))
+        {
+            folder = await StorageFolder.GetFolderFromPathAsync(QuickSaveLocation);
+        }
+        else
+        {
+            FolderPicker folderPicker = new()
+            {
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+            };
 
-        Window saveWindow = new();
-        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
-        InitializeWithWindow.Initialize(folderPicker, windowHandleSave);
+            Window saveWindow = new();
+            IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
+            InitializeWithWindow.Initialize(folderPicker, windowHandleSave);
 
-        StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+            folder = await folderPicker.PickSingleFolderAsync();
+        }
 
         if (folder is null)
-            return;
+            return null;
 
         string extension = $".{kindOfFile.ToString().ToLower()}";
 
@@ -942,6 +967,18 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
             await WriteImageToFile(imageItem, file, kindOfFile);
         }
+
+        return folder.Path;
+    }
+
+    private void ShowSaveSuccessInfoBar(string title, string folderPath)
+    {
+        CodeInfoBarSeverity = InfoBarSeverity.Success;
+        CodeInfoBarTitle = title;
+        CodeInfoBarMessage = $"Saved to {folderPath}";
+        SavedFolderPath = folderPath;
+        ShowCodeInfoBar = true;
+        copyInfoBarTimer.Start();
     }
 
     public async Task<bool> SaveAllFilesAsZip(FileKind kindOfFile)
@@ -1066,6 +1103,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
         ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton));
+        QuickSaveLocation = await LocalSettingsService.ReadSettingAsync<string>(nameof(QuickSaveLocation)) ?? string.Empty;
         MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
         if (MinSizeScanDistanceScaleFactor < 0.35)
         {
