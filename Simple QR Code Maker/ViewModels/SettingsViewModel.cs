@@ -9,6 +9,9 @@ using System.Globalization;
 using System.Reflection;
 using System.Windows.Input;
 using Windows.ApplicationModel;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
@@ -35,10 +38,19 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private bool hideMinimumSizeText = false;
 
     [ObservableProperty]
+    private bool showSaveBothButton = false;
+
+    [ObservableProperty]
     private double minSizeScanDistanceScaleFactor = 1.0;
 
     [ObservableProperty]
     private string maxScanDistanceText = "36in or 1m";
+
+    [ObservableProperty]
+    private string quickSaveLocation = string.Empty;
+
+    [ObservableProperty]
+    private bool hasQuickSaveLocation = false;
 
     private readonly DispatcherTimer settingChangedDebounceTimer = new();
 
@@ -93,7 +105,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         await LocalSettingsService.SaveSettingAsync(nameof(BaseText), BaseText);
         await LocalSettingsService.SaveSettingAsync(nameof(WarnWhenNotUrl), WarnWhenNotUrl);
         await LocalSettingsService.SaveSettingAsync(nameof(HideMinimumSizeText), HideMinimumSizeText);
+        await LocalSettingsService.SaveSettingAsync(nameof(ShowSaveBothButton), ShowSaveBothButton);
         await LocalSettingsService.SaveSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
+        await LocalSettingsService.SaveSettingAsync(nameof(QuickSaveLocation), QuickSaveLocation);
     }
 
     partial void OnBaseTextChanged(string value)
@@ -114,6 +128,19 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         settingChangedDebounceTimer.Start();
     }
 
+    partial void OnShowSaveBothButtonChanged(bool value)
+    {
+        settingChangedDebounceTimer.Stop();
+        settingChangedDebounceTimer.Start();
+    }
+
+    partial void OnQuickSaveLocationChanged(string value)
+    {
+        HasQuickSaveLocation = !string.IsNullOrWhiteSpace(value);
+        settingChangedDebounceTimer.Stop();
+        settingChangedDebounceTimer.Start();
+    }
+
     partial void OnMinSizeScanDistanceScaleFactorChanged(double value)
     {
         settingChangedDebounceTimer.Stop();
@@ -121,7 +148,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         bool isMetric = RegionInfo.CurrentRegion.IsMetric;
 
-        if (isMetric) {
+        if (isMetric)
+        {
             if (value == 1)
                 MaxScanDistanceText = $"{value} meter";
             else
@@ -131,7 +159,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         {
             if (value > 1)
             {
-                MaxScanDistanceText = $"{Math.Round(value * 3,1)} feet";
+                MaxScanDistanceText = $"{Math.Round(value * 3, 1)} feet";
             }
             else
             {
@@ -144,6 +172,32 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private void GoHome()
     {
         NavigationService.NavigateTo(typeof(MainViewModel).FullName!, navigationHistoryItem);
+    }
+
+    [RelayCommand]
+    private async Task BrowseQuickSaveLocation()
+    {
+        FolderPicker folderPicker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+        };
+
+        Window window = new();
+        IntPtr windowHandle = WindowNative.GetWindowHandle(window);
+        InitializeWithWindow.Initialize(folderPicker, windowHandle);
+
+        StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+
+        if (folder is not null)
+        {
+            QuickSaveLocation = folder.Path;
+        }
+    }
+
+    [RelayCommand]
+    private void ClearQuickSaveLocation()
+    {
+        QuickSaveLocation = string.Empty;
     }
 
     [RelayCommand]
@@ -182,7 +236,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
+        ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton));
         MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
+        QuickSaveLocation = await LocalSettingsService.ReadSettingAsync<string>(nameof(QuickSaveLocation)) ?? string.Empty;
 
         // Store the HistoryItem to pass back when returning to main page
         if (parameter is HistoryItem historyItem)

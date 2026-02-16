@@ -4,19 +4,21 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   xmlns:genTemplate="http://schemas.microsoft.com/appx/developer/templatestudio"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
-  IgnorableNamespaces="uap rescap genTemplate">
+  IgnorableNamespaces="uap uap2 uap3 rescap genTemplate">
 
   <Identity
     Name="40087JoeFinApps.SimpleQRCodeMaker"
     Publisher="CN=153F3B0F-BA3D-4964-8098-71AC78A1DF6A"
-    Version="1.9.2.0" />
+    Version="1.10.0.0" />
     
   <mp:PhoneIdentity PhoneProductId="24ace133-1601-417e-8740-5ba2ec04f662" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
-    
+
   <Properties>
     <DisplayName>Simple QR Code Maker</DisplayName>
     <PublisherDisplayName>JoeFinApps</PublisherDisplayName>
@@ -24,8 +26,8 @@
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
   </Dependencies>
 
   <Resources>
@@ -62,12 +64,44 @@
                   </com:ExeServer>
               </com:ComServer>
           </com:Extension>
+
+          <!-- Context menu integration for image files -->
+          <uap3:Extension Category="windows.fileTypeAssociation">
+              <uap3:FileTypeAssociation Name="simpleqrcodemaker.images">
+                  <uap:SupportedFileTypes>
+                      <uap:FileType>.png</uap:FileType>
+                      <uap:FileType>.jpg</uap:FileType>
+                      <uap:FileType>.jpeg</uap:FileType>
+                      <uap:FileType>.bmp</uap:FileType>
+                  </uap:SupportedFileTypes>
+                  <uap2:SupportedVerbs>
+                      <uap3:Verb Id="MakeQRCode" Parameters="&quot;%1&quot;">Make a new QR Code</uap3:Verb>
+                      <uap3:Verb Id="DecodeQRCode" Parameters="--Decode &quot;%1&quot;">Decode QR Codes</uap3:Verb>
+                  </uap2:SupportedVerbs>
+              </uap3:FileTypeAssociation>
+          </uap3:Extension>
+
+          <!-- Share target integration -->
+          <uap:Extension Category="windows.shareTarget">
+              <uap:ShareTarget Description="Decode QR Code or create a new one">
+                  <uap:SupportedFileTypes>
+                      <uap:FileType>.png</uap:FileType>
+                      <uap:FileType>.jpg</uap:FileType>
+                      <uap:FileType>.jpeg</uap:FileType>
+                      <uap:FileType>.bmp</uap:FileType>
+                  </uap:SupportedFileTypes>
+                  <uap:DataFormat>Text</uap:DataFormat>
+                  <uap:DataFormat>URI</uap:DataFormat>
+                  <uap:DataFormat>Bitmap</uap:DataFormat>
+              </uap:ShareTarget>
+          </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
 
   <Capabilities>
-    <rescap:Capability Name="runFullTrust" />
+      <rescap:Capability Name="runFullTrust" />
+      <rescap:Capability Name="systemAIModels" />
   </Capabilities>
 
   <genTemplate:Metadata>

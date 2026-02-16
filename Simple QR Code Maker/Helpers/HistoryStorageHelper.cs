@@ -68,13 +68,21 @@ public static class HistoryStorageHelper
         try
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile historyFile = await localFolder.CreateFileAsync(
-                HistoryFileName, 
-                CreationCollisionOption.ReplaceExisting);
 
             string json = JsonSerializer.Serialize(historyItems, HistoryJsonSerializerOptions.Options);
 
-            await FileIO.WriteTextAsync(historyFile, json);
+            // Write to a temp file first, then rename over the real file.
+            // This prevents an empty History.json when the app exits before
+            // the write completes (fire-and-forget in SaveHistoryOnShutdown).
+            string tempFileName = HistoryFileName + ".tmp";
+            StorageFile tempFile = await localFolder.CreateFileAsync(
+                tempFileName,
+                CreationCollisionOption.ReplaceExisting);
+
+            await FileIO.WriteTextAsync(tempFile, json);
+
+            // Atomic rename – replaces the destination if it already exists.
+            await tempFile.RenameAsync(HistoryFileName, NameCollisionOption.ReplaceExisting);
 
             Debug.WriteLine($"?? Saved {historyItems.Count} items to {HistoryFileName} ({json.Length} bytes)");
         }
@@ -118,6 +126,12 @@ public static class HistoryStorageHelper
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
             StorageFile historyFile = await localFolder.GetFileAsync(HistoryFileName);
             string json = await FileIO.ReadTextAsync(historyFile);
+
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                Debug.WriteLine($"?? {HistoryFileName} exists but is empty - treating as missing");
+                return null;
+            }
 
             ObservableCollection<HistoryItem>? history = JsonSerializer.Deserialize<ObservableCollection<HistoryItem>>(
                 json,

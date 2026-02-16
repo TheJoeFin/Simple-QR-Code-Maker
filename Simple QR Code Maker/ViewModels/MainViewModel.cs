@@ -12,7 +12,8 @@ using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
+using System.IO.Compression;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -71,6 +72,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private string BaseText = string.Empty;
     private bool WarnWhenNotUrl = true;
     private bool HideMinimumSizeText = false;
+    private string QuickSaveLocation = string.Empty;
+
+    [ObservableProperty]
+    private bool showSaveBothButton = false;
 
     [ObservableProperty]
     private bool canPasteText = false;
@@ -88,6 +93,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private string codeInfoBarMessage = string.Empty;
 
     [ObservableProperty]
+    private string savedFolderPath = string.Empty;
+
+    [ObservableProperty]
     private bool copySharePopupOpen = false;
 
     [ObservableProperty]
@@ -95,6 +103,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private bool hasLogo = false;
+
+    [ObservableProperty]
+    private BitmapImage? logoPreviewImage = null;
+
+    [ObservableProperty]
+    private bool isBackgroundRemovalAvailable = false;
 
     [ObservableProperty]
     private double logoPaddingPixels = 4.0;
@@ -144,16 +158,17 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         try
         {
-            if (File.Exists(logoPath))
+            if (!File.Exists(logoPath))
             {
-                // Dispose old logo first
-                LogoImage?.Dispose();
-
-                StorageFile file = await StorageFile.GetFileFromPathAsync(logoPath);
-                using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
-                LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
-                currentLogoPath = logoPath;
+                return;
             }
+            // Dispose old logo first
+            LogoImage?.Dispose();
+
+            StorageFile file = await StorageFile.GetFileFromPathAsync(logoPath);
+            using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
+            LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+            currentLogoPath = logoPath;
         }
         catch (Exception ex)
         {
@@ -222,8 +237,39 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 ErrorCorrectionLevels.Insert(0, new("Low 7%", ErrorCorrectionLevel.L));
         }
 
+        _ = UpdateLogoPreviewImageAsync(value);
+
         debounceTimer.Stop();
         debounceTimer.Start();
+    }
+
+    private async Task UpdateLogoPreviewImageAsync(System.Drawing.Bitmap? bitmap)
+    {
+        if (bitmap is null)
+        {
+            LogoPreviewImage = null;
+            return;
+        }
+
+        try
+        {
+            using MemoryStream ms = new();
+            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            ms.Position = 0;
+
+            BitmapImage bitmapImage = new();
+            using InMemoryRandomAccessStream randomAccessStream = new();
+            await randomAccessStream.WriteAsync(ms.ToArray().AsBuffer());
+            randomAccessStream.Seek(0);
+            await bitmapImage.SetSourceAsync(randomAccessStream);
+
+            LogoPreviewImage = bitmapImage;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to create logo preview: {ex.Message}");
+            LogoPreviewImage = null;
+        }
     }
 
     partial void OnLogoSizePercentageChanged(double value)
@@ -343,29 +389,33 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private void CheckCanPasteText()
     {
-        DataPackageView clipboardData = Clipboard.GetContent();
+        try
+        {
+            DataPackageView clipboardData = Clipboard.GetContent();
 
-        if (clipboardData.Contains(StandardDataFormats.Text))
-            CanPasteText = true;
-        else
+            if (clipboardData.Contains(StandardDataFormats.Text))
+                CanPasteText = true;
+            else
+                CanPasteText = false;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to check clipboard: {ex.Message}");
             CanPasteText = false;
+        }
     }
 
-    ~MainViewModel()
+    private async Task CheckBackgroundRemovalAvailability()
     {
-        placeholderTextTimer?.Stop();
-
-        if (placeholderTextTimer is not null)
-            placeholderTextTimer.Tick -= PlaceholderTextTimer_Tick;
-
-        debounceTimer?.Stop();
-        if (debounceTimer is not null)
-            debounceTimer.Tick -= DebounceTimer_Tick;
-
-        Clipboard.ContentChanged -= Clipboard_ContentChanged;
-
-        // Dispose of the logo image
-        LogoImage?.Dispose();
+        try
+        {
+            IsBackgroundRemovalAvailable = await BackgroundRemovalHelper.CheckIsAvailableAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Background removal check failed: {ex.Message}");
+            IsBackgroundRemovalAvailable = false;
+        }
     }
 
     private void PlaceholderTextTimer_Tick(object? sender, object e)
@@ -609,9 +659,19 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         copyInfoBarTimer.Stop();
         CodeInfoBarMessage = string.Empty;
+        SavedFolderPath = string.Empty;
         ShowCodeInfoBar = false;
         CodeInfoBarSeverity = InfoBarSeverity.Informational;
         CodeInfoBarTitle = "Copy infoBar title";
+    }
+
+    [RelayCommand]
+    private async Task OpenSavedFolder()
+    {
+        if (string.IsNullOrWhiteSpace(SavedFolderPath))
+            return;
+
+        await Windows.System.Launcher.LaunchFolderPathAsync(SavedFolderPath);
     }
 
     [RelayCommand]
@@ -656,15 +716,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         await SaveCurrentStateToHistory();
 
-        await SaveAllFiles(FileKind.PNG);
+        string? savedFolder = await SaveAllFiles(FileKind.PNG);
 
-        CodeInfoBarMessage = string.Empty;
-        ShowCodeInfoBar = true;
-        CodeInfoBarSeverity = InfoBarSeverity.Success;
-        if (QrCodeBitmaps.Count == 1)
-            CodeInfoBarTitle = "PNG QR Code saved!";
-        else
-            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} PNG QR Codes saved!";
+        if (savedFolder is null)
+            return;
+
+        ShowSaveSuccessInfoBar(
+            QrCodeBitmaps.Count == 1 ? "PNG QR Code saved!" : $"{QrCodeBitmaps.Count} PNG QR Codes saved!",
+            savedFolder);
     }
 
     [RelayCommand]
@@ -675,15 +734,151 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         await SaveCurrentStateToHistory();
 
-        await SaveAllFiles(FileKind.SVG);
+        string? savedFolder = await SaveAllFiles(FileKind.SVG);
+
+        if (savedFolder is null)
+            return;
+
+        ShowSaveSuccessInfoBar(
+            QrCodeBitmaps.Count == 1 ? "SVG QR Code saved!" : $"{QrCodeBitmaps.Count} SVG QR Codes saved!",
+            savedFolder);
+    }
+
+    [RelayCommand]
+    private async Task SavePngAsZip()
+    {
+        if (QrCodeBitmaps.Count == 0)
+            return;
+
+        await SaveCurrentStateToHistory();
+
+        bool saved = await SaveAllFilesAsZip(FileKind.PNG);
+        if (!saved)
+            return;
 
         CodeInfoBarMessage = string.Empty;
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Success;
         if (QrCodeBitmaps.Count == 1)
-            CodeInfoBarTitle = "SVG QR Code saved!";
+            CodeInfoBarTitle = "PNG QR Code saved to zip!";
         else
-            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} SVG QR Codes saved!";
+            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} PNG QR Codes saved to zip!";
+    }
+
+    [RelayCommand]
+    private async Task SaveSvgAsZip()
+    {
+        if (QrCodeBitmaps.Count == 0)
+            return;
+
+        await SaveCurrentStateToHistory();
+
+        bool saved = await SaveAllFilesAsZip(FileKind.SVG);
+        if (!saved)
+            return;
+
+        CodeInfoBarMessage = string.Empty;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Success;
+        if (QrCodeBitmaps.Count == 1)
+            CodeInfoBarTitle = "SVG QR Code saved to zip!";
+        else
+            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} SVG QR Codes saved to zip!";
+    }
+
+    [RelayCommand]
+    private async Task SaveBoth()
+    {
+        if (QrCodeBitmaps.Count == 0)
+            return;
+
+        await SaveCurrentStateToHistory();
+
+        string? savedFolder = await SaveAllFiles(FileKind.PNG);
+
+        if (savedFolder is null)
+            return;
+
+        await SaveAllFiles(FileKind.SVG, savedFolder);
+
+        ShowSaveSuccessInfoBar(
+            QrCodeBitmaps.Count == 1 ? "PNG and SVG QR Code saved!" : $"{QrCodeBitmaps.Count} PNG and SVG QR Codes saved!",
+            savedFolder);
+    }
+
+    [RelayCommand]
+    private async Task SaveBothAsZip()
+    {
+        if (QrCodeBitmaps.Count == 0)
+            return;
+
+        await SaveCurrentStateToHistory();
+
+        bool saved = await SaveAllFilesAsZip(FileKind.PNG, FileKind.SVG);
+        if (!saved)
+            return;
+
+        CodeInfoBarMessage = string.Empty;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Success;
+        if (QrCodeBitmaps.Count == 1)
+            CodeInfoBarTitle = "PNG and SVG QR Code saved to zip!";
+        else
+            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} PNG and SVG QR Codes saved to zip!";
+    }
+
+    [RelayCommand]
+    private async Task CopyBothToClipboard()
+    {
+        if (QrCodeBitmaps.Count == 0)
+            return;
+
+        await SaveCurrentStateToHistory();
+
+        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
+        List<StorageFile> files = [];
+        foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
+        {
+            if (qrCodeItem.CodeAsBitmap is null)
+                continue;
+
+            string safeFileName = qrCodeItem.CodeAsText.ToSafeFileName();
+
+            string pngFileName = $"{safeFileName}.png";
+            StorageFile pngFile = await folder.CreateFileAsync(pngFileName, CreationCollisionOption.ReplaceExisting);
+            bool pngSuccess = await qrCodeItem.CodeAsBitmap.SavePngToStorageFile(pngFile);
+            if (pngSuccess)
+                files.Add(pngFile);
+
+            string svgFileName = $"{safeFileName}.svg";
+            StorageFile svgFile = await folder.CreateFileAsync(svgFileName, CreationCollisionOption.ReplaceExisting);
+            bool svgSuccess = await qrCodeItem.SaveCodeAsSvgFile(svgFile, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), SelectedOption.ErrorCorrectionLevel);
+            if (svgSuccess)
+                files.Add(svgFile);
+        }
+
+        if (files.Count == 0)
+        {
+            CodeInfoBarMessage = "No QR Codes to copy to the clipboard";
+            ShowCodeInfoBar = true;
+            CodeInfoBarSeverity = InfoBarSeverity.Error;
+            CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
+            return;
+        }
+
+        DataPackage dataPackage = new();
+        dataPackage.SetStorageItems(files);
+        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+
+        CodeInfoBarMessage = string.Empty;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Success;
+        if (QrCodeBitmaps.Count == 1)
+            CodeInfoBarTitle = "PNG and SVG QR Code copied to the clipboard";
+        else
+            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} PNG and SVG QR Codes copied to the clipboard";
+
+        copyInfoBarTimer.Start();
     }
 
     [RelayCommand]
@@ -751,6 +946,64 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         currentLogoPath = null;
     }
 
+    [RelayCommand]
+    private async Task RemoveLogoBackground()
+    {
+        if (LogoImage is null)
+            return;
+
+        Controls.RemoveBackgroundDialog dialog = new(LogoImage)
+        {
+            XamlRoot = App.MainWindow.Content.XamlRoot,
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary && dialog.ResultBitmap is not null)
+        {
+            LogoImage?.Dispose();
+            LogoImage = dialog.ResultBitmap;
+
+            // Persist the background-removed logo to disk so currentLogoPath
+            // is valid for SaveHistoryOnShutdown and CreateCurrentStateHistoryItem.
+            await SaveLogoImageToDisk();
+        }
+    }
+
+    /// <summary>
+    /// Saves the current <see cref="LogoImage"/> to the local LogoImages folder
+    /// and updates <see cref="currentLogoPath"/>.
+    /// </summary>
+    private async Task<string?> SaveLogoImageToDisk()
+    {
+        if (LogoImage is null)
+            return null;
+
+        try
+        {
+            StorageFolder logoFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("LogoImages", CreationCollisionOption.OpenIfExists);
+            string fileName = $"logo_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.png";
+            StorageFile logoFile = await logoFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+
+            using IRandomAccessStream stream = await logoFile.OpenAsync(FileAccessMode.ReadWrite);
+            using IOutputStream outputStream = stream.GetOutputStreamAt(0);
+            using DataWriter dataWriter = new(outputStream);
+            using MemoryStream ms = new();
+            LogoImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            byte[] bytes = ms.ToArray();
+            dataWriter.WriteBytes(bytes);
+            await dataWriter.StoreAsync();
+
+            currentLogoPath = logoFile.Path;
+            return logoFile.Path;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to save logo image: {ex.Message}");
+            return null;
+        }
+    }
+
     private async Task WriteImageToFile(BarcodeImageItem imageItem, StorageFile file, FileKind kindOfFile)
     {
         switch (kindOfFile)
@@ -774,21 +1027,34 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    public async Task SaveAllFiles(FileKind kindOfFile)
+    public async Task<string?> SaveAllFiles(FileKind kindOfFile, string? overrideFolderPath = null)
     {
-        FolderPicker folderPicker = new()
+        StorageFolder? folder;
+
+        if (overrideFolderPath is not null)
         {
-            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-        };
+            folder = await StorageFolder.GetFolderFromPathAsync(overrideFolderPath);
+        }
+        else if (!string.IsNullOrWhiteSpace(QuickSaveLocation) && Directory.Exists(QuickSaveLocation))
+        {
+            folder = await StorageFolder.GetFolderFromPathAsync(QuickSaveLocation);
+        }
+        else
+        {
+            FolderPicker folderPicker = new()
+            {
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+            };
 
-        Window saveWindow = new();
-        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
-        InitializeWithWindow.Initialize(folderPicker, windowHandleSave);
+            Window saveWindow = new();
+            IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
+            InitializeWithWindow.Initialize(folderPicker, windowHandleSave);
 
-        StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+            folder = await folderPicker.PickSingleFolderAsync();
+        }
 
         if (folder is null)
-            return;
+            return null;
 
         string extension = $".{kindOfFile.ToString().ToLower()}";
 
@@ -804,6 +1070,126 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
             await WriteImageToFile(imageItem, file, kindOfFile);
         }
+
+        return folder.Path;
+    }
+
+    private void ShowSaveSuccessInfoBar(string title, string folderPath)
+    {
+        CodeInfoBarSeverity = InfoBarSeverity.Success;
+        CodeInfoBarTitle = title;
+        CodeInfoBarMessage = $"Saved to {folderPath}";
+        SavedFolderPath = folderPath;
+        ShowCodeInfoBar = true;
+        copyInfoBarTimer.Start();
+    }
+
+    public async Task<bool> SaveAllFilesAsZip(FileKind kindOfFile)
+    {
+        FileSavePicker savePicker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+            SuggestedFileName = $"QR Codes {DateTime.Now:yyyy-MM-dd}",
+        };
+        savePicker.FileTypeChoices.Add("ZIP Archive", [".zip"]);
+
+        Window saveWindow = new();
+        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
+        InitializeWithWindow.Initialize(savePicker, windowHandleSave);
+
+        StorageFile zipFile = await savePicker.PickSaveFileAsync();
+
+        if (zipFile is null)
+            return false;
+
+        string extension = $".{kindOfFile.ToString().ToLower()}";
+
+        using MemoryStream zipStream = new();
+        using (System.IO.Compression.ZipArchive archive = new(zipStream, System.IO.Compression.ZipArchiveMode.Create, true))
+        {
+            foreach (BarcodeImageItem imageItem in QrCodeBitmaps)
+            {
+                string fileName = imageItem.CodeAsText.ToSafeFileName();
+
+                if (string.IsNullOrWhiteSpace(fileName) || imageItem.CodeAsBitmap is null)
+                    continue;
+
+                fileName += extension;
+
+                // Write to a temp StorageFile, then copy bytes into the zip entry
+                StorageFolder tempFolder = ApplicationData.Current.LocalCacheFolder;
+                StorageFile tempFile = await tempFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                await WriteImageToFile(imageItem, tempFile, kindOfFile);
+
+                System.IO.Compression.ZipArchiveEntry entry = archive.CreateEntry(fileName, System.IO.Compression.CompressionLevel.Optimal);
+                using Stream entryStream = entry.Open();
+                using IRandomAccessStreamWithContentType fileStream = await tempFile.OpenReadAsync();
+                await fileStream.AsStreamForRead().CopyToAsync(entryStream);
+            }
+        }
+
+        // Write the zip MemoryStream to the chosen StorageFile
+        using IRandomAccessStream outputStream = await zipFile.OpenAsync(FileAccessMode.ReadWrite);
+        outputStream.Size = 0;
+        using Stream output = outputStream.AsStreamForWrite();
+        zipStream.Position = 0;
+        await zipStream.CopyToAsync(output);
+
+        return true;
+    }
+
+    public async Task<bool> SaveAllFilesAsZip(params FileKind[] fileKinds)
+    {
+        FileSavePicker savePicker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+            SuggestedFileName = $"QR Codes {DateTime.Now:yyyy-MM-dd}",
+        };
+        savePicker.FileTypeChoices.Add("ZIP Archive", [".zip"]);
+
+        Window saveWindow = new();
+        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
+        InitializeWithWindow.Initialize(savePicker, windowHandleSave);
+
+        StorageFile zipFile = await savePicker.PickSaveFileAsync();
+
+        if (zipFile is null)
+            return false;
+
+        using MemoryStream zipStream = new();
+        using (ZipArchive archive = new(zipStream, ZipArchiveMode.Create, true))
+        {
+            foreach (BarcodeImageItem imageItem in QrCodeBitmaps)
+            {
+                string baseName = imageItem.CodeAsText.ToSafeFileName();
+
+                if (string.IsNullOrWhiteSpace(baseName) || imageItem.CodeAsBitmap is null)
+                    continue;
+
+                foreach (FileKind kindOfFile in fileKinds)
+                {
+                    string extension = $".{kindOfFile.ToString().ToLower()}";
+                    string fileName = baseName + extension;
+
+                    StorageFolder tempFolder = ApplicationData.Current.LocalCacheFolder;
+                    StorageFile tempFile = await tempFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                    await WriteImageToFile(imageItem, tempFile, kindOfFile);
+
+                    ZipArchiveEntry entry = archive.CreateEntry(fileName, CompressionLevel.Optimal);
+                    using Stream entryStream = entry.Open();
+                    using IRandomAccessStreamWithContentType fileStream = await tempFile.OpenReadAsync();
+                    await fileStream.AsStreamForRead().CopyToAsync(entryStream);
+                }
+            }
+        }
+
+        using IRandomAccessStream outputStream = await zipFile.OpenAsync(FileAccessMode.ReadWrite);
+        outputStream.Size = 0;
+        using Stream output = outputStream.AsStreamForWrite();
+        zipStream.Position = 0;
+        await zipStream.CopyToAsync(output);
+
+        return true;
     }
 
     public async void OnNavigatedTo(object parameter)
@@ -814,11 +1200,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         OnPropertyChanged(nameof(HistoryItems));
 
         CheckCanPasteText();
+        _ = CheckBackgroundRemovalAvailability();
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
         UrlText = BaseText;
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
+        ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton));
+        QuickSaveLocation = await LocalSettingsService.ReadSettingAsync<string>(nameof(QuickSaveLocation)) ?? string.Empty;
         MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
         if (MinSizeScanDistanceScaleFactor < 0.35)
         {
@@ -865,41 +1254,70 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     public void OnNavigatedFrom()
     {
-        if (!string.IsNullOrWhiteSpace(UrlText))
-            _ = SaveCurrentStateToHistory();
+        try
+        {
+            placeholderTextTimer.Stop();
+            placeholderTextTimer.Tick -= PlaceholderTextTimer_Tick;
+
+            debounceTimer.Stop();
+            debounceTimer.Tick -= DebounceTimer_Tick;
+
+            copyInfoBarTimer.Stop();
+            copyInfoBarTimer.Tick -= CopyInfoBarTimer_Tick;
+
+            Clipboard.ContentChanged -= Clipboard_ContentChanged;
+
+            WeakReferenceMessenger.Default.UnregisterAll(this);
+
+            if (!string.IsNullOrWhiteSpace(UrlText))
+                SaveHistoryOnShutdown();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"❌ OnNavigatedFrom error: {ex}");
+        }
+        finally
+        {
+            LogoImage?.Dispose();
+        }
     }
 
+    private void SaveHistoryOnShutdown()
+    {
+        try
+        {
+            HistoryItem historyItem = new()
+            {
+                CodesContent = UrlText,
+                Foreground = ForegroundColor,
+                Background = BackgroundColor,
+                ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
+                LogoImagePath = currentLogoPath,
+                LogoSizePercentage = LogoSizePercentage,
+                LogoPaddingPixels = LogoPaddingPixels,
+            };
+
+            // Build an unbound snapshot list to avoid modifying the
+            // ObservableCollection that is bound to the XAML ListView.
+            // Modifying a bound collection during Window.Closed causes
+            // a native WinRT stowed exception (0xc000027b).
+            ObservableCollection<HistoryItem> snapshot = new(
+                HistoryItems.Where(h => !h.Equals(historyItem)));
+            snapshot.Insert(0, historyItem);
+
+            _ = HistoryStorageHelper.SaveHistoryAsync(snapshot);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"❌ SaveHistoryOnShutdown error: {ex}");
+        }
+    }
+
+    [RelayCommand]
     public async Task SaveCurrentStateToHistory()
     {
-        string? logoImagePath = null;
-
         // Save logo image to local app storage if present
-        if (LogoImage is not null)
-        {
-            try
-            {
-                StorageFolder logoFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("LogoImages", CreationCollisionOption.OpenIfExists);
-                string fileName = $"logo_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.png";
-                StorageFile logoFile = await logoFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-
-                using IRandomAccessStream stream = await logoFile.OpenAsync(FileAccessMode.ReadWrite);
-
-                using IOutputStream outputStream = stream.GetOutputStreamAt(0);
-                using DataWriter dataWriter = new(outputStream);
-                using MemoryStream ms = new();
-                LogoImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                byte[] bytes = ms.ToArray();
-                dataWriter.WriteBytes(bytes);
-                await dataWriter.StoreAsync();
-
-                logoImagePath = logoFile.Path;
-                currentLogoPath = logoImagePath;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Failed to save logo image: {ex.Message}");
-            }
-        }
+        string? logoImagePath = await SaveLogoImageToDisk();
 
         HistoryItem historyItem = new()
         {

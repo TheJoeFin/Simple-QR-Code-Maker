@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <RootNamespace>Simple_QR_Code_Maker</RootNamespace>
     <ApplicationIcon>Assets/WindowIcon.ico</ApplicationIcon>
@@ -13,16 +13,21 @@
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	  <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Controls\AdvancedToolsControl.xaml" />
+    <None Remove="Controls\AdvancedToolsUserControl.xaml" />
     <None Remove="Controls\FaqsContent.xaml" />
     <None Remove="Controls\HistoryRowItem.xaml" />
     <None Remove="Controls\IconAndTextButton.xaml" />
     <None Remove="Controls\IconAndTextContent.xaml" />
     <None Remove="Controls\NewFile1.txt" />
     <None Remove="Controls\QrCodeImageControl.xaml" />
+    <None Remove="Controls\RemoveBackgroundDialog.xaml" />
     <None Remove="Controls\TextBorder.xaml" />
     <None Remove="Views\ShellPage.xaml" />
   </ItemGroup>
@@ -35,12 +40,13 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
     <PackageReference Include="Humanizer" Version="3.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.10.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7175" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251106002" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.0" />
-    <PackageReference Include="System.Text.Json" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7705" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260209005" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
+    <PackageReference Include="System.Text.Json" Version="10.0.3" />
     <PackageReference Include="WinUIEx" Version="2.9.0" />
     <PackageReference Include="ZXing.Net" Version="0.16.11" />
     <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.14" />
@@ -53,6 +59,12 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\RemoveBackgroundDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Controls\AdvancedToolsUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\IconAndTextContent.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -96,6 +108,10 @@
 
     <ItemGroup>
       <CustomAdditionalCompileInputs Remove="Views\ShellPage.xaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Remove="Controls\AdvancedToolsControl.xaml" />
     </ItemGroup>
 
     <ItemGroup>

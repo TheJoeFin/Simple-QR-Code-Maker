@@ -12,9 +12,15 @@
 
     <UserControl.Resources>
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
+        <converters:FilePathToImageSourceConverter x:Key="FilePathToImage" />
+        <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
     </UserControl.Resources>
 
     <Grid Margin="2" Padding="0,6">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -43,6 +49,16 @@
             Style="{StaticResource CaptionTextBlockStyle}"
             Text="{x:Bind Data.SaveDateAsString, Mode=OneWay}"
             TextTrimming="WordEllipsis" />
+        <Image
+            Grid.RowSpan="3"
+            Grid.Column="1"
+            Width="32"
+            Height="32"
+            Margin="8,0,0,0"
+            VerticalAlignment="Center"
+            Source="{x:Bind Data.LogoImagePath, Converter={StaticResource FilePathToImage}, Mode=OneWay}"
+            Stretch="Uniform"
+            Visibility="{x:Bind Data.LogoImagePath, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
     </Grid>
 </UserControl>
 
