@@ -148,7 +148,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         bool isMetric = RegionInfo.CurrentRegion.IsMetric;
 
-        if (isMetric) {
+        if (isMetric)
+        {
             if (value == 1)
                 MaxScanDistanceText = $"{value} meter";
             else
@@ -158,7 +159,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         {
             if (value > 1)
             {
-                MaxScanDistanceText = $"{Math.Round(value * 3,1)} feet";
+                MaxScanDistanceText = $"{Math.Round(value * 3, 1)} feet";
             }
             else
             {

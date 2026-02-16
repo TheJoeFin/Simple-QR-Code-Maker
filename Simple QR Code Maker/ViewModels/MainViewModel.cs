@@ -151,16 +151,17 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         try
         {
-            if (File.Exists(logoPath))
+            if (!File.Exists(logoPath))
             {
-                // Dispose old logo first
-                LogoImage?.Dispose();
-
-                StorageFile file = await StorageFile.GetFileFromPathAsync(logoPath);
-                using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
-                LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
-                currentLogoPath = logoPath;
+                return;
             }
+            // Dispose old logo first
+            LogoImage?.Dispose();
+
+            StorageFile file = await StorageFile.GetFileFromPathAsync(logoPath);
+            using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
+            LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+            currentLogoPath = logoPath;
         }
         catch (Exception ex)
         {
@@ -350,27 +351,20 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private void CheckCanPasteText()
     {
-        DataPackageView clipboardData = Clipboard.GetContent();
+        try
+        {
+            DataPackageView clipboardData = Clipboard.GetContent();
 
-        if (clipboardData.Contains(StandardDataFormats.Text))
-            CanPasteText = true;
-        else
+            if (clipboardData.Contains(StandardDataFormats.Text))
+                CanPasteText = true;
+            else
+                CanPasteText = false;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to check clipboard: {ex.Message}");
             CanPasteText = false;
-    }
-
-    ~MainViewModel()
-    {
-        placeholderTextTimer?.Stop();
-
-        placeholderTextTimer?.Tick -= PlaceholderTextTimer_Tick;
-
-        debounceTimer?.Stop();
-        debounceTimer?.Tick -= DebounceTimer_Tick;
-
-        Clipboard.ContentChanged -= Clipboard_ContentChanged;
-
-        // Dispose of the logo image
-        LogoImage?.Dispose();
+        }
     }
 
     private void PlaceholderTextTimer_Tick(object? sender, object e)
@@ -926,7 +920,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     public async Task<string?> SaveAllFiles(FileKind kindOfFile, string? overrideFolderPath = null)
     {
-        StorageFolder? folder = null;
+        StorageFolder? folder;
 
         if (overrideFolderPath is not null)
         {
@@ -1150,8 +1144,63 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     public void OnNavigatedFrom()
     {
-        if (!string.IsNullOrWhiteSpace(UrlText))
-            _ = SaveCurrentStateToHistory();
+        try
+        {
+            placeholderTextTimer.Stop();
+            placeholderTextTimer.Tick -= PlaceholderTextTimer_Tick;
+
+            debounceTimer.Stop();
+            debounceTimer.Tick -= DebounceTimer_Tick;
+
+            copyInfoBarTimer.Stop();
+            copyInfoBarTimer.Tick -= CopyInfoBarTimer_Tick;
+
+            Clipboard.ContentChanged -= Clipboard_ContentChanged;
+
+            WeakReferenceMessenger.Default.UnregisterAll(this);
+
+            if (!string.IsNullOrWhiteSpace(UrlText))
+                SaveHistoryOnShutdown();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"❌ OnNavigatedFrom error: {ex}");
+        }
+        finally
+        {
+            LogoImage?.Dispose();
+        }
+    }
+
+    private void SaveHistoryOnShutdown()
+    {
+        try
+        {
+            HistoryItem historyItem = new()
+            {
+                CodesContent = UrlText,
+                Foreground = ForegroundColor,
+                Background = BackgroundColor,
+                ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
+                LogoImagePath = currentLogoPath,
+                LogoSizePercentage = LogoSizePercentage,
+                LogoPaddingPixels = LogoPaddingPixels,
+            };
+
+            // Build an unbound snapshot list to avoid modifying the
+            // ObservableCollection that is bound to the XAML ListView.
+            // Modifying a bound collection during Window.Closed causes
+            // a native WinRT stowed exception (0xc000027b).
+            ObservableCollection<HistoryItem> snapshot = new(
+                HistoryItems.Where(h => !h.Equals(historyItem)));
+            snapshot.Insert(0, historyItem);
+
+            _ = HistoryStorageHelper.SaveHistoryAsync(snapshot);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"❌ SaveHistoryOnShutdown error: {ex}");
+        }
     }
 
     public async Task SaveCurrentStateToHistory()

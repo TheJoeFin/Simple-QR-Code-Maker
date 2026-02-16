@@ -76,22 +76,25 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         Clipboard.ContentChanged += Clipboard_ContentChanged;
     }
 
-    ~DecodingViewModel()
-    {
-        Clipboard.ContentChanged -= Clipboard_ContentChanged;
-    }
-
     private void Clipboard_ContentChanged(object? sender, object e) => CheckIfCanPaste();
 
     private void CheckIfCanPaste()
     {
-        DataPackageView clipboardData = Clipboard.GetContent();
+        try
+        {
+            DataPackageView clipboardData = Clipboard.GetContent();
 
-        if (clipboardData.Contains(StandardDataFormats.StorageItems)
-            || clipboardData.Contains(StandardDataFormats.Bitmap))
-            CanPasteImage = true;
-        else
+            if (clipboardData.Contains(StandardDataFormats.StorageItems)
+                || clipboardData.Contains(StandardDataFormats.Bitmap))
+                CanPasteImage = true;
+            else
+                CanPasteImage = false;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to check clipboard: {ex.Message}");
             CanPasteImage = false;
+        }
     }
 
     public async void OnNavigatedTo(object parameter)
@@ -167,32 +170,32 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         try
         {
-        var bitmap = ImageProcessingHelper.ConvertToBitmap(item.ProcessedMagickImage);
+            Bitmap bitmap = ImageProcessingHelper.ConvertToBitmap(item.ProcessedMagickImage);
 
-        string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}_processed.png");
-        bitmap.Save(cachePath);
+            string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}_processed.png");
+            bitmap.Save(cachePath);
 
-        Uri uri = new($"{cachePath}?tick={DateTimeOffset.Now.Ticks}");
-        BitmapImage processedBitmapImage = new(uri)
-        {
-            CreateOptions = BitmapCreateOptions.IgnoreImageCache
-        };
+            Uri uri = new($"{cachePath}?tick={DateTimeOffset.Now.Ticks}");
+            BitmapImage processedBitmapImage = new(uri)
+            {
+                CreateOptions = BitmapCreateOptions.IgnoreImageCache
+            };
 
-        IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(bitmap);
+            IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(bitmap);
 
-        ObservableCollection<TextBorder> codeBorders = [];
-        foreach ((string, Result) resultItem in strings)
-        {
-            TextBorder textBorder = new(resultItem.Item2);
-            textBorder.TextBorder_Click += TextBorder_TextBorder_Click;
-            codeBorders.Add(textBorder);
-        }
+            ObservableCollection<TextBorder> codeBorders = [];
+            foreach ((string, Result) resultItem in strings)
+            {
+                TextBorder textBorder = new(resultItem.Item2);
+                textBorder.TextBorder_Click += TextBorder_TextBorder_Click;
+                codeBorders.Add(textBorder);
+            }
 
-        item.ProcessedBitmapImage = processedBitmapImage;
-        item.CodeBorders = codeBorders;
-        item.ImagePixelWidth = (int)item.ProcessedMagickImage.Width;
-        item.ImagePixelHeight = (int)item.ProcessedMagickImage.Height;
-        item.BitmapImage = processedBitmapImage;
+            item.ProcessedBitmapImage = processedBitmapImage;
+            item.CodeBorders = codeBorders;
+            item.ImagePixelWidth = (int)item.ProcessedMagickImage.Width;
+            item.ImagePixelHeight = (int)item.ProcessedMagickImage.Height;
+            item.BitmapImage = processedBitmapImage;
         }
         finally
         {
@@ -209,36 +212,36 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         try
         {
-        CurrentDecodingItem = null;
-        DataPackageView clipboardData = Clipboard.GetContent();
+            CurrentDecodingItem = null;
+            DataPackageView clipboardData = Clipboard.GetContent();
 
-        if (clipboardData.Contains(StandardDataFormats.StorageItems))
-        {
-            IReadOnlyList<IStorageItem> clipboardItems = await clipboardData.GetStorageItemsAsync();
-            if (clipboardItems.Count == 0)
-                return;
+            if (clipboardData.Contains(StandardDataFormats.StorageItems))
+            {
+                IReadOnlyList<IStorageItem> clipboardItems = await clipboardData.GetStorageItemsAsync();
+                if (clipboardItems.Count == 0)
+                    return;
 
-            OpenAndDecodeStorageFiles(clipboardItems);
+                OpenAndDecodeStorageFiles(clipboardItems);
+            }
+            else if (clipboardData.Contains(StandardDataFormats.Bitmap))
+            {
+                RandomAccessStreamReference bitmapStreamRef = await clipboardData.GetBitmapAsync();
+
+                IRandomAccessStreamWithContentType stream = await bitmapStreamRef.OpenReadAsync();
+
+                if (stream is not null)
+                    OpenAndDecodeBitmap(stream);
+            }
         }
-        else if (clipboardData.Contains(StandardDataFormats.Bitmap))
+        finally
         {
-            RandomAccessStreamReference bitmapStreamRef = await clipboardData.GetBitmapAsync();
+            IsLoading = false;
+            LoadingMessage = string.Empty;
+        }
+    }
 
-            IRandomAccessStreamWithContentType stream = await bitmapStreamRef.OpenReadAsync();
-
-            if (stream is not null)
-                        OpenAndDecodeBitmap(stream);
-                    }
-                    }
-                    finally
-                    {
-                        IsLoading = false;
-                        LoadingMessage = string.Empty;
-                    }
-                }
-
-                [RelayCommand]
-                private async Task TryLaunchLink()
+    [RelayCommand]
+    private async Task TryLaunchLink()
     {
         bool success = Uri.TryCreate(InfoBarMessage, UriKind.Absolute, out Uri? uri);
 
@@ -275,24 +278,24 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         try
         {
-        FileOpenPicker fileOpenPicker = new()
-        {
-            SuggestedStartLocation = PickerLocationId.Downloads,
-        };
+            FileOpenPicker fileOpenPicker = new()
+            {
+                SuggestedStartLocation = PickerLocationId.Downloads,
+            };
 
-        foreach (string extension in imageExtensions)
-            fileOpenPicker.FileTypeFilter.Add(extension);
+            foreach (string extension in imageExtensions)
+                fileOpenPicker.FileTypeFilter.Add(extension);
 
-        Window saveWindow = new();
-        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
-        InitializeWithWindow.Initialize(fileOpenPicker, windowHandleSave);
+            Window saveWindow = new();
+            IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
+            InitializeWithWindow.Initialize(fileOpenPicker, windowHandleSave);
 
-        StorageFile? pickedFile = await fileOpenPicker.PickSingleFileAsync();
+            StorageFile? pickedFile = await fileOpenPicker.PickSingleFileAsync();
 
-        if (pickedFile is null)
-            return;
+            if (pickedFile is null)
+                return;
 
-        await OpenAndDecodeStorageFile(pickedFile);
+            await OpenAndDecodeStorageFile(pickedFile);
         }
         finally
         {
@@ -308,8 +311,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             return;
 
         // Create a new HistoryItem with the decoded text, preserving other state if available
-        var editHistoryItem = navigationHistoryItem != null 
-            ? new HistoryItem 
+        HistoryItem editHistoryItem = navigationHistoryItem != null
+            ? new HistoryItem
             {
                 CodesContent = InfoBarMessage,
                 Foreground = navigationHistoryItem.Foreground,
@@ -320,7 +323,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
                 LogoPaddingPixels = navigationHistoryItem.LogoPaddingPixels,
             }
             : new HistoryItem { CodesContent = InfoBarMessage };
-            
+
         NavigationService.NavigateTo(typeof(MainViewModel).FullName!, editHistoryItem);
     }
 
@@ -329,11 +332,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         Bitmap rawBitmap = new(streamWithContentType.AsStreamForRead());
 
         // Load as MagickImage and apply EXIF orientation
-        var magickImage = ImageProcessingHelper.LoadImageFromBitmap(rawBitmap);
+        MagickImage magickImage = ImageProcessingHelper.LoadImageFromBitmap(rawBitmap);
 
         // Convert the oriented MagickImage to a Bitmap for ZXing decoding
         // so that ResultPoints are in the same coordinate space as the displayed image
-        var orientedBitmap = ImageProcessingHelper.ConvertToBitmap(magickImage);
+        Bitmap orientedBitmap = ImageProcessingHelper.ConvertToBitmap(magickImage);
 
         string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}.png");
         orientedBitmap.Save(cachePath);
@@ -369,7 +372,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     public async void OpenAndDecodeStorageFiles(IReadOnlyList<IStorageItem> pickedFiles)
     {
-        IStorageItem? first = pickedFiles.FirstOrDefault();
+        IStorageItem? first = pickedFiles.Count > 0 ? pickedFiles[0] : null;
         if (first is StorageFile storageFile)
             await OpenAndDecodeStorageFile(storageFile);
     }
@@ -398,11 +401,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             return null;
 
         // Load image using ImageProcessingHelper which handles EXIF orientation properly
-        var magickImage = await ImageProcessingHelper.LoadImageFromStorageFile(storageFile);
+        MagickImage magickImage = await ImageProcessingHelper.LoadImageFromStorageFile(storageFile);
 
         // Convert the oriented MagickImage to a Bitmap for ZXing decoding
         // so that ResultPoints are in the same coordinate space as the displayed image
-        var orientedBitmap = ImageProcessingHelper.ConvertToBitmap(magickImage);
+        Bitmap orientedBitmap = ImageProcessingHelper.ConvertToBitmap(magickImage);
 
         string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}.png");
         orientedBitmap.Save(cachePath);
@@ -447,6 +450,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     public void OnNavigatedFrom()
     {
+        Clipboard.ContentChanged -= Clipboard_ContentChanged;
+
         IsInfoBarShowing = false;
         PickedImage = null;
         CurrentDecodingItem = null;
