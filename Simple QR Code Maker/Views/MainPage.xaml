@@ -284,6 +284,32 @@
                                             </MenuFlyout>
                                         </SplitButton.Flyout>
                                     </SplitButton>
+                                    <SplitButton
+                                        x:Name="SaveBothButton"
+                                        Command="{x:Bind ViewModel.SaveBothCommand}"
+                                        IsEnabled="{x:Bind ViewModel.CanSaveImage, Mode=OneWay}"
+                                        ToolTipService.ToolTip="Save code(s) as both PNG and SVG files"
+                                        Visibility="{x:Bind ViewModel.ShowSaveBothButton, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
+                                        <SplitButton.Content>
+                                            <controls:IconAndTextContent ContentText="Both" Icon="Save" />
+                                        </SplitButton.Content>
+                                        <SplitButton.Flyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind ViewModel.SaveBothCommand}"
+                                                    Icon="SaveLocal"
+                                                    Text="Save all to files (default)" />
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind ViewModel.SaveBothAsZipCommand}"
+                                                    Icon="SaveLocal"
+                                                    Text="Save all to zip" />
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind ViewModel.CopyBothToClipboardCommand}"
+                                                    Icon="Copy"
+                                                    Text="Copy all to clipboard" />
+                                            </MenuFlyout>
+                                        </SplitButton.Flyout>
+                                    </SplitButton>
                                 </StackPanel>
                                 <StackPanel
                                     HorizontalAlignment="Center"

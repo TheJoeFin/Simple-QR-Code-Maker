@@ -129,6 +129,14 @@
                     OffContent="Showing size text"
                     OnContent="Hiding size text" />
 
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Show 'Save Both' button (PNG and SVG)" />
+                <ToggleSwitch
+                    IsOn="{x:Bind ViewModel.ShowSaveBothButton,
+                                  Mode=TwoWay,
+                                  UpdateSourceTrigger=PropertyChanged}"
+                    OffContent="Hidden"
+                    OnContent="Showing" />
+
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Approximate Maximum Scan distance of QR Code at minimum size" />
                 <TextBlock
                     Margin="60,0,0,0"

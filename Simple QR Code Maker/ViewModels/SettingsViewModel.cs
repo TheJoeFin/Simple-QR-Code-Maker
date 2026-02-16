@@ -35,6 +35,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private bool hideMinimumSizeText = false;
 
     [ObservableProperty]
+    private bool showSaveBothButton = false;
+
+    [ObservableProperty]
     private double minSizeScanDistanceScaleFactor = 1.0;
 
     [ObservableProperty]
@@ -93,6 +96,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         await LocalSettingsService.SaveSettingAsync(nameof(BaseText), BaseText);
         await LocalSettingsService.SaveSettingAsync(nameof(WarnWhenNotUrl), WarnWhenNotUrl);
         await LocalSettingsService.SaveSettingAsync(nameof(HideMinimumSizeText), HideMinimumSizeText);
+        await LocalSettingsService.SaveSettingAsync(nameof(ShowSaveBothButton), ShowSaveBothButton);
         await LocalSettingsService.SaveSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
     }
 
@@ -109,6 +113,12 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     }
 
     partial void OnHideMinimumSizeTextChanged(bool value)
+    {
+        settingChangedDebounceTimer.Stop();
+        settingChangedDebounceTimer.Start();
+    }
+
+    partial void OnShowSaveBothButtonChanged(bool value)
     {
         settingChangedDebounceTimer.Stop();
         settingChangedDebounceTimer.Start();
@@ -182,6 +192,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
+        ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton));
         MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
 
         // Store the HistoryItem to pass back when returning to main page
