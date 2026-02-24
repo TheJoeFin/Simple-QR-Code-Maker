@@ -37,6 +37,8 @@ public sealed partial class RemoveBackgroundDialog : ContentDialog
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
+        Loaded -= OnLoaded;
+
         // Show the original image
         OriginalImage.Source = await ConvertBitmapToBitmapImage(_sourceImage);
 
@@ -50,13 +52,15 @@ public sealed partial class RemoveBackgroundDialog : ContentDialog
             // Ensure the AI model is available on this device
             if (!await BackgroundRemovalHelper.CheckIsAvailableAsync())
             {
-                throw new InvalidOperationException("Background removal is not available on this device.");
+                StatusText.Text = "Background removal is not available on this device.";
+                IsPrimaryEnabled = false;
+                return;
             }
 
             StatusText.Text = "Removing background…";
 
             // Convert System.Drawing.Bitmap → SoftwareBitmap (BGRA8 Premultiplied)
-            SoftwareBitmap softwareBitmap = ConvertToSoftwareBitmap(_sourceImage);
+            using SoftwareBitmap softwareBitmap = ConvertToSoftwareBitmap(_sourceImage);
 
             // Create the extractor and get the foreground mask
             using ImageObjectExtractor extractor =
@@ -67,7 +71,7 @@ public sealed partial class RemoveBackgroundDialog : ContentDialog
                 includeRects: [new RectInt32(0, 0, _sourceImage.Width, _sourceImage.Height)],
                 includePoints: [],
                 excludePoints: []);
-            SoftwareBitmap maskBitmap = extractor.GetSoftwareBitmapObjectMask(hint);
+            using SoftwareBitmap maskBitmap = extractor.GetSoftwareBitmapObjectMask(hint);
 
             // Apply the mask to produce a transparent-background image
             Bitmap result = ApplyMaskToBitmap(_sourceImage, maskBitmap);
@@ -139,7 +143,7 @@ public sealed partial class RemoveBackgroundDialog : ContentDialog
     private static Bitmap ApplyMaskToBitmap(Bitmap source, SoftwareBitmap mask)
     {
         // Read mask pixels
-        SoftwareBitmap convertedMask = SoftwareBitmap.Convert(mask, BitmapPixelFormat.Gray8);
+        using SoftwareBitmap convertedMask = SoftwareBitmap.Convert(mask, BitmapPixelFormat.Gray8);
         int maskWidth = convertedMask.PixelWidth;
         int maskHeight = convertedMask.PixelHeight;
         byte[] maskPixels = new byte[maskWidth * maskHeight];

@@ -5,6 +5,7 @@ using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Windows.Input;
@@ -54,6 +55,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     private readonly DispatcherTimer settingChangedDebounceTimer = new();
 
+    private bool _isLoading;
+
     private HistoryItem? navigationHistoryItem = null;
 
     private INavigationService NavigationService { get; }
@@ -102,49 +105,72 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private async void SettingChangedDebounceTimer_Tick(object? sender, object e)
     {
         settingChangedDebounceTimer.Stop();
-        await LocalSettingsService.SaveSettingAsync(nameof(BaseText), BaseText);
-        await LocalSettingsService.SaveSettingAsync(nameof(WarnWhenNotUrl), WarnWhenNotUrl);
-        await LocalSettingsService.SaveSettingAsync(nameof(HideMinimumSizeText), HideMinimumSizeText);
-        await LocalSettingsService.SaveSettingAsync(nameof(ShowSaveBothButton), ShowSaveBothButton);
-        await LocalSettingsService.SaveSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
-        await LocalSettingsService.SaveSettingAsync(nameof(QuickSaveLocation), QuickSaveLocation);
+        await SaveAllSettingsAsync();
+    }
+
+    private async Task SaveAllSettingsAsync()
+    {
+        Trace.WriteLine("[SettingsVM] SaveAllSettingsAsync started");
+        await SaveSingleSettingAsync(nameof(BaseText), BaseText);
+        await SaveSingleSettingAsync(nameof(WarnWhenNotUrl), WarnWhenNotUrl);
+        await SaveSingleSettingAsync(nameof(HideMinimumSizeText), HideMinimumSizeText);
+        await SaveSingleSettingAsync(nameof(ShowSaveBothButton), ShowSaveBothButton);
+        await SaveSingleSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
+        await SaveSingleSettingAsync(nameof(QuickSaveLocation), QuickSaveLocation);
+        Trace.WriteLine("[SettingsVM] SaveAllSettingsAsync completed");
+    }
+
+    private async Task SaveSingleSettingAsync<T>(string key, T value)
+    {
+        try
+        {
+            Trace.WriteLine($"[SettingsVM] Saving '{key}'");
+            await LocalSettingsService.SaveSettingAsync(key, value);
+        }
+        catch (Exception ex)
+        {
+            Trace.TraceError($"[SettingsVM] Failed to save setting '{key}': {ex.Message}");
+        }
+    }
+
+    private void RestartDebounceTimer()
+    {
+        if (_isLoading)
+            return;
+
+        settingChangedDebounceTimer.Stop();
+        settingChangedDebounceTimer.Start();
     }
 
     partial void OnBaseTextChanged(string value)
     {
-        settingChangedDebounceTimer.Stop();
-        settingChangedDebounceTimer.Start();
+        RestartDebounceTimer();
     }
 
     partial void OnWarnWhenNotUrlChanged(bool value)
     {
-        settingChangedDebounceTimer.Stop();
-        settingChangedDebounceTimer.Start();
+        RestartDebounceTimer();
     }
 
     partial void OnHideMinimumSizeTextChanged(bool value)
     {
-        settingChangedDebounceTimer.Stop();
-        settingChangedDebounceTimer.Start();
+        RestartDebounceTimer();
     }
 
     partial void OnShowSaveBothButtonChanged(bool value)
     {
-        settingChangedDebounceTimer.Stop();
-        settingChangedDebounceTimer.Start();
+        RestartDebounceTimer();
     }
 
     partial void OnQuickSaveLocationChanged(string value)
     {
         HasQuickSaveLocation = !string.IsNullOrWhiteSpace(value);
-        settingChangedDebounceTimer.Stop();
-        settingChangedDebounceTimer.Start();
+        RestartDebounceTimer();
     }
 
     partial void OnMinSizeScanDistanceScaleFactorChanged(double value)
     {
-        settingChangedDebounceTimer.Stop();
-        settingChangedDebounceTimer.Start();
+        RestartDebounceTimer();
 
         bool isMetric = RegionInfo.CurrentRegion.IsMetric;
 
@@ -232,13 +258,43 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     public async void OnNavigatedTo(object parameter)
     {
-        MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
-        BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
-        WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
-        HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
-        ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton));
-        MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
-        QuickSaveLocation = await LocalSettingsService.ReadSettingAsync<string>(nameof(QuickSaveLocation)) ?? string.Empty;
+        Trace.WriteLine($"[SettingsVM] OnNavigatedTo started (parameter: {parameter?.GetType().Name ?? "null"})");
+        _isLoading = true;
+        try
+        {
+            await LoadSettingAsync(nameof(MultiLineCodeMode), async () =>
+                MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode)));
+
+            await LoadSettingAsync(nameof(BaseText), async () =>
+                BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty);
+
+            await LoadSettingAsync(nameof(WarnWhenNotUrl), async () =>
+                WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(WarnWhenNotUrl)) ?? true);
+
+            await LoadSettingAsync(nameof(HideMinimumSizeText), async () =>
+                HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText)));
+
+            await LoadSettingAsync(nameof(ShowSaveBothButton), async () =>
+                ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton)));
+
+            await LoadSettingAsync(nameof(MinSizeScanDistanceScaleFactor), async () =>
+            {
+                MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
+                if (MinSizeScanDistanceScaleFactor < 0.35)
+                {
+                    MinSizeScanDistanceScaleFactor = 1;
+                    await LocalSettingsService.SaveSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
+                }
+            });
+
+            await LoadSettingAsync(nameof(QuickSaveLocation), async () =>
+                QuickSaveLocation = await LocalSettingsService.ReadSettingAsync<string>(nameof(QuickSaveLocation)) ?? string.Empty);
+        }
+        finally
+        {
+            _isLoading = false;
+            Trace.WriteLine("[SettingsVM] OnNavigatedTo settings loaded");
+        }
 
         // Store the HistoryItem to pass back when returning to main page
         if (parameter is HistoryItem historyItem)
@@ -252,7 +308,26 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    public void OnNavigatedFrom()
+    private static async Task LoadSettingAsync(string key, Func<Task> loadAction)
     {
+        try
+        {
+            Trace.WriteLine($"[SettingsVM] Loading '{key}'");
+            await loadAction();
+        }
+        catch (Exception ex)
+        {
+            Trace.TraceError($"[SettingsVM] Failed to load setting '{key}': {ex.Message}");
+        }
+    }
+
+    public async void OnNavigatedFrom()
+    {
+        Trace.WriteLine($"[SettingsVM] OnNavigatedFrom (debounce pending: {settingChangedDebounceTimer.IsEnabled})");
+        if (settingChangedDebounceTimer.IsEnabled)
+        {
+            settingChangedDebounceTimer.Stop();
+            await SaveAllSettingsAsync();
+        }
     }
 }
