@@ -153,33 +153,101 @@
                                         </SplitButton.Content>
                                         <SplitButton.Flyout>
                                             <Flyout>
-                                                <StackPanel Width="160" Spacing="12">
-                                                    <Border
+                                                <StackPanel Width="180" Spacing="12">
+                                                    <Grid
+                                                        x:Name="LogoPreviewContainer"
+                                                        Width="160"
+                                                        Height="160"
                                                         HorizontalAlignment="Center"
-                                                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                                        BorderThickness="1"
+                                                        Background="Transparent"
                                                         CornerRadius="4"
-                                                        Visibility="{x:Bind ViewModel.HasLogo, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
-                                                        <Image
-                                                            MaxWidth="120"
-                                                            MaxHeight="120"
-                                                            Source="{x:Bind ViewModel.LogoPreviewImage, Mode=OneWay}"
-                                                            Stretch="Uniform" />
-                                                    </Border>
-                                                    <Button Command="{x:Bind ViewModel.RemoveLogoCommand}" IsEnabled="{x:Bind ViewModel.HasLogo, Mode=OneWay}">
-                                                        <StackPanel Orientation="Horizontal" Spacing="8">
-                                                            <SymbolIcon Symbol="Delete" />
-                                                            <TextBlock Text="Remove" />
-                                                        </StackPanel>
-                                                    </Button>
+                                                        PointerEntered="LogoPreviewContainer_PointerEntered"
+                                                        PointerExited="LogoPreviewContainer_PointerExited">
+                                                        <!--  Placeholder when no logo is picked  -->
+                                                        <Border
+                                                            HorizontalAlignment="Stretch"
+                                                            VerticalAlignment="Stretch"
+                                                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="4"
+                                                            Visibility="{x:Bind ViewModel.HasLogo, Converter={StaticResource BoolToVisibility}, ConverterParameter=True, Mode=OneWay}">
+                                                            <StackPanel
+                                                                HorizontalAlignment="Center"
+                                                                VerticalAlignment="Center"
+                                                                Opacity="0.4"
+                                                                Spacing="8">
+                                                                <Viewbox Width="40" Height="40">
+                                                                    <SymbolIcon Symbol="Pictures" />
+                                                                </Viewbox>
+                                                                <TextBlock
+                                                                    HorizontalAlignment="Center"
+                                                                    FontSize="12"
+                                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                                    Text="No logo selected" />
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <!--  Logo preview when a logo is picked  -->
+                                                        <Border
+                                                            HorizontalAlignment="Stretch"
+                                                            VerticalAlignment="Stretch"
+                                                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="4"
+                                                            Visibility="{x:Bind ViewModel.HasLogo, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
+                                                            <Image
+                                                                MaxWidth="150"
+                                                                MaxHeight="150"
+                                                                HorizontalAlignment="Center"
+                                                                VerticalAlignment="Center"
+                                                                Source="{x:Bind ViewModel.LogoPreviewImage, Mode=OneWay}"
+                                                                Stretch="Uniform" />
+                                                        </Border>
+                                                        <!--  Pick Image overlay on hover  -->
+                                                        <Border
+                                                            x:Name="PickImageOverlay"
+                                                            HorizontalAlignment="Stretch"
+                                                            VerticalAlignment="Stretch"
+                                                            Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+                                                            CornerRadius="4"
+                                                            IsHitTestVisible="False"
+                                                            Opacity="0">
+                                                            <Button
+                                                                HorizontalAlignment="Center"
+                                                                VerticalAlignment="Center"
+                                                                Command="{x:Bind ViewModel.SelectLogoCommand}">
+                                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                                    <SymbolIcon Symbol="Pictures" />
+                                                                    <TextBlock Text="Pick Image" />
+                                                                </StackPanel>
+                                                            </Button>
+                                                        </Border>
+                                                        <!--  X button to clear logo (top-left, above overlay)  -->
+                                                        <Button
+                                                            Width="24"
+                                                            Height="24"
+                                                            Margin="4"
+                                                            Padding="0"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Top"
+                                                            Command="{x:Bind ViewModel.RemoveLogoCommand}"
+                                                            CornerRadius="12"
+                                                            ToolTipService.ToolTip="Remove logo"
+                                                            Visibility="{x:Bind ViewModel.HasLogo, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
+                                                            <Viewbox Width="10" Height="10">
+                                                                <SymbolIcon Symbol="Cancel" />
+                                                            </Viewbox>
+                                                        </Button>
+                                                    </Grid>
                                                     <Button
+                                                        Width="160"
+                                                        HorizontalAlignment="Center"
                                                         Command="{x:Bind ViewModel.RemoveLogoBackgroundCommand}"
                                                         IsEnabled="{x:Bind ViewModel.HasLogo, Mode=OneWay}"
                                                         ToolTipService.ToolTip="Use on-device AI to remove the background from the logo image"
                                                         Visibility="{x:Bind ViewModel.IsBackgroundRemovalAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                                             <FontIcon FontSize="16" Glyph="&#xE945;" />
-                                                            <TextBlock Text="Remove BG" />
+                                                            <TextBlock Text="Erase Background" />
                                                         </StackPanel>
                                                     </Button>
 
