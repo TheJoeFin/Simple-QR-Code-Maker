@@ -102,6 +102,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private System.Drawing.Bitmap? logoImage = null;
 
     [ObservableProperty]
+    private string? logoSvgContent = null;
+
+    [ObservableProperty]
     private bool hasLogo = false;
 
     [ObservableProperty]
@@ -165,6 +168,17 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             // Dispose old logo first
             LogoImage?.Dispose();
 
+            if (logoPath.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+            {
+                string svgContent = await File.ReadAllTextAsync(logoPath);
+                LogoSvgContent = svgContent;
+                LogoImage = BarcodeHelpers.RasterizeSvgToBitmap(svgContent, 512, 512);
+                currentLogoPath = logoPath;
+                return;
+            }
+
+            // Raster logo: clear any stale SVG content
+            LogoSvgContent = null;
             StorageFile file = await StorageFile.GetFileFromPathAsync(logoPath);
             using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
             LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
@@ -175,6 +189,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             Debug.WriteLine($"Failed to load logo from history: {ex.Message}");
             LogoImage?.Dispose();
             LogoImage = null;
+            LogoSvgContent = null;
             currentLogoPath = null;
         }
     }
@@ -271,6 +286,21 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoPreviewImage = null;
         }
     }
+
+    partial void OnLogoSvgContentChanged(string? value)
+    {
+        OnPropertyChanged(nameof(IsSvgLogo));
+        OnPropertyChanged(nameof(CanRemoveLogoBackground));
+    }
+
+    partial void OnIsBackgroundRemovalAvailableChanged(bool value)
+    {
+        OnPropertyChanged(nameof(CanRemoveLogoBackground));
+    }
+
+    public bool IsSvgLogo => LogoSvgContent != null;
+
+    public bool CanRemoveLogoBackground => IsBackgroundRemovalAvailable && !IsSvgLogo;
 
     partial void OnLogoSizePercentageChanged(double value)
     {
@@ -473,6 +503,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 LogoImage = LogoImage,
                 LogoSizePercentage = LogoSizePercentage,
                 LogoPaddingPixels = LogoPaddingPixels,
+                LogoSvgContent = LogoSvgContent,
             };
 
             double ratio = barcodeImageItem.ColorContrastRatio;
@@ -906,6 +937,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         openPicker.FileTypeFilter.Add(".jpeg");
         openPicker.FileTypeFilter.Add(".bmp");
         openPicker.FileTypeFilter.Add(".gif");
+        openPicker.FileTypeFilter.Add(".svg");
 
         Window window = new();
         IntPtr windowHandle = WindowNative.GetWindowHandle(window);
@@ -921,11 +953,22 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             // Dispose of the old logo if it exists
             LogoImage?.Dispose();
 
-            // Use stream to access file instead of direct path for better compatibility
-            using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
-            LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+            if (file.FileType.Equals(".svg", StringComparison.OrdinalIgnoreCase))
+            {
+                // SVG logo: store raw content for lossless SVG export; rasterize for preview and PNG export
+                string svgContent = await FileIO.ReadTextAsync(file);
+                LogoSvgContent = svgContent;
+                LogoImage = BarcodeHelpers.RasterizeSvgToBitmap(svgContent, 512, 512);
+            }
+            else
+            {
+                // Raster logo: clear any previous SVG content, load bitmap directly
+                LogoSvgContent = null;
+                using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
+                LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+            }
 
-            // FIX: Store the selected file path so it can be saved to history
+            // Store the selected file path so it can be saved to history
             currentLogoPath = file.Path;
         }
         catch (Exception ex)
@@ -943,6 +986,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         LogoImage?.Dispose();
         LogoImage = null;
+        LogoSvgContent = null;
         currentLogoPath = null;
     }
 
@@ -971,8 +1015,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     /// <summary>
-    /// Saves the current <see cref="LogoImage"/> to the local LogoImages folder
-    /// and updates <see cref="currentLogoPath"/>.
+    /// Saves the current logo to the local LogoImages folder and updates <see cref="currentLogoPath"/>.
+    /// SVG logos are saved as .svg; raster logos are saved as .png.
     /// </summary>
     private async Task<string?> SaveLogoImageToDisk()
     {
@@ -982,6 +1026,16 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         try
         {
             StorageFolder logoFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("LogoImages", CreationCollisionOption.OpenIfExists);
+
+            if (LogoSvgContent != null)
+            {
+                string svgFileName = $"logo_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.svg";
+                StorageFile svgFile = await logoFolder.CreateFileAsync(svgFileName, CreationCollisionOption.ReplaceExisting);
+                await FileIO.WriteTextAsync(svgFile, LogoSvgContent);
+                currentLogoPath = svgFile.Path;
+                return svgFile.Path;
+            }
+
             string fileName = $"logo_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.png";
             StorageFile logoFile = await logoFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
 

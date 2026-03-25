@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Media.Imaging;
+﻿using ImageMagick;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -33,6 +34,28 @@ public static class BarcodeHelpers
             "H" => 40,  // High: ~30%
             _ => 20
         };
+    }
+
+    /// <summary>
+    /// Rasterizes SVG content to a System.Drawing.Bitmap at the specified dimensions.
+    /// Uses Magick.NET; the SVG is scaled to fit preserving aspect ratio.
+    /// </summary>
+    public static Bitmap RasterizeSvgToBitmap(string svgContent, int width, int height)
+    {
+        MagickReadSettings settings = new()
+        {
+            Format = MagickFormat.Svg,
+            Width = (uint)width,
+            Height = (uint)height,
+            BackgroundColor = MagickColors.Transparent,
+        };
+        byte[] svgBytes = System.Text.Encoding.UTF8.GetBytes(svgContent);
+        using MagickImage image = new(svgBytes, settings);
+        image.Format = MagickFormat.Png32;
+        using MemoryStream ms = new();
+        image.Write(ms);
+        ms.Position = 0;
+        return new Bitmap(ms);
     }
 
     public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0)
@@ -212,7 +235,7 @@ public static class BarcodeHelpers
         return $"{smallestSideCm:F2} x {smallestSideCm:F2} cm";
     }
 
-    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0)
+    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null)
     {
         SvgRenderer svgRenderer = new()
         {
@@ -238,18 +261,18 @@ public static class BarcodeHelpers
         SvgImage svg = barcodeWriter.Write(text);
 
         // If a logo is provided, embed it in the SVG
-        if (logoImage != null)
+        if (logoImage != null || logoSvgContent != null)
         {
             // Get the QR code details to calculate module size
             QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
             int moduleCount = qrCode.Version.DimensionForVersion;
-            svg = EmbedLogoInSvg(svg, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
+            svg = EmbedLogoInSvg(svg, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background, logoSvgContent);
         }
 
         return svg;
     }
 
-    private static SvgImage EmbedLogoInSvg(SvgImage svg, Bitmap logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels, System.Drawing.Color backgroundColor)
+    private static SvgImage EmbedLogoInSvg(SvgImage svg, Bitmap? logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels, System.Drawing.Color backgroundColor, string? logoSvgContent = null)
     {
         const int svgSize = 1024; // Should match the encoding options Width/Height
 
@@ -289,55 +312,79 @@ public static class BarcodeHelpers
             logoDisplayHeight = punchoutSize + (Math.Abs(paddingPixels) * 2);
         }
 
-        // Calculate logo dimensions preserving aspect ratio
-        float aspectRatio = (float)logo.Width / logo.Height;
-        int logoWidth, logoHeight;
-
-        if (aspectRatio > 1) // Wider than tall
-        {
-            logoWidth = logoDisplayWidth;
-            logoHeight = (int)(logoDisplayWidth / aspectRatio);
-        }
-        else // Taller than wide or square
-        {
-            logoHeight = logoDisplayHeight;
-            logoWidth = (int)(logoDisplayHeight * aspectRatio);
-        }
-
-        // Center the logo within the punchout area (or offset if larger)
-        int logoX = punchoutX + (punchoutSize - logoWidth) / 2;
-        int logoY = punchoutY + (punchoutSize - logoHeight) / 2;
-
-        // Resize the logo to the display size before encoding to reduce SVG file size
-        Bitmap resizedLogo = new(logoWidth, logoHeight);
-        using (Graphics g = Graphics.FromImage(resizedLogo))
-        {
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-            g.DrawImage(logo, 0, 0, logoWidth, logoHeight);
-        }
-
-        // Convert resized logo to base64 for embedding
-        string base64Logo;
-        using (MemoryStream ms = new())
-        {
-            resizedLogo.Save(ms, ImageFormat.Png);
-            byte[] imageBytes = ms.ToArray();
-            base64Logo = Convert.ToBase64String(imageBytes);
-        }
-        resizedLogo.Dispose();
-
         // Build the SVG logo element with punchout background and logo
         // Convert the background color to RGB format for SVG
         string backgroundColorHex = $"rgb({backgroundColor.R},{backgroundColor.G},{backgroundColor.B})";
 
-        string logoSvgElement = $@"
+        string logoSvgElement;
+
+        if (logoSvgContent != null)
+        {
+            // SVG logo: inline as a nested <svg> element so all viewers render it correctly
+            int logoWidth = logoDisplayWidth;
+            int logoHeight = logoDisplayHeight;
+            int logoX = punchoutX + (punchoutSize - logoWidth) / 2;
+            int logoY = punchoutY + (punchoutSize - logoHeight) / 2;
+
+            string viewBox = ExtractSvgViewBox(logoSvgContent);
+            string svgInner = ExtractSvgInnerContent(logoSvgContent);
+            string viewBoxAttr = string.IsNullOrEmpty(viewBox) ? string.Empty : $@" viewBox=""{viewBox}""";
+
+            logoSvgElement = $@"
+  <!-- Logo punchout background -->
+  <rect x=""{punchoutX}"" y=""{punchoutY}"" width=""{punchoutSize}"" height=""{punchoutSize}"" fill=""{backgroundColorHex}""/>
+  <!-- Logo SVG (inlined) -->
+  <svg x=""{logoX}"" y=""{logoY}"" width=""{logoWidth}"" height=""{logoHeight}""{viewBoxAttr} preserveAspectRatio=""xMidYMid meet"" overflow=""visible"">
+    {svgInner}
+  </svg>";
+        }
+        else
+        {
+            // Raster logo: calculate AR and embed as base64 PNG
+            float aspectRatio = (float)logo!.Width / logo.Height;
+            int logoWidth, logoHeight;
+
+            if (aspectRatio > 1) // Wider than tall
+            {
+                logoWidth = logoDisplayWidth;
+                logoHeight = (int)(logoDisplayWidth / aspectRatio);
+            }
+            else // Taller than wide or square
+            {
+                logoHeight = logoDisplayHeight;
+                logoWidth = (int)(logoDisplayHeight * aspectRatio);
+            }
+
+            // Center the logo within the punchout area (or offset if larger)
+            int logoX = punchoutX + (punchoutSize - logoWidth) / 2;
+            int logoY = punchoutY + (punchoutSize - logoHeight) / 2;
+
+            // Resize the logo to the display size before encoding to reduce SVG file size
+            Bitmap resizedLogo = new(logoWidth, logoHeight);
+            using (Graphics g = Graphics.FromImage(resizedLogo))
+            {
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                g.DrawImage(logo, 0, 0, logoWidth, logoHeight);
+            }
+
+            string base64Logo;
+            using (MemoryStream ms = new())
+            {
+                resizedLogo.Save(ms, ImageFormat.Png);
+                byte[] imageBytes = ms.ToArray();
+                base64Logo = Convert.ToBase64String(imageBytes);
+            }
+            resizedLogo.Dispose();
+
+            logoSvgElement = $@"
   <!-- Logo punchout background -->
   <rect x=""{punchoutX}"" y=""{punchoutY}"" width=""{punchoutSize}"" height=""{punchoutSize}"" fill=""{backgroundColorHex}""/>
   <!-- Logo image -->
   <image x=""{logoX}"" y=""{logoY}"" width=""{logoWidth}"" height=""{logoHeight}"" href=""data:image/png;base64,{base64Logo}""/>";
+        }
 
         // Find the closing </svg> tag and insert the logo before it
         string modifiedContent = svg.Content.Replace("</svg>", logoSvgElement + "\n</svg>");
@@ -378,5 +425,63 @@ public static class BarcodeHelpers
                 strings.Add((result.Text, result));
 
         return strings;
+    }
+
+    /// <summary>
+    /// Extracts the viewBox value from an SVG string (e.g. "0 0 600 530").
+    /// Falls back to constructing one from width/height attributes if no viewBox is present.
+    /// </summary>
+    private static string ExtractSvgViewBox(string svgContent)
+    {
+        // Prefer an explicit viewBox attribute
+        System.Text.RegularExpressions.Match viewBoxMatch =
+            System.Text.RegularExpressions.Regex.Match(
+                svgContent,
+                @"viewBox\s*=\s*[""']([^""']+)[""']",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        if (viewBoxMatch.Success)
+            return viewBoxMatch.Groups[1].Value;
+
+        // Fall back to synthesising viewBox from width/height on the <svg> element
+        System.Text.RegularExpressions.Match widthMatch =
+            System.Text.RegularExpressions.Regex.Match(
+                svgContent,
+                @"<svg[^>]*\swidth\s*=\s*[""']([0-9.]+)[""']",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        System.Text.RegularExpressions.Match heightMatch =
+            System.Text.RegularExpressions.Regex.Match(
+                svgContent,
+                @"<svg[^>]*\sheight\s*=\s*[""']([0-9.]+)[""']",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        if (widthMatch.Success && heightMatch.Success)
+            return $"0 0 {widthMatch.Groups[1].Value} {heightMatch.Groups[1].Value}";
+
+        return string.Empty;
+    }
+
+    /// <summary>
+    /// Extracts the inner content of an SVG string — everything between the
+    /// end of the opening &lt;svg&gt; tag and the last &lt;/svg&gt;.
+    /// Correctly skips any leading XML declaration or DOCTYPE preamble.
+    /// </summary>
+    private static string ExtractSvgInnerContent(string svgContent)
+    {
+        // Locate the <svg element itself (skipping <?xml ...?> and other preamble)
+        int svgTagStart = svgContent.IndexOf("<svg", StringComparison.OrdinalIgnoreCase);
+        if (svgTagStart < 0)
+            return string.Empty;
+
+        // Find the closing > of the opening <svg ...> tag
+        int openTagEnd = svgContent.IndexOf('>', svgTagStart);
+        if (openTagEnd < 0)
+            return string.Empty;
+
+        // Find the last </svg> (the one that closes the root element)
+        int closeTagStart = svgContent.LastIndexOf("</svg>", StringComparison.OrdinalIgnoreCase);
+        if (closeTagStart < 0 || closeTagStart <= openTagEnd)
+            return string.Empty;
+
+        return svgContent[(openTagEnd + 1)..closeTagStart];
     }
 }

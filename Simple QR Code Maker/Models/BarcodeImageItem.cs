@@ -40,6 +40,8 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public double LogoPaddingPixels { get; set; } = 8.0;
 
+    public string? LogoSvgContent { get; set; }
+
     public QRCode QRCodeDetails => Encoder.encode(CodeAsText, ErrorCorrection);
 
     public string ToolTipText => $"Smallest recommended size {SmallestSide}, {CodeAsText}";
@@ -69,7 +71,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     {
         try
         {
-            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels);
+            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent);
             using IRandomAccessStream randomAccessStream = await file.OpenAsync(FileAccessMode.ReadWrite);
             DataWriter dataWriter = new(randomAccessStream);
             dataWriter.WriteString(svgImage.Content);
@@ -87,7 +89,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     {
         try
         {
-            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels);
+            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent);
             return svgImage.Content;
         }
         catch
