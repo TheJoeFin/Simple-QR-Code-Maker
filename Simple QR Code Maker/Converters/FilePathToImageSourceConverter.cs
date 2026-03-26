@@ -12,8 +12,12 @@ public class FilePathToImageSourceConverter : IValueConverter
 
         try
         {
+            Uri uri = new(path);
+            if (path.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+                return new SvgImageSource(uri);
+
             BitmapImage bitmap = new();
-            bitmap.UriSource = new Uri(path);
+            bitmap.UriSource = uri;
             return bitmap;
         }
         catch

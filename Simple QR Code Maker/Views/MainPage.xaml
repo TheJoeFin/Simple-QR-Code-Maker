@@ -244,7 +244,7 @@
                                                         Command="{x:Bind ViewModel.RemoveLogoBackgroundCommand}"
                                                         IsEnabled="{x:Bind ViewModel.HasLogo, Mode=OneWay}"
                                                         ToolTipService.ToolTip="Use on-device AI to remove the background from the logo image"
-                                                        Visibility="{x:Bind ViewModel.IsBackgroundRemovalAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
+                                                        Visibility="{x:Bind ViewModel.CanRemoveLogoBackground, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                                             <FontIcon FontSize="16" Glyph="&#xE945;" />
                                                             <TextBlock Text="Erase Background" />
