@@ -451,8 +451,31 @@ public static class BarcodeHelpers
   <image x=""{logoX}"" y=""{logoY}"" width=""{logoWidth}"" height=""{logoHeight}"" href=""data:image/png;base64,{base64Logo}""/>";
         }
 
-        // Find the closing </svg> tag and insert the logo before it
-        string modifiedContent = svg.Content.Replace("</svg>", logoSvgElement + "\n</svg>");
+        // Build an SVG mask that subtracts the logo area from the QR code content.
+        // A plain <rect fill="transparent"> painted on top of SVG paths does nothing —
+        // the mask approach is the only reliable way to clear QR modules in the logo zone.
+        string maskId = "logo-mask";
+        string maskDefs = $"""
+<defs>
+  <mask id="{maskId}">
+    <rect width="{svgSize}" height="{svgSize}" fill="white"/>
+    <rect x="{punchoutX}" y="{punchoutY}" width="{punchoutSize}" height="{punchoutSize}" fill="black"/>
+  </mask>
+</defs>
+""";
+
+        // Find the end of the opening <svg> tag so we can inject <defs> and wrap the QR
+        // content in a masked group.  Start search at the <svg element, not at position 0,
+        // to skip any leading <?xml?> or <!DOCTYPE> declarations.
+        string svgContent = svg.Content;
+        int svgTagStart = svgContent.IndexOf("<svg", StringComparison.OrdinalIgnoreCase);
+        int openTagEnd = svgContent.IndexOf('>', svgTagStart);
+
+        string modifiedContent = svgContent[..(openTagEnd + 1)]
+            + "\n" + maskDefs
+            + $"\n<g mask=\"url(#{maskId})\">"
+            + svgContent[(openTagEnd + 1)..]
+                .Replace("</svg>", $"</g>\n{logoSvgElement}\n</svg>", StringComparison.OrdinalIgnoreCase);
 
         return new SvgImage(modifiedContent);
     }
