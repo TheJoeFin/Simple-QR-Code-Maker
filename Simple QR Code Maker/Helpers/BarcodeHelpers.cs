@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using Windows.Storage;
 using ZXing;
 using ZXing.Common;
@@ -13,7 +14,7 @@ using static ZXing.Rendering.SvgRenderer;
 
 namespace Simple_QR_Code_Maker.Helpers;
 
-public static class BarcodeHelpers
+public static partial class BarcodeHelpers
 {
     /// <summary>
     /// Calculate the maximum safe logo size percentage based on QR code error correction level and version
@@ -467,15 +468,23 @@ public static class BarcodeHelpers
         // Find the end of the opening <svg> tag so we can inject <defs> and wrap the QR
         // content in a masked group.  Start search at the <svg element, not at position 0,
         // to skip any leading <?xml?> or <!DOCTYPE> declarations.
+        // Use a regex that skips quoted attribute values so a stray '>' inside an attribute
+        // (e.g. style="fill:>") does not split the tag prematurely.
         string svgContent = svg.Content;
-        int svgTagStart = svgContent.IndexOf("<svg", StringComparison.OrdinalIgnoreCase);
-        int openTagEnd = svgContent.IndexOf('>', svgTagStart);
+        Match openTagMatch = SvgTagRegex().Match(svgContent);
+        int openTagEnd = openTagMatch.Index + openTagMatch.Length - 1;
+
+        // Wrap only the outermost </svg> — use LastIndexOf so any nested <svg> elements
+        // (e.g. from an inlined SVG logo) are not accidentally closed early.
+        string svgBody = svgContent[(openTagEnd + 1)..];
+        int lastClose = svgBody.LastIndexOf("</svg>", StringComparison.OrdinalIgnoreCase);
 
         string modifiedContent = svgContent[..(openTagEnd + 1)]
             + "\n" + maskDefs
             + $"\n<g mask=\"url(#{maskId})\">"
-            + svgContent[(openTagEnd + 1)..]
-                .Replace("</svg>", $"</g>\n{logoSvgElement}\n</svg>", StringComparison.OrdinalIgnoreCase);
+            + (lastClose >= 0
+                ? svgBody[..lastClose] + $"</g>\n{logoSvgElement}\n</svg>"
+                : svgBody + $"</g>\n{logoSvgElement}\n</svg>");  // malformed but degrade gracefully
 
         return new SvgImage(modifiedContent);
     }
@@ -522,25 +531,16 @@ public static class BarcodeHelpers
     private static string ExtractSvgViewBox(string svgContent)
     {
         // Prefer an explicit viewBox attribute
-        System.Text.RegularExpressions.Match viewBoxMatch =
-            System.Text.RegularExpressions.Regex.Match(
-                svgContent,
-                @"viewBox\s*=\s*[""']([^""']+)[""']",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        Match viewBoxMatch =
+            SvgViewboxRegex().Match(svgContent);
         if (viewBoxMatch.Success)
             return viewBoxMatch.Groups[1].Value;
 
         // Fall back to synthesising viewBox from width/height on the <svg> element
-        System.Text.RegularExpressions.Match widthMatch =
-            System.Text.RegularExpressions.Regex.Match(
-                svgContent,
-                @"<svg[^>]*\swidth\s*=\s*[""']([0-9.]+)[""']",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-        System.Text.RegularExpressions.Match heightMatch =
-            System.Text.RegularExpressions.Regex.Match(
-                svgContent,
-                @"<svg[^>]*\sheight\s*=\s*[""']([0-9.]+)[""']",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        Match widthMatch =
+            SvgTagWidthRegex().Match(svgContent);
+        Match heightMatch =
+            SvgTagHeightRegex().Match(svgContent);
 
         if (widthMatch.Success && heightMatch.Success)
             return $"0 0 {widthMatch.Groups[1].Value} {heightMatch.Groups[1].Value}";
@@ -572,4 +572,16 @@ public static class BarcodeHelpers
 
         return svgContent[(openTagEnd + 1)..closeTagStart];
     }
+
+    [GeneratedRegex(@"<svg\b(?:[^>""']|""[^""]*""|'[^']*')*>", RegexOptions.IgnoreCase | RegexOptions.Singleline, "en-US")]
+    private static partial Regex SvgTagRegex();
+
+    [GeneratedRegex(@"viewBox\s*=\s*[""']([^""']+)[""']", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex SvgViewboxRegex();
+
+    [GeneratedRegex(@"<svg[^>]*\swidth\s*=\s*[""']([0-9.]+)[""']", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex SvgTagWidthRegex();
+
+    [GeneratedRegex(@"<svg[^>]*\sheight\s*=\s*[""']([0-9.]+)[""']", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex SvgTagHeightRegex();
 }
