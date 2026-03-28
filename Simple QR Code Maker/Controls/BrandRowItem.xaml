@@ -6,12 +6,14 @@
     xmlns:converters="using:Simple_QR_Code_Maker.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
     mc:Ignorable="d">
 
     <UserControl.Resources>
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
         <converters:FilePathToImageSourceConverter x:Key="FilePathToImage" />
         <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
+        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
     </UserControl.Resources>
 
     <Grid Margin="2" Padding="0,6">
@@ -24,11 +26,20 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <TextBlock
-            FontWeight="SemiBold"
-            Style="{StaticResource BodyTextStyle}"
-            Text="{x:Bind Data.Name, Mode=OneWay}"
-            TextTrimming="WordEllipsis" />
+        <StackPanel Orientation="Horizontal" Spacing="4">
+            <TextBlock
+                FontWeight="SemiBold"
+                Style="{StaticResource BodyTextStyle}"
+                Text="{x:Bind Data.Name, Mode=OneWay}"
+                TextTrimming="WordEllipsis" />
+            <FontIcon
+                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                FontSize="12"
+                Glyph="&#xE734;"
+                ToolTipService.ToolTip="Default brand"
+                VerticalAlignment="Center"
+                Visibility="{x:Bind Data.IsDefault, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
+        </StackPanel>
         <StackPanel
             Grid.Row="1"
             Orientation="Horizontal"

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="Simple_QR_Code_Maker.Controls.BrandEditDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Simple_QR_Code_Maker.Controls"
+    xmlns:converters="using:Simple_QR_Code_Maker.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
+    Title="Edit Brand"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{x:Bind IsNameValid, Mode=OneWay}"
+    PrimaryButtonText="Save"
+    mc:Ignorable="d">
+
+    <ContentDialog.Resources>
+        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+        <converters:FilePathToImageSourceConverter x:Key="FilePathToImage" />
+        <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
+    </ContentDialog.Resources>
+
+    <ScrollViewer MaxHeight="600" VerticalScrollBarVisibility="Auto">
+        <StackPanel Width="320" Spacing="10">
+
+            <!--  Name  -->
+            <TextBlock FontWeight="SemiBold" Text="Brand Name" />
+            <TextBox
+                PlaceholderText="Brand name"
+                Text="{x:Bind EditName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Rectangle
+                Height="1"
+                Fill="{ThemeResource DividerStrokeColorDefaultBrush}"
+                Opacity="0.5" />
+
+            <!--  Foreground color  -->
+            <StackPanel
+                Orientation="Horizontal"
+                Spacing="8"
+                VerticalAlignment="Center">
+                <CheckBox
+                    MinWidth="0"
+                    Content="Foreground color"
+                    IsChecked="{x:Bind IncludeForeground, Mode=TwoWay}" />
+                <controls:ColorPickerButton
+                    Color="{x:Bind ForegroundColor, Mode=TwoWay}"
+                    Visibility="{x:Bind IncludeForeground, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
+            </StackPanel>
+
+            <!--  Background color  -->
+            <StackPanel
+                Orientation="Horizontal"
+                Spacing="8"
+                VerticalAlignment="Center">
+                <CheckBox
+                    MinWidth="0"
+                    Content="Background color"
+                    IsChecked="{x:Bind IncludeBackground, Mode=TwoWay}" />
+                <controls:ColorPickerButton
+                    Color="{x:Bind BackgroundColor, Mode=TwoWay}"
+                    Visibility="{x:Bind IncludeBackground, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
+            </StackPanel>
+
+            <Rectangle
+                Height="1"
+                Fill="{ThemeResource DividerStrokeColorDefaultBrush}"
+                Opacity="0.5" />
+
+            <!--  URL / text  -->
+            <CheckBox Content="URL / text" IsChecked="{x:Bind IncludeUrl, Mode=TwoWay}" />
+            <TextBox
+                PlaceholderText="URL or text content"
+                Text="{x:Bind UrlContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                Visibility="{x:Bind IncludeUrl, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
+
+            <Rectangle
+                Height="1"
+                Fill="{ThemeResource DividerStrokeColorDefaultBrush}"
+                Opacity="0.5" />
+
+            <!--  Logo image  -->
+            <CheckBox Content="Logo image" IsChecked="{x:Bind IncludeLogo, Mode=TwoWay}" />
+            <StackPanel Spacing="8" Visibility="{x:Bind IncludeLogo, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
+
+                <!--  Preview area  -->
+                <Grid
+                    Width="120"
+                    Height="120"
+                    HorizontalAlignment="Left">
+                    <!--  Placeholder when no logo path set  -->
+                    <Border
+                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Visibility="{x:Bind LogoPath, Converter={StaticResource NullToVisibility}, ConverterParameter=Inverted, Mode=OneWay}">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Opacity="0.4"
+                            Spacing="4">
+                            <Viewbox
+                                Width="32"
+                                Height="32">
+                                <SymbolIcon Symbol="Pictures" />
+                            </Viewbox>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                FontSize="12"
+                                Text="No image" />
+                        </StackPanel>
+                    </Border>
+                    <!--  Image preview when path is set  -->
+                    <Border
+                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Visibility="{x:Bind LogoPath, Converter={StaticResource NullToVisibility}, Mode=OneWay}">
+                        <Image
+                            MaxWidth="110"
+                            MaxHeight="110"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Source="{x:Bind LogoPath, Converter={StaticResource FilePathToImage}, Mode=OneWay}"
+                            Stretch="Uniform" />
+                    </Border>
+                    <!--  Clear logo button (top-left corner)  -->
+                    <Button
+                        Width="24"
+                        Height="24"
+                        Margin="4"
+                        Padding="0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Command="{x:Bind ClearLogoCommand}"
+                        CornerRadius="12"
+                        ToolTipService.ToolTip="Remove logo"
+                        Visibility="{x:Bind LogoPath, Converter={StaticResource NullToVisibility}, Mode=OneWay}">
+                        <Viewbox
+                            Width="10"
+                            Height="10">
+                            <SymbolIcon Symbol="Cancel" />
+                        </Viewbox>
+                    </Button>
+                </Grid>
+
+                <!--  Pick image button  -->
+                <Button Command="{x:Bind SelectLogoCommand}" HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <SymbolIcon Symbol="Pictures" />
+                        <TextBlock Text="Pick Image" />
+                    </StackPanel>
+                </Button>
+
+                <!--  Size slider  -->
+                <TextBlock
+                    FontSize="12"
+                    FontWeight="SemiBold"
+                    Text="Image Size" />
+                <Slider
+                    Maximum="30"
+                    Minimum="7"
+                    StepFrequency="1"
+                    TickFrequency="5"
+                    TickPlacement="BottomRight"
+                    Value="{x:Bind LogoSize, Mode=TwoWay}" />
+                <TextBlock HorizontalAlignment="Center" FontSize="12">
+                    <Run Text="{x:Bind LogoSize, Mode=OneWay}" />
+                    <Run Text="percent" />
+                </TextBlock>
+
+                <!--  Padding slider  -->
+                <TextBlock
+                    FontSize="12"
+                    FontWeight="SemiBold"
+                    Text="Padding around image" />
+                <Slider
+                    Maximum="20"
+                    Minimum="-20"
+                    StepFrequency="1"
+                    TickFrequency="8"
+                    TickPlacement="BottomRight"
+                    Value="{x:Bind LogoPadding, Mode=TwoWay}" />
+                <TextBlock HorizontalAlignment="Center" FontSize="12">
+                    <Run Text="{x:Bind LogoPadding, Mode=OneWay}" />
+                    <Run Text="px" />
+                </TextBlock>
+
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</ContentDialog>

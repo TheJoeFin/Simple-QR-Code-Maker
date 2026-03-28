@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Simple_QR_Code_Maker.Controls.ColorPickerButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:Simple_QR_Code_Maker.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:ColorToBrushConverter x:Key="ColorToBrush" />
+    </UserControl.Resources>
+
+    <Button Width="48" ToolTipService.ToolTip="Pick color">
+        <Button.Flyout>
+            <Flyout>
+                <ColorPicker
+                    x:Name="InternalColorPicker"
+                    ColorSpectrumShape="Ring"
+                    IsAlphaEnabled="True"
+                    IsMoreButtonVisible="True" />
+            </Flyout>
+        </Button.Flyout>
+        <Rectangle
+            Width="16"
+            Height="16"
+            Fill="{x:Bind Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
+    </Button>
+</UserControl>
