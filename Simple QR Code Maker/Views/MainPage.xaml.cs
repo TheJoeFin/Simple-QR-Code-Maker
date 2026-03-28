@@ -101,17 +101,40 @@ public sealed partial class MainPage : Page
 
     private void BrandListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (sender is ListView listView && listView.SelectedItem is BrandItem brand)
+        if (sender is not ListView listView)
+            return;
+
+        if (listView.SelectedItem is BrandItem brand && !brand.Equals(ViewModel.SelectedBrand))
         {
             ViewModel.ApplyBrandCommand.Execute(brand);
-            listView.SelectedItem = null;
             BrandFlyout.Hide();
         }
+    }
+
+    private void BrandPickerComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is not ComboBox comboBox || comboBox.SelectedItem is not BrandItem brand)
+            return;
+
+        comboBox.SelectedItem = null;
+        ViewModel.ApplyBrandCommand.Execute(brand);
     }
 
     private void ToggleNewBrandForm_Click(object sender, RoutedEventArgs e)
     {
         ViewModel.IsNewBrandFormVisible = true;
+    }
+
+    private void EditBrand_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement element && element.Tag is BrandItem brand)
+            ViewModel.EditBrandCommand.Execute(brand);
+    }
+
+    private void SetDefaultBrand_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement element && element.Tag is BrandItem brand)
+            ViewModel.SetDefaultBrandCommand.Execute(brand);
     }
 
     private void DeleteBrand_Click(object sender, RoutedEventArgs e)
