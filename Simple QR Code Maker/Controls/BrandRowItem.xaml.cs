@@ -13,7 +13,7 @@ public sealed partial class BrandRowItem : UserControl
     }
 
     public static readonly DependencyProperty DataProperty =
-        DependencyProperty.Register("Data", typeof(BrandItem), typeof(BrandRowItem), new PropertyMetadata(null));
+        DependencyProperty.Register(nameof(Data), typeof(BrandItem), typeof(BrandRowItem), new PropertyMetadata(null));
 
     public BrandRowItem()
     {

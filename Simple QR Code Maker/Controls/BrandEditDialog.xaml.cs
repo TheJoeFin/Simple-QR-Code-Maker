@@ -1,10 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
-using Simple_QR_Code_Maker;
 using Simple_QR_Code_Maker.Models;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using ZXing.QrCode.Internal;
 
 namespace Simple_QR_Code_Maker.Controls;
 
@@ -12,6 +12,14 @@ namespace Simple_QR_Code_Maker.Controls;
 public sealed partial class BrandEditDialog : ContentDialog
 {
     private readonly BrandItem _original;
+
+    public readonly List<ErrorCorrectionOptions> AllCorrectionLevels =
+    [
+        new("L", "Low 7%", ErrorCorrectionLevel.L),
+        new("M", "Medium 15%", ErrorCorrectionLevel.M),
+        new("Q", "Quarter 25%", ErrorCorrectionLevel.Q),
+        new("H", "High 30%", ErrorCorrectionLevel.H),
+    ];
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNameValid))]
@@ -22,6 +30,9 @@ public sealed partial class BrandEditDialog : ContentDialog
 
     [ObservableProperty] private bool includeBackground;
     [ObservableProperty] private Windows.UI.Color backgroundColor;
+
+    [ObservableProperty] private bool includeErrorCorrection;
+    [ObservableProperty] private int selectedCorrectionIndex = 1;
 
     [ObservableProperty] private bool includeUrl;
     [ObservableProperty] private string urlContent = string.Empty;
@@ -52,6 +63,10 @@ public sealed partial class BrandEditDialog : ContentDialog
 
         IncludeBackground = original.Background.HasValue;
         BackgroundColor = original.Background ?? Windows.UI.Color.FromArgb(255, 255, 255, 255);
+
+        IncludeErrorCorrection = original.ErrorCorrectionLevelAsString is not null;
+        int correctionIdx = AllCorrectionLevels.FindIndex(x => x.ErrorCorrectionLevel.ToString() == original.ErrorCorrectionLevelAsString);
+        SelectedCorrectionIndex = correctionIdx >= 0 ? correctionIdx : 1;
 
         IncludeUrl = original.UrlContent is not null;
         UrlContent = original.UrlContent ?? string.Empty;
@@ -103,7 +118,7 @@ public sealed partial class BrandEditDialog : ContentDialog
             Foreground = IncludeForeground ? ForegroundColor : null,
             Background = IncludeBackground ? BackgroundColor : null,
             UrlContent = IncludeUrl && !string.IsNullOrWhiteSpace(UrlContent) ? UrlContent.Trim() : null,
-            ErrorCorrectionLevelAsString = _original.ErrorCorrectionLevelAsString,
+            ErrorCorrectionLevelAsString = IncludeErrorCorrection ? AllCorrectionLevels[SelectedCorrectionIndex].ErrorCorrectionLevel.ToString() : null,
             LogoImagePath = IncludeLogo ? LogoPath : null,
             LogoSizePercentage = IncludeLogo ? LogoSize : null,
             LogoPaddingPixels = IncludeLogo ? LogoPadding : null,

@@ -72,10 +72,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private ObservableCollection<BrandItem> brandItems = [];
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(BrandPickerText))]
     private BrandItem? selectedBrand = null;
-
-    public string BrandPickerText => SelectedBrand?.Name ?? "Select a brand";
 
     private bool _isApplyingBrand = false;
 
@@ -93,6 +90,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private bool includeCenterImage = true;
+
+    [ObservableProperty]
+    private bool includeErrorCorrection = true;
 
     [ObservableProperty]
     private bool isNewBrandFormVisible;
@@ -257,9 +257,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     partial void OnBackgroundColorChanged(Windows.UI.Color value)
     {
         if (!_isApplyingBrand)
-            SelectedBrand = null;
-        if (!_isApplyingBrand)
         {
+            SelectedBrand = null;
             debounceTimer.Stop();
             debounceTimer.Start();
         }
@@ -268,9 +267,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     partial void OnForegroundColorChanged(Windows.UI.Color value)
     {
         if (!_isApplyingBrand)
-            SelectedBrand = null;
-        if (!_isApplyingBrand)
         {
+            SelectedBrand = null;
             debounceTimer.Stop();
             debounceTimer.Start();
         }
@@ -355,9 +353,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     partial void OnLogoSizePercentageChanged(double value)
     {
         if (!_isApplyingBrand)
-            SelectedBrand = null;
-        if (!_isApplyingBrand)
         {
+            SelectedBrand = null;
             debounceTimer.Stop();
             debounceTimer.Start();
         }
@@ -366,9 +363,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     partial void OnLogoPaddingPixelsChanged(double value)
     {
         if (!_isApplyingBrand)
-            SelectedBrand = null;
-        if (!_isApplyingBrand)
         {
+            SelectedBrand = null;
             debounceTimer.Stop();
             debounceTimer.Start();
         }
@@ -790,6 +786,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private void ShareApp() => CopySharePopupOpen = !CopySharePopupOpen;
 
     [RelayCommand]
+    private void SelectErrorCorrectionLevel(ErrorCorrectionOptions option) => SelectedOption = option;
+
+    [RelayCommand]
     [RequiresUnreferencedCode("Calls BrandStorageHelper.SaveBrandsAsync")]
     private async Task CreateNewBrand()
     {
@@ -802,7 +801,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             Foreground = IncludeForeground ? ForegroundColor : null,
             Background = IncludeBackground ? BackgroundColor : null,
             UrlContent = IncludeUrl ? UrlText : null,
-            ErrorCorrectionLevelAsString = SelectedOption.ErrorCorrectionLevel.ToString(),
+            ErrorCorrectionLevelAsString = IncludeErrorCorrection ? SelectedOption.ErrorCorrectionLevel.ToString() : null,
             LogoImagePath = IncludeCenterImage && LogoImage != null ? GetCurrentLogoPath() : null,
             LogoSizePercentage = IncludeCenterImage ? LogoSizePercentage : null,
             LogoPaddingPixels = IncludeCenterImage ? LogoPaddingPixels : null,

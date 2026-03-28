@@ -113,11 +113,11 @@ public sealed partial class MainPage : Page
 
     private void BrandPickerComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (sender is not ComboBox comboBox || comboBox.SelectedItem is not BrandItem brand)
+        if (sender is not ComboBox || e.AddedItems.Count == 0 || e.AddedItems[0] is not BrandItem brand)
             return;
 
-        comboBox.SelectedItem = null;
-        ViewModel.ApplyBrandCommand.Execute(brand);
+        if (!brand.Equals(ViewModel.SelectedBrand))
+            ViewModel.ApplyBrandCommand.Execute(brand);
     }
 
     private void ToggleNewBrandForm_Click(object sender, RoutedEventArgs e)
@@ -164,7 +164,7 @@ public sealed partial class MainPage : Page
     {
         if (sender is Button button && button.Tag is ErrorCorrectionOptions option)
         {
-            ViewModel.SelectedOption = option;
+            ViewModel.SelectErrorCorrectionLevelCommand.Execute(option);
             ErrorCorrectionFlyout.Hide();
         }
     }

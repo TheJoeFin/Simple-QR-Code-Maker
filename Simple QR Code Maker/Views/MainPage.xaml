@@ -58,8 +58,9 @@
                                     DisplayMemberPath="Name"
                                     ItemsSource="{x:Bind ViewModel.BrandItems,
                                                          Mode=OneWay}"
-                                    PlaceholderText="{x:Bind ViewModel.BrandPickerText,
-                                                             Mode=OneWay}"
+                                    PlaceholderText="Select a brand"
+                                    SelectedItem="{x:Bind ViewModel.SelectedBrand,
+                                                          Mode=OneWay}"
                                     SelectionChanged="BrandPickerComboBox_SelectionChanged"
                                     Visibility="{x:Bind ViewModel.BrandItems.Count,
                                                         Converter={StaticResource EmptyCollectionToVisibility},
@@ -494,6 +495,7 @@
                                                         <StackPanel Spacing="4">
                                                             <CheckBox Content="Foreground color" IsChecked="{x:Bind ViewModel.IncludeForeground, Mode=TwoWay}" />
                                                             <CheckBox Content="Background color" IsChecked="{x:Bind ViewModel.IncludeBackground, Mode=TwoWay}" />
+                                                            <CheckBox Content="Error correction" IsChecked="{x:Bind ViewModel.IncludeErrorCorrection, Mode=TwoWay}" />
                                                             <CheckBox Content="URL / text" IsChecked="{x:Bind ViewModel.IncludeUrl, Mode=TwoWay}" />
                                                             <CheckBox Content="Center image" IsChecked="{x:Bind ViewModel.IncludeCenterImage, Mode=TwoWay}" />
                                                         </StackPanel>
