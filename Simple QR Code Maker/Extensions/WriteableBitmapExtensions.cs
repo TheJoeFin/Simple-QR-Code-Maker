@@ -21,7 +21,7 @@ public static class WriteableBitmapExtensions
 
             pngEncoder.SetPixelData(
                 BitmapPixelFormat.Bgra8,
-                BitmapAlphaMode.Ignore,
+                BitmapAlphaMode.Premultiplied,
                 (uint)writeableBitmap.PixelWidth,
                 (uint)writeableBitmap.PixelHeight,
                 96.0,

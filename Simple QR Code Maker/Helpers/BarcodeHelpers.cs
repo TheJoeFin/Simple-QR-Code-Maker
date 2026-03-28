@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using Windows.Storage;
 using ZXing;
 using ZXing.Common;
@@ -13,7 +14,7 @@ using static ZXing.Rendering.SvgRenderer;
 
 namespace Simple_QR_Code_Maker.Helpers;
 
-public static class BarcodeHelpers
+public static partial class BarcodeHelpers
 {
     /// <summary>
     /// Calculate the maximum safe logo size percentage based on QR code error correction level and version
@@ -60,10 +61,13 @@ public static class BarcodeHelpers
 
     public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0)
     {
+        // Always pass fully opaque colors to ZXing — if the background color has A=0, ZXing fills
+        // nothing (transparent brush = SourceOver no-op) and the bitmap initializes to black, making
+        // foreground and background pixels indistinguishable. ApplyAlphaToQrBitmap handles alpha.
         BitmapRenderer bitmapRenderer = new()
         {
-            Foreground = foreground,
-            Background = background
+            Foreground = System.Drawing.Color.FromArgb(255, foreground.R, foreground.G, foreground.B),
+            Background = System.Drawing.Color.FromArgb(255, background.R, background.G, background.B)
         };
 
         BarcodeWriter barcodeWriter = new()
@@ -81,24 +85,78 @@ public static class BarcodeHelpers
         encodingOptions.Hints.Add(EncodeHintType.ERROR_CORRECTION, correctionLevel);
         barcodeWriter.Options = encodingOptions;
 
-        using Bitmap bitmap = barcodeWriter.Write(text);
+        // ZXing's BitmapRenderer uses Format32bppRgb (no alpha). If either color has
+        // transparency, post-process the bitmap to apply the correct alpha channel.
+        using Bitmap rawBitmap = barcodeWriter.Write(text);
+        bool needsAlpha = foreground.A < 255 || background.A < 255;
+        Bitmap bitmap = needsAlpha ? ApplyAlphaToQrBitmap(rawBitmap, foreground, background) : rawBitmap;
 
-        // If a logo is provided, overlay it on the center of the QR code
-        if (logoImage != null)
+        try
         {
-            // Get the QR code details to calculate module size
-            QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
-            int moduleCount = qrCode.Version.DimensionForVersion;
-            OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
+            // If a logo is provided, overlay it on the center of the QR code
+            if (logoImage != null)
+            {
+                // Get the QR code details to calculate module size
+                QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
+                int moduleCount = qrCode.Version.DimensionForVersion;
+                OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
+            }
+
+            using MemoryStream ms = new();
+            bitmap.Save(ms, ImageFormat.Png);
+            WriteableBitmap bitmapImage = new(encodingOptions.Width, encodingOptions.Height);
+            ms.Position = 0;
+            bitmapImage.SetSource(ms.AsRandomAccessStream());
+
+            return bitmapImage;
         }
+        finally
+        {
+            if (needsAlpha) bitmap.Dispose();
+        }
+    }
 
-        using MemoryStream ms = new();
-        bitmap.Save(ms, ImageFormat.Png);
-        WriteableBitmap bitmapImage = new(encodingOptions.Width, encodingOptions.Height);
-        ms.Position = 0;
-        bitmapImage.SetSource(ms.AsRandomAccessStream());
+    /// <summary>
+    /// Converts a ZXing-generated bitmap (Format32bppRgb, no alpha) to a Format32bppArgb
+    /// bitmap with the correct alpha channel applied to foreground and background pixels.
+    /// </summary>
+    private static Bitmap ApplyAlphaToQrBitmap(Bitmap source, System.Drawing.Color foreground, System.Drawing.Color background)
+    {
+        // Clone to Format32bppArgb first: Format32bppRgb stores the alpha byte as 0 in memory,
+        // so SetRemapTable would fail to match OldColor.A=255. The clone conversion sets alpha=255
+        // for every pixel (all Format32bppRgb pixels are fully opaque by definition).
+        using Bitmap argbSource = source.Clone(
+            new System.Drawing.Rectangle(0, 0, source.Width, source.Height),
+            PixelFormat.Format32bppArgb);
 
-        return bitmapImage;
+        Bitmap result = new(source.Width, source.Height, PixelFormat.Format32bppArgb);
+        using Graphics g = Graphics.FromImage(result);
+        g.Clear(System.Drawing.Color.Transparent);
+
+        // Remap the opaque source colors to the user's alpha-aware colors
+        ColorMap[] colorMaps =
+        [
+            new ColorMap
+            {
+                OldColor = System.Drawing.Color.FromArgb(255, background.R, background.G, background.B),
+                NewColor = background
+            },
+            new ColorMap
+            {
+                OldColor = System.Drawing.Color.FromArgb(255, foreground.R, foreground.G, foreground.B),
+                NewColor = foreground
+            }
+        ];
+
+        using ImageAttributes attributes = new();
+        attributes.SetRemapTable(colorMaps);
+
+        g.DrawImage(argbSource,
+            new System.Drawing.Rectangle(0, 0, result.Width, result.Height),
+            0, 0, argbSource.Width, argbSource.Height,
+            GraphicsUnit.Pixel, attributes);
+
+        return result;
     }
 
     private static void OverlayLogoOnQrCode(Bitmap qrCodeBitmap, Bitmap logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels, System.Drawing.Color backgroundColor)
@@ -168,9 +226,15 @@ public static class BarcodeHelpers
         g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
         g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 
-        // Draw the punchout background with the same color as the QR code background
+        // Draw the punchout background with the same color as the QR code background.
+        // Use SourceCopy so a transparent background color actually clears those pixels
+        // rather than being ignored by the default SourceOver compositing.
+        g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
         using SolidBrush backgroundBrush = new(backgroundColor);
         g.FillRectangle(backgroundBrush, punchoutX, punchoutY, punchoutSize, punchoutSize);
+
+        // Reset to SourceOver so the logo composites correctly over the punchout
+        g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
 
         // Draw the logo scaled to fit within or extend beyond the punchout
         g.DrawImage(logo, logoX, logoY, logoWidth, logoHeight);
@@ -313,8 +377,10 @@ public static class BarcodeHelpers
         }
 
         // Build the SVG logo element with punchout background and logo
-        // Convert the background color to RGB format for SVG
-        string backgroundColorHex = $"rgb({backgroundColor.R},{backgroundColor.G},{backgroundColor.B})";
+        // Use rgba() when the background has any transparency so the punchout is correctly transparent
+        string backgroundColorFill = backgroundColor.A < 255
+            ? $"rgba({backgroundColor.R},{backgroundColor.G},{backgroundColor.B},{backgroundColor.A / 255.0:F3})"
+            : $"rgb({backgroundColor.R},{backgroundColor.G},{backgroundColor.B})";
 
         string logoSvgElement;
 
@@ -332,7 +398,7 @@ public static class BarcodeHelpers
 
             logoSvgElement = $@"
   <!-- Logo punchout background -->
-  <rect x=""{punchoutX}"" y=""{punchoutY}"" width=""{punchoutSize}"" height=""{punchoutSize}"" fill=""{backgroundColorHex}""/>
+  <rect x=""{punchoutX}"" y=""{punchoutY}"" width=""{punchoutSize}"" height=""{punchoutSize}"" fill=""{backgroundColorFill}""/>
   <!-- Logo SVG (inlined) -->
   <svg x=""{logoX}"" y=""{logoY}"" width=""{logoWidth}"" height=""{logoHeight}""{viewBoxAttr} preserveAspectRatio=""xMidYMid meet"" overflow=""visible"">
     {svgInner}
@@ -381,13 +447,44 @@ public static class BarcodeHelpers
 
             logoSvgElement = $@"
   <!-- Logo punchout background -->
-  <rect x=""{punchoutX}"" y=""{punchoutY}"" width=""{punchoutSize}"" height=""{punchoutSize}"" fill=""{backgroundColorHex}""/>
+  <rect x=""{punchoutX}"" y=""{punchoutY}"" width=""{punchoutSize}"" height=""{punchoutSize}"" fill=""{backgroundColorFill}""/>
   <!-- Logo image -->
   <image x=""{logoX}"" y=""{logoY}"" width=""{logoWidth}"" height=""{logoHeight}"" href=""data:image/png;base64,{base64Logo}""/>";
         }
 
-        // Find the closing </svg> tag and insert the logo before it
-        string modifiedContent = svg.Content.Replace("</svg>", logoSvgElement + "\n</svg>");
+        // Build an SVG mask that subtracts the logo area from the QR code content.
+        // A plain <rect fill="transparent"> painted on top of SVG paths does nothing —
+        // the mask approach is the only reliable way to clear QR modules in the logo zone.
+        string maskId = "logo-mask";
+        string maskDefs = $"""
+<defs>
+  <mask id="{maskId}">
+    <rect width="{svgSize}" height="{svgSize}" fill="white"/>
+    <rect x="{punchoutX}" y="{punchoutY}" width="{punchoutSize}" height="{punchoutSize}" fill="black"/>
+  </mask>
+</defs>
+""";
+
+        // Find the end of the opening <svg> tag so we can inject <defs> and wrap the QR
+        // content in a masked group.  Start search at the <svg element, not at position 0,
+        // to skip any leading <?xml?> or <!DOCTYPE> declarations.
+        // Use a regex that skips quoted attribute values so a stray '>' inside an attribute
+        // (e.g. style="fill:>") does not split the tag prematurely.
+        string svgContent = svg.Content;
+        Match openTagMatch = SvgTagRegex().Match(svgContent);
+        int openTagEnd = openTagMatch.Index + openTagMatch.Length - 1;
+
+        // Wrap only the outermost </svg> — use LastIndexOf so any nested <svg> elements
+        // (e.g. from an inlined SVG logo) are not accidentally closed early.
+        string svgBody = svgContent[(openTagEnd + 1)..];
+        int lastClose = svgBody.LastIndexOf("</svg>", StringComparison.OrdinalIgnoreCase);
+
+        string modifiedContent = svgContent[..(openTagEnd + 1)]
+            + "\n" + maskDefs
+            + $"\n<g mask=\"url(#{maskId})\">"
+            + (lastClose >= 0
+                ? svgBody[..lastClose] + $"</g>\n{logoSvgElement}\n</svg>"
+                : svgBody + $"</g>\n{logoSvgElement}\n</svg>");  // malformed but degrade gracefully
 
         return new SvgImage(modifiedContent);
     }
@@ -434,25 +531,16 @@ public static class BarcodeHelpers
     private static string ExtractSvgViewBox(string svgContent)
     {
         // Prefer an explicit viewBox attribute
-        System.Text.RegularExpressions.Match viewBoxMatch =
-            System.Text.RegularExpressions.Regex.Match(
-                svgContent,
-                @"viewBox\s*=\s*[""']([^""']+)[""']",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        Match viewBoxMatch =
+            SvgViewboxRegex().Match(svgContent);
         if (viewBoxMatch.Success)
             return viewBoxMatch.Groups[1].Value;
 
         // Fall back to synthesising viewBox from width/height on the <svg> element
-        System.Text.RegularExpressions.Match widthMatch =
-            System.Text.RegularExpressions.Regex.Match(
-                svgContent,
-                @"<svg[^>]*\swidth\s*=\s*[""']([0-9.]+)[""']",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-        System.Text.RegularExpressions.Match heightMatch =
-            System.Text.RegularExpressions.Regex.Match(
-                svgContent,
-                @"<svg[^>]*\sheight\s*=\s*[""']([0-9.]+)[""']",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        Match widthMatch =
+            SvgTagWidthRegex().Match(svgContent);
+        Match heightMatch =
+            SvgTagHeightRegex().Match(svgContent);
 
         if (widthMatch.Success && heightMatch.Success)
             return $"0 0 {widthMatch.Groups[1].Value} {heightMatch.Groups[1].Value}";
@@ -484,4 +572,16 @@ public static class BarcodeHelpers
 
         return svgContent[(openTagEnd + 1)..closeTagStart];
     }
+
+    [GeneratedRegex(@"<svg\b(?:[^>""']|""[^""]*""|'[^']*')*>", RegexOptions.IgnoreCase | RegexOptions.Singleline, "en-US")]
+    private static partial Regex SvgTagRegex();
+
+    [GeneratedRegex(@"viewBox\s*=\s*[""']([^""']+)[""']", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex SvgViewboxRegex();
+
+    [GeneratedRegex(@"<svg[^>]*\swidth\s*=\s*[""']([0-9.]+)[""']", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex SvgTagWidthRegex();
+
+    [GeneratedRegex(@"<svg[^>]*\sheight\s*=\s*[""']([0-9.]+)[""']", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex SvgTagHeightRegex();
 }

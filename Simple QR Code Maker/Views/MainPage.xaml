@@ -104,7 +104,7 @@
                                                 <ColorPicker
                                                     x:Name="ForegroundColorPicker"
                                                     ColorSpectrumShape="Ring"
-                                                    IsAlphaEnabled="False"
+                                                    IsAlphaEnabled="True"
                                                     IsMoreButtonVisible="True"
                                                     Color="{x:Bind ViewModel.ForegroundColor, Mode=TwoWay}" />
                                             </Flyout>
@@ -121,7 +121,7 @@
                                                 <ColorPicker
                                                     x:Name="BackgroundColorPicker"
                                                     ColorSpectrumShape="Ring"
-                                                    IsAlphaEnabled="False"
+                                                    IsAlphaEnabled="True"
                                                     IsMoreButtonVisible="True"
                                                     Color="{x:Bind ViewModel.BackgroundColor, Mode=TwoWay}" />
                                             </Flyout>
