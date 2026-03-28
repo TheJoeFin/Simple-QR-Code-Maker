@@ -28,6 +28,8 @@ public class BrandItem : IEquatable<BrandItem>
 
     public double? LogoPaddingPixels { get; set; }
 
+    public bool IsDefault { get; set; } = false;
+
     public BrandItem()
     {
     }
