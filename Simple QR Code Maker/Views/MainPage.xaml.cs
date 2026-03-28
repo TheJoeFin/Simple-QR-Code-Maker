@@ -1,7 +1,9 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 
@@ -79,5 +81,74 @@ public sealed partial class MainPage : Page
         Storyboard storyboard = new();
         storyboard.Children.Add(animation);
         storyboard.Begin();
+    }
+
+    private void BrandForegroundColor_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is BrandItem brand)
+        {
+            ViewModel.ApplyBrandForegroundCommand.Execute(brand);
+        }
+    }
+
+    private void BrandBackgroundColor_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is BrandItem brand)
+        {
+            ViewModel.ApplyBrandBackgroundCommand.Execute(brand);
+        }
+    }
+
+    private void BrandListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ListView listView && listView.SelectedItem is BrandItem brand)
+        {
+            ViewModel.ApplyBrandCommand.Execute(brand);
+            listView.SelectedItem = null;
+            BrandFlyout.Hide();
+        }
+    }
+
+    private void ToggleNewBrandForm_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.IsNewBrandFormVisible = true;
+    }
+
+    private void DeleteBrand_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement element && element.Tag is BrandItem brand)
+        {
+            ViewModel.DeleteBrandCommand.Execute(brand);
+        }
+    }
+
+    private void BrandNameTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == Windows.System.VirtualKey.Enter)
+        {
+            ViewModel.CreateNewBrandCommand.Execute(null);
+            e.Handled = true;
+        }
+    }
+
+    private void BrandSaveAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        ViewModel.CreateNewBrandCommand.Execute(null);
+        args.Handled = true;
+    }
+
+    private void ErrorCorrectionItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is ErrorCorrectionOptions option)
+        {
+            ViewModel.SelectedOption = option;
+            ErrorCorrectionFlyout.Hide();
+        }
+    }
+
+    private void WhatIsErrorCorrection_Click(object sender, RoutedEventArgs e)
+    {
+        ErrorCorrectionFlyout.Hide();
+        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, "error correction"));
     }
 }

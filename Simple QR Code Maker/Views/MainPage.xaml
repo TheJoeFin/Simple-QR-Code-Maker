@@ -101,12 +101,36 @@
                                     <Button Width="48" ToolTipService.ToolTip="Code Color">
                                         <Button.Flyout>
                                             <Flyout>
-                                                <ColorPicker
-                                                    x:Name="ForegroundColorPicker"
-                                                    ColorSpectrumShape="Ring"
-                                                    IsAlphaEnabled="True"
-                                                    IsMoreButtonVisible="True"
-                                                    Color="{x:Bind ViewModel.ForegroundColor, Mode=TwoWay}" />
+                                                <StackPanel Spacing="8">
+                                                    <ColorPicker
+                                                        x:Name="ForegroundColorPicker"
+                                                        ColorSpectrumShape="Ring"
+                                                        IsAlphaEnabled="True"
+                                                        IsMoreButtonVisible="True"
+                                                        Color="{x:Bind ViewModel.ForegroundColor, Mode=TwoWay}" />
+                                                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.BrandItems, Mode=OneWay}">
+                                                        <ItemsRepeater.Layout>
+                                                            <StackLayout Orientation="Horizontal" Spacing="4" />
+                                                        </ItemsRepeater.Layout>
+                                                        <ItemsRepeater.ItemTemplate>
+                                                            <DataTemplate x:DataType="models:BrandItem">
+                                                                <Button
+                                                                    Width="28"
+                                                                    Height="28"
+                                                                    MinWidth="28"
+                                                                    Padding="0"
+                                                                    Click="BrandForegroundColor_Click"
+                                                                    Tag="{x:Bind}"
+                                                                    ToolTipService.ToolTip="{x:Bind Name}">
+                                                                    <Rectangle
+                                                                        Width="16"
+                                                                        Height="16"
+                                                                        Fill="{x:Bind Foreground, Converter={StaticResource ColorToBrush}}" />
+                                                                </Button>
+                                                            </DataTemplate>
+                                                        </ItemsRepeater.ItemTemplate>
+                                                    </ItemsRepeater>
+                                                </StackPanel>
                                             </Flyout>
                                         </Button.Flyout>
                                         <Button.Content>
@@ -118,12 +142,36 @@
                                     <Button Width="48" ToolTipService.ToolTip="Background Color">
                                         <Button.Flyout>
                                             <Flyout>
-                                                <ColorPicker
-                                                    x:Name="BackgroundColorPicker"
-                                                    ColorSpectrumShape="Ring"
-                                                    IsAlphaEnabled="True"
-                                                    IsMoreButtonVisible="True"
-                                                    Color="{x:Bind ViewModel.BackgroundColor, Mode=TwoWay}" />
+                                                <StackPanel Spacing="8">
+                                                    <ColorPicker
+                                                        x:Name="BackgroundColorPicker"
+                                                        ColorSpectrumShape="Ring"
+                                                        IsAlphaEnabled="True"
+                                                        IsMoreButtonVisible="True"
+                                                        Color="{x:Bind ViewModel.BackgroundColor, Mode=TwoWay}" />
+                                                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.BrandItems, Mode=OneWay}">
+                                                        <ItemsRepeater.Layout>
+                                                            <StackLayout Orientation="Horizontal" Spacing="4" />
+                                                        </ItemsRepeater.Layout>
+                                                        <ItemsRepeater.ItemTemplate>
+                                                            <DataTemplate x:DataType="models:BrandItem">
+                                                                <Button
+                                                                    Width="28"
+                                                                    Height="28"
+                                                                    MinWidth="28"
+                                                                    Padding="0"
+                                                                    Click="BrandBackgroundColor_Click"
+                                                                    Tag="{x:Bind}"
+                                                                    ToolTipService.ToolTip="{x:Bind Name}">
+                                                                    <Rectangle
+                                                                        Width="16"
+                                                                        Height="16"
+                                                                        Fill="{x:Bind Background, Converter={StaticResource ColorToBrush}}" />
+                                                                </Button>
+                                                            </DataTemplate>
+                                                        </ItemsRepeater.ItemTemplate>
+                                                    </ItemsRepeater>
+                                                </StackPanel>
                                             </Flyout>
                                         </Button.Flyout>
                                         <Button.Content>
@@ -133,18 +181,33 @@
                                                 Fill="{x:Bind BackgroundColorPicker.Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
                                         </Button.Content>
                                     </Button>
-                                    <ComboBox
-                                        x:Name="ErrorCorrectionComboBox"
-                                        Width="136"
-                                        ItemsSource="{x:Bind ViewModel.ErrorCorrectionLevels, Mode=OneWay}"
-                                        SelectedItem="{x:Bind ViewModel.SelectedOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        ToolTipService.ToolTip="Level of Error Correction">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate x:DataType="models:ErrorCorrectionOptions">
-                                                <TextBlock Text="{x:Bind Description}" />
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                    </ComboBox>
+                                    <DropDownButton Width="60" ToolTipService.ToolTip="Level of Error Correction">
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedOption.ShortDescription, Mode=OneWay}" />
+                                        <DropDownButton.Flyout>
+                                            <Flyout x:Name="ErrorCorrectionFlyout">
+                                                <StackPanel Spacing="8">
+                                                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.ErrorCorrectionLevels, Mode=OneWay}">
+                                                        <ItemsRepeater.Layout>
+                                                            <StackLayout Spacing="2" />
+                                                        </ItemsRepeater.Layout>
+                                                        <ItemsRepeater.ItemTemplate>
+                                                            <DataTemplate x:DataType="models:ErrorCorrectionOptions">
+                                                                <Button
+                                                                    HorizontalAlignment="Stretch"
+                                                                    HorizontalContentAlignment="Left"
+                                                                    Click="ErrorCorrectionItem_Click"
+                                                                    Content="{x:Bind Description}"
+                                                                    Tag="{x:Bind}" />
+                                                            </DataTemplate>
+                                                        </ItemsRepeater.ItemTemplate>
+                                                    </ItemsRepeater>
+                                                    <HyperlinkButton Click="WhatIsErrorCorrection_Click" FontSize="12">
+                                                        <TextBlock Text="What is error correction?" />
+                                                    </HyperlinkButton>
+                                                </StackPanel>
+                                            </Flyout>
+                                        </DropDownButton.Flyout>
+                                    </DropDownButton>
                                     <SplitButton Command="{x:Bind ViewModel.SelectLogoCommand}" ToolTipService.ToolTip="Add image to the center of the QR Code">
                                         <SplitButton.Content>
                                             <Viewbox Height="16" Margin="1">
@@ -294,6 +357,95 @@
                                             </Flyout>
                                         </SplitButton.Flyout>
                                     </SplitButton>
+                                    <Button ToolTipService.ToolTip="Brands">
+                                        <Button.Flyout>
+                                            <Flyout x:Name="BrandFlyout">
+                                                <StackPanel Width="280" Spacing="12">
+                                                    <TextBlock
+                                                        FontWeight="SemiBold"
+                                                        Style="{StaticResource SubtitleTextBlockStyle}"
+                                                        Text="Brands" />
+                                                    <ListView
+                                                        x:Name="BrandListView"
+                                                        MaxHeight="200"
+                                                        ItemsSource="{x:Bind ViewModel.BrandItems, Mode=OneWay}"
+                                                        SelectionChanged="BrandListView_SelectionChanged"
+                                                        SelectionMode="Single">
+                                                        <ListView.ItemTemplate>
+                                                            <DataTemplate x:DataType="models:BrandItem">
+                                                                <controls:BrandRowItem
+                                                                    Background="Transparent"
+                                                                    Data="{x:Bind}"
+                                                                    Tag="{x:Bind}">
+                                                                    <controls:BrandRowItem.ContextFlyout>
+                                                                        <MenuFlyout>
+                                                                            <MenuFlyoutItem
+                                                                                Click="DeleteBrand_Click"
+                                                                                Icon="Delete"
+                                                                                Tag="{x:Bind}"
+                                                                                Text="Delete" />
+                                                                        </MenuFlyout>
+                                                                    </controls:BrandRowItem.ContextFlyout>
+                                                                </controls:BrandRowItem>
+                                                            </DataTemplate>
+                                                        </ListView.ItemTemplate>
+                                                    </ListView>
+                                                    <TextBlock
+                                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                                        Text="No brands saved yet."
+                                                        Visibility="{x:Bind ViewModel.BrandItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, Mode=OneWay}" />
+                                                    <Button
+                                                        HorizontalAlignment="Stretch"
+                                                        Click="ToggleNewBrandForm_Click"
+                                                        Visibility="{x:Bind ViewModel.IsNewBrandFormVisible, Converter={StaticResource BoolToVisibility}, ConverterParameter=True, Mode=OneWay}">
+                                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                                            <SymbolIcon Symbol="Add" />
+                                                            <TextBlock Text="Save as brand" />
+                                                        </StackPanel>
+                                                    </Button>
+                                                    <StackPanel Spacing="8" Visibility="{x:Bind ViewModel.IsNewBrandFormVisible, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
+                                                        <TextBlock
+                                                            FontSize="12"
+                                                            FontWeight="SemiBold"
+                                                            Text="Save current settings as brand" />
+                                                        <TextBox
+                                                            x:Name="BrandNameTextBox"
+                                                            KeyDown="BrandNameTextBox_KeyDown"
+                                                            PlaceholderText="Brand name"
+                                                            Text="{x:Bind ViewModel.NewBrandName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                            <TextBox.KeyboardAccelerators>
+                                                                <KeyboardAccelerator
+                                                                    Key="S"
+                                                                    Invoked="BrandSaveAccelerator_Invoked"
+                                                                    Modifiers="Control" />
+                                                            </TextBox.KeyboardAccelerators>
+                                                        </TextBox>
+                                                        <StackPanel Spacing="4">
+                                                            <CheckBox Content="Foreground color" IsChecked="{x:Bind ViewModel.IncludeForeground, Mode=TwoWay}" />
+                                                            <CheckBox Content="Background color" IsChecked="{x:Bind ViewModel.IncludeBackground, Mode=TwoWay}" />
+                                                            <CheckBox Content="URL / text" IsChecked="{x:Bind ViewModel.IncludeUrl, Mode=TwoWay}" />
+                                                            <CheckBox Content="Center image" IsChecked="{x:Bind ViewModel.IncludeCenterImage, Mode=TwoWay}" />
+                                                        </StackPanel>
+                                                        <Button
+                                                            HorizontalAlignment="Stretch"
+                                                            Command="{x:Bind ViewModel.CreateNewBrandCommand}"
+                                                            Style="{StaticResource AccentButtonStyle}">
+                                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                                <SymbolIcon Symbol="Save" />
+                                                                <TextBlock Text="Save Brand" />
+                                                            </StackPanel>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                        <Button.Content>
+                                            <Viewbox Width="16" Height="16">
+                                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE734;" />
+                                            </Viewbox>
+                                        </Button.Content>
+                                    </Button>
                                 </StackPanel>
 
                                 <Border

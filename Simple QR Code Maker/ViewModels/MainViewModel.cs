@@ -54,7 +54,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private Windows.UI.Color foregroundColor = Windows.UI.Color.FromArgb(255, 0, 0, 0);
 
     [ObservableProperty]
-    private ErrorCorrectionOptions selectedOption = new("Medium 15%", ErrorCorrectionLevel.M);
+    private ErrorCorrectionOptions selectedOption = new("M", "Medium 15%", ErrorCorrectionLevel.M);
 
     [ObservableProperty]
     private bool isFaqPaneOpen = false;
@@ -67,6 +67,27 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private HistoryItem? selectedHistoryItem = null;
+
+    [ObservableProperty]
+    private ObservableCollection<BrandItem> brandItems = [];
+
+    [ObservableProperty]
+    private string newBrandName = string.Empty;
+
+    [ObservableProperty]
+    private bool includeForeground = true;
+
+    [ObservableProperty]
+    private bool includeBackground = true;
+
+    [ObservableProperty]
+    private bool includeUrl;
+
+    [ObservableProperty]
+    private bool includeCenterImage = true;
+
+    [ObservableProperty]
+    private bool isNewBrandFormVisible;
 
     private MultiLineCodeMode MultiLineCodeMode = MultiLineCodeMode.OneLineOneCode;
     private string BaseText = string.Empty;
@@ -198,10 +219,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private static readonly List<ErrorCorrectionOptions> allCorrectionLevels =
     [
-        new("Low 7%", ErrorCorrectionLevel.L),
-        new("Medium 15%", ErrorCorrectionLevel.M),
-        new("Quarter 25%", ErrorCorrectionLevel.Q),
-        new("High 30%", ErrorCorrectionLevel.H),
+        new("L", "Low 7%", ErrorCorrectionLevel.L),
+        new("M", "Medium 15%", ErrorCorrectionLevel.M),
+        new("Q", "Quarter 25%", ErrorCorrectionLevel.Q),
+        new("H", "High 30%", ErrorCorrectionLevel.H),
     ];
 
     partial void OnSelectedOptionChanged(ErrorCorrectionOptions value)
@@ -249,7 +270,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         else
         {
             if (ErrorCorrectionLevels.Count == 3)
-                ErrorCorrectionLevels.Insert(0, new("Low 7%", ErrorCorrectionLevel.L));
+                ErrorCorrectionLevels.Insert(0, new("L", "Low 7%", ErrorCorrectionLevel.L));
         }
 
         _ = UpdateLogoPreviewImageAsync(value);
@@ -713,6 +734,95 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [RelayCommand]
     private void ShareApp() => CopySharePopupOpen = !CopySharePopupOpen;
+
+    [RelayCommand]
+    [RequiresUnreferencedCode("Calls BrandStorageHelper.SaveBrandsAsync")]
+    private async Task CreateNewBrand()
+    {
+        if (string.IsNullOrWhiteSpace(NewBrandName))
+            return;
+
+        BrandItem brand = new()
+        {
+            Name = NewBrandName.Trim(),
+            Foreground = IncludeForeground ? ForegroundColor : null,
+            Background = IncludeBackground ? BackgroundColor : null,
+            UrlContent = IncludeUrl ? UrlText : null,
+            ErrorCorrectionLevelAsString = SelectedOption.ErrorCorrectionLevel.ToString(),
+            LogoImagePath = IncludeCenterImage && LogoImage != null ? GetCurrentLogoPath() : null,
+            LogoSizePercentage = IncludeCenterImage ? LogoSizePercentage : null,
+            LogoPaddingPixels = IncludeCenterImage ? LogoPaddingPixels : null,
+        };
+
+        BrandItems.Remove(brand);
+        BrandItems.Insert(0, brand);
+        await BrandStorageHelper.SaveBrandsAsync(BrandItems);
+        NewBrandName = string.Empty;
+        IsNewBrandFormVisible = false;
+
+        WeakReferenceMessenger.Default.Send(
+            new RequestShowMessage("Brand saved", $"\"{brand.Name}\" has been saved", InfoBarSeverity.Success));
+    }
+
+    [RelayCommand]
+    private void ApplyBrand(BrandItem? brand)
+    {
+        if (brand is null)
+            return;
+
+        if (brand.Foreground.HasValue)
+            ForegroundColor = brand.Foreground.Value;
+
+        if (brand.Background.HasValue)
+            BackgroundColor = brand.Background.Value;
+
+        if (brand.UrlContent is not null)
+            UrlText = brand.UrlContent;
+
+        if (brand.ErrorCorrectionLevelAsString is not null)
+        {
+            ErrorCorrectionOptions? match = ErrorCorrectionLevels
+                .FirstOrDefault(x => x.ErrorCorrectionLevel.ToString() == brand.ErrorCorrectionLevelAsString);
+            if (match is not null)
+                SelectedOption = match.Value;
+        }
+
+        if (brand.LogoImagePath is not null)
+        {
+            _ = LoadLogoFromHistory(brand.LogoImagePath);
+        }
+
+        if (brand.LogoSizePercentage.HasValue)
+            LogoSizePercentage = brand.LogoSizePercentage.Value;
+
+        if (brand.LogoPaddingPixels.HasValue)
+            LogoPaddingPixels = brand.LogoPaddingPixels.Value;
+    }
+
+    [RelayCommand]
+    private void ApplyBrandForeground(BrandItem? brand)
+    {
+        if (brand?.Foreground is not null)
+            ForegroundColor = brand.Foreground.Value;
+    }
+
+    [RelayCommand]
+    private void ApplyBrandBackground(BrandItem? brand)
+    {
+        if (brand?.Background is not null)
+            BackgroundColor = brand.Background.Value;
+    }
+
+    [RelayCommand]
+    [RequiresUnreferencedCode("Calls BrandStorageHelper.SaveBrandsAsync")]
+    private async Task DeleteBrand(BrandItem? brand)
+    {
+        if (brand is null)
+            return;
+
+        BrandItems.Remove(brand);
+        await BrandStorageHelper.SaveBrandsAsync(BrandItems);
+    }
 
     [RelayCommand]
     private void OpenFile() => NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!, CreateCurrentStateHistoryItem());
@@ -1249,9 +1359,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public async void OnNavigatedTo(object parameter)
     {
         await LoadHistory();
+        await LoadBrands();
 
         // Force property change notification to refresh UI bindings after history loads
         OnPropertyChanged(nameof(HistoryItems));
+        OnPropertyChanged(nameof(BrandItems));
 
         CheckCanPasteText();
         _ = CheckBackgroundRemovalAvailability();
@@ -1411,6 +1523,17 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         foreach (HistoryItem item in loadedHistory)
         {
             HistoryItems.Add(item);
+        }
+    }
+
+    [RequiresUnreferencedCode("Calls BrandStorageHelper.LoadBrandsAsync")]
+    private async Task LoadBrands()
+    {
+        ObservableCollection<BrandItem> loadedBrands = await BrandStorageHelper.LoadBrandsAsync();
+
+        foreach (BrandItem item in loadedBrands)
+        {
+            BrandItems.Add(item);
         }
     }
 }
