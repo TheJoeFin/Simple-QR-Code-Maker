@@ -174,4 +174,10 @@ public sealed partial class MainPage : Page
         ErrorCorrectionFlyout.Hide();
         WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, "error correction"));
     }
+
+    private void LearnMoreAboutBrands_Click(object sender, RoutedEventArgs e)
+    {
+        BrandFlyout.Hide();
+        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, "brand"));
+    }
 }
