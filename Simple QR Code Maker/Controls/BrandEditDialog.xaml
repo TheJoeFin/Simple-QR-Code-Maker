@@ -47,6 +47,7 @@
                     IsChecked="{x:Bind IncludeForeground, Mode=TwoWay}" />
                 <controls:ColorPickerButton
                     Color="{x:Bind ForegroundColor, Mode=TwoWay}"
+                    DefaultImagePath="{x:Bind LogoPath, Mode=OneWay}"
                     Visibility="{x:Bind IncludeForeground, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
             </StackPanel>
 
@@ -61,6 +62,7 @@
                     IsChecked="{x:Bind IncludeBackground, Mode=TwoWay}" />
                 <controls:ColorPickerButton
                     Color="{x:Bind BackgroundColor, Mode=TwoWay}"
+                    DefaultImagePath="{x:Bind LogoPath, Mode=OneWay}"
                     Visibility="{x:Bind IncludeBackground, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
             </StackPanel>
 
@@ -79,7 +81,7 @@
                     Content="Error correction"
                     IsChecked="{x:Bind IncludeErrorCorrection, Mode=TwoWay}" />
                 <ComboBox
-                    ItemsSource="{x:Bind AllCorrectionLevels}"
+                    ItemsSource="{x:Bind AllCorrectionLevels, Mode=OneWay}"
                     SelectedIndex="{x:Bind SelectedCorrectionIndex, Mode=TwoWay}"
                     Visibility="{x:Bind IncludeErrorCorrection, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                     <ComboBox.ItemTemplate>

@@ -5,8 +5,7 @@ namespace Simple_QR_Code_Maker.Controls;
 
 public sealed partial class ColorPickerButton : UserControl
 {
-    private bool _updatingColor = false;
-
+    // ── Color DependencyProperty ────────────────────────────────────────────
     public static readonly DependencyProperty ColorProperty =
         DependencyProperty.Register(
             nameof(Color),
@@ -20,14 +19,28 @@ public sealed partial class ColorPickerButton : UserControl
         set => SetValue(ColorProperty, value);
     }
 
+    // ── DefaultImagePath DependencyProperty ────────────────────────────────
+    public static readonly DependencyProperty DefaultImagePathProperty =
+        DependencyProperty.Register(
+            nameof(DefaultImagePath),
+            typeof(string),
+            typeof(ColorPickerButton),
+            new PropertyMetadata(null));
+
+    public string? DefaultImagePath
+    {
+        get => (string?)GetValue(DefaultImagePathProperty);
+        set => SetValue(DefaultImagePathProperty, value);
+    }
+
     public ColorPickerButton()
     {
         InitializeComponent();
-        InternalColorPicker.Color = Color;
-        InternalColorPicker.ColorChanged += OnColorPickerColorChanged;
-        RegisterPropertyChangedCallback(ColorProperty, OnColorPropertyChanged);
     }
 
+    private bool _updatingColor = false;
+
+    // ColorPicker → Color property
     private void OnColorPickerColorChanged(ColorPicker sender, ColorChangedEventArgs args)
     {
         if (_updatingColor) return;
@@ -36,11 +49,24 @@ public sealed partial class ColorPickerButton : UserControl
         _updatingColor = false;
     }
 
-    private void OnColorPropertyChanged(DependencyObject sender, DependencyProperty dp)
+    // ImageColorPickerControl wired up when its Case becomes active
+    private void OnImagePickerLoaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not ImageColorPickerControl picker) return;
+
+        picker.RegisterPropertyChangedCallback(
+            ImageColorPickerControl.ColorProperty, OnImagePickerColorChanged);
+
+        picker.PickingImage += (_, _) => PickerFlyout.Hide();
+    }
+
+    // ImageColorPickerControl → Color property
+    private void OnImagePickerColorChanged(DependencyObject d, DependencyProperty dp)
     {
         if (_updatingColor) return;
+        if (d is not ImageColorPickerControl picker) return;
         _updatingColor = true;
-        InternalColorPicker.Color = Color;
+        Color = picker.Color;
         _updatingColor = false;
     }
 }

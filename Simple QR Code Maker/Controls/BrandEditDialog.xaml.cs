@@ -13,7 +13,7 @@ public sealed partial class BrandEditDialog : ContentDialog
 {
     private readonly BrandItem _original;
 
-    public readonly List<ErrorCorrectionOptions> AllCorrectionLevels =
+    public List<ErrorCorrectionOptions> AllCorrectionLevels { get; } =
     [
         new("L", "Low 7%", ErrorCorrectionLevel.L),
         new("M", "Medium 15%", ErrorCorrectionLevel.M),
