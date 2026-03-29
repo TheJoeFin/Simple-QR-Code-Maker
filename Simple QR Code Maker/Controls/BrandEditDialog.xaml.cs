@@ -45,11 +45,18 @@ public sealed partial class BrandEditDialog : ContentDialog
     [NotifyPropertyChangedFor(nameof(HasLogoPath))]
     private string? logoPath;
 
-    [ObservableProperty] private double logoSize;
-    [ObservableProperty] private double logoPadding;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(LogoSizeDescription))]
+    private double logoSize;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(LogoPaddingDescription))]
+    private double logoPadding;
 
     public bool IsNameValid => !string.IsNullOrWhiteSpace(EditName);
     public bool HasLogoPath => IncludeLogo && LogoPath is not null;
+    public string LogoSizeDescription => $"{LogoSize} percent";
+    public string LogoPaddingDescription => $"{LogoPadding} px";
 
     public BrandItem? EditedItem { get; private set; }
 
