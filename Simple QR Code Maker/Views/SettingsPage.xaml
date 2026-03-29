@@ -32,14 +32,12 @@
                 Spacing="4">
 
                 <!--  Rate and Review  -->
-                <settingsControls:SettingsCard
-                    Description="Enjoying the app? Rate it or send me feedback!"
-                    Header="Rate and Review">
+                <settingsControls:SettingsCard Description="Enjoying the app? Rate it or send me feedback!" Header="Rate and Review">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE735;" />
                     </settingsControls:SettingsCard.HeaderIcon>
                     <RatingControl
-                        x:Name="AppRatingControl" 
+                        x:Name="AppRatingControl"
                         IsClearEnabled="False"
                         ValueChanged="AppRatingControl_ValueChanged" />
                 </settingsControls:SettingsCard>
@@ -117,7 +115,7 @@
                     Header="Multi-line handling"
                     IsExpanded="True">
                     <settingsControls:SettingsExpander.HeaderIcon>
-                        <FontIcon Glyph="&#xE8C1;" />
+                        <SymbolIcon Symbol="List" />
                     </settingsControls:SettingsExpander.HeaderIcon>
                     <settingsControls:SettingsExpander.Items>
                         <settingsControls:SettingsCard ContentAlignment="Left">
@@ -202,7 +200,7 @@
                 <!--  Max scan distance  -->
                 <settingsControls:SettingsCard Description="{x:Bind ViewModel.MaxScanDistanceText, Mode=OneWay}" Header="Max scan distance at minimum size">
                     <settingsControls:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE909;" />
+                        <FontIcon Glyph="&#xED5E;" />
                     </settingsControls:SettingsCard.HeaderIcon>
                     <Slider
                         MinWidth="200"
