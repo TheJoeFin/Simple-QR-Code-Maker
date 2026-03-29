@@ -27,6 +27,7 @@
     <None Remove="Controls\IconAndTextContent.xaml" />
     <None Remove="Controls\NewFile1.txt" />
     <None Remove="Controls\QrCodeImageControl.xaml" />
+    <None Remove="Controls\FeedbackDialog.xaml" />
     <None Remove="Controls\RemoveBackgroundDialog.xaml" />
     <None Remove="Controls\TextBorder.xaml" />
     <None Remove="Views\ShellPage.xaml" />
@@ -38,6 +39,9 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.251219" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.251219" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
     <PackageReference Include="Humanizer" Version="3.0.10" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.11.1" />
@@ -59,6 +63,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\FeedbackDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\RemoveBackgroundDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

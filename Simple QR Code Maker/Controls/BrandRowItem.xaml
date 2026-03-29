@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Simple_QR_Code_Maker.Controls.BrandRowItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:Simple_QR_Code_Maker.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:ColorToBrushConverter x:Key="ColorToBrush" />
+        <converters:FilePathToImageSourceConverter x:Key="FilePathToImage" />
+        <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
+        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+
+    <Grid Margin="2" Padding="0,6">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Spacing="4">
+            <TextBlock
+                FontWeight="SemiBold"
+                Style="{StaticResource BodyTextStyle}"
+                Text="{x:Bind Data.Name,
+                              Mode=OneWay}"
+                TextTrimming="WordEllipsis" />
+            <FontIcon
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                FontSize="12"
+                Glyph="&#xE734;"
+                ToolTipService.ToolTip="Default brand"
+                Visibility="{x:Bind Data.IsDefault,
+                                    Mode=OneWay,
+                                    Converter={StaticResource BoolToVisibility}}" />
+        </StackPanel>
+        <StackPanel
+            Grid.Row="1"
+            Orientation="Horizontal"
+            Spacing="8">
+            <StackPanel.Resources>
+                <Style TargetType="Rectangle">
+                    <Setter Property="Width" Value="16" />
+                    <Setter Property="Height" Value="10" />
+                </Style>
+            </StackPanel.Resources>
+            <Rectangle Fill="{x:Bind Data.Foreground, Converter={StaticResource ColorToBrush}, Mode=OneWay}" Visibility="{x:Bind Data.Foreground, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
+            <Rectangle Fill="{x:Bind Data.Background, Converter={StaticResource ColorToBrush}, Mode=OneWay}" Visibility="{x:Bind Data.Background, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
+            <TextBlock Text="{x:Bind Data.ErrorCorrectionLevelAsString, Mode=OneWay}" Visibility="{x:Bind Data.ErrorCorrectionLevelAsString, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
+        </StackPanel>
+        <TextBlock
+            Grid.Row="2"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{x:Bind Data.CreatedDateAsString,
+                          Mode=OneWay}"
+            TextTrimming="WordEllipsis" />
+        <Image
+            Grid.RowSpan="3"
+            Grid.Column="1"
+            Width="32"
+            Height="32"
+            Margin="8,0,0,0"
+            VerticalAlignment="Center"
+            Source="{x:Bind Data.LogoImagePath,
+                            Converter={StaticResource FilePathToImage},
+                            Mode=OneWay}"
+            Stretch="Uniform"
+            Visibility="{x:Bind Data.LogoImagePath,
+                                Converter={StaticResource NullToVisibility},
+                                Mode=OneWay}" />
+    </Grid>
+</UserControl>
