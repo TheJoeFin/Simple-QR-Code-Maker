@@ -30,15 +30,18 @@
             <TextBlock
                 FontWeight="SemiBold"
                 Style="{StaticResource BodyTextStyle}"
-                Text="{x:Bind Data.Name, Mode=OneWay}"
+                Text="{x:Bind Data.Name,
+                              Mode=OneWay}"
                 TextTrimming="WordEllipsis" />
             <FontIcon
+                VerticalAlignment="Center"
                 FontFamily="{StaticResource SymbolThemeFontFamily}"
                 FontSize="12"
                 Glyph="&#xE734;"
                 ToolTipService.ToolTip="Default brand"
-                VerticalAlignment="Center"
-                Visibility="{x:Bind Data.IsDefault, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
+                Visibility="{x:Bind Data.IsDefault,
+                                    Mode=OneWay,
+                                    Converter={StaticResource BoolToVisibility}}" />
         </StackPanel>
         <StackPanel
             Grid.Row="1"
@@ -50,20 +53,15 @@
                     <Setter Property="Height" Value="10" />
                 </Style>
             </StackPanel.Resources>
-            <Rectangle
-                Fill="{x:Bind Data.Foreground, Converter={StaticResource ColorToBrush}, Mode=OneWay}"
-                Visibility="{x:Bind Data.Foreground, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
-            <Rectangle
-                Fill="{x:Bind Data.Background, Converter={StaticResource ColorToBrush}, Mode=OneWay}"
-                Visibility="{x:Bind Data.Background, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
-            <TextBlock
-                Text="{x:Bind Data.ErrorCorrectionLevelAsString, Mode=OneWay}"
-                Visibility="{x:Bind Data.ErrorCorrectionLevelAsString, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
+            <Rectangle Fill="{x:Bind Data.Foreground, Converter={StaticResource ColorToBrush}, Mode=OneWay}" Visibility="{x:Bind Data.Foreground, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
+            <Rectangle Fill="{x:Bind Data.Background, Converter={StaticResource ColorToBrush}, Mode=OneWay}" Visibility="{x:Bind Data.Background, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
+            <TextBlock Text="{x:Bind Data.ErrorCorrectionLevelAsString, Mode=OneWay}" Visibility="{x:Bind Data.ErrorCorrectionLevelAsString, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
         </StackPanel>
         <TextBlock
             Grid.Row="2"
             Style="{StaticResource CaptionTextBlockStyle}"
-            Text="{x:Bind Data.CreatedDateAsString, Mode=OneWay}"
+            Text="{x:Bind Data.CreatedDateAsString,
+                          Mode=OneWay}"
             TextTrimming="WordEllipsis" />
         <Image
             Grid.RowSpan="3"
@@ -72,8 +70,12 @@
             Height="32"
             Margin="8,0,0,0"
             VerticalAlignment="Center"
-            Source="{x:Bind Data.LogoImagePath, Converter={StaticResource FilePathToImage}, Mode=OneWay}"
+            Source="{x:Bind Data.LogoImagePath,
+                            Converter={StaticResource FilePathToImage},
+                            Mode=OneWay}"
             Stretch="Uniform"
-            Visibility="{x:Bind Data.LogoImagePath, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
+            Visibility="{x:Bind Data.LogoImagePath,
+                                Converter={StaticResource NullToVisibility},
+                                Mode=OneWay}" />
     </Grid>
 </UserControl>

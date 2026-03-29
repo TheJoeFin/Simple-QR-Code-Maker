@@ -49,9 +49,7 @@
                 VerticalAlignment="Center"
                 Opacity="0.4"
                 Spacing="6">
-                <Viewbox
-                    Width="40"
-                    Height="40">
+                <Viewbox Width="40" Height="40">
                     <SymbolIcon Symbol="Pictures" />
                 </Viewbox>
                 <TextBlock

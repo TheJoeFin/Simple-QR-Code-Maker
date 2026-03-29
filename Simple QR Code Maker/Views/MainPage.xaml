@@ -510,10 +510,10 @@
                                                         </Button>
                                                     </StackPanel>
                                                     <HyperlinkButton
+                                                        Padding="0"
                                                         Click="LearnMoreAboutBrands_Click"
                                                         FontSize="12"
-                                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                        Padding="0">
+                                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                                                         <TextBlock Text="Learn more about Brands" />
                                                     </HyperlinkButton>
                                                 </StackPanel>

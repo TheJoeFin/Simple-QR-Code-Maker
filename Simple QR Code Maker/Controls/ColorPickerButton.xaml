@@ -5,9 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Simple_QR_Code_Maker.Controls"
     xmlns:converters="using:Simple_QR_Code_Maker.Converters"
-    xmlns:toolkitControls="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkitControls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -39,17 +39,20 @@
                     <toolkitControls:SwitchPresenter Value="{Binding SelectedItem.Tag, ElementName=ModePicker}">
                         <toolkitControls:Case Value="color">
                             <ColorPicker
-                                Color="{x:Bind Color, Mode=OneWay}"
                                 ColorChanged="OnColorPickerColorChanged"
                                 ColorSpectrumShape="Ring"
                                 IsAlphaEnabled="True"
-                                IsMoreButtonVisible="True" />
+                                IsMoreButtonVisible="True"
+                                Color="{x:Bind Color,
+                                               Mode=OneWay}" />
                         </toolkitControls:Case>
                         <toolkitControls:Case Value="image">
                             <controls:ImageColorPickerControl
-                                Color="{x:Bind Color, Mode=OneWay}"
-                                DefaultImagePath="{x:Bind DefaultImagePath, Mode=OneWay}"
-                                Loaded="OnImagePickerLoaded" />
+                                DefaultImagePath="{x:Bind DefaultImagePath,
+                                                          Mode=OneWay}"
+                                Loaded="OnImagePickerLoaded"
+                                Color="{x:Bind Color,
+                                               Mode=OneWay}" />
                         </toolkitControls:Case>
                     </toolkitControls:SwitchPresenter>
 
@@ -59,6 +62,8 @@
         <Rectangle
             Width="16"
             Height="16"
-            Fill="{x:Bind Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
+            Fill="{x:Bind Color,
+                          Mode=OneWay,
+                          Converter={StaticResource ColorToBrush}}" />
     </Button>
 </UserControl>

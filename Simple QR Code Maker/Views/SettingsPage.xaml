@@ -1,17 +1,17 @@
-﻿<Page
+<Page
     x:Class="Simple_QR_Code_Maker.Views.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:Simple_QR_Code_Maker.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:Simple_QR_Code_Maker"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:settingsControls="using:CommunityToolkit.WinUI.Controls"
     xmlns:xaml="using:Microsoft.UI.Xaml"
     mc:Ignorable="d">
     <Page.Resources>
-        <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
-        <converters:MultiLineCodeModeConverter x:Key="MultiLineCodeModeConverter" />
         <converters:EnumIsEqualConverter x:Key="EnumIsEqualConverter" />
+        <x:Double x:Key="SettingsCardWrapThreshold">320</x:Double>
+        <x:Double x:Key="SettingsCardWrapNoIconThreshold">200</x:Double>
     </Page.Resources>
     <Grid Padding="40,0,0,0">
         <Grid.RowDefinitions>
@@ -21,212 +21,261 @@
 
         <StackPanel Orientation="Horizontal" Spacing="12">
             <AppBarButton Command="{x:Bind ViewModel.GoHomeCommand}" Icon="Back" />
-            <TextBlock
-                x:Uid="Settings_Title"
-                Grid.Row="0"
-                Style="{StaticResource PageTitleStyle}" />
+            <TextBlock x:Uid="Settings_Title" Style="{StaticResource PageTitleStyle}" />
         </StackPanel>
+
         <ScrollViewer Grid.Row="1">
             <StackPanel
                 x:Name="ContentArea"
-                Margin="80,24,0,40"
-                Spacing="8">
-                <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
-                <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
-                    <TextBlock x:Uid="Settings_Theme" />
+                Margin="80,24,80,40"
+                HorizontalAlignment="Stretch"
+                Spacing="4">
 
-                    <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                        <RadioButton
-                            x:Uid="Settings_Theme_Light"
-                            Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                            FontSize="15"
-                            GroupName="AppTheme"
-                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Light, Mode=OneWay}">
-                            <RadioButton.CommandParameter>
-                                <xaml:ElementTheme>Light</xaml:ElementTheme>
-                            </RadioButton.CommandParameter>
-                        </RadioButton>
-                        <RadioButton
-                            x:Uid="Settings_Theme_Dark"
-                            Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                            FontSize="15"
-                            GroupName="AppTheme"
-                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Dark, Mode=OneWay}">
-                            <RadioButton.CommandParameter>
-                                <xaml:ElementTheme>Dark</xaml:ElementTheme>
-                            </RadioButton.CommandParameter>
-                        </RadioButton>
-                        <RadioButton
-                            x:Uid="Settings_Theme_Default"
-                            Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                            FontSize="15"
-                            GroupName="AppTheme"
-                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Default, Mode=OneWay}">
-                            <RadioButton.CommandParameter>
-                                <xaml:ElementTheme>Default</xaml:ElementTheme>
-                            </RadioButton.CommandParameter>
-                        </RadioButton>
-                    </StackPanel>
-                </StackPanel>
+                <!--  Personalization  -->
+                <TextBlock
+                    x:Uid="Settings_Personalization"
+                    Margin="0,0,0,4"
+                    Style="{ThemeResource SubtitleTextBlockStyle}" />
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="How to handle multiple lines when making QR Codes" />
-                <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
-                    <RadioButton
-                        Command="{x:Bind ViewModel.SwitchMultiLineModeCommand}"
-                        CommandParameter="OneLineOneCode"
-                        Content="One code for each line"
-                        FontSize="15"
-                        GroupName="MultiLineHandling"
-                        IsChecked="{x:Bind ViewModel.MultiLineCodeMode, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=OneLineOneCode, Mode=OneWay}" />
-                    <RadioButton
-                        Command="{x:Bind ViewModel.SwitchMultiLineModeCommand}"
-                        CommandParameter="MultilineOneCode"
-                        Content="Multi-Line in single code"
-                        FontSize="15"
-                        GroupName="MultiLineHandling"
-                        IsChecked="{x:Bind ViewModel.MultiLineCodeMode, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=MultilineOneCode, Mode=OneWay}" />
-                </StackPanel>
+                <!--  Theme  -->
+                <settingsControls:SettingsExpander
+                    Description="Select the app theme"
+                    Header="Theme"
+                    IsExpanded="True">
+                    <settingsControls:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE790;" />
+                    </settingsControls:SettingsExpander.HeaderIcon>
+                    <settingsControls:SettingsExpander.Items>
+                        <settingsControls:SettingsCard ContentAlignment="Left">
+                            <StackPanel>
+                                <RadioButton
+                                    x:Uid="Settings_Theme_Light"
+                                    Command="{x:Bind ViewModel.SwitchThemeCommand}"
+                                    FontSize="15"
+                                    GroupName="AppTheme"
+                                    IsChecked="{x:Bind ViewModel.ElementTheme,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=Light,
+                                                       Mode=OneWay}">
+                                    <RadioButton.CommandParameter>
+                                        <xaml:ElementTheme>Light</xaml:ElementTheme>
+                                    </RadioButton.CommandParameter>
+                                </RadioButton>
+                                <RadioButton
+                                    x:Uid="Settings_Theme_Dark"
+                                    Command="{x:Bind ViewModel.SwitchThemeCommand}"
+                                    FontSize="15"
+                                    GroupName="AppTheme"
+                                    IsChecked="{x:Bind ViewModel.ElementTheme,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=Dark,
+                                                       Mode=OneWay}">
+                                    <RadioButton.CommandParameter>
+                                        <xaml:ElementTheme>Dark</xaml:ElementTheme>
+                                    </RadioButton.CommandParameter>
+                                </RadioButton>
+                                <RadioButton
+                                    x:Uid="Settings_Theme_Default"
+                                    Command="{x:Bind ViewModel.SwitchThemeCommand}"
+                                    FontSize="15"
+                                    GroupName="AppTheme"
+                                    IsChecked="{x:Bind ViewModel.ElementTheme,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=Default,
+                                                       Mode=OneWay}">
+                                    <RadioButton.CommandParameter>
+                                        <xaml:ElementTheme>Default</xaml:ElementTheme>
+                                    </RadioButton.CommandParameter>
+                                </RadioButton>
+                            </StackPanel>
+                        </settingsControls:SettingsCard>
+                    </settingsControls:SettingsExpander.Items>
+                </settingsControls:SettingsExpander>
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Base text, at start and for newlines" />
-                <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
+                <!--  QR Code Settings  -->
+                <TextBlock
+                    Margin="0,16,0,4"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="QR Code" />
+
+                <!--  Multi-line handling  -->
+                <settingsControls:SettingsExpander
+                    Description="How to handle multiple lines when making QR Codes"
+                    Header="Multi-line handling"
+                    IsExpanded="True">
+                    <settingsControls:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE8C1;" />
+                    </settingsControls:SettingsExpander.HeaderIcon>
+                    <settingsControls:SettingsExpander.Items>
+                        <settingsControls:SettingsCard ContentAlignment="Left">
+                            <StackPanel>
+                                <RadioButton
+                                    Command="{x:Bind ViewModel.SwitchMultiLineModeCommand}"
+                                    CommandParameter="OneLineOneCode"
+                                    Content="One code for each line"
+                                    FontSize="15"
+                                    GroupName="MultiLineHandling"
+                                    IsChecked="{x:Bind ViewModel.MultiLineCodeMode,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=OneLineOneCode,
+                                                       Mode=OneWay}" />
+                                <RadioButton
+                                    Command="{x:Bind ViewModel.SwitchMultiLineModeCommand}"
+                                    CommandParameter="MultilineOneCode"
+                                    Content="Multi-Line in single code"
+                                    FontSize="15"
+                                    GroupName="MultiLineHandling"
+                                    IsChecked="{x:Bind ViewModel.MultiLineCodeMode,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=MultilineOneCode,
+                                                       Mode=OneWay}" />
+                            </StackPanel>
+                        </settingsControls:SettingsCard>
+                    </settingsControls:SettingsExpander.Items>
+                </settingsControls:SettingsExpander>
+
+                <!--  Base text  -->
+                <settingsControls:SettingsCard Description="Starting text, at start and for newlines" Header="Base text">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE8AC;" />
+                    </settingsControls:SettingsCard.HeaderIcon>
                     <TextBox
-                        Width="300"
-                        HorizontalAlignment="Left"
+                        MinWidth="250"
                         PlaceholderText="ex: https://example.com/"
-                        Text="{x:Bind ViewModel.BaseText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
+                        Text="{x:Bind ViewModel.BaseText,
+                                      Mode=TwoWay,
+                                      UpdateSourceTrigger=PropertyChanged}" />
+                </settingsControls:SettingsCard>
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Show warnings when QR Codes are not URLs" />
-                <ToggleSwitch
-                    IsOn="{x:Bind ViewModel.WarnWhenNotUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    OffContent="Not warning"
-                    OnContent="Warning" />
+                <!--  URL warnings  -->
+                <settingsControls:SettingsCard Description="Show warnings when QR Codes are not URLs" Header="URL warnings">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE7BA;" />
+                    </settingsControls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.WarnWhenNotUrl,
+                                      Mode=TwoWay,
+                                      UpdateSourceTrigger=PropertyChanged}"
+                        OffContent="Off"
+                        OnContent="On" />
+                </settingsControls:SettingsCard>
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Hide minimum size text" />
-                <ToggleSwitch
-                    IsOn="{x:Bind ViewModel.HideMinimumSizeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    OffContent="Showing size text"
-                    OnContent="Hiding size text" />
+                <!--  Minimum size text  -->
+                <settingsControls:SettingsCard Description="Hide the minimum size text on QR codes" Header="Minimum size text">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE8FF;" />
+                    </settingsControls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.HideMinimumSizeText,
+                                      Mode=TwoWay,
+                                      UpdateSourceTrigger=PropertyChanged}"
+                        OffContent="Showing"
+                        OnContent="Hidden" />
+                </settingsControls:SettingsCard>
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Show 'Save Both' button (PNG and SVG)" />
-                <ToggleSwitch
-                    IsOn="{x:Bind ViewModel.ShowSaveBothButton, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    OffContent="Hidden"
-                    OnContent="Showing" />
+                <!--  Save Both button  -->
+                <settingsControls:SettingsCard Description="Show the 'Save Both' button for PNG and SVG" Header="Save Both button">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE74E;" />
+                    </settingsControls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.ShowSaveBothButton,
+                                      Mode=TwoWay,
+                                      UpdateSourceTrigger=PropertyChanged}"
+                        OffContent="Hidden"
+                        OnContent="Showing" />
+                </settingsControls:SettingsCard>
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Approximate Maximum Scan distance of QR Code at minimum size" />
+                <!--  Max scan distance  -->
+                <settingsControls:SettingsCard Description="{x:Bind ViewModel.MaxScanDistanceText, Mode=OneWay}" Header="Max scan distance at minimum size">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE909;" />
+                    </settingsControls:SettingsCard.HeaderIcon>
+                    <Slider
+                        MinWidth="200"
+                        IsThumbToolTipEnabled="False"
+                        Maximum="5"
+                        Minimum=".35"
+                        StepFrequency="0.1"
+                        Value="{x:Bind ViewModel.MinSizeScanDistanceScaleFactor,
+                                       Mode=TwoWay,
+                                       UpdateSourceTrigger=PropertyChanged}" />
+                </settingsControls:SettingsCard>
+
+                <!--  Quick save location  -->
+                <settingsControls:SettingsExpander Description="Skip the folder picker and save directly to this folder" Header="Quick save location">
+                    <settingsControls:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xED25;" />
+                    </settingsControls:SettingsExpander.HeaderIcon>
+                    <settingsControls:SettingsExpander.Items>
+                        <settingsControls:SettingsCard Header="Folder">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBox
+                                    MinWidth="250"
+                                    IsReadOnly="True"
+                                    PlaceholderText="No folder selected"
+                                    Text="{x:Bind ViewModel.QuickSaveLocation,
+                                                  Mode=OneWay}" />
+                                <Button Command="{x:Bind ViewModel.BrowseQuickSaveLocationCommand}" Content="Browse..." />
+                                <Button
+                                    Command="{x:Bind ViewModel.ClearQuickSaveLocationCommand}"
+                                    Content="Clear"
+                                    IsEnabled="{x:Bind ViewModel.HasQuickSaveLocation,
+                                                       Mode=OneWay}" />
+                            </StackPanel>
+                        </settingsControls:SettingsCard>
+                    </settingsControls:SettingsExpander.Items>
+                </settingsControls:SettingsExpander>
+
+                <!--  About  -->
                 <TextBlock
-                    Margin="60,0,0,0"
-                    Style="{ThemeResource SubheaderTextBlockStyle}"
-                    Text="{x:Bind ViewModel.MaxScanDistanceText, Mode=OneWay}" />
-                <Slider
-                    Width="300"
-                    Margin="0,0,0,20"
-                    HorizontalAlignment="Left"
-                    IsThumbToolTipEnabled="False"
-                    Maximum="5"
-                    Minimum=".35"
-                    StepFrequency="0.1"
-                    Value="{x:Bind ViewModel.MinSizeScanDistanceScaleFactor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    x:Uid="Settings_About"
+                    Margin="0,16,0,4"
+                    Style="{ThemeResource SubtitleTextBlockStyle}" />
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Quick default save location" />
-                <TextBlock
-                    Margin="{StaticResource XSmallTopMargin}"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Style="{ThemeResource BodyTextBlockStyle}"
-                    Text="When set, saving will skip the folder picker and save directly to this folder."
-                    TextWrapping="Wrap" />
-                <StackPanel
-                    Margin="{StaticResource SmallTopBottomMargin}"
-                    Orientation="Horizontal"
-                    Spacing="8">
-                    <TextBox
-                        Width="400"
-                        HorizontalAlignment="Left"
-                        IsReadOnly="True"
-                        PlaceholderText="No folder selected"
-                        Text="{x:Bind ViewModel.QuickSaveLocation, Mode=OneWay}" />
-                    <Button Command="{x:Bind ViewModel.BrowseQuickSaveLocationCommand}" Content="Browse..." />
-                    <Button
-                        Command="{x:Bind ViewModel.ClearQuickSaveLocationCommand}"
-                        Content="Clear"
-                        IsEnabled="{x:Bind ViewModel.HasQuickSaveLocation, Mode=OneWay}" />
-                </StackPanel>
+                <settingsControls:SettingsExpander Description="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" Header="Simple QR Code Maker">
+                    <settingsControls:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE946;" />
+                    </settingsControls:SettingsExpander.HeaderIcon>
+                    <settingsControls:SettingsExpander.Items>
+                        <settingsControls:SettingsCard Header="Privacy">
+                            <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Header="Learn more">
+                            <HyperlinkButton Command="{x:Bind ViewModel.GoToMoreInfoCommand}" Content="QR Codes on Wikipedia" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Header="Rate this app">
+                            <HyperlinkButton Command="{x:Bind ViewModel.ReviewAppCommand}" Content="Microsoft Store" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Header="Source code">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/TheJoeFin/Simple-QR-Code-Maker" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Header="Created by">
+                            <HyperlinkButton Content="TheJoeFin" NavigateUri="https://github.com/TheJoeFin" />
+                        </settingsControls:SettingsCard>
+                    </settingsControls:SettingsExpander.Items>
+                </settingsControls:SettingsExpander>
 
-                <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
-                <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                    <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" />
-
-                    <TextBlock
-                        x:Uid="Settings_AboutDescription"
-                        Margin="{StaticResource XSmallTopMargin}"
-                        Style="{ThemeResource BodyTextBlockStyle}" />
-                    <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" Margin="{StaticResource SettingsPageHyperlinkButtonMargin}" />
-                </StackPanel>
-
-                <HyperlinkButton
-                    Margin="-12,0,0,0"
-                    Command="{x:Bind ViewModel.GoToMoreInfoCommand}"
-                    ToolTipService.ToolTip="Learn more about how QR Codes work (Wikipedia)">
-                    Learn more about QR Codes on Wikipedia
-                </HyperlinkButton>
-
-                <HyperlinkButton
-                    x:Name="ReviewBTN"
-                    Margin="-12,0,0,0"
-                    Command="{x:Bind ViewModel.ReviewAppCommand}">
-                    Rate / Review on the Microsoft Store
-                </HyperlinkButton>
-                <HyperlinkButton
-                    x:Name="SourceBTN"
-                    Margin="-12,0,0,0"
-                    NavigateUri="https://github.com/TheJoeFin/Simple-QR-Code-Maker">
-                    Source code on GitHub
-                </HyperlinkButton>
-                <TextBlock IsTextSelectionEnabled="True">
-                    <Run FontWeight="SemiBold">
-                        Version:
-                    </Run>
-                    <Run x:Name="VersionNumber" />
-                </TextBlock>
-                <TextBlock
-                    Margin="0,16,0,0"
-                    FontWeight="SemiBold"
-                    Text="Created by:" />
-                <HyperlinkButton
-                    x:Name="TheJoeFinBTN"
-                    Margin="-12,0,0,0"
-                    NavigateUri="https://github.com/TheJoeFin">
-                    TheJoeFin (GitHub)
-                </HyperlinkButton>
-                <TextBlock
-                    Margin="0,16,0,0"
-                    FontWeight="SemiBold"
-                    Text="Libraries used:" />
-                <HyperlinkButton
-                    x:Name="MagickDotNetBTN"
-                    Margin="-12,0,0,0"
-                    NavigateUri="https://github.com/micjahn/ZXing.Net">
-                    ZXing.NET
-                </HyperlinkButton>
-                <HyperlinkButton
-                    x:Name="WindowsAppSDKBTN"
-                    Margin="-12,0,0,0"
-                    NavigateUri="https://github.com/microsoft/WindowsAppSDK">
-                    Windows App SDK
-                </HyperlinkButton>
-                <HyperlinkButton
-                    x:Name="WinUIBTN"
-                    Margin="-12,0,0,0"
-                    NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml">
-                    WinUI 3
-                </HyperlinkButton>
-                <HyperlinkButton
-                    x:Name="WinUIExBTN"
-                    Margin="-12,0,0,0"
-                    NavigateUri="https://github.com/dotMorten/WinUIEx">
-                    WinUIEx
-                </HyperlinkButton>
+                <!--  Libraries  -->
+                <settingsControls:SettingsExpander Description="Open source libraries used in this app" Header="Libraries">
+                    <settingsControls:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE74C;" />
+                    </settingsControls:SettingsExpander.HeaderIcon>
+                    <settingsControls:SettingsExpander.Items>
+                        <settingsControls:SettingsCard Header="ZXing.NET">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/micjahn/ZXing.Net" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Header="Windows App SDK">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/microsoft/WindowsAppSDK" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Header="WinUI 3">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Header="WinUIEx">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/dotMorten/WinUIEx" />
+                        </settingsControls:SettingsCard>
+                    </settingsControls:SettingsExpander.Items>
+                </settingsControls:SettingsExpander>
 
             </StackPanel>
         </ScrollViewer>
