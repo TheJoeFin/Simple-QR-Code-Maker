@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="Simple_QR_Code_Maker.Controls.FeedbackDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Share Your Feedback"
+    CloseButtonText="Close"
+    DefaultButton="Primary"
+    PrimaryButtonText="Open Mail App"
+    mc:Ignorable="d">
+
+    <StackPanel MaxWidth="440" Spacing="16">
+
+        <TextBlock TextWrapping="Wrap">
+            Hi! I'm an indie developer, and feedback from users is the best way for me to understand issues and improve the app. If something isn't working right or you have a suggestion, I'd love to hear from you!
+        </TextBlock>
+
+        <TextBox
+            x:Name="FeedbackTextBox"
+            AcceptsReturn="True"
+            Header="Message"
+            MaxLength="2000"
+            MinHeight="120"
+            PlaceholderText="Describe the issue or share your thoughts..."
+            TextWrapping="Wrap" />
+
+        <Border
+            Padding="12,8"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="4">
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <FontIcon
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    Glyph="&#xE168;" />
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    IsTextSelectionEnabled="True"
+                    Text="joe@joefinapps.com" />
+                <Button
+                    x:Name="CopyEmailButton"
+                    Grid.Column="2"
+                    Click="CopyEmailButton_Click"
+                    Content="Copy" />
+            </Grid>
+        </Border>
+
+        <TextBlock
+            FontSize="12"
+            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+            Text="'Open Mail App' will open your default email client with your message pre-filled."
+            TextWrapping="Wrap" />
+
+    </StackPanel>
+</ContentDialog>

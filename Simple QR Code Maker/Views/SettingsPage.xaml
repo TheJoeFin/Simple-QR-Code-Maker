@@ -31,6 +31,19 @@
                 HorizontalAlignment="Stretch"
                 Spacing="4">
 
+                <!--  Rate and Review  -->
+                <settingsControls:SettingsCard
+                    Description="Enjoying the app? Rate it or send me feedback!"
+                    Header="Rate and Review">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE735;" />
+                    </settingsControls:SettingsCard.HeaderIcon>
+                    <RatingControl
+                        x:Name="AppRatingControl" 
+                        IsClearEnabled="False"
+                        ValueChanged="AppRatingControl_ValueChanged" />
+                </settingsControls:SettingsCard>
+
                 <!--  Personalization  -->
                 <TextBlock
                     x:Uid="Settings_Personalization"
