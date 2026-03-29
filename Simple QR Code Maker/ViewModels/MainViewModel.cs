@@ -210,7 +210,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoSvgContent = null;
             StorageFile file = await StorageFile.GetFileFromPathAsync(logoPath);
             using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
-            LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+            // GDI+ keeps an internal reference to the original stream; create an independent
+            // copy before the stream is disposed so that later Save() calls don't fail.
+            using System.Drawing.Bitmap tmp = new(stream.AsStreamForRead());
+            LogoImage = new System.Drawing.Bitmap(tmp);
             currentLogoPath = logoPath;
         }
         catch (Exception ex)
@@ -1204,7 +1207,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 // Raster logo: clear any previous SVG content, load bitmap directly
                 LogoSvgContent = null;
                 using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
-                LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+                // GDI+ keeps an internal reference to the original stream; create an independent
+                // copy before the stream is disposed so that later Save() calls don't fail.
+                using System.Drawing.Bitmap tmp = new(stream.AsStreamForRead());
+                LogoImage = new System.Drawing.Bitmap(tmp);
             }
 
             // Store the selected file path so it can be saved to history
