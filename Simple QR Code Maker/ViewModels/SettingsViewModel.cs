@@ -232,6 +232,18 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         _ = await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NCH56G3RQFC"));
     }
 
+    [RelayCommand]
+    private static async Task OpenSimpleIconFileMaker()
+    {
+        _ = await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?ProductId=9NS1BM1FB99Z"));
+    }
+
+    [RelayCommand]
+    private static async Task OpenTextGrab()
+    {
+        _ = await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?ProductId=9MZNKQJ7SL0B"));
+    }
+
     private static string GetVersionDescription()
     {
         Version version;

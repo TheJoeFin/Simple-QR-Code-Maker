@@ -41,4 +41,9 @@ public sealed partial class SettingsPage : Page
             await dialog.ShowAsync();
         }
     }
+
+    private void SettingsExpander_Expanded(object sender, EventArgs e)
+    {
+
+    }
 }

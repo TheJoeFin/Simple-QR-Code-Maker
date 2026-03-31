@@ -267,6 +267,27 @@
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>
 
+                <!--  More Apps  -->
+                <settingsControls:SettingsExpander
+                    Description="Other free apps by the same developer"
+                    Header="More apps by TheJoeFin"
+                    IsExpanded="True">
+                    <settingsControls:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE8F1;" />
+                    </settingsControls:SettingsExpander.HeaderIcon>
+                    <settingsControls:SettingsExpander.Items>
+                        <settingsControls:SettingsCard Description="Create, edit, and convert icon files" Header="Simple Icon FileMaker">
+                            <HyperlinkButton Command="{x:Bind ViewModel.OpenSimpleIconFileMakerCommand}" Content="Microsoft Store" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Description="Copy text from anywhere on your screen" Header="TextGrab">
+                            <HyperlinkButton Command="{x:Bind ViewModel.OpenTextGrabCommand}" Content="Microsoft Store" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Header="Website">
+                            <HyperlinkButton Content="JoeFinApps.com" NavigateUri="https://joefinapps.com" />
+                        </settingsControls:SettingsCard>
+                    </settingsControls:SettingsExpander.Items>
+                </settingsControls:SettingsExpander>
+
                 <!--  Libraries  -->
                 <settingsControls:SettingsExpander Description="Open source libraries used in this app" Header="Libraries">
                     <settingsControls:SettingsExpander.HeaderIcon>
