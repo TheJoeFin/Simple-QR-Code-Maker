@@ -902,9 +902,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             return;
 
         BrandItem? previousDefault = BrandItems.FirstOrDefault(b => b.IsDefault);
+        bool isAlreadyDefault = brand.IsDefault;
 
         foreach (BrandItem item in BrandItems)
-            item.IsDefault = item.Equals(brand);
+            item.IsDefault = !isAlreadyDefault && item.Equals(brand);
 
         if (previousDefault is not null && !previousDefault.Equals(brand))
             RefreshBrandItemInList(previousDefault);
