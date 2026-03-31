@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:127.0.0.1)",
+      "Bash(bin/pdm auth:*)",
+      "Bash(bin/pdm *)",
+      "Bash(grep -E \"\\\\.\\(cs|xaml\\)$\")",
+      "Bash(grep:*)",
+      "Bash(msbuild \"Simple QR Code Maker.sln\" /t:Restore /p:Configuration=Debug /p:Platform=x64 /v:q)",
+      "Bash(ls:*)",
+      "Bash(dotnet build:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ]
+  }
+}

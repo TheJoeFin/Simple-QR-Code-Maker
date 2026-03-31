@@ -54,7 +54,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private Windows.UI.Color foregroundColor = Windows.UI.Color.FromArgb(255, 0, 0, 0);
 
     [ObservableProperty]
-    private ErrorCorrectionOptions selectedOption = new("Medium 15%", ErrorCorrectionLevel.M);
+    private ErrorCorrectionOptions selectedOption = new("M", "Medium 15%", ErrorCorrectionLevel.M);
 
     [ObservableProperty]
     private bool isFaqPaneOpen = false;
@@ -67,6 +67,35 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private HistoryItem? selectedHistoryItem = null;
+
+    [ObservableProperty]
+    private ObservableCollection<BrandItem> brandItems = [];
+
+    [ObservableProperty]
+    private BrandItem? selectedBrand = null;
+
+    private bool _isApplyingBrand = false;
+
+    [ObservableProperty]
+    private string newBrandName = string.Empty;
+
+    [ObservableProperty]
+    private bool includeForeground = true;
+
+    [ObservableProperty]
+    private bool includeBackground = true;
+
+    [ObservableProperty]
+    private bool includeUrl;
+
+    [ObservableProperty]
+    private bool includeCenterImage = true;
+
+    [ObservableProperty]
+    private bool includeErrorCorrection = true;
+
+    [ObservableProperty]
+    private bool isNewBrandFormVisible;
 
     private MultiLineCodeMode MultiLineCodeMode = MultiLineCodeMode.OneLineOneCode;
     private string BaseText = string.Empty;
@@ -181,7 +210,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoSvgContent = null;
             StorageFile file = await StorageFile.GetFileFromPathAsync(logoPath);
             using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
-            LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+            // GDI+ keeps an internal reference to the original stream; create an independent
+            // copy before the stream is disposed so that later Save() calls don't fail.
+            using System.Drawing.Bitmap tmp = new(stream.AsStreamForRead());
+            LogoImage = new System.Drawing.Bitmap(tmp);
             currentLogoPath = logoPath;
         }
         catch (Exception ex)
@@ -198,14 +230,17 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private static readonly List<ErrorCorrectionOptions> allCorrectionLevels =
     [
-        new("Low 7%", ErrorCorrectionLevel.L),
-        new("Medium 15%", ErrorCorrectionLevel.M),
-        new("Quarter 25%", ErrorCorrectionLevel.Q),
-        new("High 30%", ErrorCorrectionLevel.H),
+        new("L", "Low 7%", ErrorCorrectionLevel.L),
+        new("M", "Medium 15%", ErrorCorrectionLevel.M),
+        new("Q", "Quarter 25%", ErrorCorrectionLevel.Q),
+        new("H", "High 30%", ErrorCorrectionLevel.H),
     ];
 
     partial void OnSelectedOptionChanged(ErrorCorrectionOptions value)
     {
+        if (!_isApplyingBrand)
+            SelectedBrand = null;
+
         // Ensure logo size doesn't exceed the new error correction level's maximum
         if (logoSizePercentage > logoSizeMaxPercentage)
         {
@@ -215,24 +250,37 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         LogoSizeMaxPercentage = BarcodeHelpers.GetMaxLogoSizePercentage(value.ErrorCorrectionLevel);
 
-        debounceTimer.Stop();
-        debounceTimer.Start();
+        if (!_isApplyingBrand)
+        {
+            debounceTimer.Stop();
+            debounceTimer.Start();
+        }
     }
 
     partial void OnBackgroundColorChanged(Windows.UI.Color value)
     {
-        debounceTimer.Stop();
-        debounceTimer.Start();
+        if (!_isApplyingBrand)
+        {
+            SelectedBrand = null;
+            debounceTimer.Stop();
+            debounceTimer.Start();
+        }
     }
 
     partial void OnForegroundColorChanged(Windows.UI.Color value)
     {
-        debounceTimer.Stop();
-        debounceTimer.Start();
+        if (!_isApplyingBrand)
+        {
+            SelectedBrand = null;
+            debounceTimer.Stop();
+            debounceTimer.Start();
+        }
     }
 
     partial void OnLogoImageChanged(System.Drawing.Bitmap? value)
     {
+        if (!_isApplyingBrand)
+            SelectedBrand = null;
         HasLogo = value != null;
 
         if (HasLogo)
@@ -249,13 +297,16 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         else
         {
             if (ErrorCorrectionLevels.Count == 3)
-                ErrorCorrectionLevels.Insert(0, new("Low 7%", ErrorCorrectionLevel.L));
+                ErrorCorrectionLevels.Insert(0, new("L", "Low 7%", ErrorCorrectionLevel.L));
         }
 
         _ = UpdateLogoPreviewImageAsync(value);
 
-        debounceTimer.Stop();
-        debounceTimer.Start();
+        if (!_isApplyingBrand)
+        {
+            debounceTimer.Stop();
+            debounceTimer.Start();
+        }
     }
 
     private async Task UpdateLogoPreviewImageAsync(System.Drawing.Bitmap? bitmap)
@@ -304,20 +355,40 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     partial void OnLogoSizePercentageChanged(double value)
     {
-        debounceTimer.Stop();
-        debounceTimer.Start();
+        if (!_isApplyingBrand)
+        {
+            SelectedBrand = null;
+            debounceTimer.Stop();
+            debounceTimer.Start();
+        }
     }
 
     partial void OnLogoPaddingPixelsChanged(double value)
     {
-        debounceTimer.Stop();
-        debounceTimer.Start();
+        if (!_isApplyingBrand)
+        {
+            SelectedBrand = null;
+            debounceTimer.Stop();
+            debounceTimer.Start();
+        }
     }
 
     public bool CanSaveImage => !string.IsNullOrWhiteSpace(UrlText);
 
+    private bool UrlMatchesBrand(string url)
+    {
+        if (SelectedBrand is null)
+            return false;
+        if (SelectedBrand.UrlContent is null)
+            return true;
+        return url.StartsWith(SelectedBrand.UrlContent, StringComparison.OrdinalIgnoreCase);
+    }
+
     partial void OnUrlTextChanged(string value)
     {
+        if (!_isApplyingBrand && !UrlMatchesBrand(value))
+            SelectedBrand = null;
+
         // Update max logo size when text changes (affects QR version/density)
         OnPropertyChanged(nameof(logoSizeMaxPercentage));
 
@@ -327,8 +398,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             logoSizePercentage = logoSizeMaxPercentage;
         }
 
-        debounceTimer.Stop();
-        debounceTimer.Start();
+        if (!_isApplyingBrand)
+        {
+            debounceTimer.Stop();
+            debounceTimer.Start();
+        }
     }
 
     private readonly DispatcherTimer debounceTimer = new();
@@ -715,6 +789,175 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private void ShareApp() => CopySharePopupOpen = !CopySharePopupOpen;
 
     [RelayCommand]
+    private void SelectErrorCorrectionLevel(ErrorCorrectionOptions option) => SelectedOption = option;
+
+    [RelayCommand]
+    [RequiresUnreferencedCode("Calls BrandStorageHelper.SaveBrandsAsync")]
+    private async Task CreateNewBrand()
+    {
+        if (string.IsNullOrWhiteSpace(NewBrandName))
+            return;
+
+        BrandItem brand = new()
+        {
+            Name = NewBrandName.Trim(),
+            Foreground = IncludeForeground ? ForegroundColor : null,
+            Background = IncludeBackground ? BackgroundColor : null,
+            UrlContent = IncludeUrl ? UrlText : null,
+            ErrorCorrectionLevelAsString = IncludeErrorCorrection ? SelectedOption.ErrorCorrectionLevel.ToString() : null,
+            LogoImagePath = IncludeCenterImage && LogoImage != null ? GetCurrentLogoPath() : null,
+            LogoSizePercentage = IncludeCenterImage ? LogoSizePercentage : null,
+            LogoPaddingPixels = IncludeCenterImage ? LogoPaddingPixels : null,
+        };
+
+        BrandItems.Remove(brand);
+        BrandItems.Insert(0, brand);
+        await BrandStorageHelper.SaveBrandsAsync(BrandItems);
+        NewBrandName = string.Empty;
+        IsNewBrandFormVisible = false;
+
+        WeakReferenceMessenger.Default.Send(
+            new RequestShowMessage("Brand saved", $"\"{brand.Name}\" has been saved", InfoBarSeverity.Success));
+    }
+
+    [RelayCommand]
+    private async Task ApplyBrand(BrandItem? brand)
+    {
+        if (brand is null)
+            return;
+
+        _isApplyingBrand = true;
+        try
+        {
+            if (brand.Foreground.HasValue)
+                ForegroundColor = brand.Foreground.Value;
+
+            if (brand.Background.HasValue)
+                BackgroundColor = brand.Background.Value;
+
+            if (brand.UrlContent is not null)
+                UrlText = brand.UrlContent;
+
+            if (brand.ErrorCorrectionLevelAsString is not null)
+            {
+                ErrorCorrectionOptions? match = ErrorCorrectionLevels
+                    .FirstOrDefault(x => x.ErrorCorrectionLevel.ToString() == brand.ErrorCorrectionLevelAsString);
+                if (match is not null)
+                    SelectedOption = match.Value;
+            }
+
+            if (brand.LogoImagePath is not null)
+                await LoadLogoFromHistory(brand.LogoImagePath);
+
+            if (brand.LogoSizePercentage.HasValue)
+                LogoSizePercentage = brand.LogoSizePercentage.Value;
+
+            if (brand.LogoPaddingPixels.HasValue)
+                LogoPaddingPixels = brand.LogoPaddingPixels.Value;
+
+            SelectedBrand = brand;
+        }
+        finally
+        {
+            _isApplyingBrand = false;
+            debounceTimer.Stop();
+            debounceTimer.Start();
+        }
+    }
+
+    [RelayCommand]
+    private void ApplyBrandForeground(BrandItem? brand)
+    {
+        if (brand?.Foreground is not null)
+            ForegroundColor = brand.Foreground.Value;
+    }
+
+    [RelayCommand]
+    private void ApplyBrandBackground(BrandItem? brand)
+    {
+        if (brand?.Background is not null)
+            BackgroundColor = brand.Background.Value;
+    }
+
+    [RelayCommand]
+    [RequiresUnreferencedCode("Calls BrandStorageHelper.SaveBrandsAsync")]
+    private async Task DeleteBrand(BrandItem? brand)
+    {
+        if (brand is null)
+            return;
+
+        BrandItems.Remove(brand);
+
+        if (SelectedBrand is not null && SelectedBrand.Equals(brand))
+            SelectedBrand = null;
+
+        await BrandStorageHelper.SaveBrandsAsync(BrandItems);
+    }
+
+    [RelayCommand]
+    [RequiresUnreferencedCode("Calls BrandStorageHelper.SaveBrandsAsync")]
+    private async Task SetDefaultBrand(BrandItem? brand)
+    {
+        if (brand is null)
+            return;
+
+        BrandItem? previousDefault = BrandItems.FirstOrDefault(b => b.IsDefault);
+        bool isAlreadyDefault = brand.IsDefault;
+
+        foreach (BrandItem item in BrandItems)
+            item.IsDefault = !isAlreadyDefault && item.Equals(brand);
+
+        if (previousDefault is not null && !previousDefault.Equals(brand))
+            RefreshBrandItemInList(previousDefault);
+        RefreshBrandItemInList(brand);
+
+        await BrandStorageHelper.SaveBrandsAsync(BrandItems);
+    }
+
+    [RelayCommand]
+    [RequiresUnreferencedCode("Calls BrandStorageHelper.SaveBrandsAsync")]
+    private async Task EditBrand(BrandItem? brand)
+    {
+        if (brand is null)
+            return;
+
+        Controls.BrandEditDialog dialog = new(brand)
+        {
+            XamlRoot = App.MainWindow.Content.XamlRoot
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+
+        if (result != ContentDialogResult.Primary || dialog.EditedItem is null)
+            return;
+
+        BrandItem edited = dialog.EditedItem;
+        int index = BrandItems.IndexOf(brand);
+        if (index < 0)
+            return;
+
+        BrandItems.RemoveAt(index);
+        BrandItems.Insert(index, edited);
+
+        if (SelectedBrand is not null && SelectedBrand.Equals(brand))
+            SelectedBrand = edited;
+
+        await BrandStorageHelper.SaveBrandsAsync(BrandItems);
+
+        WeakReferenceMessenger.Default.Send(
+            new RequestShowMessage("Brand updated", $"\"{edited.Name}\" has been updated", InfoBarSeverity.Success));
+    }
+
+    private void RefreshBrandItemInList(BrandItem brand)
+    {
+        int index = BrandItems.IndexOf(brand);
+        if (index < 0)
+            return;
+        BrandItems.RemoveAt(index);
+        BrandItems.Insert(index, brand);
+    }
+
+    [RelayCommand]
     private void OpenFile() => NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!, CreateCurrentStateHistoryItem());
 
     [RelayCommand]
@@ -965,7 +1208,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 // Raster logo: clear any previous SVG content, load bitmap directly
                 LogoSvgContent = null;
                 using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
-                LogoImage = new System.Drawing.Bitmap(stream.AsStreamForRead());
+                // GDI+ keeps an internal reference to the original stream; create an independent
+                // copy before the stream is disposed so that later Save() calls don't fail.
+                using System.Drawing.Bitmap tmp = new(stream.AsStreamForRead());
+                LogoImage = new System.Drawing.Bitmap(tmp);
             }
 
             // Store the selected file path so it can be saved to history
@@ -1249,9 +1495,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public async void OnNavigatedTo(object parameter)
     {
         await LoadHistory();
+        await LoadBrands();
 
         // Force property change notification to refresh UI bindings after history loads
         OnPropertyChanged(nameof(HistoryItems));
+        OnPropertyChanged(nameof(BrandItems));
 
         CheckCanPasteText();
         _ = CheckBackgroundRemovalAvailability();
@@ -1279,6 +1527,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         else if (parameter is string textParam && !string.IsNullOrWhiteSpace(textParam))
         {
             UrlText = textParam;
+        }
+        else
+        {
+            // Apply default brand last, after all settings are loaded
+            BrandItem? defaultBrand = BrandItems.FirstOrDefault(b => b.IsDefault);
+            if (defaultBrand is not null)
+                _ = ApplyBrand(defaultBrand);
         }
     }
 
@@ -1411,6 +1666,17 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         foreach (HistoryItem item in loadedHistory)
         {
             HistoryItems.Add(item);
+        }
+    }
+
+    [RequiresUnreferencedCode("Calls BrandStorageHelper.LoadBrandsAsync")]
+    private async Task LoadBrands()
+    {
+        ObservableCollection<BrandItem> loadedBrands = await BrandStorageHelper.LoadBrandsAsync();
+
+        foreach (BrandItem item in loadedBrands)
+        {
+            BrandItems.Add(item);
         }
     }
 }

@@ -24,3 +24,27 @@ public class ColorJsonConverter : JsonConverter<Color>
         writer.WriteStringValue($"#{value.A:X2}{value.R:X2}{value.G:X2}{value.B:X2}");
     }
 }
+
+public class NullableColorJsonConverter : JsonConverter<Color?>
+{
+    private static readonly ColorJsonConverter _inner = new();
+
+    public override Color? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType == JsonTokenType.Null)
+            return null;
+
+        return _inner.Read(ref reader, typeof(Color), options);
+    }
+
+    public override void Write(Utf8JsonWriter writer, Color? value, JsonSerializerOptions options)
+    {
+        if (value is null)
+        {
+            writer.WriteNullValue();
+            return;
+        }
+
+        _inner.Write(writer, value.Value, options);
+    }
+}
