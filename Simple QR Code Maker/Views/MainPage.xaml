@@ -108,7 +108,7 @@
                                                         <FontIcon Glyph="&#xE8A5;" />
                                                     </MenuFlyoutItem.Icon>
                                                 </MenuFlyoutItem>
-                                                <MenuFlyoutItem Command="{x:Bind ViewModel.OpenCsvFileCommand}" Text="Open CSV">
+                                                <MenuFlyoutItem Command="{x:Bind ViewModel.OpenSpreadsheetFileCommand}" Text="Open spreadsheet">
                                                     <MenuFlyoutItem.Icon>
                                                         <FontIcon Glyph="&#xF232;" />
                                                     </MenuFlyoutItem.Icon>

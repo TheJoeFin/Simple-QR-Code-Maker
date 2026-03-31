@@ -3,15 +3,15 @@ using System.Text;
 namespace Simple_QR_Code_Maker.Helpers;
 
 /// <summary>
-/// Minimal RFC-4180 CSV parser. Handles quoted fields, embedded commas, and
-/// doubled-quote escaping (""). Does not depend on any external packages.
+/// Minimal delimited-text parser. Handles quoted fields, embedded delimiters,
+/// and doubled-quote escaping (""). Does not depend on any external packages.
 /// </summary>
 public static class CsvParser
 {
     /// <summary>
-    /// Parses CSV text into a list of rows, each row being a list of field strings.
+    /// Parses delimited text into a list of rows, each row being a list of field strings.
     /// </summary>
-    public static List<List<string>> Parse(string csv)
+    public static List<List<string>> Parse(string csv, char delimiter = ',')
     {
         var rows = new List<List<string>>();
         if (string.IsNullOrEmpty(csv))
@@ -59,7 +59,7 @@ public static class CsvParser
                     inQuotes = true;
                     i++;
                 }
-                else if (c == ',')
+                else if (c == delimiter)
                 {
                     currentRow.Add(currentField.ToString());
                     currentField.Clear();

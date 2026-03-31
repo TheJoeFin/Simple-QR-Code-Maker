@@ -143,6 +143,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private bool isBackgroundRemovalAvailable = false;
 
     [ObservableProperty]
+    private bool isSpreadsheetImportAvailable = false;
+
+    [ObservableProperty]
     private double logoPaddingPixels = 4.0;
 
     [ObservableProperty]
@@ -349,6 +352,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         OnPropertyChanged(nameof(CanRemoveLogoBackground));
     }
 
+    partial void OnIsSpreadsheetImportAvailableChanged(bool value)
+    {
+        OpenSpreadsheetFileCommand.NotifyCanExecuteChanged();
+    }
+
     public bool IsSvgLogo => LogoSvgContent != null;
 
     public bool CanRemoveLogoBackground => IsBackgroundRemovalAvailable && !IsSvgLogo;
@@ -522,6 +530,19 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
+    private async Task CheckSpreadsheetImportAvailability()
+    {
+        try
+        {
+            IsSpreadsheetImportAvailable = await ExcelSpreadsheetHelper.CheckIsAvailableAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Spreadsheet import availability check failed: {ex.Message}");
+            IsSpreadsheetImportAvailable = false;
+        }
+    }
+
     private void PlaceholderTextTimer_Tick(object? sender, object e)
     {
         Random random = new();
@@ -655,14 +676,26 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    [RelayCommand]
-    private async Task OpenCsvFile()
+    [RelayCommand(CanExecute = nameof(CanOpenSpreadsheetFile))]
+    private async Task OpenSpreadsheetFile()
     {
+        if (!IsSpreadsheetImportAvailable)
+        {
+            CodeInfoBarMessage = "Install Microsoft Excel to import spreadsheet files right now.";
+            CodeInfoBarTitle = "Spreadsheet import unavailable";
+            CodeInfoBarSeverity = InfoBarSeverity.Warning;
+            ShowCodeInfoBar = true;
+            return;
+        }
+
         FileOpenPicker picker = new()
         {
             SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
         };
         picker.FileTypeFilter.Add(".csv");
+        picker.FileTypeFilter.Add(".tsv");
+        picker.FileTypeFilter.Add(".xlsx");
+        picker.FileTypeFilter.Add(".xls");
 
         InitializeWithWindow.Initialize(picker, App.MainWindow.GetWindowHandle());
 
@@ -670,34 +703,43 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (file is null)
             return;
 
-        string csvContent;
+        List<List<string>> rows;
         try
         {
-            csvContent = await FileIO.ReadTextAsync(file);
+            rows = await ExcelSpreadsheetHelper.ReadRowsAsync(file.Path);
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Failed to read CSV file: {ex.Message}");
+            Debug.WriteLine($"Failed to read spreadsheet file: {ex.Message}");
             CodeInfoBarMessage = "Could not read the selected file";
-            CodeInfoBarTitle = "Error reading file";
+            CodeInfoBarTitle = "Error reading spreadsheet";
             CodeInfoBarSeverity = InfoBarSeverity.Error;
             ShowCodeInfoBar = true;
             return;
         }
 
-        Controls.CsvImportDialog dialog = new(csvContent)
+        if (rows.Count == 0)
         {
-            XamlRoot = App.MainWindow.Content.XamlRoot,
-        };
-
-        ContentDialogResult result = await dialog.ShowAsync();
-        if (result != ContentDialogResult.Primary || dialog.SelectedValues.Count == 0)
+            CodeInfoBarMessage = "The selected spreadsheet did not contain any data.";
+            CodeInfoBarTitle = "Nothing to import";
+            CodeInfoBarSeverity = InfoBarSeverity.Warning;
+            ShowCodeInfoBar = true;
             return;
+        }
 
-        string imported = string.Join("\r", dialog.SelectedValues);
-        UrlText = string.IsNullOrWhiteSpace(UrlText)
-            ? imported
-            : UrlText + "\r" + imported;
+        NavigationService.NavigateTo(
+            typeof(SpreadsheetImportViewModel).FullName!,
+            new SpreadsheetImportNavigationData
+            {
+                ReturnState = CreateCurrentStateHistoryItem(),
+                Rows = rows.Select(row => (IReadOnlyList<string>)row.ToList()).ToList(),
+                SourceFileName = file.Name,
+            });
+    }
+
+    private bool CanOpenSpreadsheetFile()
+    {
+        return IsSpreadsheetImportAvailable;
     }
 
     [RelayCommand]
@@ -1586,6 +1628,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         CheckCanPasteText();
         _ = CheckBackgroundRemovalAvailability();
+        _ = CheckSpreadsheetImportAvailability();
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
         UrlText = BaseText;

@@ -27,7 +27,6 @@
     <None Remove="Controls\IconAndTextContent.xaml" />
     <None Remove="Controls\NewFile1.txt" />
     <None Remove="Controls\QrCodeImageControl.xaml" />
-    <None Remove="Controls\CsvImportDialog.xaml" />
     <None Remove="Controls\FeedbackDialog.xaml" />
     <None Remove="Controls\RemoveBackgroundDialog.xaml" />
     <None Remove="Controls\TextBorder.xaml" />
@@ -65,9 +64,6 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Page Update="Controls\CsvImportDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Update="Controls\FeedbackDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
