@@ -289,24 +289,92 @@ public sealed partial class ImageColorPickerControl : UserControl
 
     private static List<WinColor> ExtractDominantColors(MagickImage source)
     {
-        using MagickImage thumb = (MagickImage)source.Clone();
-        thumb.Thumbnail(new MagickGeometry(100, 100));
-        thumb.Quantize(new QuantizeSettings
+        using MagickImage img = (MagickImage)source.Clone();
+
+        // Larger thumbnail gives better color representation than 100×100
+        img.Thumbnail(new MagickGeometry(150, 150));
+
+        // Quantize to more colors so we have headroom to filter
+        // Magick.NET Q16: channels are ushort 0–65535; divide by 257 to get 0–255
+        img.Quantize(new QuantizeSettings
         {
-            Colors = 6,
+            Colors = 24,
             DitherMethod = DitherMethod.No,
         });
 
-        // Magick.NET Q16: channels are ushort 0–65535; divide by 257 to get 0–255
-        return thumb.Histogram()
+        // Build candidates sorted by frequency; skip transparent pixels
+        List<WinColor> candidates = img.Histogram()
             .OrderByDescending(kv => kv.Value)
-            .Take(6)
             .Select(kv => WinColor.FromArgb(
                 (byte)(kv.Key.A / 257),
                 (byte)(kv.Key.R / 257),
                 (byte)(kv.Key.G / 257),
                 (byte)(kv.Key.B / 257)))
+            .Where(c => c.A >= 200)
             .ToList();
+
+        // Prefer saturated mid-tone colors (brand-like); skip whites, blacks, grays
+        List<WinColor> pool = candidates
+            .Where(c =>
+            {
+                (_, double s, double l) = ToHsl(c);
+                return s >= 0.12 && l >= 0.07 && l <= 0.90;
+            })
+            .ToList();
+
+        // Fall back to all opaque candidates if the image is desaturated/monochrome
+        if (pool.Count < 2)
+            pool = candidates;
+
+        // Greedily pick visually distinct colors
+        const double MinDistSq = 50.0 * 50.0;
+        List<WinColor> result = [];
+        foreach (WinColor color in pool)
+        {
+            if (result.Count >= 6) break;
+            if (result.All(existing => ColorDistSq(existing, color) >= MinDistSq))
+                result.Add(color);
+        }
+
+        // Relax constraints and draw from full pool if we still need more swatches
+        if (result.Count < 6)
+        {
+            const double RelaxedDistSq = 30.0 * 30.0;
+            foreach (WinColor color in candidates)
+            {
+                if (result.Count >= 6) break;
+                if (result.All(existing => ColorDistSq(existing, color) >= RelaxedDistSq))
+                    result.Add(color);
+            }
+        }
+
+        return result;
+    }
+
+    private static (double H, double S, double L) ToHsl(WinColor c)
+    {
+        double r = c.R / 255.0, g = c.G / 255.0, b = c.B / 255.0;
+        double max = Math.Max(r, Math.Max(g, b));
+        double min = Math.Min(r, Math.Min(g, b));
+        double l = (max + min) / 2.0;
+        double s = 0.0, h = 0.0;
+
+        if (max != min)
+        {
+            double d = max - min;
+            s = l > 0.5 ? d / (2.0 - max - min) : d / (max + min);
+            if (max == r)      h = ((g - b) / d + (g < b ? 6 : 0)) / 6.0;
+            else if (max == g) h = ((b - r) / d + 2) / 6.0;
+            else               h = ((r - g) / d + 4) / 6.0;
+        }
+
+        return (h, s, l);
+    }
+
+    private static double ColorDistSq(WinColor a, WinColor b)
+    {
+        double dr = a.R - b.R, dg = a.G - b.G, db = a.B - b.B;
+        return dr * dr + dg * dg + db * db;
     }
 
     // ── Swatch row ──────────────────────────────────────────────────────────
