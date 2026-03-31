@@ -27,6 +27,7 @@
     <None Remove="Controls\IconAndTextContent.xaml" />
     <None Remove="Controls\NewFile1.txt" />
     <None Remove="Controls\QrCodeImageControl.xaml" />
+    <None Remove="Controls\CsvImportDialog.xaml" />
     <None Remove="Controls\FeedbackDialog.xaml" />
     <None Remove="Controls\RemoveBackgroundDialog.xaml" />
     <None Remove="Controls\TextBorder.xaml" />
@@ -39,6 +40,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="CommunityToolkit.Labs.WinUI.Controls.DataTable" Version="0.1.260319-build.2547" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.251219" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.251219" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
@@ -63,6 +65,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\CsvImportDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\FeedbackDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
