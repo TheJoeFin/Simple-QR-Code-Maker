@@ -84,41 +84,41 @@
                                                       UpdateSourceTrigger=PropertyChanged}"
                                         TextChanged="UrlTextBox_TextChanged"
                                         TextWrapping="NoWrap" />
-                                    <Grid>
-                                        <Button
-                                            Width="36"
-                                            Height="36"
-                                            Margin="0,0,0,-1"
-                                            Padding="0"
-                                            VerticalAlignment="Bottom"
-                                            Command="{x:Bind ViewModel.AddNewLineCommand}"
-                                            ToolTipService.ToolTip="Add a return and start making another QR Code"
-                                            Visibility="{x:Bind ViewModel.CanSaveImage,
-                                                                Converter={StaticResource BoolToVisibility},
-                                                                Mode=OneWay}">
-                                            <Viewbox Width="16" Height="16">
-                                                <SymbolIcon Symbol="Add" />
-                                            </Viewbox>
-                                        </Button>
-                                        <Button
-                                            Width="36"
-                                            Height="36"
-                                            Margin="0,0,0,-1"
-                                            Padding="0"
-                                            VerticalAlignment="Bottom"
-                                            Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
-                                            IsEnabled="{x:Bind ViewModel.CanPasteText,
-                                                               Mode=OneWay}"
-                                            ToolTipService.ToolTip="Paste text from clipboard"
-                                            Visibility="{x:Bind ViewModel.CanSaveImage,
-                                                                Converter={StaticResource BoolToVisibility},
-                                                                ConverterParameter=True,
-                                                                Mode=OneWay}">
-                                            <Viewbox Width="16" Height="16">
-                                                <SymbolIcon Symbol="Paste" />
-                                            </Viewbox>
-                                        </Button>
-                                    </Grid>
+                                    <Button
+                                        Width="36"
+                                        Height="36"
+                                        Margin="0,0,0,-1"
+                                        Padding="0"
+                                        VerticalAlignment="Bottom"
+                                        ToolTipService.ToolTip="Import text">
+                                        <Button.Flyout>
+                                            <MenuFlyout Placement="Bottom">
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
+                                                    IsEnabled="{x:Bind ViewModel.CanPasteText,
+                                                                       Mode=OneWay}"
+                                                    Text="Paste">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <SymbolIcon Symbol="Paste" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutSeparator />
+                                                <MenuFlyoutItem Command="{x:Bind ViewModel.OpenTextFileCommand}" Text="Open text file">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xE8A5;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutItem Command="{x:Bind ViewModel.OpenCsvFileCommand}" Text="Open CSV">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xF232;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                            </MenuFlyout>
+                                        </Button.Flyout>
+                                        <Viewbox Width="16" Height="16">
+                                            <SymbolIcon Symbol="Add" />
+                                        </Viewbox>
+                                    </Button>
                                 </StackPanel>
 
                                 <StackPanel

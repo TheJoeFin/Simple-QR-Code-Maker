@@ -618,6 +618,89 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
+    private async Task OpenTextFile()
+    {
+        FileOpenPicker picker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+        };
+        picker.FileTypeFilter.Add(".txt");
+        picker.FileTypeFilter.Add(".csv");
+        picker.FileTypeFilter.Add("*");
+
+        InitializeWithWindow.Initialize(picker, App.MainWindow.GetWindowHandle());
+
+        StorageFile? file = await picker.PickSingleFileAsync();
+        if (file is null)
+            return;
+
+        try
+        {
+            string text = await FileIO.ReadTextAsync(file);
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                text = text.TrimEnd();
+                UrlText = string.IsNullOrWhiteSpace(UrlText)
+                    ? text
+                    : UrlText + "\r" + text;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to read text file: {ex.Message}");
+            CodeInfoBarMessage = "Could not read the selected file";
+            CodeInfoBarTitle = "Error reading file";
+            CodeInfoBarSeverity = InfoBarSeverity.Error;
+            ShowCodeInfoBar = true;
+        }
+    }
+
+    [RelayCommand]
+    private async Task OpenCsvFile()
+    {
+        FileOpenPicker picker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+        };
+        picker.FileTypeFilter.Add(".csv");
+
+        InitializeWithWindow.Initialize(picker, App.MainWindow.GetWindowHandle());
+
+        StorageFile? file = await picker.PickSingleFileAsync();
+        if (file is null)
+            return;
+
+        string csvContent;
+        try
+        {
+            csvContent = await FileIO.ReadTextAsync(file);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to read CSV file: {ex.Message}");
+            CodeInfoBarMessage = "Could not read the selected file";
+            CodeInfoBarTitle = "Error reading file";
+            CodeInfoBarSeverity = InfoBarSeverity.Error;
+            ShowCodeInfoBar = true;
+            return;
+        }
+
+        Controls.CsvImportDialog dialog = new(csvContent)
+        {
+            XamlRoot = App.MainWindow.Content.XamlRoot,
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+        if (result != ContentDialogResult.Primary || dialog.SelectedValues.Count == 0)
+            return;
+
+        string imported = string.Join("\r", dialog.SelectedValues);
+        UrlText = string.IsNullOrWhiteSpace(UrlText)
+            ? imported
+            : UrlText + "\r" + imported;
+    }
+
+    [RelayCommand]
     private async Task CopyPngToClipboard()
     {
         if (QrCodeBitmaps.Count == 0)
