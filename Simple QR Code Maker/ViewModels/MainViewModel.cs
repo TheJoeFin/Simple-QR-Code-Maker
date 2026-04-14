@@ -9,6 +9,7 @@ using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
+using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -73,6 +74,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private BrandItem? selectedBrand = null;
+
+    public ObservableCollection<ColorPickerListItem> ForegroundBrandColorItems { get; } = [];
+
+    public ObservableCollection<ColorPickerListItem> BackgroundBrandColorItems { get; } = [];
+
+    public ObservableCollection<ColorPickerListItem> ForegroundRecentColorItems { get; } = [];
+
+    public ObservableCollection<ColorPickerListItem> BackgroundRecentColorItems { get; } = [];
 
     private bool _isApplyingBrand = false;
 
@@ -442,9 +451,106 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
         Clipboard.ContentChanged += Clipboard_ContentChanged;
 
+        HistoryItems.CollectionChanged += HistoryItems_CollectionChanged;
+        BrandItems.CollectionChanged += BrandItems_CollectionChanged;
+        RefreshColorPickerListItems();
+
         WeakReferenceMessenger.Default.Register<RequestShowMessage>(this, OnRequestShowMessage);
         WeakReferenceMessenger.Default.Register<SaveHistoryMessage>(this, OnSaveHistoryMessage);
         WeakReferenceMessenger.Default.Register<RequestPaneChange>(this, OnRequestPaneChange);
+    }
+
+    private void BrandItems_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        RefreshBrandColorPickerListItems();
+    }
+
+    private void HistoryItems_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        RefreshRecentColorPickerListItems();
+    }
+
+    private void RefreshColorPickerListItems()
+    {
+        RefreshBrandColorPickerListItems();
+        RefreshRecentColorPickerListItems();
+    }
+
+    private void RefreshBrandColorPickerListItems()
+    {
+        IReadOnlyList<ColorPickerListItem> brandColorItems = [.. GetBrandColorPickerListItems()];
+        ReplaceColorPickerListItems(ForegroundBrandColorItems, brandColorItems);
+        ReplaceColorPickerListItems(BackgroundBrandColorItems, brandColorItems);
+    }
+
+    private void RefreshRecentColorPickerListItems()
+    {
+        IReadOnlyList<ColorPickerListItem> recentColorItems = [.. GetHistoryColorPickerListItems()];
+        ReplaceColorPickerListItems(ForegroundRecentColorItems, recentColorItems);
+        ReplaceColorPickerListItems(BackgroundRecentColorItems, recentColorItems);
+    }
+
+    private IEnumerable<ColorPickerListItem> GetBrandColorPickerListItems()
+    {
+        foreach (BrandItem brand in BrandItems)
+        {
+            if (brand.Foreground is Windows.UI.Color foreground)
+                yield return new ColorPickerListItem(foreground, BuildColorPickerListLabel("Foreground", brand.Name));
+
+            if (brand.Background is Windows.UI.Color background)
+                yield return new ColorPickerListItem(background, BuildColorPickerListLabel("Background", brand.Name));
+        }
+    }
+
+    private IEnumerable<ColorPickerListItem> GetHistoryColorPickerListItems()
+    {
+        foreach (HistoryItem historyItem in HistoryItems)
+        {
+            yield return new ColorPickerListItem(
+                historyItem.Foreground,
+                BuildColorPickerListLabel("Foreground", historyItem.CodesContent));
+
+            yield return new ColorPickerListItem(
+                historyItem.Background,
+                BuildColorPickerListLabel("Background", historyItem.CodesContent));
+        }
+    }
+
+    private static void ReplaceColorPickerListItems(
+        ObservableCollection<ColorPickerListItem> target,
+        IEnumerable<ColorPickerListItem> source)
+    {
+        target.Clear();
+
+        foreach (ColorPickerListItem item in source)
+        {
+            target.Add(item);
+        }
+    }
+
+    private static string BuildColorPickerListLabel(string prefix, string source)
+    {
+        return $"{prefix}, {NormalizeColorPickerListSource(source)}";
+    }
+
+    private static string NormalizeColorPickerListSource(string source)
+    {
+        if (string.IsNullOrWhiteSpace(source))
+            return "(empty)";
+
+        string normalized = source
+            .Replace("\r\n", " ", StringComparison.Ordinal)
+            .Replace('\r', ' ')
+            .Replace('\n', ' ')
+            .Replace('\t', ' ')
+            .Trim();
+
+        while (normalized.Contains("  ", StringComparison.Ordinal))
+        {
+            normalized = normalized.Replace("  ", " ", StringComparison.Ordinal);
+        }
+
+        return normalized.Length == 0 ? "(empty)" : normalized;
     }
 
     private void OnRequestPaneChange(object recipient, RequestPaneChange message)

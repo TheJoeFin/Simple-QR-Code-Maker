@@ -192,95 +192,23 @@
                                     Visibility="{x:Bind ViewModel.CanSaveImage,
                                                         Mode=OneWay,
                                                         Converter={StaticResource BoolToVisibility}}">
-                                    <Button Width="48" ToolTipService.ToolTip="Code Color">
-                                        <Button.Flyout>
-                                            <Flyout>
-                                                <StackPanel Spacing="8">
-                                                    <ColorPicker
-                                                        x:Name="ForegroundColorPicker"
-                                                        ColorSpectrumShape="Ring"
-                                                        IsAlphaEnabled="True"
-                                                        IsMoreButtonVisible="True"
-                                                        Color="{x:Bind ViewModel.ForegroundColor,
-                                                                       Mode=TwoWay}" />
-                                                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.BrandItems, Mode=OneWay}">
-                                                        <ItemsRepeater.Layout>
-                                                            <StackLayout Orientation="Horizontal" Spacing="4" />
-                                                        </ItemsRepeater.Layout>
-                                                        <ItemsRepeater.ItemTemplate>
-                                                            <DataTemplate x:DataType="models:BrandItem">
-                                                                <Button
-                                                                    Width="28"
-                                                                    Height="28"
-                                                                    MinWidth="28"
-                                                                    Padding="0"
-                                                                    Click="BrandForegroundColor_Click"
-                                                                    Tag="{x:Bind}"
-                                                                    ToolTipService.ToolTip="{x:Bind Name}">
-                                                                    <Rectangle
-                                                                        Width="16"
-                                                                        Height="16"
-                                                                        Fill="{x:Bind Foreground,
-                                                                                      Converter={StaticResource ColorToBrush}}" />
-                                                                </Button>
-                                                            </DataTemplate>
-                                                        </ItemsRepeater.ItemTemplate>
-                                                    </ItemsRepeater>
-                                                </StackPanel>
-                                            </Flyout>
-                                        </Button.Flyout>
-                                        <Button.Content>
+                                    <controls:ColorPickerButton
+                                        BrandColorItems="{x:Bind ViewModel.ForegroundBrandColorItems, Mode=OneWay}"
+                                        Color="{x:Bind ViewModel.ForegroundColor, Mode=TwoWay}"
+                                        RecentColorItems="{x:Bind ViewModel.ForegroundRecentColorItems, Mode=OneWay}"
+                                        ToolTipText="Code Color">
+                                        <controls:ColorPickerButton.ButtonContent>
                                             <Viewbox Width="18" Height="18">
-                                                <controls:QrCodeIcon Foreground="{x:Bind ForegroundColorPicker.Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
+                                                <controls:QrCodeIcon Foreground="{x:Bind ViewModel.ForegroundColor, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
                                             </Viewbox>
-                                        </Button.Content>
-                                    </Button>
-                                    <Button Width="48" ToolTipService.ToolTip="Background Color">
-                                        <Button.Flyout>
-                                            <Flyout>
-                                                <StackPanel Spacing="8">
-                                                    <ColorPicker
-                                                        x:Name="BackgroundColorPicker"
-                                                        ColorSpectrumShape="Ring"
-                                                        IsAlphaEnabled="True"
-                                                        IsMoreButtonVisible="True"
-                                                        Color="{x:Bind ViewModel.BackgroundColor,
-                                                                       Mode=TwoWay}" />
-                                                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.BrandItems, Mode=OneWay}">
-                                                        <ItemsRepeater.Layout>
-                                                            <StackLayout Orientation="Horizontal" Spacing="4" />
-                                                        </ItemsRepeater.Layout>
-                                                        <ItemsRepeater.ItemTemplate>
-                                                            <DataTemplate x:DataType="models:BrandItem">
-                                                                <Button
-                                                                    Width="28"
-                                                                    Height="28"
-                                                                    MinWidth="28"
-                                                                    Padding="0"
-                                                                    Click="BrandBackgroundColor_Click"
-                                                                    Tag="{x:Bind}"
-                                                                    ToolTipService.ToolTip="{x:Bind Name}">
-                                                                    <Rectangle
-                                                                        Width="16"
-                                                                        Height="16"
-                                                                        Fill="{x:Bind Background,
-                                                                                      Converter={StaticResource ColorToBrush}}" />
-                                                                </Button>
-                                                            </DataTemplate>
-                                                        </ItemsRepeater.ItemTemplate>
-                                                    </ItemsRepeater>
-                                                </StackPanel>
-                                            </Flyout>
-                                        </Button.Flyout>
-                                        <Button.Content>
-                                            <Rectangle
-                                                Width="16"
-                                                Height="16"
-                                                Fill="{x:Bind BackgroundColorPicker.Color,
-                                                              Mode=OneWay,
-                                                              Converter={StaticResource ColorToBrush}}" />
-                                        </Button.Content>
-                                    </Button>
+                                        </controls:ColorPickerButton.ButtonContent>
+                                    </controls:ColorPickerButton>
+                                    <controls:ColorPickerButton
+                                        BrandColorItems="{x:Bind ViewModel.BackgroundBrandColorItems, Mode=OneWay}"
+                                        Color="{x:Bind ViewModel.BackgroundColor, Mode=TwoWay}"
+                                        RecentColorItems="{x:Bind ViewModel.BackgroundRecentColorItems, Mode=OneWay}"
+                                        ToolTipText="Background Color">
+                                    </controls:ColorPickerButton>
                                     <DropDownButton Width="60" ToolTipService.ToolTip="Level of Error Correction">
                                         <TextBlock Text="{x:Bind ViewModel.SelectedOption.ShortDescription, Mode=OneWay}" />
                                         <DropDownButton.Flyout>

@@ -2,6 +2,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Simple_QR_Code_Maker.Models;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.DataTransfer;
 using WinColor = Windows.UI.Color;
@@ -30,6 +33,71 @@ public sealed partial class ColorPickerButton : UserControl
         set => SetValue(ColorProperty, value);
     }
 
+    public static readonly DependencyProperty ButtonContentProperty =
+        DependencyProperty.Register(
+            nameof(ButtonContent),
+            typeof(UIElement),
+            typeof(ColorPickerButton),
+            new PropertyMetadata(null, OnButtonContentChanged));
+
+    public UIElement? ButtonContent
+    {
+        get => (UIElement?)GetValue(ButtonContentProperty);
+        set => SetValue(ButtonContentProperty, value);
+    }
+
+    public static readonly DependencyProperty AdditionalFlyoutContentProperty =
+        DependencyProperty.Register(
+            nameof(AdditionalFlyoutContent),
+            typeof(UIElement),
+            typeof(ColorPickerButton),
+            new PropertyMetadata(null, OnAdditionalFlyoutContentChanged));
+
+    public UIElement? AdditionalFlyoutContent
+    {
+        get => (UIElement?)GetValue(AdditionalFlyoutContentProperty);
+        set => SetValue(AdditionalFlyoutContentProperty, value);
+    }
+
+    public static readonly DependencyProperty ToolTipTextProperty =
+        DependencyProperty.Register(
+            nameof(ToolTipText),
+            typeof(string),
+            typeof(ColorPickerButton),
+            new PropertyMetadata("Pick color", OnToolTipTextChanged));
+
+    public string? ToolTipText
+    {
+        get => (string?)GetValue(ToolTipTextProperty);
+        set => SetValue(ToolTipTextProperty, value);
+    }
+
+    public static readonly DependencyProperty BrandColorItemsProperty =
+        DependencyProperty.Register(
+            nameof(BrandColorItems),
+            typeof(ObservableCollection<ColorPickerListItem>),
+            typeof(ColorPickerButton),
+            new PropertyMetadata(null, OnBrandColorItemsChanged));
+
+    public ObservableCollection<ColorPickerListItem>? BrandColorItems
+    {
+        get => (ObservableCollection<ColorPickerListItem>?)GetValue(BrandColorItemsProperty);
+        set => SetValue(BrandColorItemsProperty, value);
+    }
+
+    public static readonly DependencyProperty RecentColorItemsProperty =
+        DependencyProperty.Register(
+            nameof(RecentColorItems),
+            typeof(ObservableCollection<ColorPickerListItem>),
+            typeof(ColorPickerButton),
+            new PropertyMetadata(null, OnRecentColorItemsChanged));
+
+    public ObservableCollection<ColorPickerListItem>? RecentColorItems
+    {
+        get => (ObservableCollection<ColorPickerListItem>?)GetValue(RecentColorItemsProperty);
+        set => SetValue(RecentColorItemsProperty, value);
+    }
+
     // ── DefaultImagePath DependencyProperty ────────────────────────────────
     public static readonly DependencyProperty DefaultImagePathProperty =
         DependencyProperty.Register(
@@ -47,6 +115,12 @@ public sealed partial class ColorPickerButton : UserControl
     public ColorPickerButton()
     {
         InitializeComponent();
+        UpdateButtonContent();
+        UpdateAdditionalFlyoutContent();
+        UpdateToolTip();
+        UpdateSavedModeItems(null, BrandColorItems, BrandColorsListView);
+        UpdateSavedModeItems(null, RecentColorItems, RecentColorsListView);
+        UpdateSavedModeState();
         Loaded += ColorPickerButton_Loaded;
         Unloaded += ColorPickerButton_Unloaded;
         UpdateModeVisibility();
@@ -57,6 +131,46 @@ public sealed partial class ColorPickerButton : UserControl
     private bool _isClipboardSubscriptionActive;
     private WinColor? _clipboardSuggestionColor;
     private ImageColorPickerControl? _imageModePanel;
+
+    private static void OnButtonContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ColorPickerButton control)
+            control.UpdateButtonContent();
+    }
+
+    private static void OnAdditionalFlyoutContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ColorPickerButton control)
+            control.UpdateAdditionalFlyoutContent();
+    }
+
+    private static void OnToolTipTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ColorPickerButton control)
+            control.UpdateToolTip();
+    }
+
+    private static void OnBrandColorItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ColorPickerButton control)
+        {
+            control.UpdateSavedModeItems(
+                e.OldValue as ObservableCollection<ColorPickerListItem>,
+                e.NewValue as ObservableCollection<ColorPickerListItem>,
+                control.BrandColorsListView);
+        }
+    }
+
+    private static void OnRecentColorItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ColorPickerButton control)
+        {
+            control.UpdateSavedModeItems(
+                e.OldValue as ObservableCollection<ColorPickerListItem>,
+                e.NewValue as ObservableCollection<ColorPickerListItem>,
+                control.RecentColorsListView);
+        }
+    }
 
     private static void OnDefaultImagePathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -124,6 +238,15 @@ public sealed partial class ColorPickerButton : UserControl
             SetSelectedColor(clipboardColor);
     }
 
+    private void SavedColorItem_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is not ColorPickerListItem item)
+            return;
+
+        SetSelectedColor(item.Color);
+        PickerFlyout.Hide();
+    }
+
     private async Task RefreshClipboardSuggestionAsync()
     {
         int refreshVersion = ++_clipboardRefreshVersion;
@@ -164,6 +287,91 @@ public sealed partial class ColorPickerButton : UserControl
         AutomationProperties.SetName(PasteClipboardColorButton, "Paste color from clipboard");
     }
 
+    private void UpdateButtonContent()
+    {
+        if (ButtonContentHost is null || DefaultColorSwatch is null)
+            return;
+
+        bool hasCustomContent = ButtonContent is not null;
+        ButtonContentHost.Content = ButtonContent;
+        ButtonContentHost.Visibility = hasCustomContent ? Visibility.Visible : Visibility.Collapsed;
+        DefaultColorSwatch.Visibility = hasCustomContent ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    private void UpdateAdditionalFlyoutContent()
+    {
+        if (AdditionalFlyoutContentHost is null)
+            return;
+
+        bool hasAdditionalContent = AdditionalFlyoutContent is not null;
+        AdditionalFlyoutContentHost.Content = AdditionalFlyoutContent;
+        AdditionalFlyoutContentHost.Visibility = hasAdditionalContent ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void UpdateToolTip()
+    {
+        if (PickerButton is null)
+            return;
+
+        string toolTipText = string.IsNullOrWhiteSpace(ToolTipText) ? "Pick color" : ToolTipText;
+        ToolTipService.SetToolTip(PickerButton, toolTipText);
+        AutomationProperties.SetName(PickerButton, toolTipText);
+    }
+
+    private void UpdateSavedModeItems(
+        ObservableCollection<ColorPickerListItem>? oldItems,
+        ObservableCollection<ColorPickerListItem>? newItems,
+        ListView? listView)
+    {
+        if (oldItems is not null)
+            oldItems.CollectionChanged -= SavedModeItems_CollectionChanged;
+
+        if (newItems is not null)
+            newItems.CollectionChanged += SavedModeItems_CollectionChanged;
+
+        if (listView is not null)
+            listView.ItemsSource = newItems;
+
+        UpdateSavedModeState();
+    }
+
+    private void SavedModeItems_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        UpdateSavedModeState();
+    }
+
+    private void UpdateSavedModeState()
+    {
+        if (ListModePickerItem is null)
+            return;
+
+        bool hasListMode = BrandColorItems is not null || RecentColorItems is not null;
+        bool hasBrandItems = BrandColorItems?.Count > 0;
+        bool hasRecentItems = RecentColorItems?.Count > 0;
+
+        ListModePickerItem.Visibility = hasListMode ? Visibility.Visible : Visibility.Collapsed;
+
+        if (BrandColorsSection is not null)
+            BrandColorsSection.Visibility = hasBrandItems ? Visibility.Visible : Visibility.Collapsed;
+
+        if (RecentColorsSection is not null)
+            RecentColorsSection.Visibility = hasRecentItems ? Visibility.Visible : Visibility.Collapsed;
+
+        if (SavedColorsEmptyStateText is not null)
+        {
+            SavedColorsEmptyStateText.Visibility =
+                hasListMode && !hasBrandItems && !hasRecentItems
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+        }
+
+        if (ListModePickerItem.Visibility != Visibility.Visible && ModePicker.SelectedIndex == 2)
+            ModePicker.SelectedIndex = 0;
+
+        if (IsLoaded)
+            UpdateModeVisibility();
+    }
+
     private void SetSelectedColor(WinColor color)
     {
         if (_updatingColor) return;
@@ -179,14 +387,16 @@ public sealed partial class ColorPickerButton : UserControl
         if (!IsLoaded) return;
 
         bool showImagePicker = ModePicker.SelectedIndex == 1;
+        bool showListPicker = ListModePickerItem.Visibility == Visibility.Visible && ModePicker.SelectedIndex == 2;
         if (showImagePicker)
         {
             _ = EnsureImageModePanel();
             ApplyImagePickerDefaults();
         }
 
-        ColorModePanel.Visibility = showImagePicker ? Visibility.Collapsed : Visibility.Visible;
+        ColorModePanel.Visibility = showImagePicker || showListPicker ? Visibility.Collapsed : Visibility.Visible;
         ImageModeHost.Visibility = showImagePicker ? Visibility.Visible : Visibility.Collapsed;
+        ListModePanel.Visibility = showListPicker ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void ApplyImagePickerDefaults()
