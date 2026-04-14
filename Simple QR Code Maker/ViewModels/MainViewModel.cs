@@ -1644,8 +1644,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             await LocalSettingsService.SaveSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
         }
 
+        if (parameter is TitleBarSearchResult searchResult)
+        {
+            await ApplyTitleBarSearchNavigationAsync(searchResult);
+        }
         // Check if parameter is a HistoryItem with full state restoration
-        if (parameter is HistoryItem historyItem)
+        else if (parameter is HistoryItem historyItem)
         {
             RestoreFromHistoryItem(historyItem);
         }
@@ -1660,6 +1664,31 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             BrandItem? defaultBrand = BrandItems.FirstOrDefault(b => b.IsDefault);
             if (defaultBrand is not null)
                 _ = ApplyBrand(defaultBrand);
+        }
+    }
+
+    private async Task ApplyTitleBarSearchNavigationAsync(TitleBarSearchResult searchResult)
+    {
+        switch (searchResult.Kind)
+        {
+            case TitleBarSearchResultKind.Brand when searchResult.BrandItem is not null:
+                BrandItem brandToApply = BrandItems
+                    .FirstOrDefault(item => item.Equals(searchResult.BrandItem))
+                    ?? searchResult.BrandItem;
+                await ApplyBrand(brandToApply);
+                break;
+
+            case TitleBarSearchResultKind.History when searchResult.HistoryItem is not null:
+                RestoreFromHistoryItem(searchResult.HistoryItem);
+                break;
+
+            case TitleBarSearchResultKind.Faq:
+                IsFaqPaneOpen = true;
+                WeakReferenceMessenger.Default.Send(new RequestPaneChange(
+                    MainViewPanes.Faq,
+                    PaneState.Open,
+                    searchResult.SearchText));
+                break;
         }
     }
 

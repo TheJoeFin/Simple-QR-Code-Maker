@@ -16,6 +16,7 @@
         <converters:TextHasNoURLConverter x:Key="HasNoURL" />
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
         <converters:EmptyStringToCollapsedConverter x:Key="EmptyStringToCollapsed" />
+        <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
         <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
         <converters:EmptyCollectionToVisibilityConverter x:Key="EmptyCollectionToVisibility" />
 
@@ -51,21 +52,83 @@
                                 VerticalAlignment="Center"
                                 Orientation="Vertical"
                                 Spacing="12">
-                                <ComboBox
-                                    x:Name="BrandPickerComboBox"
-                                    MinWidth="212"
+                                <DropDownButton
+                                    x:Name="BrandPickerButton"
+                                    Height="36"
+                                    MinWidth="216"
                                     HorizontalAlignment="Center"
-                                    DisplayMemberPath="Name"
-                                    ItemsSource="{x:Bind ViewModel.BrandItems,
-                                                         Mode=OneWay}"
-                                    PlaceholderText="Select a brand"
-                                    SelectedItem="{x:Bind ViewModel.SelectedBrand,
-                                                          Mode=OneWay}"
-                                    SelectionChanged="BrandPickerComboBox_SelectionChanged"
+                                    HorizontalContentAlignment="Stretch"
+                                    ToolTipService.ToolTip="Select brand"
                                     Visibility="{x:Bind ViewModel.BrandItems.Count,
                                                         Converter={StaticResource EmptyCollectionToVisibility},
                                                         ConverterParameter=true,
-                                                        Mode=OneWay}" />
+                                                        Mode=OneWay}">
+                                    <DropDownButton.Content>
+                                        <Grid>
+                                            <StackPanel
+                                                Orientation="Horizontal"
+                                                Spacing="6"
+                                                Visibility="{Binding ViewModel.SelectedBrand,
+                                                                     ElementName=EncodingPage,
+                                                                     Converter={StaticResource NullToVisibility}}">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontWeight="SemiBold"
+                                                    Text="{Binding ViewModel.SelectedBrand.Name,
+                                                                   ElementName=EncodingPage}"
+                                                    TextTrimming="CharacterEllipsis" />
+                                                <FontIcon
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                    FontSize="12"
+                                                    Glyph="&#xE734;"
+                                                    ToolTipService.ToolTip="Default brand"
+                                                    Visibility="{Binding ViewModel.SelectedBrand.IsDefault,
+                                                                         ElementName=EncodingPage,
+                                                                         Converter={StaticResource BoolToVisibility}}" />
+                                            </StackPanel>
+
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Text="Select a brand"
+                                                Visibility="{Binding ViewModel.SelectedBrand,
+                                                                     ElementName=EncodingPage,
+                                                                     Converter={StaticResource NullToVisibility},
+                                                                     ConverterParameter=Inverted}" />
+                                        </Grid>
+                                    </DropDownButton.Content>
+                                    <DropDownButton.Flyout>
+                                        <Flyout x:Name="BrandPickerFlyout" Placement="Bottom">
+                                            <ListView
+                                                x:Name="BrandPickerListView"
+                                                Width="320"
+                                                MaxHeight="360"
+                                                ItemsSource="{x:Bind ViewModel.BrandItems,
+                                                                     Mode=OneWay}"
+                                                SelectedItem="{x:Bind ViewModel.SelectedBrand,
+                                                                      Mode=OneWay}"
+                                                SelectionChanged="BrandPickerListView_SelectionChanged"
+                                                SelectionMode="Single">
+                                                <ListView.ItemContainerStyle>
+                                                    <Style TargetType="ListViewItem">
+                                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                    </Style>
+                                                </ListView.ItemContainerStyle>
+                                                <ListView.ItemTemplate>
+                                                    <DataTemplate x:DataType="models:BrandItem">
+                                                        <controls:BrandRowItem
+                                                            Data="{x:Bind}"
+                                                            DeleteRequested="BrandRowItem_DeleteRequested"
+                                                            EditRequested="BrandRowItem_EditRequested"
+                                                            SetDefaultRequested="BrandRowItem_SetDefaultRequested"
+                                                            ShowActions="True" />
+                                                    </DataTemplate>
+                                                </ListView.ItemTemplate>
+                                            </ListView>
+                                        </Flyout>
+                                    </DropDownButton.Flyout>
+                                </DropDownButton>
 
                                 <StackPanel
                                     HorizontalAlignment="Center"
@@ -425,32 +488,20 @@
                                                                               Mode=OneWay}"
                                                         SelectionChanged="BrandListView_SelectionChanged"
                                                         SelectionMode="Single">
+                                                        <ListView.ItemContainerStyle>
+                                                            <Style TargetType="ListViewItem">
+                                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                            </Style>
+                                                        </ListView.ItemContainerStyle>
                                                         <ListView.ItemTemplate>
                                                             <DataTemplate x:DataType="models:BrandItem">
                                                                 <controls:BrandRowItem
                                                                     Background="Transparent"
                                                                     Data="{x:Bind}"
-                                                                    Tag="{x:Bind}">
-                                                                    <controls:BrandRowItem.ContextFlyout>
-                                                                        <MenuFlyout>
-                                                                            <MenuFlyoutItem
-                                                                                Click="EditBrand_Click"
-                                                                                Icon="Edit"
-                                                                                Tag="{x:Bind}"
-                                                                                Text="Edit" />
-                                                                            <MenuFlyoutItem
-                                                                                Click="SetDefaultBrand_Click"
-                                                                                Tag="{x:Bind}"
-                                                                                Text="Set as default" />
-                                                                            <MenuFlyoutSeparator />
-                                                                            <MenuFlyoutItem
-                                                                                Click="DeleteBrand_Click"
-                                                                                Icon="Delete"
-                                                                                Tag="{x:Bind}"
-                                                                                Text="Delete" />
-                                                                        </MenuFlyout>
-                                                                    </controls:BrandRowItem.ContextFlyout>
-                                                                </controls:BrandRowItem>
+                                                                    DeleteRequested="BrandRowItem_DeleteRequested"
+                                                                    EditRequested="BrandRowItem_EditRequested"
+                                                                    SetDefaultRequested="BrandRowItem_SetDefaultRequested"
+                                                                    ShowActions="True" />
                                                             </DataTemplate>
                                                         </ListView.ItemTemplate>
                                                     </ListView>

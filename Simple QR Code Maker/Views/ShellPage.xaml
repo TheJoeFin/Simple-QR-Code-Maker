@@ -6,42 +6,57 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Simple_QR_Code_Maker.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Simple_QR_Code_Maker.Models"
     mc:Ignorable="d">
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="36" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <AppBarButton
-            VerticalAlignment="Center"
-            Canvas.ZIndex="0"
-            Command="{x:Bind ViewModel.BackCommand}"
-            Icon="Back"
-            IsEnabled="{x:Bind ViewModel.IsBackEnabled,
-                               Mode=OneWay}"
-            Style="{StaticResource NavigationBackButtonSmallStyle}"
-            Visibility="Collapsed" />
-        <StackPanel
-            x:Name="AppTitleBar"
-            Margin="6,0,0,0"
-            Padding="0"
-            Canvas.ZIndex="1"
-            IsHitTestVisible="True"
-            Orientation="Horizontal"
-            Spacing="10">
-            <Image
-                Width="24"
-                Height="24"
-                Margin="4,2"
-                Source="/Assets/WindowIcon.ico" />
-            <TextBlock
-                x:Name="AppTitleBarText"
-                VerticalAlignment="Center"
-                Style="{StaticResource CaptionTextBlockStyle}"
-                TextWrapping="NoWrap" />
-        </StackPanel>
+        <TitleBar x:Name="AppTitleBar" IsBackButtonVisible="False">
+            <TitleBar.Content>
+                <AutoSuggestBox
+                    x:Name="TitleBarSearchBox"
+                    MinWidth="320"
+                    MaxWidth="800"
+                    Margin="0,0,-160,0"
+                    ItemsSource="{x:Bind ViewModel.TitleBarSearchResults,
+                                         Mode=OneWay}"
+                    PlaceholderText="Search FAQs, history, and brands"
+                    QueryIcon="Find"
+                    QuerySubmitted="TitleBarSearchBox_QuerySubmitted"
+                    SuggestionChosen="TitleBarSearchBox_SuggestionChosen"
+                    TextChanged="TitleBarSearchBox_TextChanged">
+                    <AutoSuggestBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:TitleBarSearchResult">
+                            <StackPanel Padding="8,4">
+                                <TextBlock
+                                    FontSize="12"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="{x:Bind KindLabel,
+                                                  Mode=OneWay}" />
+                                <TextBlock
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                    Text="{x:Bind Title,
+                                                  Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Bind Subtitle,
+                                                  Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </AutoSuggestBox.ItemTemplate>
+                </AutoSuggestBox>
+            </TitleBar.Content>
+            <TitleBar.IconSource>
+                <BitmapIconSource ShowAsMonochrome="False" UriSource="ms-appx:///Assets/WindowIcon.ico" />
+            </TitleBar.IconSource>
+        </TitleBar>
         <Frame x:Name="NavigationFrame" Grid.Row="1" />
     </Grid>
 </Page>

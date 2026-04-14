@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using Simple_QR_Code_Maker.Controls;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
@@ -104,20 +105,17 @@ public sealed partial class MainPage : Page
         if (sender is not ListView listView)
             return;
 
-        if (listView.SelectedItem is BrandItem brand && !brand.Equals(ViewModel.SelectedBrand))
-        {
-            ViewModel.ApplyBrandCommand.Execute(brand);
+        if (TryApplySelectedBrand(listView))
             BrandFlyout.Hide();
-        }
     }
 
-    private void BrandPickerComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void BrandPickerListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (sender is not ComboBox || e.AddedItems.Count == 0 || e.AddedItems[0] is not BrandItem brand)
+        if (sender is not ListView listView)
             return;
 
-        if (!brand.Equals(ViewModel.SelectedBrand))
-            ViewModel.ApplyBrandCommand.Execute(brand);
+        if (TryApplySelectedBrand(listView))
+            BrandPickerFlyout.Hide();
     }
 
     private void ToggleNewBrandForm_Click(object sender, RoutedEventArgs e)
@@ -125,24 +123,31 @@ public sealed partial class MainPage : Page
         ViewModel.IsNewBrandFormVisible = true;
     }
 
-    private void EditBrand_Click(object sender, RoutedEventArgs e)
+    private void BrandRowItem_EditRequested(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement element && element.Tag is BrandItem brand)
-            ViewModel.EditBrandCommand.Execute(brand);
+        if (sender is BrandRowItem row)
+            ViewModel.EditBrandCommand.Execute(row.Data);
     }
 
-    private void SetDefaultBrand_Click(object sender, RoutedEventArgs e)
+    private void BrandRowItem_SetDefaultRequested(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement element && element.Tag is BrandItem brand)
-            ViewModel.SetDefaultBrandCommand.Execute(brand);
+        if (sender is BrandRowItem row)
+            ViewModel.SetDefaultBrandCommand.Execute(row.Data);
     }
 
-    private void DeleteBrand_Click(object sender, RoutedEventArgs e)
+    private void BrandRowItem_DeleteRequested(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement element && element.Tag is BrandItem brand)
-        {
-            ViewModel.DeleteBrandCommand.Execute(brand);
-        }
+        if (sender is BrandRowItem row)
+            ViewModel.DeleteBrandCommand.Execute(row.Data);
+    }
+
+    private bool TryApplySelectedBrand(ListView listView)
+    {
+        if (listView.SelectedItem is not BrandItem brand || brand.Equals(ViewModel.SelectedBrand))
+            return false;
+
+        ViewModel.ApplyBrandCommand.Execute(brand);
+        return true;
     }
 
     private void BrandNameTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
