@@ -238,6 +238,59 @@
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>
 
+                <!--  Data Import/Export  -->
+                <TextBlock
+                    Margin="0,16,0,4"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Data" />
+
+                <!--  Export  -->
+                <settingsControls:SettingsExpander
+                    Description="Save settings, history, brands, and logo images to a zip backup file"
+                    Header="Export"
+                    IsExpanded="True">
+                    <settingsControls:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE898;" />
+                    </settingsControls:SettingsExpander.HeaderIcon>
+                    <Button Command="{x:Bind ViewModel.ExportSettingsCommand}" Content="Export..." />
+                    <settingsControls:SettingsExpander.Items>
+                        <settingsControls:SettingsCard Header="Include settings">
+                            <settingsControls:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE713;" />
+                            </settingsControls:SettingsCard.HeaderIcon>
+                            <CheckBox IsChecked="{x:Bind ViewModel.ExportIncludeSettings, Mode=TwoWay}" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Header="Include brands">
+                            <settingsControls:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE8F9;" />
+                            </settingsControls:SettingsCard.HeaderIcon>
+                            <CheckBox IsChecked="{x:Bind ViewModel.ExportIncludeBrands, Mode=TwoWay}" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Header="Include history">
+                            <settingsControls:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE81C;" />
+                            </settingsControls:SettingsCard.HeaderIcon>
+                            <CheckBox IsChecked="{x:Bind ViewModel.ExportIncludeHistory, Mode=TwoWay}" />
+                        </settingsControls:SettingsCard>
+                    </settingsControls:SettingsExpander.Items>
+                </settingsControls:SettingsExpander>
+
+                <!--  Import  -->
+                <settingsControls:SettingsCard Description="Restore settings, history, brands, and logo images from a backup zip file" Header="Import">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE896;" />
+                    </settingsControls:SettingsCard.HeaderIcon>
+                    <Button Command="{x:Bind ViewModel.ImportSettingsCommand}" Content="Import..." />
+                </settingsControls:SettingsCard>
+
+                <InfoBar
+                    x:Name="ImportExportInfoBar"
+                    IsOpen="{x:Bind ViewModel.HasImportExportStatus, Mode=OneWay}"
+                    IsClosable="True"
+                    Severity="{x:Bind ViewModel.ImportExportStatusSeverity, Mode=OneWay}"
+                    Message="{x:Bind ViewModel.ImportExportStatusMessage, Mode=OneWay}"
+                    Closed="ImportExportInfoBar_Closed" />
+
                 <!--  About  -->
                 <TextBlock
                     x:Uid="Settings_About"
