@@ -23,7 +23,8 @@
                     <toolkitControls:Segmented
                         x:Name="ModePicker"
                         HorizontalAlignment="Stretch"
-                        SelectedIndex="0">
+                        SelectedIndex="0"
+                        SelectionChanged="ModePicker_SelectionChanged">
                         <toolkitControls:SegmentedItem Content="Color" Tag="color">
                             <toolkitControls:SegmentedItem.Icon>
                                 <FontIcon Glyph="&#xE790;" />
@@ -36,25 +37,51 @@
                         </toolkitControls:SegmentedItem>
                     </toolkitControls:Segmented>
 
-                    <toolkitControls:SwitchPresenter Value="{Binding SelectedItem.Tag, ElementName=ModePicker}">
-                        <toolkitControls:Case Value="color">
-                            <ColorPicker
-                                ColorChanged="OnColorPickerColorChanged"
-                                ColorSpectrumShape="Ring"
-                                IsAlphaEnabled="True"
-                                IsMoreButtonVisible="True"
-                                Color="{x:Bind Color,
-                                               Mode=OneWay}" />
-                        </toolkitControls:Case>
-                        <toolkitControls:Case Value="image">
-                            <controls:ImageColorPickerControl
-                                DefaultImagePath="{x:Bind DefaultImagePath,
-                                                          Mode=OneWay}"
-                                Loaded="OnImagePickerLoaded"
-                                Color="{x:Bind Color,
-                                               Mode=OneWay}" />
-                        </toolkitControls:Case>
-                    </toolkitControls:SwitchPresenter>
+                    <Grid>
+                        <ColorPicker
+                            x:Name="ColorModePanel"
+                            ColorChanged="OnColorPickerColorChanged"
+                            ColorSpectrumShape="Ring"
+                            IsAlphaEnabled="True"
+                            IsMoreButtonVisible="True"
+                            Color="{x:Bind Color,
+                                           Mode=OneWay}" />
+                        <ContentControl x:Name="ImageModeHost" Visibility="Collapsed" />
+                    </Grid>
+
+                    <Grid
+                        x:Name="ClipboardSuggestionContainer"
+                        Margin="0,2,0,0"
+                        IsHitTestVisible="False"
+                        Opacity="0">
+                        <StackPanel
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Clipboard" />
+                            <Button
+                                x:Name="PasteClipboardColorButton"
+                                MinWidth="0"
+                                Padding="8,4"
+                                Click="PasteClipboardColorButton_Click"
+                                IsEnabled="False">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <SymbolIcon Symbol="Paste" />
+                                    <Border
+                                        x:Name="PasteClipboardColorSwatch"
+                                        Width="16"
+                                        Height="16"
+                                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
 
                 </StackPanel>
             </Flyout>
