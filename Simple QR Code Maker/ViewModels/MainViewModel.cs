@@ -696,7 +696,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 CodeAsBitmap = bitmap,
                 CodeAsText = textToUse,
                 IsAppShowingUrlWarnings = WarnWhenNotUrl,
-                SizeTextVisible = (HideMinimumSizeText || LogoImage != null) ? Visibility.Collapsed : Visibility.Visible,
+                SizeTextVisible = (HideMinimumSizeText
+                    || LogoImage != null
+                    || ForegroundColor.A < 255
+                    || BackgroundColor.A < 255)
+                    ? Visibility.Collapsed
+                    : Visibility.Visible,
                 ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
                 ForegroundColor = ForegroundColor,
                 BackgroundColor = BackgroundColor,

@@ -44,16 +44,36 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public QRCode QRCodeDetails => Encoder.encode(CodeAsText, ErrorCorrection);
 
-    public string ToolTipText => $"Smallest recommended size {SmallestSide}, {CodeAsText}";
+    private QrCodeSizeRecommendation SizeRecommendation => BarcodeHelpers.GetSizeRecommendation(32 * MaxSizeScaleFactor, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor);
+
+    public string ToolTipText
+    {
+        get
+        {
+            QrCodeSizeRecommendation sizeRecommendation = SizeRecommendation;
+
+            if (sizeRecommendation.Kind == QrCodeSizeRecommendationKind.TransparencyDependent)
+                return CodeAsText;
+
+            return sizeRecommendation.IsExact
+                ? $"Smallest recommended size {sizeRecommendation.Text}, {CodeAsText}"
+                : $"{sizeRecommendation.Text} {CodeAsText}";
+        }
+    }
 
     [ObservableProperty]
     public Visibility sizeTextVisible = Visibility.Visible;
 
     public double MaxSizeScaleFactor { get; set; }
 
-    public string SmallestSide => BarcodeHelpers.SmallestSideWithUnits(32 * MaxSizeScaleFactor, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor);
+    public string SizeRecommendationLabel => SizeRecommendation.IsExact ? "Minimum size: " : "Print sizing: ";
 
-    // The contrast ratio between the foreground and background colors.
+    public string SizeRecommendationText => SizeRecommendation.Text;
+
+    public bool CanCopySizeText => SizeRecommendation.IsExact;
+
+    // The contrast ratio between the selected colors before any transparent QR output
+    // is composited onto the real print surface.
     // A value of 1:1 is the minimum, and 21:1 is the maximum.
     // The higher the value, the better the contrast.
     // anything less than 2 will be illegible for most applications
@@ -107,8 +127,17 @@ public partial class BarcodeImageItem : ObservableRecipient
     [RelayCommand]
     private void CopySizeText()
     {
+        if (!CanCopySizeText)
+        {
+            WeakReferenceMessenger.Default.Send(new RequestShowMessage(
+                "Exact minimum size unavailable",
+                "Transparent QR colors depend on the final print surface, so there is no exact minimum size to copy.",
+                InfoBarSeverity.Informational));
+            return;
+        }
+
         DataPackage dataPackage = new();
-        dataPackage.SetText(SmallestSide);
+        dataPackage.SetText(SizeRecommendationText);
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
         WeakReferenceMessenger.Default.Send(new RequestShowMessage("QR Code size copied to the clipboard", string.Empty, InfoBarSeverity.Success));
     }

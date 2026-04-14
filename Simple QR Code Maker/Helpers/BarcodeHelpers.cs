@@ -1,5 +1,6 @@
 ﻿using ImageMagick;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Simple_QR_Code_Maker.Models;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -275,28 +276,49 @@ public static partial class BarcodeHelpers
         return (slope * contrastRatio) + yIntercept;
     }
 
-    public static string SmallestSideWithUnits(double distance, int numberOfBlocks, Windows.UI.Color foreground, Windows.UI.Color background)
+    public static QrCodeSizeRecommendation GetSizeRecommendation(double distance, int numberOfBlocks, Windows.UI.Color foreground, Windows.UI.Color background)
     {
+        if (foreground.A < 255 || background.A < 255)
+        {
+            return new QrCodeSizeRecommendation(
+                QrCodeSizeRecommendationKind.TransparencyDependent,
+                "Exact minimum size depends on the final print surface when transparency is used.");
+        }
+
         bool isMetric = RegionInfo.CurrentRegion.IsMetric;
         double smallestSide = SmallestCodeSide(distance, numberOfBlocks);
 
         if (smallestSide == 0)
-            return "Error at selected max distance.";
+        {
+            return new QrCodeSizeRecommendation(
+                QrCodeSizeRecommendationKind.Error,
+                "Error at selected max distance.");
+        }
 
         double contrastRatio = ColorHelpers.GetContrastRatio(foreground, background);
 
         if (contrastRatio < 2.5)
-            return "Color contrast too low";
+        {
+            return new QrCodeSizeRecommendation(
+                QrCodeSizeRecommendationKind.LowContrast,
+                "Color contrast too low");
+        }
 
         double fractionalLoss = ContrastRatioLossFrac(contrastRatio);
 
         smallestSide /= fractionalLoss;
 
         if (!isMetric)
-            return $"{smallestSide:F2} x {smallestSide:F2} in";
+        {
+            return new QrCodeSizeRecommendation(
+                QrCodeSizeRecommendationKind.Exact,
+                $"{smallestSide:F2} x {smallestSide:F2} in");
+        }
 
         double smallestSideCm = smallestSide * 2.54;
-        return $"{smallestSideCm:F2} x {smallestSideCm:F2} cm";
+        return new QrCodeSizeRecommendation(
+            QrCodeSizeRecommendationKind.Exact,
+            $"{smallestSideCm:F2} x {smallestSideCm:F2} cm");
     }
 
     public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null)
