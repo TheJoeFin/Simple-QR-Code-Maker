@@ -9,8 +9,8 @@ using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
-using System.Collections.Specialized;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
@@ -26,6 +26,10 @@ namespace Simple_QR_Code_Maker.ViewModels;
 
 public partial class MainViewModel : ObservableRecipient, INavigationAware
 {
+    private const int LargeBatchThreshold = 24;
+    private const int PreviewBatchSize = LargeBatchThreshold;
+    private const int MaxBulkSaveConcurrency = 4;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanSaveImage))]
     private string urlText = "";
@@ -33,6 +37,58 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanSaveImage))]
     private ObservableCollection<BarcodeImageItem> qrCodeBitmaps = [];
+
+    private readonly List<RequestedQrCodeItem> requestedQrCodes = [];
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasRequestedCodes))]
+    [NotifyPropertyChangedFor(nameof(IsLargeBatchPreview))]
+    [NotifyPropertyChangedFor(nameof(IsBulkClipboardEnabled))]
+    [NotifyPropertyChangedFor(nameof(IsBulkClipboardDisabled))]
+    [NotifyPropertyChangedFor(nameof(BulkClipboardRestrictionText))]
+    [NotifyPropertyChangedFor(nameof(CanLoadMorePreviews))]
+    [NotifyPropertyChangedFor(nameof(PreviewSummaryText))]
+    [NotifyCanExecuteChangedFor(nameof(LoadMorePreviewsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SavePngCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveSvgCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SavePngAsZipCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveSvgAsZipCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveBothCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveBothAsZipCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CopyPngToClipboardCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CopySvgToClipboardCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CopySvgTextToClipboardCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CopyBothToClipboardCommand))]
+    private int requestedCodeCount;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanLoadMorePreviews))]
+    [NotifyPropertyChangedFor(nameof(PreviewSummaryText))]
+    [NotifyCanExecuteChangedFor(nameof(LoadMorePreviewsCommand))]
+    private int loadedPreviewCount;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(BulkOperationStatusText))]
+    private int bulkOperationCompletedItemCount;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(BulkOperationStatusText))]
+    private int bulkOperationTotalItemCount;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsBulkClipboardEnabled))]
+    [NotifyPropertyChangedFor(nameof(BulkOperationStatusText))]
+    [NotifyCanExecuteChangedFor(nameof(SavePngCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveSvgCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SavePngAsZipCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveSvgAsZipCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveBothCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveBothAsZipCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CopyPngToClipboardCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CopySvgToClipboardCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CopySvgTextToClipboardCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CopyBothToClipboardCommand))]
+    private bool isBulkOperationRunning;
 
     [ObservableProperty]
     private string placeholderText = "ex: http://www.example.com";
@@ -56,6 +112,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     private ErrorCorrectionOptions selectedOption = new("M", "Medium 15%", ErrorCorrectionLevel.M);
+
+    [ObservableProperty]
+    private double qrPaddingModules = 2.0;
 
     [ObservableProperty]
     private bool isFaqPaneOpen = false;
@@ -392,6 +451,55 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     public bool CanSaveImage => !string.IsNullOrWhiteSpace(UrlText);
 
+    public bool HasRequestedCodes => RequestedCodeCount > 0;
+
+    public bool CanLoadMorePreviews => LoadedPreviewCount < RequestedCodeCount;
+
+    public bool IsLargeBatchPreview => RequestedCodeCount > LargeBatchThreshold;
+
+    public bool IsBulkClipboardEnabled => HasRequestedCodes && !IsLargeBatchPreview && !IsBulkOperationRunning;
+
+    public bool IsBulkClipboardDisabled => HasRequestedCodes && IsLargeBatchPreview;
+
+    public string BulkClipboardRestrictionText => IsBulkClipboardDisabled
+        ? $"Bulk clipboard is disabled when more than {LargeBatchThreshold} QR Codes are requested. Save to files or ZIP instead."
+        : string.Empty;
+
+    public string PreviewSummaryText
+    {
+        get
+        {
+            if (RequestedCodeCount == 0)
+                return string.Empty;
+
+            if (LoadedPreviewCount >= RequestedCodeCount)
+            {
+                return RequestedCodeCount == 1
+                    ? "Showing 1 preview."
+                    : $"Showing all {RequestedCodeCount} previews.";
+            }
+
+            return $"Showing {LoadedPreviewCount} of {RequestedCodeCount} previews.";
+        }
+    }
+
+    public string BulkOperationStatusText
+    {
+        get
+        {
+            if (!IsBulkOperationRunning || BulkOperationTotalItemCount == 0)
+                return string.Empty;
+
+            return $"Saving {BulkOperationCompletedItemCount} of {BulkOperationTotalItemCount} QR Codes...";
+        }
+    }
+
+    partial void OnQrPaddingModulesChanged(double value)
+    {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
     private bool UrlMatchesBrand(string url)
     {
         if (SelectedBrand is null)
@@ -659,79 +767,134 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         debounceTimer.Stop();
 
-        QrCodeBitmaps.Clear();
+        ResetRequestedCodeState();
 
         if (string.IsNullOrWhiteSpace(UrlText))
             return;
 
-        if (MultiLineCodeMode == MultiLineCodeMode.OneLineOneCode)
+        bool skippedAnyInvalidCodes = false;
+        foreach (string text in EnumerateRequestedCodeTexts())
         {
-            string[] lines = UrlText.Split('\r');
-            GenerateQrCodesFromLines(lines);
-            return;
+            try
+            {
+                _ = Encoder.encode(text, SelectedOption.ErrorCorrectionLevel);
+                requestedQrCodes.Add(new RequestedQrCodeItem(text));
+            }
+            catch (ZXing.WriterException)
+            {
+                skippedAnyInvalidCodes = true;
+            }
         }
 
-        GenerateQrCodeFromOneLine(UrlText);
-    }
+        RequestedCodeCount = requestedQrCodes.Count;
 
-    private void GenerateQrCodeFromOneLine(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text))
-            return;
-
-        string textToUse = text.Trim();
-
-        try
+        if (RequestedCodeCount > 0)
         {
-            WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(
-                textToUse,
-                SelectedOption.ErrorCorrectionLevel,
-                ForegroundColor.ToSystemDrawingColor(),
-                BackgroundColor.ToSystemDrawingColor(),
-                LogoImage,
-                LogoSizePercentage,
-                LogoPaddingPixels);
-            BarcodeImageItem barcodeImageItem = new()
-            {
-                CodeAsBitmap = bitmap,
-                CodeAsText = textToUse,
-                IsAppShowingUrlWarnings = WarnWhenNotUrl,
-                SizeTextVisible = (HideMinimumSizeText
-                    || LogoImage != null
-                    || ForegroundColor.A < 255
-                    || BackgroundColor.A < 255)
-                    ? Visibility.Collapsed
-                    : Visibility.Visible,
-                ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
-                ForegroundColor = ForegroundColor,
-                BackgroundColor = BackgroundColor,
-                MaxSizeScaleFactor = MinSizeScanDistanceScaleFactor,
-                LogoImage = LogoImage,
-                LogoSizePercentage = LogoSizePercentage,
-                LogoPaddingPixels = LogoPaddingPixels,
-                LogoSvgContent = LogoSvgContent,
-            };
-
-            double ratio = barcodeImageItem.ColorContrastRatio;
-            Debug.WriteLine($"Contrast ratio: {ratio}");
-
-            QrCodeBitmaps.Add(barcodeImageItem);
+            MaterializePreviewBatch(Math.Min(PreviewBatchSize, RequestedCodeCount));
             ShowCodeInfoBar = false;
             CodeInfoBarSeverity = InfoBarSeverity.Informational;
         }
-        catch (ZXing.WriterException)
+
+        if (skippedAnyInvalidCodes)
         {
             ShowCodeInfoBar = true;
             CodeInfoBarSeverity = InfoBarSeverity.Error;
             CodeInfoBarTitle = "Error creating QR Code";
-            CodeInfoBarMessage = "The text you entered is too long for a QR Code. Please try a shorter text.";
+            CodeInfoBarMessage = RequestedCodeCount == 0
+                ? "The text you entered is too long for a QR Code. Please try a shorter text."
+                : "Some text entries were too long for a QR Code and were skipped.";
         }
     }
 
-    private void GenerateQrCodesFromLines(string[] lines)
+    private void ResetRequestedCodeState()
     {
-        foreach (string line in lines)
-            GenerateQrCodeFromOneLine(line);
+        QrCodeBitmaps.Clear();
+        requestedQrCodes.Clear();
+        RequestedCodeCount = 0;
+        LoadedPreviewCount = 0;
+        SavedFolderPath = string.Empty;
+    }
+
+    private IEnumerable<string> EnumerateRequestedCodeTexts()
+    {
+        if (MultiLineCodeMode != MultiLineCodeMode.OneLineOneCode)
+        {
+            string singleCode = UrlText.Trim();
+            if (!string.IsNullOrWhiteSpace(singleCode))
+                yield return singleCode;
+
+            yield break;
+        }
+
+        foreach (string line in UrlText.Split(["\r\n", "\r", "\n"], StringSplitOptions.None))
+        {
+            string textToUse = line.Trim();
+            if (!string.IsNullOrWhiteSpace(textToUse))
+                yield return textToUse;
+        }
+    }
+
+    private void MaterializePreviewBatch(int additionalCount)
+    {
+        if (additionalCount <= 0)
+            return;
+
+        int targetCount = Math.Min(RequestedCodeCount, LoadedPreviewCount + additionalCount);
+        for (int index = LoadedPreviewCount; index < targetCount; index++)
+        {
+            BarcodeImageItem previewItem = CreatePreviewItem(requestedQrCodes[index]);
+            QrCodeBitmaps.Add(previewItem);
+        }
+
+        LoadedPreviewCount = targetCount;
+    }
+
+    private BarcodeImageItem CreatePreviewItem(RequestedQrCodeItem requestedCode)
+    {
+        WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(
+            requestedCode.CodeAsText,
+            SelectedOption.ErrorCorrectionLevel,
+            ForegroundColor.ToSystemDrawingColor(),
+            BackgroundColor.ToSystemDrawingColor(),
+            LogoImage,
+            LogoSizePercentage,
+            LogoPaddingPixels,
+            QrPaddingModules);
+        BarcodeImageItem barcodeImageItem = new()
+        {
+            CodeAsBitmap = bitmap,
+            CodeAsText = requestedCode.CodeAsText,
+            IsAppShowingUrlWarnings = WarnWhenNotUrl,
+            SizeTextVisible = (HideMinimumSizeText
+                || LogoImage != null
+                || ForegroundColor.A < 255
+                || BackgroundColor.A < 255
+                || !BarcodeHelpers.IsSizeRecommendationAvailableForPadding(QrPaddingModules))
+                ? Visibility.Collapsed
+                : Visibility.Visible,
+            ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
+            ForegroundColor = ForegroundColor,
+            BackgroundColor = BackgroundColor,
+            MaxSizeScaleFactor = MinSizeScanDistanceScaleFactor,
+            QrPaddingModules = QrPaddingModules,
+            LogoImage = LogoImage,
+            LogoSizePercentage = LogoSizePercentage,
+            LogoPaddingPixels = LogoPaddingPixels,
+            LogoSvgContent = LogoSvgContent,
+        };
+
+        double ratio = barcodeImageItem.ColorContrastRatio;
+        Debug.WriteLine($"Contrast ratio: {ratio}");
+
+        return barcodeImageItem;
+    }
+
+    private bool CanLoadMorePreviewBatch() => CanLoadMorePreviews;
+
+    [RelayCommand(CanExecute = nameof(CanLoadMorePreviewBatch))]
+    private void LoadMorePreviews()
+    {
+        MaterializePreviewBatch(PreviewBatchSize);
     }
 
     [RelayCommand]
@@ -843,7 +1006,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             new SpreadsheetImportNavigationData
             {
                 ReturnState = CreateCurrentStateHistoryItem(),
-                Rows = rows.Select(row => (IReadOnlyList<string>)row.ToList()).ToList(),
+                Rows = rows.Select(row => (IReadOnlyList<string>)[.. row]).ToList(),
                 SourceFileName = file.Name,
             });
     }
@@ -853,147 +1016,304 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         return IsSpreadsheetImportAvailable;
     }
 
-    [RelayCommand]
+    private RequestedQrCodeItem[] GetRequestedCodeSnapshot() => [.. requestedQrCodes];
+
+    private bool CanRunBulkSaveOperation() => RequestedCodeCount > 0 && !IsBulkOperationRunning;
+
+    private bool CanRunBulkClipboardOperation() => RequestedCodeCount > 0 && !IsBulkOperationRunning && !IsLargeBatchPreview;
+
+    private RenderSettingsSnapshot CreateRenderSettingsSnapshot()
+    {
+        return new RenderSettingsSnapshot(
+            SelectedOption.ErrorCorrectionLevel,
+            ForegroundColor.ToSystemDrawingColor(),
+            BackgroundColor.ToSystemDrawingColor(),
+            LogoImage is null ? null : new System.Drawing.Bitmap(LogoImage),
+            LogoSizePercentage,
+            LogoPaddingPixels,
+            LogoSvgContent,
+            QrPaddingModules);
+    }
+
+    private void ShowClipboardDisabledInfoBar()
+    {
+        CodeInfoBarTitle = "Bulk clipboard disabled";
+        CodeInfoBarMessage = BulkClipboardRestrictionText;
+        CodeInfoBarSeverity = InfoBarSeverity.Informational;
+        ShowCodeInfoBar = true;
+    }
+
+    private void ShowClipboardCopyFailureInfoBar(string message)
+    {
+        CodeInfoBarMessage = message;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Error;
+        CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
+    }
+
+    private void ShowBulkOperationFailureInfoBar(string title, string message)
+    {
+        CodeInfoBarMessage = message;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Error;
+        CodeInfoBarTitle = title;
+    }
+
+    private void ShowClipboardCopySuccessInfoBar(string title)
+    {
+        CodeInfoBarMessage = string.Empty;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Success;
+        CodeInfoBarTitle = title;
+        copyInfoBarTimer.Start();
+    }
+
+    private static async Task<byte[]> RenderRequestedCodePngBytesAsync(RequestedQrCodeItem requestedCode, RenderSettingsSnapshot renderSettings)
+    {
+        return await Task.Run(() =>
+        {
+            using MemoryStream ms = new();
+            BarcodeHelpers.SaveQrCodePngToStream(
+                ms,
+                requestedCode.CodeAsText,
+                renderSettings.ErrorCorrectionLevel,
+                renderSettings.ForegroundColor,
+                renderSettings.BackgroundColor,
+                renderSettings.LogoImage,
+                renderSettings.LogoSizePercentage,
+                renderSettings.LogoPaddingPixels,
+                renderSettings.QrPaddingModules);
+            return ms.ToArray();
+        });
+    }
+
+    private static async Task<string> GetRequestedCodeAsSvgTextAsync(RequestedQrCodeItem requestedCode, RenderSettingsSnapshot renderSettings)
+    {
+        return await Task.Run(() =>
+            BarcodeHelpers.GetSvgQrCodeForText(
+                requestedCode.CodeAsText,
+                renderSettings.ErrorCorrectionLevel,
+                renderSettings.ForegroundColor,
+                renderSettings.BackgroundColor,
+                renderSettings.LogoImage,
+                renderSettings.LogoSizePercentage,
+                renderSettings.LogoPaddingPixels,
+                renderSettings.LogoSvgContent,
+                renderSettings.QrPaddingModules).Content);
+    }
+
+    private static async Task WriteRequestedCodeToFileAsync(RequestedQrCodeItem requestedCode, StorageFile file, FileKind kindOfFile, RenderSettingsSnapshot renderSettings)
+    {
+        switch (kindOfFile)
+        {
+            case FileKind.None:
+                return;
+            case FileKind.PNG:
+                {
+                    byte[] pngBytes = await RenderRequestedCodePngBytesAsync(requestedCode, renderSettings);
+                    using IRandomAccessStream outputStream = await file.OpenAsync(FileAccessMode.ReadWrite);
+                    outputStream.Size = 0;
+                    using Stream output = outputStream.AsStreamForWrite();
+                    await output.WriteAsync(pngBytes);
+                    await output.FlushAsync();
+                    break;
+                }
+            case FileKind.SVG:
+                {
+                    string svgText = await GetRequestedCodeAsSvgTextAsync(requestedCode, renderSettings);
+                    using IRandomAccessStream outputStream = await file.OpenAsync(FileAccessMode.ReadWrite);
+                    outputStream.Size = 0;
+                    using Stream output = outputStream.AsStreamForWrite();
+                    using StreamWriter writer = new(output, new System.Text.UTF8Encoding(false), 1024, leaveOpen: true);
+                    await writer.WriteAsync(svgText);
+                    await writer.FlushAsync();
+                    break;
+                }
+            default:
+                return;
+        }
+    }
+
+    private static async Task WriteRequestedCodeToZipEntryAsync(RequestedQrCodeItem requestedCode, Stream entryStream, FileKind kindOfFile, RenderSettingsSnapshot renderSettings)
+    {
+        switch (kindOfFile)
+        {
+            case FileKind.None:
+                return;
+            case FileKind.PNG:
+                {
+                    byte[] pngBytes = await RenderRequestedCodePngBytesAsync(requestedCode, renderSettings);
+                    await entryStream.WriteAsync(pngBytes);
+                    await entryStream.FlushAsync();
+                    break;
+                }
+            case FileKind.SVG:
+                {
+                    string svgText = await GetRequestedCodeAsSvgTextAsync(requestedCode, renderSettings);
+                    using StreamWriter writer = new(entryStream, new System.Text.UTF8Encoding(false), 1024, leaveOpen: true);
+                    await writer.WriteAsync(svgText);
+                    await writer.FlushAsync();
+                    break;
+                }
+            default:
+                return;
+        }
+    }
+
+    private static async Task<List<StorageFile>> CreateRequestedCodeFilesAsync(StorageFolder folder, RequestedQrCodeItem[] requestedCodes, RenderSettingsSnapshot renderSettings, params FileKind[] fileKinds)
+    {
+        List<StorageFile> files = [];
+
+        foreach (RequestedQrCodeItem requestedCode in requestedCodes)
+        {
+            if (string.IsNullOrWhiteSpace(requestedCode.SafeFileNameBase))
+                continue;
+
+            foreach (FileKind kindOfFile in fileKinds)
+            {
+                StorageFile file = await folder.CreateFileAsync(
+                    requestedCode.SafeFileNameBase + GetFileExtension(kindOfFile),
+                    CreationCollisionOption.ReplaceExisting);
+                await WriteRequestedCodeToFileAsync(requestedCode, file, kindOfFile, renderSettings);
+                files.Add(file);
+            }
+        }
+
+        return files;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanRunBulkClipboardOperation))]
     private async Task CopyPngToClipboard()
     {
-        if (QrCodeBitmaps.Count == 0)
+        if (IsBulkClipboardDisabled)
+        {
+            ShowClipboardDisabledInfoBar();
+            return;
+        }
+
+        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
+        if (requestedCodes.Length == 0)
             return;
 
         await SaveCurrentStateToHistory();
 
-        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-        List<StorageFile> files = [];
-        foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
+        try
         {
-            if (qrCodeItem.CodeAsBitmap is null)
-                continue;
+            StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
+            using RenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+            List<StorageFile> files = await CreateRequestedCodeFilesAsync(folder, requestedCodes, renderSettings, FileKind.PNG);
 
-            string? imageNameFileName = $"{qrCodeItem.CodeAsText.ToSafeFileName()}.png";
-            StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
-            bool success = await qrCodeItem.CodeAsBitmap.SavePngToStorageFile(file);
+            if (files.Count == 0)
+            {
+                ShowClipboardCopyFailureInfoBar("No QR Codes to copy to the clipboard");
+                return;
+            }
 
-            if (!success)
-                continue;
+            DataPackage dataPackage = new();
+            dataPackage.SetStorageItems(files);
+            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
 
-            files.Add(file);
+            ShowClipboardCopySuccessInfoBar(
+                requestedCodes.Length == 1
+                    ? "PNG QR Code copied to the clipboard"
+                    : $"{requestedCodes.Length} PNG QR Codes copied to the clipboard");
         }
-
-        if (files.Count == 0)
+        catch (Exception ex)
         {
-            CodeInfoBarMessage = "No QR Codes to copy to the clipboard";
-            ShowCodeInfoBar = true;
-            CodeInfoBarSeverity = InfoBarSeverity.Error;
-            CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
-            return;
+            Debug.WriteLine($"Failed to copy PNG QR Codes to the clipboard: {ex.Message}");
+            ShowClipboardCopyFailureInfoBar("Could not prepare the PNG QR Codes for the clipboard");
         }
-
-        DataPackage dataPackage = new();
-        dataPackage.SetStorageItems(files);
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
-
-        CodeInfoBarMessage = string.Empty;
-        ShowCodeInfoBar = true;
-        CodeInfoBarSeverity = InfoBarSeverity.Success;
-        if (files.Count == 1)
-            CodeInfoBarTitle = "PNG QR Code copied to the clipboard";
-        else
-            CodeInfoBarTitle = $"{files.Count} PNG QR Codes copied to the clipboard";
-
-        copyInfoBarTimer.Start();
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRunBulkClipboardOperation))]
     private async Task CopySvgToClipboard()
     {
-        if (QrCodeBitmaps.Count == 0)
+        if (IsBulkClipboardDisabled)
+        {
+            ShowClipboardDisabledInfoBar();
+            return;
+        }
+
+        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
+        if (requestedCodes.Length == 0)
             return;
 
         await SaveCurrentStateToHistory();
 
-        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-        List<StorageFile> files = [];
-        foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
+        try
         {
-            if (qrCodeItem.CodeAsBitmap is null)
-                continue;
+            StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
+            using RenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+            List<StorageFile> files = await CreateRequestedCodeFilesAsync(folder, requestedCodes, renderSettings, FileKind.SVG);
 
-            string? imageNameFileName = $"{qrCodeItem.CodeAsText.ToSafeFileName()}.svg";
-            StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
+            if (files.Count == 0)
+            {
+                ShowClipboardCopyFailureInfoBar("No QR Codes to copy to the clipboard");
+                return;
+            }
 
-            bool success = await qrCodeItem.SaveCodeAsSvgFile(file, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), SelectedOption.ErrorCorrectionLevel);
-            if (!success)
-                continue;
+            DataPackage dataPackage = new();
+            dataPackage.SetStorageItems(files);
+            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
 
-            files.Add(file);
+            ShowClipboardCopySuccessInfoBar(
+                requestedCodes.Length == 1
+                    ? "SVG QR Code copied to the clipboard"
+                    : $"{requestedCodes.Length} SVG QR Codes copied to the clipboard");
         }
-
-        if (files.Count == 0)
+        catch (Exception ex)
         {
-            CodeInfoBarMessage = "No QR Codes to copy to the clipboard";
-            ShowCodeInfoBar = true;
-            CodeInfoBarSeverity = InfoBarSeverity.Error;
-            CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
-            return;
+            Debug.WriteLine($"Failed to copy SVG QR Codes to the clipboard: {ex.Message}");
+            ShowClipboardCopyFailureInfoBar("Could not prepare the SVG QR Codes for the clipboard");
         }
-
-        DataPackage dataPackage = new();
-        dataPackage.SetStorageItems(files);
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
-
-        CodeInfoBarMessage = string.Empty;
-        ShowCodeInfoBar = true;
-        CodeInfoBarSeverity = InfoBarSeverity.Success;
-        if (files.Count == 1)
-            CodeInfoBarTitle = "SVG QR Code copied to the clipboard";
-        else
-            CodeInfoBarTitle = $"{files.Count} SVG QR Codes copied to the clipboard";
-
-        copyInfoBarTimer.Start();
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRunBulkClipboardOperation))]
     private async Task CopySvgTextToClipboard()
     {
-        if (QrCodeBitmaps.Count == 0)
+        if (IsBulkClipboardDisabled)
+        {
+            ShowClipboardDisabledInfoBar();
+            return;
+        }
+
+        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
+        if (requestedCodes.Length == 0)
             return;
 
         await SaveCurrentStateToHistory();
 
-        List<string> textStrings = [];
-        foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
+        try
         {
-            if (qrCodeItem.CodeAsBitmap is null)
-                continue;
+            using RenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+            List<string> textStrings = [];
+            foreach (RequestedQrCodeItem requestedCode in requestedCodes)
+            {
+                string svgText = await GetRequestedCodeAsSvgTextAsync(requestedCode, renderSettings);
+                if (!string.IsNullOrWhiteSpace(svgText))
+                    textStrings.Add(svgText);
+            }
 
-            string svgText = qrCodeItem.GetCodeAsSvgText(ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), SelectedOption.ErrorCorrectionLevel);
-            if (string.IsNullOrWhiteSpace(svgText))
-                continue;
+            if (textStrings.Count == 0)
+            {
+                ShowClipboardCopyFailureInfoBar("No QR Codes to copy to the clipboard");
+                return;
+            }
 
-            textStrings.Add(svgText);
+            DataPackage dataPackage = new();
+            dataPackage.SetText(string.Join(Environment.NewLine, textStrings));
+            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+
+            ShowClipboardCopySuccessInfoBar(
+                textStrings.Count == 1
+                    ? "SVG QR Code copied to the clipboard"
+                    : $"{textStrings.Count} Text of SVGs QR Codes copied to the clipboard");
         }
-
-        if (textStrings.Count == 0)
+        catch (Exception ex)
         {
-            CodeInfoBarMessage = "No QR Codes to copy to the clipboard";
-            ShowCodeInfoBar = true;
-            CodeInfoBarSeverity = InfoBarSeverity.Error;
-            CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
-            return;
+            Debug.WriteLine($"Failed to copy SVG text QR Codes to the clipboard: {ex.Message}");
+            ShowClipboardCopyFailureInfoBar("Could not prepare the SVG text for the clipboard");
         }
-
-        DataPackage dataPackage = new();
-        dataPackage.SetText(string.Join(Environment.NewLine, textStrings));
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
-
-        CodeInfoBarMessage = string.Empty;
-        ShowCodeInfoBar = true;
-        CodeInfoBarSeverity = InfoBarSeverity.Success;
-        if (textStrings.Count == 1)
-            CodeInfoBarTitle = "SVG QR Code copied to the clipboard";
-        else
-            CodeInfoBarTitle = $"{textStrings.Count} Text of SVGs QR Codes copied to the clipboard";
-
-        copyInfoBarTimer.Start();
     }
 
     private void CopyInfoBarTimer_Tick(object? sender, object e)
@@ -1218,177 +1538,169 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private string? GetCurrentLogoPath() => currentLogoPath;
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRunBulkSaveOperation))]
     private async Task SavePng()
     {
-        if (QrCodeBitmaps.Count == 0)
+        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
+        if (requestedCodes.Length == 0)
             return;
 
         await SaveCurrentStateToHistory();
 
-        string? savedFolder = await SaveAllFiles(FileKind.PNG);
+        string? savedFolder = await SaveAllFiles(requestedCodes, null, FileKind.PNG);
 
         if (savedFolder is null)
             return;
 
         ShowSaveSuccessInfoBar(
-            QrCodeBitmaps.Count == 1 ? "PNG QR Code saved!" : $"{QrCodeBitmaps.Count} PNG QR Codes saved!",
+            requestedCodes.Length == 1 ? "PNG QR Code saved!" : $"{requestedCodes.Length} PNG QR Codes saved!",
             savedFolder);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRunBulkSaveOperation))]
     private async Task SaveSvg()
     {
-        if (QrCodeBitmaps.Count == 0)
+        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
+        if (requestedCodes.Length == 0)
             return;
 
         await SaveCurrentStateToHistory();
 
-        string? savedFolder = await SaveAllFiles(FileKind.SVG);
+        string? savedFolder = await SaveAllFiles(requestedCodes, null, FileKind.SVG);
 
         if (savedFolder is null)
             return;
 
         ShowSaveSuccessInfoBar(
-            QrCodeBitmaps.Count == 1 ? "SVG QR Code saved!" : $"{QrCodeBitmaps.Count} SVG QR Codes saved!",
+            requestedCodes.Length == 1 ? "SVG QR Code saved!" : $"{requestedCodes.Length} SVG QR Codes saved!",
             savedFolder);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRunBulkSaveOperation))]
     private async Task SavePngAsZip()
     {
-        if (QrCodeBitmaps.Count == 0)
+        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
+        if (requestedCodes.Length == 0)
             return;
 
         await SaveCurrentStateToHistory();
 
-        bool saved = await SaveAllFilesAsZip(FileKind.PNG);
+        bool saved = await SaveAllFilesAsZip(requestedCodes, FileKind.PNG);
         if (!saved)
             return;
 
         CodeInfoBarMessage = string.Empty;
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Success;
-        if (QrCodeBitmaps.Count == 1)
+        if (requestedCodes.Length == 1)
             CodeInfoBarTitle = "PNG QR Code saved to zip!";
         else
-            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} PNG QR Codes saved to zip!";
+            CodeInfoBarTitle = $"{requestedCodes.Length} PNG QR Codes saved to zip!";
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRunBulkSaveOperation))]
     private async Task SaveSvgAsZip()
     {
-        if (QrCodeBitmaps.Count == 0)
+        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
+        if (requestedCodes.Length == 0)
             return;
 
         await SaveCurrentStateToHistory();
 
-        bool saved = await SaveAllFilesAsZip(FileKind.SVG);
+        bool saved = await SaveAllFilesAsZip(requestedCodes, FileKind.SVG);
         if (!saved)
             return;
 
         CodeInfoBarMessage = string.Empty;
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Success;
-        if (QrCodeBitmaps.Count == 1)
+        if (requestedCodes.Length == 1)
             CodeInfoBarTitle = "SVG QR Code saved to zip!";
         else
-            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} SVG QR Codes saved to zip!";
+            CodeInfoBarTitle = $"{requestedCodes.Length} SVG QR Codes saved to zip!";
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRunBulkSaveOperation))]
     private async Task SaveBoth()
     {
-        if (QrCodeBitmaps.Count == 0)
+        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
+        if (requestedCodes.Length == 0)
             return;
 
         await SaveCurrentStateToHistory();
 
-        string? savedFolder = await SaveAllFiles(FileKind.PNG);
-
+        string? savedFolder = await SaveAllFiles(requestedCodes, null, FileKind.PNG, FileKind.SVG);
         if (savedFolder is null)
             return;
 
-        await SaveAllFiles(FileKind.SVG, savedFolder);
-
         ShowSaveSuccessInfoBar(
-            QrCodeBitmaps.Count == 1 ? "PNG and SVG QR Code saved!" : $"{QrCodeBitmaps.Count} PNG and SVG QR Codes saved!",
+            requestedCodes.Length == 1 ? "PNG and SVG QR Code saved!" : $"{requestedCodes.Length} PNG and SVG QR Codes saved!",
             savedFolder);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRunBulkSaveOperation))]
     private async Task SaveBothAsZip()
     {
-        if (QrCodeBitmaps.Count == 0)
+        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
+        if (requestedCodes.Length == 0)
             return;
 
         await SaveCurrentStateToHistory();
 
-        bool saved = await SaveAllFilesAsZip(FileKind.PNG, FileKind.SVG);
+        bool saved = await SaveAllFilesAsZip(requestedCodes, FileKind.PNG, FileKind.SVG);
         if (!saved)
             return;
 
         CodeInfoBarMessage = string.Empty;
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Success;
-        if (QrCodeBitmaps.Count == 1)
+        if (requestedCodes.Length == 1)
             CodeInfoBarTitle = "PNG and SVG QR Code saved to zip!";
         else
-            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} PNG and SVG QR Codes saved to zip!";
+            CodeInfoBarTitle = $"{requestedCodes.Length} PNG and SVG QR Codes saved to zip!";
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRunBulkClipboardOperation))]
     private async Task CopyBothToClipboard()
     {
-        if (QrCodeBitmaps.Count == 0)
+        if (IsBulkClipboardDisabled)
+        {
+            ShowClipboardDisabledInfoBar();
+            return;
+        }
+
+        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
+        if (requestedCodes.Length == 0)
             return;
 
         await SaveCurrentStateToHistory();
 
-        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-        List<StorageFile> files = [];
-        foreach (BarcodeImageItem qrCodeItem in QrCodeBitmaps)
+        try
         {
-            if (qrCodeItem.CodeAsBitmap is null)
-                continue;
+            StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
+            using RenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+            List<StorageFile> files = await CreateRequestedCodeFilesAsync(folder, requestedCodes, renderSettings, FileKind.PNG, FileKind.SVG);
 
-            string safeFileName = qrCodeItem.CodeAsText.ToSafeFileName();
+            if (files.Count == 0)
+            {
+                ShowClipboardCopyFailureInfoBar("No QR Codes to copy to the clipboard");
+                return;
+            }
 
-            string pngFileName = $"{safeFileName}.png";
-            StorageFile pngFile = await folder.CreateFileAsync(pngFileName, CreationCollisionOption.ReplaceExisting);
-            bool pngSuccess = await qrCodeItem.CodeAsBitmap.SavePngToStorageFile(pngFile);
-            if (pngSuccess)
-                files.Add(pngFile);
+            DataPackage dataPackage = new();
+            dataPackage.SetStorageItems(files);
+            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
 
-            string svgFileName = $"{safeFileName}.svg";
-            StorageFile svgFile = await folder.CreateFileAsync(svgFileName, CreationCollisionOption.ReplaceExisting);
-            bool svgSuccess = await qrCodeItem.SaveCodeAsSvgFile(svgFile, ForegroundColor.ToSystemDrawingColor(), BackgroundColor.ToSystemDrawingColor(), SelectedOption.ErrorCorrectionLevel);
-            if (svgSuccess)
-                files.Add(svgFile);
+            ShowClipboardCopySuccessInfoBar(
+                requestedCodes.Length == 1
+                    ? "PNG and SVG QR Code copied to the clipboard"
+                    : $"{requestedCodes.Length} PNG and SVG QR Codes copied to the clipboard");
         }
-
-        if (files.Count == 0)
+        catch (Exception ex)
         {
-            CodeInfoBarMessage = "No QR Codes to copy to the clipboard";
-            ShowCodeInfoBar = true;
-            CodeInfoBarSeverity = InfoBarSeverity.Error;
-            CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
-            return;
+            Debug.WriteLine($"Failed to copy PNG and SVG QR Codes to the clipboard: {ex.Message}");
+            ShowClipboardCopyFailureInfoBar("Could not prepare the QR Codes for the clipboard");
         }
-
-        DataPackage dataPackage = new();
-        dataPackage.SetStorageItems(files);
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
-
-        CodeInfoBarMessage = string.Empty;
-        ShowCodeInfoBar = true;
-        CodeInfoBarSeverity = InfoBarSeverity.Success;
-        if (QrCodeBitmaps.Count == 1)
-            CodeInfoBarTitle = "PNG and SVG QR Code copied to the clipboard";
-        else
-            CodeInfoBarTitle = $"{QrCodeBitmaps.Count} PNG and SVG QR Codes copied to the clipboard";
-
-        copyInfoBarTimer.Start();
     }
 
     [RelayCommand]
@@ -1540,74 +1852,129 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    private async Task WriteImageToFile(BarcodeImageItem imageItem, StorageFile file, FileKind kindOfFile)
+    private static string GetFileExtension(FileKind kindOfFile)
     {
-        switch (kindOfFile)
-        {
-            case FileKind.None:
-                break;
-            case FileKind.PNG:
-                if (imageItem.CodeAsBitmap is null)
-                    return;
-
-                await imageItem.CodeAsBitmap.SavePngToStorageFile(file);
-                break;
-            case FileKind.SVG:
-                await imageItem.SaveCodeAsSvgFile(file,
-                    ForegroundColor.ToSystemDrawingColor(),
-                    BackgroundColor.ToSystemDrawingColor(),
-                    SelectedOption.ErrorCorrectionLevel);
-                break;
-            default:
-                break;
-        }
+        return $".{kindOfFile.ToString().ToLowerInvariant()}";
     }
 
-    public async Task<string?> SaveAllFiles(FileKind kindOfFile, string? overrideFolderPath = null)
+    private async Task<StorageFolder?> PickSaveFolderAsync(string? overrideFolderPath)
     {
-        StorageFolder? folder;
-
         if (overrideFolderPath is not null)
-        {
-            folder = await StorageFolder.GetFolderFromPathAsync(overrideFolderPath);
-        }
-        else if (!string.IsNullOrWhiteSpace(QuickSaveLocation) && Directory.Exists(QuickSaveLocation))
-        {
-            folder = await StorageFolder.GetFolderFromPathAsync(QuickSaveLocation);
-        }
-        else
-        {
-            FolderPicker folderPicker = new()
-            {
-                SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-            };
+            return await StorageFolder.GetFolderFromPathAsync(overrideFolderPath);
 
-            Window saveWindow = new();
-            IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
-            InitializeWithWindow.Initialize(folderPicker, windowHandleSave);
+        if (!string.IsNullOrWhiteSpace(QuickSaveLocation) && Directory.Exists(QuickSaveLocation))
+            return await StorageFolder.GetFolderFromPathAsync(QuickSaveLocation);
 
-            folder = await folderPicker.PickSingleFolderAsync();
+        FolderPicker folderPicker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+        };
+
+        Window saveWindow = new();
+        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
+        InitializeWithWindow.Initialize(folderPicker, windowHandleSave);
+
+        return await folderPicker.PickSingleFolderAsync();
+    }
+
+    private static async Task<StorageFile?> PickSaveZipFileAsync()
+    {
+        FileSavePicker savePicker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+            SuggestedFileName = $"QR Codes {DateTime.Now:yyyy-MM-dd}",
+        };
+        savePicker.FileTypeChoices.Add("ZIP Archive", [".zip"]);
+
+        Window saveWindow = new();
+        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
+        InitializeWithWindow.Initialize(savePicker, windowHandleSave);
+
+        return await savePicker.PickSaveFileAsync();
+    }
+
+    private void BeginBulkSaveOperation(int totalItemCount)
+    {
+        BulkOperationTotalItemCount = totalItemCount;
+        BulkOperationCompletedItemCount = 0;
+        IsBulkOperationRunning = true;
+        SavedFolderPath = string.Empty;
+    }
+
+    private void EndBulkSaveOperation()
+    {
+        IsBulkOperationRunning = false;
+        BulkOperationCompletedItemCount = 0;
+        BulkOperationTotalItemCount = 0;
+    }
+
+    private void UpdateBulkSaveProgress(int completedItemCount)
+    {
+        if (App.MainWindow.DispatcherQueue.HasThreadAccess)
+        {
+            BulkOperationCompletedItemCount = completedItemCount;
+            return;
         }
 
+        App.MainWindow.DispatcherQueue.TryEnqueue(() => BulkOperationCompletedItemCount = completedItemCount);
+    }
+
+    public async Task<string?> SaveAllFiles(RequestedQrCodeItem[] requestedCodes, string? overrideFolderPath = null, params FileKind[] fileKinds)
+    {
+        StorageFolder? folder = await PickSaveFolderAsync(overrideFolderPath);
         if (folder is null)
             return null;
 
-        string extension = $".{kindOfFile.ToString().ToLower()}";
+        using RenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+        int completedItemCount = 0;
+        int maxConcurrency = renderSettings.LogoImage is null ? MaxBulkSaveConcurrency : 1;
+        using SemaphoreSlim semaphore = new(maxConcurrency, maxConcurrency);
+        List<Task> tasks = [];
 
-        foreach (BarcodeImageItem imageItem in QrCodeBitmaps)
+        BeginBulkSaveOperation(requestedCodes.Length);
+
+        try
         {
-            string fileName = imageItem.CodeAsText.ToSafeFileName();
+            foreach (RequestedQrCodeItem requestedCode in requestedCodes)
+            {
+                await semaphore.WaitAsync();
+                tasks.Add(Task.Run(async () =>
+                {
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(requestedCode.SafeFileNameBase))
+                        {
+                            foreach (FileKind kindOfFile in fileKinds)
+                            {
+                                StorageFile file = await folder.CreateFileAsync(
+                                    requestedCode.SafeFileNameBase + GetFileExtension(kindOfFile),
+                                    CreationCollisionOption.ReplaceExisting);
+                                await WriteRequestedCodeToFileAsync(requestedCode, file, kindOfFile, renderSettings);
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        int completed = Interlocked.Increment(ref completedItemCount);
+                        UpdateBulkSaveProgress(completed);
+                        semaphore.Release();
+                    }
+                }));
+            }
 
-            if (string.IsNullOrWhiteSpace(fileName) || imageItem.CodeAsBitmap is null)
-                continue;
-
-            fileName += extension;
-
-            StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-            await WriteImageToFile(imageItem, file, kindOfFile);
+            await Task.WhenAll(tasks);
+            return folder.Path;
         }
-
-        return folder.Path;
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to save QR Codes to files: {ex.Message}");
+            ShowBulkOperationFailureInfoBar("Failed to save QR Codes", "Could not save the requested QR Codes to files.");
+            return null;
+        }
+        finally
+        {
+            EndBulkSaveOperation();
+        }
     }
 
     private void ShowSaveSuccessInfoBar(string title, string folderPath)
@@ -1620,112 +1987,86 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         copyInfoBarTimer.Start();
     }
 
-    public async Task<bool> SaveAllFilesAsZip(FileKind kindOfFile)
+    public async Task<bool> SaveAllFilesAsZip(RequestedQrCodeItem[] requestedCodes, params FileKind[] fileKinds)
     {
-        FileSavePicker savePicker = new()
-        {
-            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-            SuggestedFileName = $"QR Codes {DateTime.Now:yyyy-MM-dd}",
-        };
-        savePicker.FileTypeChoices.Add("ZIP Archive", [".zip"]);
-
-        Window saveWindow = new();
-        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
-        InitializeWithWindow.Initialize(savePicker, windowHandleSave);
-
-        StorageFile zipFile = await savePicker.PickSaveFileAsync();
-
+        StorageFile? zipFile = await PickSaveZipFileAsync();
         if (zipFile is null)
             return false;
 
-        string extension = $".{kindOfFile.ToString().ToLower()}";
+        using RenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+        BeginBulkSaveOperation(requestedCodes.Length);
 
-        using MemoryStream zipStream = new();
-        using (System.IO.Compression.ZipArchive archive = new(zipStream, System.IO.Compression.ZipArchiveMode.Create, true))
+        try
         {
-            foreach (BarcodeImageItem imageItem in QrCodeBitmaps)
+            using IRandomAccessStream outputStream = await zipFile.OpenAsync(FileAccessMode.ReadWrite);
+            outputStream.Size = 0;
+            using Stream output = outputStream.AsStreamForWrite();
+            using ZipArchive archive = new(output, ZipArchiveMode.Create, leaveOpen: true);
+
+            for (int index = 0; index < requestedCodes.Length; index++)
             {
-                string fileName = imageItem.CodeAsText.ToSafeFileName();
+                RequestedQrCodeItem requestedCode = requestedCodes[index];
 
-                if (string.IsNullOrWhiteSpace(fileName) || imageItem.CodeAsBitmap is null)
-                    continue;
+                if (!string.IsNullOrWhiteSpace(requestedCode.SafeFileNameBase))
+                {
+                    foreach (FileKind kindOfFile in fileKinds)
+                    {
+                        ZipArchiveEntry entry = archive.CreateEntry(
+                            requestedCode.SafeFileNameBase + GetFileExtension(kindOfFile),
+                            CompressionLevel.Optimal);
+                        using Stream entryStream = entry.Open();
+                        await WriteRequestedCodeToZipEntryAsync(requestedCode, entryStream, kindOfFile, renderSettings);
+                    }
+                }
 
-                fileName += extension;
-
-                // Write to a temp StorageFile, then copy bytes into the zip entry
-                StorageFolder tempFolder = ApplicationData.Current.LocalCacheFolder;
-                StorageFile tempFile = await tempFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-                await WriteImageToFile(imageItem, tempFile, kindOfFile);
-
-                System.IO.Compression.ZipArchiveEntry entry = archive.CreateEntry(fileName, System.IO.Compression.CompressionLevel.Optimal);
-                using Stream entryStream = entry.Open();
-                using IRandomAccessStreamWithContentType fileStream = await tempFile.OpenReadAsync();
-                await fileStream.AsStreamForRead().CopyToAsync(entryStream);
+                BulkOperationCompletedItemCount = index + 1;
             }
+
+            await output.FlushAsync();
+            return true;
         }
-
-        // Write the zip MemoryStream to the chosen StorageFile
-        using IRandomAccessStream outputStream = await zipFile.OpenAsync(FileAccessMode.ReadWrite);
-        outputStream.Size = 0;
-        using Stream output = outputStream.AsStreamForWrite();
-        zipStream.Position = 0;
-        await zipStream.CopyToAsync(output);
-
-        return true;
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to save QR Codes to zip: {ex.Message}");
+            ShowBulkOperationFailureInfoBar("Failed to save QR Codes", "Could not save the requested QR Codes to a ZIP archive.");
+            return false;
+        }
+        finally
+        {
+            EndBulkSaveOperation();
+        }
     }
 
-    public async Task<bool> SaveAllFilesAsZip(params FileKind[] fileKinds)
+    private sealed partial class RenderSettingsSnapshot(
+        ErrorCorrectionLevel errorCorrectionLevel,
+        System.Drawing.Color foregroundColor,
+        System.Drawing.Color backgroundColor,
+        System.Drawing.Bitmap? logoImage,
+        double logoSizePercentage,
+        double logoPaddingPixels,
+        string? logoSvgContent,
+        double qrPaddingModules) : IDisposable
     {
-        FileSavePicker savePicker = new()
+        public ErrorCorrectionLevel ErrorCorrectionLevel { get; } = errorCorrectionLevel;
+
+        public System.Drawing.Color ForegroundColor { get; } = foregroundColor;
+
+        public System.Drawing.Color BackgroundColor { get; } = backgroundColor;
+
+        public System.Drawing.Bitmap? LogoImage { get; } = logoImage;
+
+        public double LogoSizePercentage { get; } = logoSizePercentage;
+
+        public double LogoPaddingPixels { get; } = logoPaddingPixels;
+
+        public string? LogoSvgContent { get; } = logoSvgContent;
+
+        public double QrPaddingModules { get; } = qrPaddingModules;
+
+        public void Dispose()
         {
-            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-            SuggestedFileName = $"QR Codes {DateTime.Now:yyyy-MM-dd}",
-        };
-        savePicker.FileTypeChoices.Add("ZIP Archive", [".zip"]);
-
-        Window saveWindow = new();
-        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
-        InitializeWithWindow.Initialize(savePicker, windowHandleSave);
-
-        StorageFile zipFile = await savePicker.PickSaveFileAsync();
-
-        if (zipFile is null)
-            return false;
-
-        using MemoryStream zipStream = new();
-        using (ZipArchive archive = new(zipStream, ZipArchiveMode.Create, true))
-        {
-            foreach (BarcodeImageItem imageItem in QrCodeBitmaps)
-            {
-                string baseName = imageItem.CodeAsText.ToSafeFileName();
-
-                if (string.IsNullOrWhiteSpace(baseName) || imageItem.CodeAsBitmap is null)
-                    continue;
-
-                foreach (FileKind kindOfFile in fileKinds)
-                {
-                    string extension = $".{kindOfFile.ToString().ToLower()}";
-                    string fileName = baseName + extension;
-
-                    StorageFolder tempFolder = ApplicationData.Current.LocalCacheFolder;
-                    StorageFile tempFile = await tempFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-                    await WriteImageToFile(imageItem, tempFile, kindOfFile);
-
-                    ZipArchiveEntry entry = archive.CreateEntry(fileName, CompressionLevel.Optimal);
-                    using Stream entryStream = entry.Open();
-                    using IRandomAccessStreamWithContentType fileStream = await tempFile.OpenReadAsync();
-                    await fileStream.AsStreamForRead().CopyToAsync(entryStream);
-                }
-            }
+            LogoImage?.Dispose();
         }
-
-        using IRandomAccessStream outputStream = await zipFile.OpenAsync(FileAccessMode.ReadWrite);
-        outputStream.Size = 0;
-        using Stream output = outputStream.AsStreamForWrite();
-        zipStream.Position = 0;
-        await zipStream.CopyToAsync(output);
-
-        return true;
     }
 
     public async void OnNavigatedTo(object parameter)
@@ -1748,6 +2089,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton));
         QuickSaveLocation = await LocalSettingsService.ReadSettingAsync<string>(nameof(QuickSaveLocation)) ?? string.Empty;
         MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
+        QrPaddingModules = BarcodeHelpers.NormalizeQrPaddingModules(
+            await LocalSettingsService.ReadSettingAsync<double?>(nameof(QrPaddingModules)) ?? 2.0);
         if (MinSizeScanDistanceScaleFactor < 0.35)
         {
             MinSizeScanDistanceScaleFactor = 1;
