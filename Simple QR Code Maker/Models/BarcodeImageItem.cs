@@ -40,17 +40,22 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public double LogoPaddingPixels { get; set; } = 8.0;
 
+    public double QrPaddingModules { get; set; } = 2.0;
+
     public string? LogoSvgContent { get; set; }
 
     public QRCode QRCodeDetails => Encoder.encode(CodeAsText, ErrorCorrection);
 
-    private QrCodeSizeRecommendation SizeRecommendation => BarcodeHelpers.GetSizeRecommendation(32 * MaxSizeScaleFactor, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor);
+    private QrCodeSizeRecommendation SizeRecommendation => BarcodeHelpers.GetSizeRecommendation(32 * MaxSizeScaleFactor, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor, QrPaddingModules);
 
     public string ToolTipText
     {
         get
         {
             QrCodeSizeRecommendation sizeRecommendation = SizeRecommendation;
+
+            if (!BarcodeHelpers.IsSizeRecommendationAvailableForPadding(QrPaddingModules))
+                return CodeAsText;
 
             if (sizeRecommendation.Kind == QrCodeSizeRecommendationKind.TransparencyDependent)
                 return CodeAsText;
@@ -66,7 +71,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public double MaxSizeScaleFactor { get; set; }
 
-    public string SizeRecommendationLabel => SizeRecommendation.IsExact ? "Minimum size: " : "Print sizing: ";
+    public string SizeRecommendationTitle => SizeRecommendation.IsExact ? "Minimum size" : "Print sizing unavailable";
 
     public string SizeRecommendationText => SizeRecommendation.Text;
 
@@ -91,7 +96,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     {
         try
         {
-            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent);
+            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent, QrPaddingModules);
             using IRandomAccessStream randomAccessStream = await file.OpenAsync(FileAccessMode.ReadWrite);
             DataWriter dataWriter = new(randomAccessStream);
             dataWriter.WriteString(svgImage.Content);
@@ -109,7 +114,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     {
         try
         {
-            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent);
+            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent, QrPaddingModules);
             return svgImage.Content;
         }
         catch
@@ -129,10 +134,36 @@ public partial class BarcodeImageItem : ObservableRecipient
     {
         if (!CanCopySizeText)
         {
+            QrCodeSizeRecommendation sizeRecommendation = SizeRecommendation;
+
+            (string title, string message, InfoBarSeverity severity) = sizeRecommendation.Kind switch
+            {
+                QrCodeSizeRecommendationKind.PaddingDependent => (
+                    "Exact minimum size unavailable",
+                    "Print sizing is unavailable because padding outside 1-4 modules makes borderless and heavy-border QR Codes scan too variably for reliable prediction.",
+                    InfoBarSeverity.Informational),
+                QrCodeSizeRecommendationKind.TransparencyDependent => (
+                    "Exact minimum size unavailable",
+                    "Transparent QR colors depend on the final print surface, so there is no exact minimum size to copy.",
+                    InfoBarSeverity.Informational),
+                QrCodeSizeRecommendationKind.LowContrast => (
+                    "Exact minimum size unavailable",
+                    "Color contrast is too low to produce a reliable minimum size recommendation.",
+                    InfoBarSeverity.Warning),
+                QrCodeSizeRecommendationKind.Error => (
+                    "Exact minimum size unavailable",
+                    "The selected maximum scan distance does not produce a reliable minimum size recommendation.",
+                    InfoBarSeverity.Warning),
+                _ => (
+                    "Exact minimum size unavailable",
+                    "There is no exact minimum size to copy for this QR Code.",
+                    InfoBarSeverity.Informational)
+            };
+
             WeakReferenceMessenger.Default.Send(new RequestShowMessage(
-                "Exact minimum size unavailable",
-                "Transparent QR colors depend on the final print surface, so there is no exact minimum size to copy.",
-                InfoBarSeverity.Informational));
+                title,
+                message,
+                severity));
             return;
         }
 
