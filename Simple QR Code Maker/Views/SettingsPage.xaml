@@ -292,7 +292,7 @@
                 </settingsControls:SettingsExpander>
 
                 <!--  Import  -->
-                <settingsControls:SettingsCard Description="Restore settings, history, brands, and logo images from a backup zip file" Header="Import">
+                <settingsControls:SettingsCard Description="Merge settings, history, brands, and logo images from a backup zip file. Existing settings not in the backup are kept." Header="Import">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE896;" />
                     </settingsControls:SettingsCard.HeaderIcon>

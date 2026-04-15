@@ -1,4 +1,4 @@
-using Microsoft.UI.Text;
+using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -21,7 +21,7 @@ public sealed partial class SpreadsheetImportPage : Page
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        RefreshPreviewGrid();
+        RefreshPreviewListView();
     }
 
     private void SpreadsheetImportPage_Unloaded(object sender, RoutedEventArgs e)
@@ -35,80 +35,66 @@ public sealed partial class SpreadsheetImportPage : Page
         if (e.PropertyName is nameof(SpreadsheetImportViewModel.Headers)
             or nameof(SpreadsheetImportViewModel.PreviewRows))
         {
-            RefreshPreviewGrid();
+            RefreshPreviewListView();
         }
     }
 
-    private void RefreshPreviewGrid()
+    private void RefreshPreviewListView()
     {
-        PreviewGrid.Children.Clear();
-        PreviewGrid.ColumnDefinitions.Clear();
-        PreviewGrid.RowDefinitions.Clear();
+        PreviewListView.ItemsSource = null;
 
         IReadOnlyList<string> headers = ViewModel.Headers;
-        IReadOnlyList<IReadOnlyList<string>> rows = ViewModel.PreviewRows;
         int columnCount = headers.Count;
 
         if (columnCount == 0)
         {
-            PreviewGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            TextBlock emptyState = new()
-            {
-                Margin = new Thickness(12),
-                Foreground = Application.Current.Resources["TextFillColorSecondaryBrush"] as Brush,
-                Text = "No preview available.",
-            };
-            Grid.SetRow(emptyState, 0);
-            PreviewGrid.Children.Add(emptyState);
+            PreviewListView.Header = null;
             return;
         }
 
-        for (int column = 0; column < columnCount; column++)
-            PreviewGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-
-        Brush? altBrush = Application.Current.Resources.TryGetValue(
-            "SubtleFillColorSecondaryBrush", out object? brush) ? brush as Brush : null;
-
-        PreviewGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        for (int column = 0; column < columnCount; column++)
+        DataTable dataTable = new() { ColumnSpacing = 0 };
+        foreach (string header in headers)
         {
-            TextBlock cell = new()
+            dataTable.Children.Add(new DataColumn
             {
-                FontWeight = FontWeights.SemiBold,
-                Padding = new Thickness(8, 5, 8, 5),
-                Text = headers[column],
+                Content = header,
+                DesiredWidth = new GridLength(1, GridUnitType.Star),
+                CanResize = true,
+            });
+        }
+
+        Application.Current.Resources.TryGetValue("SubtleFillColorSecondaryBrush", out object? brush);
+        PreviewListView.Header = new Border
+        {
+            Padding = new Thickness(8, 4, 8, 4),
+            Background = brush as Brush,
+            Child = dataTable,
+        };
+
+        PreviewListView.ItemsSource = ViewModel.PreviewRows;
+    }
+
+    private void PreviewListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    {
+        args.Handled = true;
+
+        if (args.Item is not IReadOnlyList<string> fields)
+            return;
+
+        int columnCount = ViewModel.Headers.Count;
+        DataRow row = new();
+
+        for (int i = 0; i < columnCount; i++)
+        {
+            row.Children.Add(new TextBlock
+            {
+                Text = i < fields.Count ? fields[i] : string.Empty,
+                Padding = new Thickness(8, 3, 8, 3),
                 TextTrimming = TextTrimming.CharacterEllipsis,
-            };
-            Grid.SetRow(cell, 0);
-            Grid.SetColumn(cell, column);
-            PreviewGrid.Children.Add(cell);
+                VerticalAlignment = VerticalAlignment.Center,
+            });
         }
 
-        for (int row = 0; row < rows.Count; row++)
-        {
-            PreviewGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            IReadOnlyList<string> fields = rows[row];
-
-            if (altBrush is not null && row % 2 == 0)
-            {
-                Border rowBackground = new() { Background = altBrush };
-                Grid.SetRow(rowBackground, row + 1);
-                Grid.SetColumnSpan(rowBackground, columnCount);
-                PreviewGrid.Children.Add(rowBackground);
-            }
-
-            for (int column = 0; column < columnCount; column++)
-            {
-                TextBlock cell = new()
-                {
-                    Padding = new Thickness(8, 3, 8, 3),
-                    Text = column < fields.Count ? fields[column] : string.Empty,
-                    TextTrimming = TextTrimming.CharacterEllipsis,
-                };
-                Grid.SetRow(cell, row + 1);
-                Grid.SetColumn(cell, column);
-                PreviewGrid.Children.Add(cell);
-            }
-        }
+        args.ItemContainer.Content = row;
     }
 }

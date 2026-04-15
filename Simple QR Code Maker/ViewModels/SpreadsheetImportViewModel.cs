@@ -9,6 +9,8 @@ namespace Simple_QR_Code_Maker.ViewModels;
 
 public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigationAware
 {
+    private const int PreviewRowLimit = 200;
+
     private readonly INavigationService _navigationService;
     private readonly List<List<string>> _allRows = [];
     private string[] _headers = [];
@@ -58,7 +60,10 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
 
     public IReadOnlyList<string> Headers => _headers;
 
-    public IReadOnlyList<IReadOnlyList<string>> PreviewRows => _dataRows;
+    public IReadOnlyList<IReadOnlyList<string>> PreviewRows =>
+        _dataRows.Count > PreviewRowLimit
+            ? (IReadOnlyList<IReadOnlyList<string>>)_dataRows.Take(PreviewRowLimit).ToList()
+            : _dataRows;
 
     partial void OnFirstRowIsHeaderChanged(bool value)
     {
@@ -185,7 +190,9 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         if (SelectedColumnIndex < 0 || SelectedColumnIndex >= ColumnNames.Count)
             SelectedColumnIndex = ColumnNames.Count > 0 ? 0 : -1;
 
-        RowCountDescription = $"{_dataRows.Count} row{(_dataRows.Count == 1 ? "" : "s")} in file";
+        RowCountDescription = _dataRows.Count > PreviewRowLimit
+            ? $"{_dataRows.Count} rows in file (preview shows first {PreviewRowLimit})"
+            : $"{_dataRows.Count} row{(_dataRows.Count == 1 ? "" : "s")} in file";
 
         OnPropertyChanged(nameof(Headers));
         OnPropertyChanged(nameof(PreviewRows));
