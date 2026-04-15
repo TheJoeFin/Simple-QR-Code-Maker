@@ -29,12 +29,12 @@
                                 IsTextSelectionEnabled="True"
                                 Style="{StaticResource SubtitleTextBlockStyle}"
                                 Text="{x:Bind Title,
-                                              Mode=OneWay}"
+                                              Mode=OneTime}"
                                 TextWrapping="WrapWholeWords" />
                             <TextBlock
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind Content,
-                                              Mode=OneWay}"
+                                              Mode=OneTime}"
                                 TextWrapping="WrapWholeWords" />
                         </StackPanel>
                     </DataTemplate>

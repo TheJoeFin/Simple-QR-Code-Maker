@@ -57,7 +57,7 @@
                         ItemsSource="{x:Bind ViewModel.ColumnNames,
                                              Mode=OneWay}"
                         SelectedIndex="{x:Bind ViewModel.SelectedColumnIndex,
-                                                Mode=TwoWay}" />
+                                               Mode=TwoWay}" />
                 </settingsControls:SettingsCard>
 
                 <settingsControls:SettingsCard Description="Optional text to add before each imported line." Header="Text before imported line">
@@ -82,8 +82,8 @@
                         HorizontalAlignment="Stretch"
                         PlaceholderText="ex: ?source=qr-code"
                         Text="{x:Bind ViewModel.TextAfterImportedLine,
-                                       Mode=TwoWay,
-                                       UpdateSourceTrigger=PropertyChanged}" />
+                                      Mode=TwoWay,
+                                      UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
                 <settingsControls:SettingsCard Description="Only import unique values after applying any before/after text." Header="Remove duplicates">

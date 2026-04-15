@@ -36,17 +36,17 @@
                                     FontSize="12"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Text="{x:Bind KindLabel,
-                                                  Mode=OneWay}" />
+                                                  Mode=OneTime}" />
                                 <TextBlock
                                     Style="{StaticResource BodyStrongTextBlockStyle}"
                                     Text="{x:Bind Title,
-                                                  Mode=OneWay}"
+                                                  Mode=OneTime}"
                                     TextTrimming="CharacterEllipsis" />
                                 <TextBlock
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{x:Bind Subtitle,
-                                                  Mode=OneWay}"
+                                                  Mode=OneTime}"
                                     TextTrimming="CharacterEllipsis" />
                             </StackPanel>
                         </DataTemplate>
