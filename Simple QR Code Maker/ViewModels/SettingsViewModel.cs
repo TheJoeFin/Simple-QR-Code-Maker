@@ -55,6 +55,11 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private string maxScanDistanceText = "36in or 1m";
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(QrPaddingDescription))]
+    [NotifyPropertyChangedFor(nameof(QrPaddingSettingsDescription))]
+    private double qrPaddingModules = 2.0;
+
+    [ObservableProperty]
     private string quickSaveLocation = string.Empty;
 
     [ObservableProperty]
@@ -154,6 +159,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         await SaveSingleSettingAsync(nameof(HideMinimumSizeText), HideMinimumSizeText);
         await SaveSingleSettingAsync(nameof(ShowSaveBothButton), ShowSaveBothButton);
         await SaveSingleSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
+        await SaveSingleSettingAsync(nameof(QrPaddingModules), QrPaddingModules);
         await SaveSingleSettingAsync(nameof(QuickSaveLocation), QuickSaveLocation);
         Trace.WriteLine("[SettingsVM] SaveAllSettingsAsync completed");
     }
@@ -230,6 +236,17 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                 MaxScanDistanceText = $"{Math.Round(value * 36, 0)} inches";
             }
         }
+    }
+
+    public string QrPaddingDescription => $"{QrPaddingModules:0} modules";
+
+    public string QrPaddingSettingsDescription => BarcodeHelpers.IsSizeRecommendationAvailableForPadding(QrPaddingModules)
+        ? $"{QrPaddingDescription}. Print sizing stays reliable at this setting."
+        : $"{QrPaddingDescription}. Print sizing is disabled outside 1-4 modules.";
+
+    partial void OnQrPaddingModulesChanged(double value)
+    {
+        RestartDebounceTimer();
     }
 
     [RelayCommand]
@@ -796,6 +813,16 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                     MinSizeScanDistanceScaleFactor = 1;
                     await LocalSettingsService.SaveSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
                 }
+            });
+
+            await LoadSettingAsync(nameof(QrPaddingModules), async () =>
+            {
+                double? storedQrPaddingModules = await LocalSettingsService.ReadSettingAsync<double?>(nameof(QrPaddingModules));
+                double normalizedQrPaddingModules = BarcodeHelpers.NormalizeQrPaddingModules(storedQrPaddingModules ?? 2.0);
+                QrPaddingModules = normalizedQrPaddingModules;
+
+                if (!storedQrPaddingModules.HasValue || storedQrPaddingModules.Value != normalizedQrPaddingModules)
+                    await LocalSettingsService.SaveSettingAsync(nameof(QrPaddingModules), normalizedQrPaddingModules);
             });
 
             await LoadSettingAsync(nameof(QuickSaveLocation), async () =>
