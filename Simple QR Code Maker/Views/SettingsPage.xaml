@@ -210,8 +210,8 @@
                         Minimum=".35"
                         StepFrequency="0.1"
                         Value="{x:Bind ViewModel.MinSizeScanDistanceScaleFactor,
-                                        Mode=TwoWay,
-                                        UpdateSourceTrigger=PropertyChanged}" />
+                                       Mode=TwoWay,
+                                       UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
                 <settingsControls:SettingsCard Description="{x:Bind ViewModel.QrPaddingSettingsDescription, Mode=OneWay}" Header="QR padding">
@@ -225,8 +225,8 @@
                         Minimum="0"
                         StepFrequency="1"
                         Value="{x:Bind ViewModel.QrPaddingModules,
-                                        Mode=TwoWay,
-                                        UpdateSourceTrigger=PropertyChanged}" />
+                                       Mode=TwoWay,
+                                       UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
                 <!--  Quick save location  -->
@@ -301,11 +301,14 @@
 
                 <InfoBar
                     x:Name="ImportExportInfoBar"
-                    IsOpen="{x:Bind ViewModel.HasImportExportStatus, Mode=OneWay}"
+                    Closed="ImportExportInfoBar_Closed"
                     IsClosable="True"
-                    Severity="{x:Bind ViewModel.ImportExportStatusSeverity, Mode=OneWay}"
-                    Message="{x:Bind ViewModel.ImportExportStatusMessage, Mode=OneWay}"
-                    Closed="ImportExportInfoBar_Closed" />
+                    IsOpen="{x:Bind ViewModel.HasImportExportStatus,
+                                    Mode=OneWay}"
+                    Message="{x:Bind ViewModel.ImportExportStatusMessage,
+                                     Mode=OneWay}"
+                    Severity="{x:Bind ViewModel.ImportExportStatusSeverity,
+                                      Mode=OneWay}" />
 
                 <!--  About  -->
                 <TextBlock

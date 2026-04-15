@@ -18,8 +18,8 @@
         </Grid.RowDefinitions>
         <Image
             x:Name="QrCodeImage"
-            Width="285"
-            Height="285"
+            Width="300"
+            Height="300"
             CanDrag="True"
             DragStarting="QrCodeImage_DragStarting"
             Source="{x:Bind Data.CodeAsBitmap,
