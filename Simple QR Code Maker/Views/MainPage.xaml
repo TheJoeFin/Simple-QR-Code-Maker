@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Simple_QR_Code_Maker.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,12 +10,14 @@
     xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
     Name="EncodingPage"
     Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
     mc:Ignorable="d">
 
     <Page.Resources>
         <converters:TextHasNoURLConverter x:Key="HasNoURL" />
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
         <converters:EmptyStringToCollapsedConverter x:Key="EmptyStringToCollapsed" />
+        <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
         <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
         <converters:EmptyCollectionToVisibilityConverter x:Key="EmptyCollectionToVisibility" />
 
@@ -43,31 +45,98 @@
                 OpenPaneLength="400"
                 PanePlacement="Right">
                 <SplitView.Content>
-                    <Grid>
-                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <Grid x:Name="PageRootGrid">
+                        <ScrollViewer
+                            x:Name="MainContentScrollViewer"
+                            HorizontalScrollBarVisibility="Disabled"
+                            VerticalScrollBarVisibility="Auto">
                             <StackPanel
+                                x:Name="MainContentStackPanel"
                                 Margin="20"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Orientation="Vertical"
                                 Spacing="12">
-                                <ComboBox
-                                    x:Name="BrandPickerComboBox"
-                                    MinWidth="212"
+                                <DropDownButton
+                                    x:Name="BrandPickerButton"
+                                    Height="36"
+                                    MinWidth="216"
                                     HorizontalAlignment="Center"
-                                    DisplayMemberPath="Name"
-                                    ItemsSource="{x:Bind ViewModel.BrandItems,
-                                                         Mode=OneWay}"
-                                    PlaceholderText="Select a brand"
-                                    SelectedItem="{x:Bind ViewModel.SelectedBrand,
-                                                          Mode=OneWay}"
-                                    SelectionChanged="BrandPickerComboBox_SelectionChanged"
+                                    HorizontalContentAlignment="Stretch"
+                                    ToolTipService.ToolTip="Select brand"
                                     Visibility="{x:Bind ViewModel.BrandItems.Count,
                                                         Converter={StaticResource EmptyCollectionToVisibility},
                                                         ConverterParameter=true,
-                                                        Mode=OneWay}" />
+                                                        Mode=OneWay}">
+                                    <DropDownButton.Content>
+                                        <Grid>
+                                            <StackPanel
+                                                Orientation="Horizontal"
+                                                Spacing="6"
+                                                Visibility="{Binding ViewModel.SelectedBrand,
+                                                                     ElementName=EncodingPage,
+                                                                     Converter={StaticResource NullToVisibility}}">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontWeight="SemiBold"
+                                                    Text="{Binding ViewModel.SelectedBrand.Name,
+                                                                   ElementName=EncodingPage}"
+                                                    TextTrimming="CharacterEllipsis" />
+                                                <FontIcon
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                    FontSize="12"
+                                                    Glyph="&#xE734;"
+                                                    ToolTipService.ToolTip="Default brand"
+                                                    Visibility="{Binding ViewModel.SelectedBrand.IsDefault,
+                                                                         ElementName=EncodingPage,
+                                                                         Converter={StaticResource BoolToVisibility}}" />
+                                            </StackPanel>
+
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Text="Select a brand"
+                                                Visibility="{Binding ViewModel.SelectedBrand,
+                                                                     ElementName=EncodingPage,
+                                                                     Converter={StaticResource NullToVisibility},
+                                                                     ConverterParameter=Inverted}" />
+                                        </Grid>
+                                    </DropDownButton.Content>
+                                    <DropDownButton.Flyout>
+                                        <Flyout x:Name="BrandPickerFlyout" Placement="Bottom">
+                                            <ListView
+                                                x:Name="BrandPickerListView"
+                                                Width="320"
+                                                MaxHeight="360"
+                                                ItemsSource="{x:Bind ViewModel.BrandItems,
+                                                                     Mode=OneWay}"
+                                                SelectedItem="{x:Bind ViewModel.SelectedBrand,
+                                                                      Mode=OneWay}"
+                                                SelectionChanged="BrandPickerListView_SelectionChanged"
+                                                SelectionMode="Single">
+                                                <ListView.ItemContainerStyle>
+                                                    <Style TargetType="ListViewItem">
+                                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                    </Style>
+                                                </ListView.ItemContainerStyle>
+                                                <ListView.ItemTemplate>
+                                                    <DataTemplate x:DataType="models:BrandItem">
+                                                        <controls:BrandRowItem
+                                                            Data="{x:Bind}"
+                                                            DeleteRequested="BrandRowItem_DeleteRequested"
+                                                            EditRequested="BrandRowItem_EditRequested"
+                                                            SetDefaultRequested="BrandRowItem_SetDefaultRequested"
+                                                            ShowActions="True" />
+                                                    </DataTemplate>
+                                                </ListView.ItemTemplate>
+                                            </ListView>
+                                        </Flyout>
+                                    </DropDownButton.Flyout>
+                                </DropDownButton>
 
                                 <StackPanel
+                                    x:Name="QrCodeInputRow"
                                     HorizontalAlignment="Center"
                                     Orientation="Horizontal"
                                     Spacing="6">
@@ -84,41 +153,41 @@
                                                       UpdateSourceTrigger=PropertyChanged}"
                                         TextChanged="UrlTextBox_TextChanged"
                                         TextWrapping="NoWrap" />
-                                    <Grid>
-                                        <Button
-                                            Width="36"
-                                            Height="36"
-                                            Margin="0,0,0,-1"
-                                            Padding="0"
-                                            VerticalAlignment="Bottom"
-                                            Command="{x:Bind ViewModel.AddNewLineCommand}"
-                                            ToolTipService.ToolTip="Add a return and start making another QR Code"
-                                            Visibility="{x:Bind ViewModel.CanSaveImage,
-                                                                Converter={StaticResource BoolToVisibility},
-                                                                Mode=OneWay}">
-                                            <Viewbox Width="16" Height="16">
-                                                <SymbolIcon Symbol="Add" />
-                                            </Viewbox>
-                                        </Button>
-                                        <Button
-                                            Width="36"
-                                            Height="36"
-                                            Margin="0,0,0,-1"
-                                            Padding="0"
-                                            VerticalAlignment="Bottom"
-                                            Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
-                                            IsEnabled="{x:Bind ViewModel.CanPasteText,
-                                                               Mode=OneWay}"
-                                            ToolTipService.ToolTip="Paste text from clipboard"
-                                            Visibility="{x:Bind ViewModel.CanSaveImage,
-                                                                Converter={StaticResource BoolToVisibility},
-                                                                ConverterParameter=True,
-                                                                Mode=OneWay}">
-                                            <Viewbox Width="16" Height="16">
-                                                <SymbolIcon Symbol="Paste" />
-                                            </Viewbox>
-                                        </Button>
-                                    </Grid>
+                                    <Button
+                                        Width="36"
+                                        Height="36"
+                                        Margin="0,0,0,-1"
+                                        Padding="0"
+                                        VerticalAlignment="Bottom"
+                                        ToolTipService.ToolTip="Import text">
+                                        <Button.Flyout>
+                                            <MenuFlyout Placement="Bottom">
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
+                                                    IsEnabled="{x:Bind ViewModel.CanPasteText,
+                                                                       Mode=OneWay}"
+                                                    Text="Paste">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <SymbolIcon Symbol="Paste" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutSeparator />
+                                                <MenuFlyoutItem Command="{x:Bind ViewModel.OpenTextFileCommand}" Text="Open text file">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xE8A5;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutItem Command="{x:Bind ViewModel.OpenSpreadsheetFileCommand}" Text="Open spreadsheet">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xF232;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                            </MenuFlyout>
+                                        </Button.Flyout>
+                                        <Viewbox Width="16" Height="16">
+                                            <SymbolIcon Symbol="Add" />
+                                        </Viewbox>
+                                    </Button>
                                 </StackPanel>
 
                                 <StackPanel
@@ -129,95 +198,28 @@
                                     Visibility="{x:Bind ViewModel.CanSaveImage,
                                                         Mode=OneWay,
                                                         Converter={StaticResource BoolToVisibility}}">
-                                    <Button Width="48" ToolTipService.ToolTip="Code Color">
-                                        <Button.Flyout>
-                                            <Flyout>
-                                                <StackPanel Spacing="8">
-                                                    <ColorPicker
-                                                        x:Name="ForegroundColorPicker"
-                                                        ColorSpectrumShape="Ring"
-                                                        IsAlphaEnabled="True"
-                                                        IsMoreButtonVisible="True"
-                                                        Color="{x:Bind ViewModel.ForegroundColor,
-                                                                       Mode=TwoWay}" />
-                                                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.BrandItems, Mode=OneWay}">
-                                                        <ItemsRepeater.Layout>
-                                                            <StackLayout Orientation="Horizontal" Spacing="4" />
-                                                        </ItemsRepeater.Layout>
-                                                        <ItemsRepeater.ItemTemplate>
-                                                            <DataTemplate x:DataType="models:BrandItem">
-                                                                <Button
-                                                                    Width="28"
-                                                                    Height="28"
-                                                                    MinWidth="28"
-                                                                    Padding="0"
-                                                                    Click="BrandForegroundColor_Click"
-                                                                    Tag="{x:Bind}"
-                                                                    ToolTipService.ToolTip="{x:Bind Name}">
-                                                                    <Rectangle
-                                                                        Width="16"
-                                                                        Height="16"
-                                                                        Fill="{x:Bind Foreground,
-                                                                                      Converter={StaticResource ColorToBrush}}" />
-                                                                </Button>
-                                                            </DataTemplate>
-                                                        </ItemsRepeater.ItemTemplate>
-                                                    </ItemsRepeater>
-                                                </StackPanel>
-                                            </Flyout>
-                                        </Button.Flyout>
-                                        <Button.Content>
+                                    <controls:ColorPickerButton
+                                        BrandColorItems="{x:Bind ViewModel.ForegroundBrandColorItems,
+                                                                 Mode=OneWay}"
+                                        RecentColorItems="{x:Bind ViewModel.ForegroundRecentColorItems,
+                                                                  Mode=OneWay}"
+                                        ToolTipText="Code Color"
+                                        Color="{x:Bind ViewModel.ForegroundColor,
+                                                       Mode=TwoWay}">
+                                        <controls:ColorPickerButton.ButtonContent>
                                             <Viewbox Width="18" Height="18">
-                                                <controls:QrCodeIcon Foreground="{x:Bind ForegroundColorPicker.Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
+                                                <controls:QrCodeIcon Foreground="{x:Bind ViewModel.ForegroundColor, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
                                             </Viewbox>
-                                        </Button.Content>
-                                    </Button>
-                                    <Button Width="48" ToolTipService.ToolTip="Background Color">
-                                        <Button.Flyout>
-                                            <Flyout>
-                                                <StackPanel Spacing="8">
-                                                    <ColorPicker
-                                                        x:Name="BackgroundColorPicker"
-                                                        ColorSpectrumShape="Ring"
-                                                        IsAlphaEnabled="True"
-                                                        IsMoreButtonVisible="True"
-                                                        Color="{x:Bind ViewModel.BackgroundColor,
-                                                                       Mode=TwoWay}" />
-                                                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.BrandItems, Mode=OneWay}">
-                                                        <ItemsRepeater.Layout>
-                                                            <StackLayout Orientation="Horizontal" Spacing="4" />
-                                                        </ItemsRepeater.Layout>
-                                                        <ItemsRepeater.ItemTemplate>
-                                                            <DataTemplate x:DataType="models:BrandItem">
-                                                                <Button
-                                                                    Width="28"
-                                                                    Height="28"
-                                                                    MinWidth="28"
-                                                                    Padding="0"
-                                                                    Click="BrandBackgroundColor_Click"
-                                                                    Tag="{x:Bind}"
-                                                                    ToolTipService.ToolTip="{x:Bind Name}">
-                                                                    <Rectangle
-                                                                        Width="16"
-                                                                        Height="16"
-                                                                        Fill="{x:Bind Background,
-                                                                                      Converter={StaticResource ColorToBrush}}" />
-                                                                </Button>
-                                                            </DataTemplate>
-                                                        </ItemsRepeater.ItemTemplate>
-                                                    </ItemsRepeater>
-                                                </StackPanel>
-                                            </Flyout>
-                                        </Button.Flyout>
-                                        <Button.Content>
-                                            <Rectangle
-                                                Width="16"
-                                                Height="16"
-                                                Fill="{x:Bind BackgroundColorPicker.Color,
-                                                              Mode=OneWay,
-                                                              Converter={StaticResource ColorToBrush}}" />
-                                        </Button.Content>
-                                    </Button>
+                                        </controls:ColorPickerButton.ButtonContent>
+                                    </controls:ColorPickerButton>
+                                    <controls:ColorPickerButton
+                                        BrandColorItems="{x:Bind ViewModel.BackgroundBrandColorItems,
+                                                                 Mode=OneWay}"
+                                        RecentColorItems="{x:Bind ViewModel.BackgroundRecentColorItems,
+                                                                  Mode=OneWay}"
+                                        ToolTipText="Background Color"
+                                        Color="{x:Bind ViewModel.BackgroundColor,
+                                                       Mode=TwoWay}" />
                                     <DropDownButton Width="60" ToolTipService.ToolTip="Level of Error Correction">
                                         <TextBlock Text="{x:Bind ViewModel.SelectedOption.ShortDescription, Mode=OneWay}" />
                                         <DropDownButton.Flyout>
@@ -425,32 +427,20 @@
                                                                               Mode=OneWay}"
                                                         SelectionChanged="BrandListView_SelectionChanged"
                                                         SelectionMode="Single">
+                                                        <ListView.ItemContainerStyle>
+                                                            <Style TargetType="ListViewItem">
+                                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                            </Style>
+                                                        </ListView.ItemContainerStyle>
                                                         <ListView.ItemTemplate>
                                                             <DataTemplate x:DataType="models:BrandItem">
                                                                 <controls:BrandRowItem
                                                                     Background="Transparent"
                                                                     Data="{x:Bind}"
-                                                                    Tag="{x:Bind}">
-                                                                    <controls:BrandRowItem.ContextFlyout>
-                                                                        <MenuFlyout>
-                                                                            <MenuFlyoutItem
-                                                                                Click="EditBrand_Click"
-                                                                                Icon="Edit"
-                                                                                Tag="{x:Bind}"
-                                                                                Text="Edit" />
-                                                                            <MenuFlyoutItem
-                                                                                Click="SetDefaultBrand_Click"
-                                                                                Tag="{x:Bind}"
-                                                                                Text="Set as default" />
-                                                                            <MenuFlyoutSeparator />
-                                                                            <MenuFlyoutItem
-                                                                                Click="DeleteBrand_Click"
-                                                                                Icon="Delete"
-                                                                                Tag="{x:Bind}"
-                                                                                Text="Delete" />
-                                                                        </MenuFlyout>
-                                                                    </controls:BrandRowItem.ContextFlyout>
-                                                                </controls:BrandRowItem>
+                                                                    DeleteRequested="BrandRowItem_DeleteRequested"
+                                                                    EditRequested="BrandRowItem_EditRequested"
+                                                                    SetDefaultRequested="BrandRowItem_SetDefaultRequested"
+                                                                    ShowActions="True" />
                                                             </DataTemplate>
                                                         </ListView.ItemTemplate>
                                                     </ListView>
@@ -527,36 +517,62 @@
                                     </Button>
                                 </StackPanel>
 
-                                <Border
-                                    MinWidth="300"
-                                    MinHeight="300"
-                                    HorizontalAlignment="Center"
-                                    Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
-                                    CornerRadius="4">
-                                    <GridView
-                                        x:Name="ListOfCodes"
-                                        Margin="0"
-                                        Padding="2,2,0,0"
-                                        ItemsSource="{x:Bind ViewModel.QrCodeBitmaps,
-                                                             Mode=OneWay}"
-                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                        ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                        <GridView.ItemTemplate>
-                                            <DataTemplate x:DataType="models:BarcodeImageItem">
-                                                <controls:QrCodeImageControl Data="{x:Bind}" />
-                                            </DataTemplate>
-                                        </GridView.ItemTemplate>
-                                    </GridView>
-                                </Border>
+                                <StackPanel x:Name="CodesSection" HorizontalAlignment="Center">
+                                    <Border
+                                        MinWidth="300"
+                                        MinHeight="300"
+                                        HorizontalAlignment="Center"
+                                        Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
+                                        CornerRadius="4">
+                                        <GridView
+                                            x:Name="ListOfCodes"
+                                            Margin="0"
+                                            Padding="0"
+                                            ItemsSource="{x:Bind ViewModel.QrCodeBitmaps,
+                                                                 Mode=OneWay}"
+                                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                            ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                            <GridView.ItemTemplate>
+                                                <DataTemplate x:DataType="models:BarcodeImageItem">
+                                                    <controls:QrCodeImageControl Data="{x:Bind}" />
+                                                </DataTemplate>
+                                            </GridView.ItemTemplate>
+                                        </GridView>
+                                    </Border>
+
+                                    <!--  If there are more than 24 codes show this UI below  -->
+                                    <StackPanel Orientation="Vertical" Visibility="{x:Bind ViewModel.CanLoadMorePreviews, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            FontWeight="SemiBold"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Text="{x:Bind ViewModel.PreviewSummaryText,
+                                                          Mode=OneWay}"
+                                            Visibility="{x:Bind ViewModel.PreviewSummaryText,
+                                                                Converter={StaticResource EmptyStringToCollapsed},
+                                                                Mode=OneWay}" />
+                                        <HyperlinkButton
+                                            Margin="0,8,0,0"
+                                            HorizontalAlignment="Center"
+                                            Command="{x:Bind ViewModel.LoadMorePreviewsCommand}"
+                                            Visibility="{x:Bind ViewModel.CanLoadMorePreviews,
+                                                                Converter={StaticResource BoolToVisibility},
+                                                                Mode=OneWay}">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <SymbolIcon Symbol="Download" />
+                                                <TextBlock Text="Load more" />
+                                            </StackPanel>
+                                        </HyperlinkButton>
+                                    </StackPanel>
+                                </StackPanel>
 
                                 <StackPanel
                                     x:Name="SaveButtonsPanel"
                                     HorizontalAlignment="Center"
                                     Orientation="Horizontal"
                                     Spacing="10"
-                                    Visibility="{x:Bind ViewModel.QrCodeBitmaps.Count,
-                                                        Converter={StaticResource EmptyCollectionToVisibility},
-                                                        ConverterParameter=true,
+                                    Visibility="{x:Bind ViewModel.HasRequestedCodes,
+                                                        Converter={StaticResource BoolToVisibility},
                                                         Mode=OneWay}">
                                     <TextBlock VerticalAlignment="Center" Text="Save as" />
                                     <SplitButton
@@ -579,6 +595,8 @@
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind ViewModel.CopyPngToClipboardCommand}"
                                                     Icon="Copy"
+                                                    IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled,
+                                                                       Mode=OneWay}"
                                                     Text="Copy all to clipboard" />
                                             </MenuFlyout>
                                         </SplitButton.Flyout>
@@ -603,10 +621,14 @@
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind ViewModel.CopySvgToClipboardCommand}"
                                                     Icon="Copy"
+                                                    IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled,
+                                                                       Mode=OneWay}"
                                                     Text="Copy all to clipboard" />
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind ViewModel.CopySvgTextToClipboardCommand}"
                                                     Icon="Copy"
+                                                    IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled,
+                                                                       Mode=OneWay}"
                                                     Text="Copy all as text to clipboard" />
                                             </MenuFlyout>
                                         </SplitButton.Flyout>
@@ -634,11 +656,35 @@
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind ViewModel.CopyBothToClipboardCommand}"
                                                     Icon="Copy"
+                                                    IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled,
+                                                                       Mode=OneWay}"
                                                     Text="Copy all to clipboard" />
                                             </MenuFlyout>
                                         </SplitButton.Flyout>
                                     </SplitButton>
+                                    <!--  Info icon  -->
+                                    <FontIcon
+                                        Glyph="&#xE946;"
+                                        ToolTipService.ToolTip="{x:Bind ViewModel.BulkClipboardRestrictionText,
+                                                                        Mode=OneWay}"
+                                        Visibility="{x:Bind ViewModel.BulkClipboardRestrictionText,
+                                                            Converter={StaticResource EmptyStringToCollapsed},
+                                                            Mode=OneWay}" />
                                 </StackPanel>
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="8"
+                                    Visibility="{x:Bind ViewModel.IsBulkOperationRunning,
+                                                        Converter={StaticResource BoolToVisibility},
+                                                        Mode=OneWay}">
+                                    <ProgressRing
+                                        Width="20"
+                                        Height="20"
+                                        IsActive="True" />
+                                    <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.BulkOperationStatusText, Mode=OneWay}" />
+                                </StackPanel>
+
                                 <StackPanel
                                     HorizontalAlignment="Center"
                                     Orientation="Horizontal"
@@ -660,9 +706,26 @@
                                         </controls:IconAndTextButton.Icon>
                                     </controls:IconAndTextButton>
                                 </StackPanel>
-
                             </StackPanel>
                         </ScrollViewer>
+
+                        <Button
+                            x:Name="ScrollToCodesButton"
+                            Height="40"
+                            MinWidth="168"
+                            Padding="16,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Click="ScrollToCodesButton_Click"
+                            CornerRadius="16"
+                            Style="{StaticResource AccentButtonStyle}"
+                            ToolTipService.ToolTip="Scroll to the QR Code preview"
+                            Visibility="Collapsed">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE74B;" />
+                                <TextBlock Text="Scroll to codes" />
+                            </StackPanel>
+                        </Button>
 
                         <StackPanel
                             HorizontalAlignment="Left"

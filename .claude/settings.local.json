@@ -11,7 +11,10 @@
       "Bash(dotnet build:*)",
       "WebSearch",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(msbuild \"Simple QR Code Maker.sln\" /p:Configuration=Debug /p:Platform=arm64 /t:Build /v:minimal)",
+      "Bash(msbuild \"D:\\\\source\\\\TheJoeFin\\\\Simple-QR-Code-Maker\\\\Simple QR Code Maker.slnx\" /p:Configuration=Debug /p:Platform=arm64 /t:Build /v:minimal)",
+      "Bash(\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\18\\\\Insiders\\\\MSBuild\\\\Current\\\\Bin\\\\MSBuild.exe\" \"D:\\\\source\\\\TheJoeFin\\\\Simple-QR-Code-Maker\\\\Simple QR Code Maker.slnx\" /p:Configuration=Debug /p:Platform=arm64 /t:Build /v:minimal)"
     ]
   }
 }

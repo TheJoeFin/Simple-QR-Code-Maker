@@ -22,60 +22,170 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Spacing="4">
+
+        <StackPanel Orientation="Vertical" Spacing="6">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock
+                    FontWeight="SemiBold"
+                    Style="{StaticResource BodyTextStyle}"
+                    Text="{x:Bind Data.Name,
+                                  Mode=OneWay}"
+                    TextTrimming="CharacterEllipsis" />
+                <FontIcon
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    FontSize="12"
+                    Glyph="&#xE734;"
+                    ToolTipService.ToolTip="Default brand"
+                    Visibility="{x:Bind Data.IsDefault,
+                                        Mode=OneWay,
+                                        Converter={StaticResource BoolToVisibility}}" />
+            </StackPanel>
+
+            <StackPanel
+                Grid.Row="1"
+                Orientation="Horizontal"
+                Spacing="10">
+                <StackPanel
+                    Orientation="Horizontal"
+                    Spacing="4"
+                    Visibility="{x:Bind Data.Foreground,
+                                        Converter={StaticResource NullToVisibility},
+                                        Mode=OneWay}">
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="FG" />
+                    <Rectangle
+                        Width="16"
+                        Height="10"
+                        Fill="{x:Bind Data.Foreground,
+                                      Converter={StaticResource ColorToBrush},
+                                      Mode=OneWay}" />
+                </StackPanel>
+
+                <StackPanel
+                    Orientation="Horizontal"
+                    Spacing="4"
+                    Visibility="{x:Bind Data.Background,
+                                        Converter={StaticResource NullToVisibility},
+                                        Mode=OneWay}">
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="BG" />
+                    <Rectangle
+                        Width="16"
+                        Height="10"
+                        Fill="{x:Bind Data.Background,
+                                      Converter={StaticResource ColorToBrush},
+                                      Mode=OneWay}" />
+                </StackPanel>
+
+                <StackPanel
+                    Orientation="Horizontal"
+                    Spacing="4"
+                    Visibility="{x:Bind Data.ErrorCorrectionLevelAsString,
+                                        Converter={StaticResource NullToVisibility},
+                                        Mode=OneWay}">
+                    <FontIcon
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="11"
+                        Glyph="&#xE8D8;" />
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="{x:Bind Data.ErrorCorrectionLevelAsString,
+                                      Mode=OneWay}" />
+                </StackPanel>
+
+                <StackPanel
+                    Orientation="Horizontal"
+                    Spacing="4"
+                    Visibility="{x:Bind Data.UrlContent,
+                                        Converter={StaticResource NullToVisibility},
+                                        Mode=OneWay}">
+                    <FontIcon
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="11"
+                        Glyph="&#xE71B;" />
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="Text" />
+                </StackPanel>
+            </StackPanel>
+
             <TextBlock
-                FontWeight="SemiBold"
-                Style="{StaticResource BodyTextStyle}"
-                Text="{x:Bind Data.Name,
+                Grid.Row="2"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Text="{x:Bind Data.CreatedDateAsString,
                               Mode=OneWay}"
-                TextTrimming="WordEllipsis" />
-            <FontIcon
-                VerticalAlignment="Center"
-                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                FontSize="12"
-                Glyph="&#xE734;"
-                ToolTipService.ToolTip="Default brand"
-                Visibility="{x:Bind Data.IsDefault,
-                                    Mode=OneWay,
-                                    Converter={StaticResource BoolToVisibility}}" />
+                TextTrimming="CharacterEllipsis" />
         </StackPanel>
+
         <StackPanel
-            Grid.Row="1"
-            Orientation="Horizontal"
-            Spacing="8">
-            <StackPanel.Resources>
-                <Style TargetType="Rectangle">
-                    <Setter Property="Width" Value="16" />
-                    <Setter Property="Height" Value="10" />
-                </Style>
-            </StackPanel.Resources>
-            <Rectangle Fill="{x:Bind Data.Foreground, Converter={StaticResource ColorToBrush}, Mode=OneWay}" Visibility="{x:Bind Data.Foreground, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
-            <Rectangle Fill="{x:Bind Data.Background, Converter={StaticResource ColorToBrush}, Mode=OneWay}" Visibility="{x:Bind Data.Background, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
-            <TextBlock Text="{x:Bind Data.ErrorCorrectionLevelAsString, Mode=OneWay}" Visibility="{x:Bind Data.ErrorCorrectionLevelAsString, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
-        </StackPanel>
-        <TextBlock
-            Grid.Row="2"
-            Style="{StaticResource CaptionTextBlockStyle}"
-            Text="{x:Bind Data.CreatedDateAsString,
-                          Mode=OneWay}"
-            TextTrimming="WordEllipsis" />
-        <Image
             Grid.RowSpan="3"
             Grid.Column="1"
-            Width="32"
-            Height="32"
-            Margin="8,0,0,0"
+            Margin="12,0,0,0"
             VerticalAlignment="Center"
-            Source="{x:Bind Data.LogoImagePath,
-                            Converter={StaticResource FilePathToImage},
-                            Mode=OneWay}"
-            Stretch="Uniform"
-            Visibility="{x:Bind Data.LogoImagePath,
-                                Converter={StaticResource NullToVisibility},
-                                Mode=OneWay}" />
+            Orientation="Horizontal"
+            Spacing="6">
+            <Border
+                Width="36"
+                Height="36"
+                BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Visibility="{x:Bind Data.LogoImagePath,
+                                    Converter={StaticResource NullToVisibility},
+                                    Mode=OneWay}">
+                <Image
+                    Width="32"
+                    Height="32"
+                    Margin="1"
+                    Source="{x:Bind Data.LogoImagePath,
+                                    Converter={StaticResource FilePathToImage},
+                                    Mode=OneWay}"
+                    Stretch="Uniform" />
+            </Border>
+
+            <Button
+                Width="32"
+                Height="32"
+                MinWidth="32"
+                Padding="0"
+                ToolTipService.ToolTip="Brand options"
+                Visibility="{x:Bind ShowActions,
+                                    Mode=OneWay,
+                                    Converter={StaticResource BoolToVisibility}}">
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Click="EditMenuItem_Click"
+                            Icon="Edit"
+                            Text="Edit" />
+                        <MenuFlyoutItem
+                            Click="SetDefaultMenuItem_Click"
+                            Text="Set as default" />
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem
+                            Click="DeleteMenuItem_Click"
+                            Icon="Delete"
+                            Text="Delete" />
+                    </MenuFlyout>
+                </Button.Flyout>
+                <FontIcon
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    Glyph="&#xE712;" />
+            </Button>
+        </StackPanel>
     </Grid>
 </UserControl>

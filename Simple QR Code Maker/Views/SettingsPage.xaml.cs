@@ -46,4 +46,9 @@ public sealed partial class SettingsPage : Page
     {
 
     }
+
+    private void ImportExportInfoBar_Closed(InfoBar sender, InfoBarClosedEventArgs args)
+    {
+        ViewModel.ImportExportStatusMessage = string.Empty;
+    }
 }

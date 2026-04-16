@@ -1,5 +1,6 @@
 ﻿using ImageMagick;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Simple_QR_Code_Maker.Models;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -16,6 +17,8 @@ namespace Simple_QR_Code_Maker.Helpers;
 
 public static partial class BarcodeHelpers
 {
+    private const int MaxQrRenderSize = 1024;
+
     /// <summary>
     /// Calculate the maximum safe logo size percentage based on QR code error correction level and version
     /// </summary>
@@ -59,61 +62,39 @@ public static partial class BarcodeHelpers
         return new Bitmap(ms);
     }
 
-    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0)
+    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0)
     {
-        // Always pass fully opaque colors to ZXing — if the background color has A=0, ZXing fills
-        // nothing (transparent brush = SourceOver no-op) and the bitmap initializes to black, making
-        // foreground and background pixels indistinguishable. ApplyAlphaToQrBitmap handles alpha.
-        BitmapRenderer bitmapRenderer = new()
-        {
-            Foreground = System.Drawing.Color.FromArgb(255, foreground.R, foreground.G, foreground.B),
-            Background = System.Drawing.Color.FromArgb(255, background.R, background.G, background.B)
-        };
+        using Bitmap bitmap = CreateQrCodeBitmap(
+            text,
+            correctionLevel,
+            foreground,
+            background,
+            logoImage,
+            logoSizePercentage,
+            logoPaddingPixels,
+            qrPaddingModules);
+        using MemoryStream ms = new();
+        bitmap.Save(ms, ImageFormat.Png);
 
-        BarcodeWriter barcodeWriter = new()
-        {
-            Format = BarcodeFormat.QR_CODE,
-            Renderer = bitmapRenderer,
-        };
+        WriteableBitmap bitmapImage = new(bitmap.Width, bitmap.Height);
+        ms.Position = 0;
+        bitmapImage.SetSource(ms.AsRandomAccessStream());
 
-        EncodingOptions encodingOptions = new()
-        {
-            Width = 1024,
-            Height = 1024,
-            Margin = 2,
-        };
-        encodingOptions.Hints.Add(EncodeHintType.ERROR_CORRECTION, correctionLevel);
-        barcodeWriter.Options = encodingOptions;
+        return bitmapImage;
+    }
 
-        // ZXing's BitmapRenderer uses Format32bppRgb (no alpha). If either color has
-        // transparency, post-process the bitmap to apply the correct alpha channel.
-        using Bitmap rawBitmap = barcodeWriter.Write(text);
-        bool needsAlpha = foreground.A < 255 || background.A < 255;
-        Bitmap bitmap = needsAlpha ? ApplyAlphaToQrBitmap(rawBitmap, foreground, background) : rawBitmap;
-
-        try
-        {
-            // If a logo is provided, overlay it on the center of the QR code
-            if (logoImage != null)
-            {
-                // Get the QR code details to calculate module size
-                QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
-                int moduleCount = qrCode.Version.DimensionForVersion;
-                OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
-            }
-
-            using MemoryStream ms = new();
-            bitmap.Save(ms, ImageFormat.Png);
-            WriteableBitmap bitmapImage = new(encodingOptions.Width, encodingOptions.Height);
-            ms.Position = 0;
-            bitmapImage.SetSource(ms.AsRandomAccessStream());
-
-            return bitmapImage;
-        }
-        finally
-        {
-            if (needsAlpha) bitmap.Dispose();
-        }
+    public static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0)
+    {
+        using Bitmap bitmap = CreateQrCodeBitmap(
+            text,
+            correctionLevel,
+            foreground,
+            background,
+            logoImage,
+            logoSizePercentage,
+            logoPaddingPixels,
+            qrPaddingModules);
+        bitmap.Save(outputStream, ImageFormat.Png);
     }
 
     /// <summary>
@@ -157,6 +138,63 @@ public static partial class BarcodeHelpers
             GraphicsUnit.Pixel, attributes);
 
         return result;
+    }
+
+    private static Bitmap CreateQrCodeBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules)
+    {
+        // Always pass fully opaque colors to ZXing — if the background color has A=0, ZXing fills
+        // nothing (transparent brush = SourceOver no-op) and the bitmap initializes to black, making
+        // foreground and background pixels indistinguishable. ApplyAlphaToQrBitmap handles alpha.
+        int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
+        QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
+        int moduleCount = qrCode.Version.DimensionForVersion;
+        int renderSize = GetQrRenderSize(moduleCount, normalizedQrPaddingModules);
+
+        BitmapRenderer bitmapRenderer = new()
+        {
+            Foreground = System.Drawing.Color.FromArgb(255, foreground.R, foreground.G, foreground.B),
+            Background = System.Drawing.Color.FromArgb(255, background.R, background.G, background.B)
+        };
+
+        BarcodeWriter barcodeWriter = new()
+        {
+            Format = BarcodeFormat.QR_CODE,
+            Renderer = bitmapRenderer,
+        };
+
+        EncodingOptions encodingOptions = new()
+        {
+            Width = renderSize,
+            Height = renderSize,
+            Margin = normalizedQrPaddingModules,
+        };
+        encodingOptions.Hints.Add(EncodeHintType.ERROR_CORRECTION, correctionLevel);
+        barcodeWriter.Options = encodingOptions;
+
+        Bitmap rawBitmap = barcodeWriter.Write(text);
+        bool needsAlpha = foreground.A < 255 || background.A < 255;
+        Bitmap bitmap = rawBitmap;
+
+        if (needsAlpha)
+        {
+            bitmap = ApplyAlphaToQrBitmap(rawBitmap, foreground, background);
+            rawBitmap.Dispose();
+        }
+
+        try
+        {
+            if (logoImage != null)
+            {
+                OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
+            }
+
+            return bitmap;
+        }
+        catch
+        {
+            bitmap.Dispose();
+            throw;
+        }
     }
 
     private static void OverlayLogoOnQrCode(Bitmap qrCodeBitmap, Bitmap logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels, System.Drawing.Color backgroundColor)
@@ -246,11 +284,15 @@ public static partial class BarcodeHelpers
     /// <param name="distance">Distance of camera from QR Code (in)</param>
     /// <param name="numberOfBlocks">Number of blocks in the QR Code (Version)</param>
     /// <returns>The smallest size (in) of a QR Code scanning at the given distance</returns>
-    public static double SmallestCodeSide(double distance, int numberOfBlocks)
+    public static bool IsSizeRecommendationAvailableForPadding(double qrPaddingModules)
     {
-        // TODO when margin or padding can be set in settings
-        // account for padding on both sides
-        int padding = 2 * 2;
+        int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
+        return normalizedQrPaddingModules is >= 1 and <= 4;
+    }
+
+    public static double SmallestCodeSide(double distance, int numberOfBlocks, double qrPaddingModules = 2.0)
+    {
+        int padding = NormalizeQrPaddingModules(qrPaddingModules) * 2;
 
         double blockSize = (distance + 2.721) / 1759.1;
 
@@ -275,32 +317,66 @@ public static partial class BarcodeHelpers
         return (slope * contrastRatio) + yIntercept;
     }
 
-    public static string SmallestSideWithUnits(double distance, int numberOfBlocks, Windows.UI.Color foreground, Windows.UI.Color background)
+    public static QrCodeSizeRecommendation GetSizeRecommendation(double distance, int numberOfBlocks, Windows.UI.Color foreground, Windows.UI.Color background, double qrPaddingModules = 2.0)
     {
+        if (foreground.A < 255 || background.A < 255)
+        {
+            return new QrCodeSizeRecommendation(
+                QrCodeSizeRecommendationKind.TransparencyDependent,
+                "Exact minimum size depends on the final print surface when transparency is used.");
+        }
+
+        if (!IsSizeRecommendationAvailableForPadding(qrPaddingModules))
+        {
+            int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
+            return new QrCodeSizeRecommendation(
+                QrCodeSizeRecommendationKind.PaddingDependent,
+                $"Padding {normalizedQrPaddingModules} is outside the predictable 1-4 module range. Borderless and heavy-border QR Codes scan too variably for reliable print sizing.");
+        }
+
         bool isMetric = RegionInfo.CurrentRegion.IsMetric;
-        double smallestSide = SmallestCodeSide(distance, numberOfBlocks);
+        double smallestSide = SmallestCodeSide(distance, numberOfBlocks, qrPaddingModules);
 
         if (smallestSide == 0)
-            return "Error at selected max distance.";
+        {
+            return new QrCodeSizeRecommendation(
+                QrCodeSizeRecommendationKind.Error,
+                "Error at selected max distance.");
+        }
 
         double contrastRatio = ColorHelpers.GetContrastRatio(foreground, background);
 
         if (contrastRatio < 2.5)
-            return "Color contrast too low";
+        {
+            return new QrCodeSizeRecommendation(
+                QrCodeSizeRecommendationKind.LowContrast,
+                "Color contrast too low");
+        }
 
         double fractionalLoss = ContrastRatioLossFrac(contrastRatio);
 
         smallestSide /= fractionalLoss;
 
         if (!isMetric)
-            return $"{smallestSide:F2} x {smallestSide:F2} in";
+        {
+            return new QrCodeSizeRecommendation(
+                QrCodeSizeRecommendationKind.Exact,
+                $"{smallestSide:F2} x {smallestSide:F2} in");
+        }
 
         double smallestSideCm = smallestSide * 2.54;
-        return $"{smallestSideCm:F2} x {smallestSideCm:F2} cm";
+        return new QrCodeSizeRecommendation(
+            QrCodeSizeRecommendationKind.Exact,
+            $"{smallestSideCm:F2} x {smallestSideCm:F2} cm");
     }
 
-    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null)
+    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null, double qrPaddingModules = 2.0)
     {
+        int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
+        QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
+        int moduleCount = qrCode.Version.DimensionForVersion;
+        int renderSize = GetQrRenderSize(moduleCount, normalizedQrPaddingModules);
+
         SvgRenderer svgRenderer = new()
         {
             Foreground = new SvgRenderer.Color(foreground.A, foreground.R, foreground.G, foreground.B),
@@ -315,9 +391,9 @@ public static partial class BarcodeHelpers
 
         EncodingOptions encodingOptions = new()
         {
-            Width = 1024,
-            Height = 1024,
-            Margin = 2,
+            Width = renderSize,
+            Height = renderSize,
+            Margin = normalizedQrPaddingModules,
         };
         encodingOptions.Hints.Add(EncodeHintType.ERROR_CORRECTION, correctionLevel);
         barcodeWriter.Options = encodingOptions;
@@ -327,19 +403,14 @@ public static partial class BarcodeHelpers
         // If a logo is provided, embed it in the SVG
         if (logoImage != null || logoSvgContent != null)
         {
-            // Get the QR code details to calculate module size
-            QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
-            int moduleCount = qrCode.Version.DimensionForVersion;
-            svg = EmbedLogoInSvg(svg, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background, logoSvgContent);
+            svg = EmbedLogoInSvg(svg, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, renderSize, logoPaddingPixels, background, logoSvgContent);
         }
 
         return svg;
     }
 
-    private static SvgImage EmbedLogoInSvg(SvgImage svg, Bitmap? logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels, System.Drawing.Color backgroundColor, string? logoSvgContent = null)
+    private static SvgImage EmbedLogoInSvg(SvgImage svg, Bitmap? logo, double sizePercentage, int moduleCount, int margin, int svgSize, double logoPaddingPixels, System.Drawing.Color backgroundColor, string? logoSvgContent = null)
     {
-        const int svgSize = 1024; // Should match the encoding options Width/Height
-
         // Calculate the pixel size of each QR code module
         int totalModules = moduleCount + (margin * 2);
         double modulePixelSize = (double)svgSize / totalModules;
@@ -571,6 +642,18 @@ public static partial class BarcodeHelpers
             return string.Empty;
 
         return svgContent[(openTagEnd + 1)..closeTagStart];
+    }
+
+    public static int NormalizeQrPaddingModules(double qrPaddingModules)
+    {
+        return Math.Clamp((int)Math.Round(qrPaddingModules, MidpointRounding.AwayFromZero), 0, 10);
+    }
+
+    private static int GetQrRenderSize(int moduleCount, int margin)
+    {
+        int totalModules = moduleCount + (margin * 2);
+        int pixelsPerModule = Math.Max(1, MaxQrRenderSize / totalModules);
+        return totalModules * pixelsPerModule;
     }
 
     [GeneratedRegex(@"<svg\b(?:[^>""']|""[^""]*""|'[^']*')*>", RegexOptions.IgnoreCase | RegexOptions.Singleline, "en-US")]

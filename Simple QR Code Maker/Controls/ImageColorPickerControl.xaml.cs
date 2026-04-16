@@ -68,6 +68,7 @@ public sealed partial class ImageColorPickerControl : UserControl
     // ── Private state ───────────────────────────────────────────────────────
     private Bitmap? _bitmap;
     private bool _imageLoaded;
+    private int _loadRequestVersion;
 
     // Letterbox geometry — rendered image bounds inside the 280×200 container
     private double _renderWidth;
@@ -83,6 +84,8 @@ public sealed partial class ImageColorPickerControl : UserControl
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
+        _loadRequestVersion++;
+        SetLoadingState(false);
         _bitmap?.Dispose();
         _bitmap = null;
     }
@@ -120,65 +123,139 @@ public sealed partial class ImageColorPickerControl : UserControl
 
     private async Task LoadImageFromFileAsync(StorageFile file)
     {
-        _imageLoaded = false;
+        bool hadLoadedImage = _imageLoaded;
+        int loadRequestVersion = BeginImageLoad();
+        PreparedImageData? preparedImage = null;
         try
         {
-            using MagickImage magick = await ImageProcessingHelper.LoadImageFromStorageFile(file);
-            await LoadMagickImageAsync(magick);
+            await Task.Yield();
+            preparedImage = await PrepareImageFromStorageFileAsync(file);
+            if (loadRequestVersion != _loadRequestVersion)
+                return;
+
+            await ApplyPreparedImageAsync(preparedImage);
+            preparedImage = null;
         }
         catch (Exception ex)
         {
+            _imageLoaded = hadLoadedImage;
             System.Diagnostics.Debug.WriteLine($"ImageColorPicker load failed: {ex}");
+        }
+        finally
+        {
+            preparedImage?.Bitmap.Dispose();
+            EndImageLoad(loadRequestVersion);
         }
     }
 
     private async Task LoadImageFromPathAsync(string path)
     {
         if (!File.Exists(path)) return;
-        _imageLoaded = false;
+        bool hadLoadedImage = _imageLoaded;
+        int loadRequestVersion = BeginImageLoad();
+        PreparedImageData? preparedImage = null;
         try
         {
-            using MagickImage magick = new(path);
-            magick.AutoOrient();
-            await LoadMagickImageAsync(magick);
+            await Task.Yield();
+            preparedImage = await PrepareImageFromPathAsync(path);
+            if (loadRequestVersion != _loadRequestVersion)
+                return;
+
+            await ApplyPreparedImageAsync(preparedImage);
+            preparedImage = null;
         }
         catch (Exception ex)
         {
+            _imageLoaded = hadLoadedImage;
             System.Diagnostics.Debug.WriteLine($"ImageColorPicker auto-load failed: {ex}");
+        }
+        finally
+        {
+            preparedImage?.Bitmap.Dispose();
+            EndImageLoad(loadRequestVersion);
         }
     }
 
-    private async Task LoadMagickImageAsync(MagickImage magick)
+    private int BeginImageLoad()
+    {
+        _loadRequestVersion++;
+        _imageLoaded = false;
+        SetCrosshairVisible(false);
+        SetLoadingState(true);
+        return _loadRequestVersion;
+    }
+
+    private void EndImageLoad(int loadRequestVersion)
+    {
+        if (loadRequestVersion != _loadRequestVersion)
+            return;
+
+        SetLoadingState(false);
+    }
+
+    private void SetLoadingState(bool isLoading)
+    {
+        LoadingOverlay.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
+        LoadingProgressRing.IsActive = isLoading;
+        PickImageButton.IsEnabled = !isLoading;
+        PointerOverlay.IsHitTestVisible = !isLoading;
+    }
+
+    private async Task ApplyPreparedImageAsync(PreparedImageData preparedImage)
     {
         _bitmap?.Dispose();
-        using Bitmap rawBitmap = ImageProcessingHelper.ConvertToBitmap(magick);
-        _bitmap = new Bitmap(rawBitmap); // stream-independent copy
+        _bitmap = preparedImage.Bitmap;
 
-        PreviewImage.Source = await MagickImageToBitmapImageAsync(magick);
+        PreviewImage.Source = await CreateBitmapImageAsync(preparedImage.PreviewBytes);
         ComputeLetterboxGeometry(_bitmap.Width, _bitmap.Height);
 
         NoImagePlaceholder.Visibility = Visibility.Collapsed;
         SuggestedColorsPanel.Visibility = Visibility.Visible;
         _imageLoaded = true;
-
-        MagickImage clone = (MagickImage)magick.Clone();
-        List<WinColor> dominantColors = await Task.Run(() =>
-        {
-            using var _ = clone;
-            return ExtractDominantColors(clone);
-        });
-        PopulateSwatches(dominantColors);
+        PopulateSwatches(preparedImage.DominantColors);
     }
 
-    private static async Task<BitmapImage> MagickImageToBitmapImageAsync(MagickImage magick)
+    private static async Task<PreparedImageData> PrepareImageFromStorageFileAsync(StorageFile file)
     {
-        using MemoryStream ms = new();
-        await magick.WriteAsync(ms, MagickFormat.Png);
-        ms.Position = 0;
+        using Stream sourceStream = await file.OpenStreamForReadAsync();
+        using MemoryStream bufferStream = new();
+        await sourceStream.CopyToAsync(bufferStream);
+        byte[] fileBytes = bufferStream.ToArray();
 
+        return await Task.Run(() =>
+        {
+            using MemoryStream imageStream = new(fileBytes);
+            using MagickImage magick = new(imageStream);
+            magick.AutoOrient();
+            return PrepareImageData(magick);
+        });
+    }
+
+    private static Task<PreparedImageData> PrepareImageFromPathAsync(string path)
+    {
+        return Task.Run(() =>
+        {
+            using MagickImage magick = new(path);
+            magick.AutoOrient();
+            return PrepareImageData(magick);
+        });
+    }
+
+    private static PreparedImageData PrepareImageData(MagickImage magick)
+    {
+        using Bitmap rawBitmap = ImageProcessingHelper.ConvertToBitmap(magick);
+        Bitmap bitmapCopy = new(rawBitmap);
+        using MemoryStream previewStream = new();
+        magick.Write(previewStream, MagickFormat.Png);
+
+        return new PreparedImageData(bitmapCopy, previewStream.ToArray(), ExtractDominantColors(magick));
+    }
+
+    private static async Task<BitmapImage> CreateBitmapImageAsync(byte[] previewBytes)
+    {
         BitmapImage bitmapImage = new();
         using InMemoryRandomAccessStream stream = new();
-        await stream.WriteAsync(ms.ToArray().AsBuffer());
+        await stream.WriteAsync(previewBytes.AsBuffer());
         stream.Seek(0);
         await bitmapImage.SetSourceAsync(stream);
         return bitmapImage;
@@ -407,5 +484,14 @@ public sealed partial class ImageColorPickerControl : UserControl
     {
         if (sender is Button btn && btn.Tag is WinColor color)
             Color = color;
+    }
+
+    private sealed class PreparedImageData(Bitmap bitmap, byte[] previewBytes, List<WinColor> dominantColors)
+    {
+        public Bitmap Bitmap { get; } = bitmap;
+
+        public byte[] PreviewBytes { get; } = previewBytes;
+
+        public List<WinColor> DominantColors { get; } = dominantColors;
     }
 }

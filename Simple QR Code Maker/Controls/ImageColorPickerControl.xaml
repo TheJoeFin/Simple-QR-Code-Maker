@@ -114,6 +114,20 @@
                 PointerMoved="PointerOverlay_PointerMoved"
                 PointerPressed="PointerOverlay_PointerPressed" />
 
+            <Grid x:Name="LoadingOverlay" Visibility="Collapsed">
+                <Border
+                    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                    CornerRadius="4"
+                    Opacity="0.82" />
+                <ProgressRing
+                    x:Name="LoadingProgressRing"
+                    Width="36"
+                    Height="36"
+                    IsActive="False"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
+            </Grid>
+
         </Grid>
 
         <!--  Suggested colors — visible only after an image is loaded  -->

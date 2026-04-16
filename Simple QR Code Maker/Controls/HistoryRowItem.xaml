@@ -27,9 +27,11 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <TextBlock
+            MaxLines="24"
             Style="{StaticResource BodyTextStyle}"
-            Text="{x:Bind Data.CodesContent, Mode=OneWay}"
-            TextTrimming="WordEllipsis" />
+            Text="{x:Bind Data.CodesContent,
+                          Mode=OneWay}"
+            TextTrimming="CharacterEllipsis" />
         <StackPanel
             Grid.Row="1"
             Orientation="Horizontal"
@@ -47,7 +49,8 @@
         <TextBlock
             Grid.Row="2"
             Style="{StaticResource CaptionTextBlockStyle}"
-            Text="{x:Bind Data.SaveDateAsString, Mode=OneWay}"
+            Text="{x:Bind Data.SaveDateAsString,
+                          Mode=OneWay}"
             TextTrimming="WordEllipsis" />
         <Image
             Grid.RowSpan="3"
@@ -56,9 +59,13 @@
             Height="32"
             Margin="8,0,0,0"
             VerticalAlignment="Center"
-            Source="{x:Bind Data.LogoImagePath, Converter={StaticResource FilePathToImage}, Mode=OneWay}"
+            Source="{x:Bind Data.LogoImagePath,
+                            Converter={StaticResource FilePathToImage},
+                            Mode=OneWay}"
             Stretch="Uniform"
-            Visibility="{x:Bind Data.LogoImagePath, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
+            Visibility="{x:Bind Data.LogoImagePath,
+                                Converter={StaticResource NullToVisibility},
+                                Mode=OneWay}" />
     </Grid>
 </UserControl>
 

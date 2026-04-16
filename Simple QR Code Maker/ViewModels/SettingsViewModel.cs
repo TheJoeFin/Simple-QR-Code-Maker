@@ -1,17 +1,24 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO.Compression;
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using System.Windows.Input;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using WinRT.Interop;
 
 namespace Simple_QR_Code_Maker.ViewModels;
@@ -48,10 +55,39 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private string maxScanDistanceText = "36in or 1m";
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(QrPaddingDescription))]
+    [NotifyPropertyChangedFor(nameof(QrPaddingSettingsDescription))]
+    private double qrPaddingModules = 2.0;
+
+    [ObservableProperty]
     private string quickSaveLocation = string.Empty;
 
     [ObservableProperty]
     private bool hasQuickSaveLocation = false;
+
+    [ObservableProperty]
+    private bool exportIncludeSettings = true;
+
+    [ObservableProperty]
+    private bool exportIncludeBrands = true;
+
+    [ObservableProperty]
+    private bool exportIncludeHistory = true;
+
+    [ObservableProperty]
+    private string importExportStatusMessage = string.Empty;
+
+    [ObservableProperty]
+    private InfoBarSeverity importExportStatusSeverity = InfoBarSeverity.Success;
+
+    public bool HasImportExportStatus => !string.IsNullOrEmpty(ImportExportStatusMessage);
+
+    partial void OnImportExportStatusMessageChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasImportExportStatus));
+    }
+
+    private readonly DispatcherTimer importExportStatusTimer = new();
 
     private readonly DispatcherTimer settingChangedDebounceTimer = new();
 
@@ -91,6 +127,13 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         settingChangedDebounceTimer.Tick -= SettingChangedDebounceTimer_Tick;
         settingChangedDebounceTimer.Tick += SettingChangedDebounceTimer_Tick;
 
+        importExportStatusTimer.Interval = TimeSpan.FromSeconds(6);
+        importExportStatusTimer.Tick += (s, e) =>
+        {
+            importExportStatusTimer.Stop();
+            ImportExportStatusMessage = string.Empty;
+        };
+
         SwitchThemeCommand = new RelayCommand<ElementTheme>(
             async (param) =>
             {
@@ -116,6 +159,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         await SaveSingleSettingAsync(nameof(HideMinimumSizeText), HideMinimumSizeText);
         await SaveSingleSettingAsync(nameof(ShowSaveBothButton), ShowSaveBothButton);
         await SaveSingleSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
+        await SaveSingleSettingAsync(nameof(QrPaddingModules), QrPaddingModules);
         await SaveSingleSettingAsync(nameof(QuickSaveLocation), QuickSaveLocation);
         Trace.WriteLine("[SettingsVM] SaveAllSettingsAsync completed");
     }
@@ -194,6 +238,17 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         }
     }
 
+    public string QrPaddingDescription => $"{QrPaddingModules:0} modules";
+
+    public string QrPaddingSettingsDescription => BarcodeHelpers.IsSizeRecommendationAvailableForPadding(QrPaddingModules)
+        ? $"{QrPaddingDescription}. Print sizing stays reliable at this setting."
+        : $"{QrPaddingDescription}. Print sizing is disabled outside 1-4 modules.";
+
+    partial void OnQrPaddingModulesChanged(double value)
+    {
+        RestartDebounceTimer();
+    }
+
     [RelayCommand]
     private void GoHome()
     {
@@ -268,9 +323,470 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         NavigationService.NavigateTo(typeof(AboutQrCodesWebViewModel).FullName!);
     }
 
+    [RelayCommand]
+    [RequiresUnreferencedCode("Loads history and brand items for export")]
+    private async Task ExportSettings()
+    {
+        if (!ExportIncludeSettings && !ExportIncludeBrands && !ExportIncludeHistory)
+        {
+            ShowStatus("Select at least one item to export.", InfoBarSeverity.Warning);
+            return;
+        }
+
+        try
+        {
+            FileSavePicker picker = new()
+            {
+                SuggestedFileName = $"SimpleQRBackup_{DateTime.Now:yyyyMMdd_HHmmss}",
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+            };
+            picker.FileTypeChoices.Add("Zip Archive", [".zip"]);
+
+            IntPtr windowHandle = WindowNative.GetWindowHandle(App.MainWindow);
+            InitializeWithWindow.Initialize(picker, windowHandle);
+
+            StorageFile? zipFile = await picker.PickSaveFileAsync();
+            if (zipFile is null)
+                return;
+
+            // imagePathMap: original absolute path → relative path inside the ZIP.
+            Dictionary<string, string> imagePathMap = [];
+
+            using MemoryStream zipStream = new();
+            using (ZipArchive archive = new(zipStream, ZipArchiveMode.Create, leaveOpen: true))
+            {
+                if (ExportIncludeHistory)
+                {
+                    ObservableCollection<HistoryItem> historyItems = await HistoryStorageHelper.LoadHistoryAsync();
+                    foreach (HistoryItem item in historyItems)
+                    {
+                        item.LogoImagePath = await AddImageToArchiveAsync(
+                            archive,
+                            item.LogoImagePath,
+                            imagePathMap,
+                            "history",
+                            item.CodesContent,
+                            item.SavedDateTime);
+                    }
+
+                    string historyJson = JsonSerializer.Serialize(historyItems, HistoryJsonSerializerOptions.Options);
+                    ZipArchiveEntry historyEntry = archive.CreateEntry("History.json", CompressionLevel.Fastest);
+                    using StreamWriter historyWriter = new(historyEntry.Open(), leaveOpen: false);
+                    await historyWriter.WriteAsync(historyJson);
+                }
+
+                if (ExportIncludeBrands)
+                {
+                    ObservableCollection<BrandItem> brandItems = await BrandStorageHelper.LoadBrandsAsync();
+                    foreach (BrandItem brand in brandItems)
+                    {
+                        brand.LogoImagePath = await AddImageToArchiveAsync(
+                            archive,
+                            brand.LogoImagePath,
+                            imagePathMap,
+                            "brand",
+                            brand.Name,
+                            brand.CreatedDateTime);
+                    }
+
+                    string brandsJson = JsonSerializer.Serialize(brandItems, BrandJsonSerializerOptions.Options);
+                    ZipArchiveEntry brandsEntry = archive.CreateEntry("Brands.json", CompressionLevel.Fastest);
+                    using StreamWriter brandsWriter = new(brandsEntry.Open(), leaveOpen: false);
+                    await brandsWriter.WriteAsync(brandsJson);
+                }
+
+                if (ExportIncludeSettings)
+                {
+                    Dictionary<string, string> settingsDict = [];
+                    foreach (KeyValuePair<string, object> kvp in ApplicationData.Current.LocalSettings.Values)
+                    {
+                        if (kvp.Value is string strVal)
+                            settingsDict[kvp.Key] = strVal;
+                    }
+
+                    JsonSerializerOptions options = new() { WriteIndented = true };
+                    string settingsJson = JsonSerializer.Serialize(settingsDict, options);
+                    ZipArchiveEntry settingsEntry = archive.CreateEntry("LocalSettings.json", CompressionLevel.Fastest);
+                    using StreamWriter settingsWriter = new(settingsEntry.Open(), leaveOpen: false);
+                    await settingsWriter.WriteAsync(settingsJson);
+                }
+            }
+
+            using IRandomAccessStream outputStream = await zipFile.OpenAsync(FileAccessMode.ReadWrite);
+            outputStream.Size = 0;
+            using Stream fileStream = outputStream.AsStreamForWrite();
+            zipStream.Position = 0;
+            await zipStream.CopyToAsync(fileStream);
+            await fileStream.FlushAsync();
+
+            ShowStatus("Export complete.", InfoBarSeverity.Success);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Export failed: {ex.Message}");
+            ShowStatus($"Export failed: {ex.Message}", InfoBarSeverity.Error);
+        }
+    }
+
+    [RelayCommand]
+    [RequiresUnreferencedCode("Deserializes history and brand items during import")]
+    private async Task ImportSettings()
+    {
+        try
+        {
+            FileOpenPicker picker = new()
+            {
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+            };
+            picker.FileTypeFilter.Add(".zip");
+
+            IntPtr windowHandle = WindowNative.GetWindowHandle(App.MainWindow);
+            InitializeWithWindow.Initialize(picker, windowHandle);
+
+            StorageFile? zipFile = await picker.PickSingleFileAsync();
+            if (zipFile is null)
+                return;
+
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+
+            using Stream zipStream = await zipFile.OpenStreamForReadAsync();
+            using ZipArchive archive = new(zipStream, ZipArchiveMode.Read);
+
+            // Extract images first so paths can be resolved when processing JSON.
+            // zipRelPath (e.g. "images/history_20260413_170000_example_logo_001.png")
+            // maps to a unique absolute local path for this import session.
+            Dictionary<string, string> importedImagePaths = await ExtractImagesToLocalFolderAsync(archive, localFolder);
+
+            ZipArchiveEntry? historyEntry = archive.GetEntry("History.json");
+            if (historyEntry is not null)
+            {
+                using StreamReader reader = new(historyEntry.Open());
+                string historyJson = await reader.ReadToEndAsync();
+
+                ObservableCollection<HistoryItem>? historyItems = JsonSerializer.Deserialize<ObservableCollection<HistoryItem>>(
+                    historyJson, HistoryJsonSerializerOptions.Options);
+
+                if (historyItems is not null)
+                {
+                    foreach (HistoryItem item in historyItems)
+                        item.LogoImagePath = ResolveImportedImagePath(item.LogoImagePath, importedImagePaths);
+
+                    ObservableCollection<HistoryItem> existingHistory = await HistoryStorageHelper.LoadHistoryAsync();
+                    ObservableCollection<HistoryItem> mergedHistory = MergeImportedHistory(existingHistory, historyItems);
+                    await HistoryStorageHelper.SaveHistoryAsync(mergedHistory);
+                }
+            }
+
+            ZipArchiveEntry? brandsEntry = archive.GetEntry("Brands.json");
+            if (brandsEntry is not null)
+            {
+                using StreamReader reader = new(brandsEntry.Open());
+                string brandsJson = await reader.ReadToEndAsync();
+
+                ObservableCollection<BrandItem>? brandItems = JsonSerializer.Deserialize<ObservableCollection<BrandItem>>(
+                    brandsJson, BrandJsonSerializerOptions.Options);
+
+                if (brandItems is not null)
+                {
+                    foreach (BrandItem brand in brandItems)
+                        brand.LogoImagePath = ResolveImportedImagePath(brand.LogoImagePath, importedImagePaths);
+
+                    ObservableCollection<BrandItem> existingBrands = await BrandStorageHelper.LoadBrandsAsync();
+                    ObservableCollection<BrandItem> mergedBrands = MergeImportedBrands(existingBrands, brandItems);
+                    await BrandStorageHelper.SaveBrandsAsync(mergedBrands);
+                }
+            }
+
+            ZipArchiveEntry? settingsEntry = archive.GetEntry("LocalSettings.json");
+            if (settingsEntry is not null)
+            {
+                using StreamReader reader = new(settingsEntry.Open());
+                string settingsJson = await reader.ReadToEndAsync();
+                Dictionary<string, string>? settingsDict = JsonSerializer.Deserialize<Dictionary<string, string>>(settingsJson);
+                if (settingsDict is not null)
+                {
+                    foreach (KeyValuePair<string, string> kvp in settingsDict)
+                        Windows.Storage.ApplicationData.Current.LocalSettings.Values[kvp.Key] = kvp.Value;
+                }
+            }
+
+            await ReloadAllSettingsAsync();
+            ShowStatus("Import complete. Return to the main screen to reload history and brands.", InfoBarSeverity.Success);
+        }
+        catch (InvalidDataException ex)
+        {
+            Debug.WriteLine($"Import failed: Invalid backup archive. {ex.Message}");
+            ShowStatus("Import failed: The selected file is not a valid backup ZIP.", InfoBarSeverity.Error);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Import failed: {ex.Message}");
+            ShowStatus($"Import failed: {ex.Message}", InfoBarSeverity.Error);
+        }
+    }
+
+    /// <summary>
+    /// Adds an image file to the ZIP archive (deduplicating by original path).
+    /// Returns the relative ZIP path, or null if the image path is null/missing.
+    /// </summary>
+    private static async Task<string?> AddImageToArchiveAsync(
+        ZipArchive archive,
+        string? originalPath,
+        Dictionary<string, string> imagePathMap,
+        string category,
+        string nameHint,
+        DateTime timestamp)
+    {
+        if (string.IsNullOrEmpty(originalPath))
+            return null;
+
+        if (imagePathMap.TryGetValue(originalPath, out string? existingZipPath))
+            return existingZipPath;
+
+        if (!File.Exists(originalPath))
+            return null;
+
+        string zipRelPath = CreateArchiveImagePath(
+            category,
+            nameHint,
+            originalPath,
+            timestamp,
+            imagePathMap.Count + 1);
+
+        imagePathMap[originalPath] = zipRelPath;
+
+        ZipArchiveEntry imgEntry = archive.CreateEntry(zipRelPath, CompressionLevel.NoCompression);
+        using Stream imgEntryStream = imgEntry.Open();
+        using FileStream imgFileStream = File.OpenRead(originalPath);
+        await imgFileStream.CopyToAsync(imgEntryStream);
+
+        return zipRelPath;
+    }
+
+    /// <summary>
+    /// Extracts all images/* entries from the archive to LocalFolder/ImportedImages/.
+    /// Returns a mapping from ZIP relative path to absolute local path.
+    /// </summary>
+    private static async Task<Dictionary<string, string>> ExtractImagesToLocalFolderAsync(
+        ZipArchive archive, StorageFolder localFolder)
+    {
+        Dictionary<string, string> importedPaths = [];
+        string importedImagesDir = Path.Combine(localFolder.Path, "ImportedImages", CreateImportSessionFolderName());
+        Directory.CreateDirectory(importedImagesDir);
+
+        foreach (ZipArchiveEntry entry in archive.Entries)
+        {
+            if (!entry.FullName.StartsWith("images/", StringComparison.Ordinal) || string.IsNullOrEmpty(entry.Name))
+                continue;
+
+            string localPath = CreateUniqueImportedImagePath(importedImagesDir, entry.Name);
+            using Stream entryStream = entry.Open();
+            using FileStream fileStream = new(localPath, FileMode.Create, FileAccess.Write);
+            await entryStream.CopyToAsync(fileStream);
+
+            importedPaths[entry.FullName] = localPath;
+        }
+
+        return importedPaths;
+    }
+
+    /// <summary>
+    /// Maps a ZIP-relative image path to its extracted absolute local path.
+    /// Returns null if the path was a ZIP reference that wasn't found in the import.
+    /// Leaves non-relative paths (i.e. paths from old backups without images) as-is.
+    /// </summary>
+    private static string? ResolveImportedImagePath(string? logoPath, Dictionary<string, string> importedImagePaths)
+    {
+        if (string.IsNullOrEmpty(logoPath))
+            return null;
+
+        if (logoPath.StartsWith("images/", StringComparison.Ordinal))
+            return importedImagePaths.TryGetValue(logoPath, out string? local) ? local : null;
+
+        return logoPath;
+    }
+
+    private static ObservableCollection<HistoryItem> MergeImportedHistory(
+        ObservableCollection<HistoryItem> existingHistory,
+        ObservableCollection<HistoryItem> importedHistory)
+    {
+        ObservableCollection<HistoryItem> mergedHistory = new(existingHistory);
+
+        for (int index = importedHistory.Count - 1; index >= 0; index--)
+        {
+            HistoryItem importedItem = importedHistory[index];
+            mergedHistory.Remove(importedItem);
+            mergedHistory.Insert(0, importedItem);
+        }
+
+        return mergedHistory;
+    }
+
+    private static ObservableCollection<BrandItem> MergeImportedBrands(
+        ObservableCollection<BrandItem> existingBrands,
+        ObservableCollection<BrandItem> importedBrands)
+    {
+        ObservableCollection<BrandItem> mergedBrands = new(existingBrands);
+        BrandItem? preferredDefault = null;
+
+        for (int index = importedBrands.Count - 1; index >= 0; index--)
+        {
+            BrandItem importedBrand = importedBrands[index];
+            if (importedBrand.IsDefault)
+                preferredDefault = importedBrand;
+
+            mergedBrands.Remove(importedBrand);
+            mergedBrands.Insert(0, importedBrand);
+        }
+
+        NormalizeDefaultBrand(mergedBrands, preferredDefault);
+        return mergedBrands;
+    }
+
+    private static void NormalizeDefaultBrand(ObservableCollection<BrandItem> brands, BrandItem? preferredDefault)
+    {
+        BrandItem? resolvedDefault = preferredDefault;
+        if (resolvedDefault is null)
+        {
+            foreach (BrandItem brand in brands)
+            {
+                if (brand.IsDefault)
+                {
+                    resolvedDefault = brand;
+                    break;
+                }
+            }
+        }
+
+        bool defaultAssigned = false;
+        foreach (BrandItem brand in brands)
+        {
+            bool shouldBeDefault = resolvedDefault is not null && !defaultAssigned && brand.Equals(resolvedDefault);
+            brand.IsDefault = shouldBeDefault;
+            defaultAssigned |= shouldBeDefault;
+        }
+    }
+
+    private static string CreateArchiveImagePath(
+        string category,
+        string nameHint,
+        string originalPath,
+        DateTime timestamp,
+        int imageNumber)
+    {
+        string extension = Path.GetExtension(originalPath);
+        if (string.IsNullOrWhiteSpace(extension))
+            extension = ".img";
+
+        string categorySegment = SanitizeFileNameSegment(category, 16);
+        string timestampSegment = (timestamp == default ? DateTime.Now : timestamp).ToString("yyyyMMdd_HHmmss");
+        string hintSegment = SanitizeFileNameSegment(nameHint, 36);
+        string originalNameSegment = SanitizeFileNameSegment(Path.GetFileNameWithoutExtension(originalPath), 24);
+
+        List<string> parts =
+        [
+            string.IsNullOrWhiteSpace(categorySegment) ? "image" : categorySegment,
+            timestampSegment
+        ];
+
+        if (!string.IsNullOrWhiteSpace(hintSegment))
+            parts.Add(hintSegment);
+
+        if (!string.IsNullOrWhiteSpace(originalNameSegment) &&
+            !string.Equals(originalNameSegment, hintSegment, StringComparison.OrdinalIgnoreCase))
+        {
+            parts.Add(originalNameSegment);
+        }
+
+        parts.Add($"logo_{imageNumber:D3}");
+
+        return $"images/{string.Join("_", parts)}{extension}";
+    }
+
+    private static string CreateImportSessionFolderName()
+    {
+        return $"import_{DateTime.Now:yyyyMMdd_HHmmss}_{Guid.NewGuid().ToString("N")[..8]}";
+    }
+
+    private static string CreateUniqueImportedImagePath(string importedImagesDir, string entryName)
+    {
+        string baseName = SanitizeFileNameSegment(Path.GetFileNameWithoutExtension(entryName), 96);
+        if (string.IsNullOrWhiteSpace(baseName))
+            baseName = "imported_logo";
+
+        string extension = Path.GetExtension(entryName);
+        if (string.IsNullOrWhiteSpace(extension))
+            extension = ".img";
+
+        string localPath = Path.Combine(importedImagesDir, $"{baseName}{extension}");
+        int duplicateIndex = 1;
+
+        while (File.Exists(localPath))
+        {
+            localPath = Path.Combine(importedImagesDir, $"{baseName}_{duplicateIndex:D2}{extension}");
+            duplicateIndex++;
+        }
+
+        return localPath;
+    }
+
+    private static string SanitizeFileNameSegment(string? value, int maxLength)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return string.Empty;
+
+        StringBuilder builder = new(maxLength);
+        bool lastWasSeparator = false;
+
+        foreach (char ch in value.Trim())
+        {
+            if (char.IsLetterOrDigit(ch))
+            {
+                if (builder.Length >= maxLength)
+                    break;
+
+                builder.Append(char.ToLowerInvariant(ch));
+                lastWasSeparator = false;
+                continue;
+            }
+
+            if (builder.Length == 0 || lastWasSeparator || builder.Length >= maxLength)
+                continue;
+
+            builder.Append('_');
+            lastWasSeparator = true;
+        }
+
+        return builder.ToString().Trim('_');
+    }
+
+    private void ShowStatus(string message, InfoBarSeverity severity)
+    {
+        importExportStatusTimer.Stop();
+        ImportExportStatusSeverity = severity;
+        ImportExportStatusMessage = message;
+        importExportStatusTimer.Start();
+    }
+
     public async void OnNavigatedTo(object parameter)
     {
         Trace.WriteLine($"[SettingsVM] OnNavigatedTo started (parameter: {parameter?.GetType().Name ?? "null"})");
+        await ReloadAllSettingsAsync();
+
+        // Store the HistoryItem to pass back when returning to main page
+        if (parameter is HistoryItem historyItem)
+        {
+            navigationHistoryItem = historyItem;
+        }
+        // For backward compatibility, also handle string parameter
+        else if (parameter is string urlText && !string.IsNullOrWhiteSpace(urlText))
+        {
+            navigationHistoryItem = new HistoryItem { CodesContent = urlText };
+        }
+    }
+
+    private async Task ReloadAllSettingsAsync()
+    {
         _isLoading = true;
         try
         {
@@ -299,24 +815,26 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                 }
             });
 
+            await LoadSettingAsync(nameof(QrPaddingModules), async () =>
+            {
+                double? storedQrPaddingModules = await LocalSettingsService.ReadSettingAsync<double?>(nameof(QrPaddingModules));
+                double normalizedQrPaddingModules = BarcodeHelpers.NormalizeQrPaddingModules(storedQrPaddingModules ?? 2.0);
+                QrPaddingModules = normalizedQrPaddingModules;
+
+                if (!storedQrPaddingModules.HasValue || storedQrPaddingModules.Value != normalizedQrPaddingModules)
+                    await LocalSettingsService.SaveSettingAsync(nameof(QrPaddingModules), normalizedQrPaddingModules);
+            });
+
             await LoadSettingAsync(nameof(QuickSaveLocation), async () =>
                 QuickSaveLocation = await LocalSettingsService.ReadSettingAsync<string>(nameof(QuickSaveLocation)) ?? string.Empty);
+
+            await _themeSelectorService.RefreshThemeAsync();
+            ElementTheme = _themeSelectorService.Theme;
         }
         finally
         {
             _isLoading = false;
-            Trace.WriteLine("[SettingsVM] OnNavigatedTo settings loaded");
-        }
-
-        // Store the HistoryItem to pass back when returning to main page
-        if (parameter is HistoryItem historyItem)
-        {
-            navigationHistoryItem = historyItem;
-        }
-        // For backward compatibility, also handle string parameter
-        else if (parameter is string urlText && !string.IsNullOrWhiteSpace(urlText))
-        {
-            navigationHistoryItem = new HistoryItem { CodesContent = urlText };
+            Trace.WriteLine("[SettingsVM] Settings loaded");
         }
     }
 

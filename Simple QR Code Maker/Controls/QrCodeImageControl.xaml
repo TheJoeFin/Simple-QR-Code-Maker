@@ -18,8 +18,8 @@
         </Grid.RowDefinitions>
         <Image
             x:Name="QrCodeImage"
-            Width="285"
-            Height="285"
+            Width="300"
+            Height="300"
             CanDrag="True"
             DragStarting="QrCodeImage_DragStarting"
             Source="{x:Bind Data.CodeAsBitmap,
@@ -63,24 +63,44 @@
             Message="QR Code not a URL"
             Severity="Warning"
             ToolTipService.ToolTip="This warning can be disabled in settings" />
-        <StackPanel
+        <Border
             Grid.Row="1"
-            Margin="0"
-            Orientation="Horizontal"
-            Spacing="4"
+            Padding="8,6"
+            Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
+            CornerRadius="6"
             Visibility="{x:Bind Data.SizeTextVisible,
                                 Mode=TwoWay}">
-            <HyperlinkButton Command="{x:Bind Data.FaqButtonCommand, Mode=OneWay}" ToolTipService.ToolTip="How was this calculated?">
-                <local:RulerIcon />
-            </HyperlinkButton>
-            <TextBlock VerticalAlignment="Center" Text="Minimum size: " />
-            <TextBlock VerticalAlignment="Center" Text="{x:Bind Data.SmallestSide, Mode=OneWay}" />
-            <StackPanel.ContextFlyout>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <HyperlinkButton
+                    MinWidth="0"
+                    Padding="0,2,8,0"
+                    VerticalAlignment="Top"
+                    Command="{x:Bind Data.FaqButtonCommand,
+                                     Mode=OneWay}"
+                    ToolTipService.ToolTip="How was this calculated?">
+                    <local:RulerIcon />
+                </HyperlinkButton>
+                <StackPanel
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="12">
+                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind Data.SizeRecommendationTitle, Mode=OneWay}" />
+                    <TextBlock Text="{x:Bind Data.SizeRecommendationText, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+                </StackPanel>
+            </Grid>
+            <Border.ContextFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem
                         Command="{x:Bind Data.CopySizeTextCommand,
                                          Mode=OneWay}"
                         Icon="Copy"
+                        IsEnabled="{x:Bind Data.CanCopySizeText,
+                                           Mode=OneWay}"
                         Text="Copy Size" />
                     <MenuFlyoutItem Command="{x:Bind Data.HideSizeTextCommand, Mode=OneWay}" Text="Hide min. size text">
                         <MenuFlyoutItem.Icon>
@@ -88,7 +108,7 @@
                         </MenuFlyoutItem.Icon>
                     </MenuFlyoutItem>
                 </MenuFlyout>
-            </StackPanel.ContextFlyout>
-        </StackPanel>
+            </Border.ContextFlyout>
+        </Border>
     </Grid>
 </UserControl>

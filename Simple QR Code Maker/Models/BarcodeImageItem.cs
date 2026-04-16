@@ -40,20 +40,45 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public double LogoPaddingPixels { get; set; } = 8.0;
 
+    public double QrPaddingModules { get; set; } = 2.0;
+
     public string? LogoSvgContent { get; set; }
 
     public QRCode QRCodeDetails => Encoder.encode(CodeAsText, ErrorCorrection);
 
-    public string ToolTipText => $"Smallest recommended size {SmallestSide}, {CodeAsText}";
+    private QrCodeSizeRecommendation SizeRecommendation => BarcodeHelpers.GetSizeRecommendation(32 * MaxSizeScaleFactor, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor, QrPaddingModules);
+
+    public string ToolTipText
+    {
+        get
+        {
+            QrCodeSizeRecommendation sizeRecommendation = SizeRecommendation;
+
+            if (!BarcodeHelpers.IsSizeRecommendationAvailableForPadding(QrPaddingModules))
+                return CodeAsText;
+
+            if (sizeRecommendation.Kind == QrCodeSizeRecommendationKind.TransparencyDependent)
+                return CodeAsText;
+
+            return sizeRecommendation.IsExact
+                ? $"Smallest recommended size {sizeRecommendation.Text}, {CodeAsText}"
+                : $"{sizeRecommendation.Text} {CodeAsText}";
+        }
+    }
 
     [ObservableProperty]
     public Visibility sizeTextVisible = Visibility.Visible;
 
     public double MaxSizeScaleFactor { get; set; }
 
-    public string SmallestSide => BarcodeHelpers.SmallestSideWithUnits(32 * MaxSizeScaleFactor, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor);
+    public string SizeRecommendationTitle => SizeRecommendation.IsExact ? "Minimum size" : "Print sizing unavailable";
 
-    // The contrast ratio between the foreground and background colors.
+    public string SizeRecommendationText => SizeRecommendation.Text;
+
+    public bool CanCopySizeText => SizeRecommendation.IsExact;
+
+    // The contrast ratio between the selected colors before any transparent QR output
+    // is composited onto the real print surface.
     // A value of 1:1 is the minimum, and 21:1 is the maximum.
     // The higher the value, the better the contrast.
     // anything less than 2 will be illegible for most applications
@@ -71,7 +96,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     {
         try
         {
-            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent);
+            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent, QrPaddingModules);
             using IRandomAccessStream randomAccessStream = await file.OpenAsync(FileAccessMode.ReadWrite);
             DataWriter dataWriter = new(randomAccessStream);
             dataWriter.WriteString(svgImage.Content);
@@ -89,7 +114,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     {
         try
         {
-            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent);
+            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent, QrPaddingModules);
             return svgImage.Content;
         }
         catch
@@ -107,8 +132,43 @@ public partial class BarcodeImageItem : ObservableRecipient
     [RelayCommand]
     private void CopySizeText()
     {
+        if (!CanCopySizeText)
+        {
+            QrCodeSizeRecommendation sizeRecommendation = SizeRecommendation;
+
+            (string title, string message, InfoBarSeverity severity) = sizeRecommendation.Kind switch
+            {
+                QrCodeSizeRecommendationKind.PaddingDependent => (
+                    "Exact minimum size unavailable",
+                    "Print sizing is unavailable because padding outside 1-4 modules makes borderless and heavy-border QR Codes scan too variably for reliable prediction.",
+                    InfoBarSeverity.Informational),
+                QrCodeSizeRecommendationKind.TransparencyDependent => (
+                    "Exact minimum size unavailable",
+                    "Transparent QR colors depend on the final print surface, so there is no exact minimum size to copy.",
+                    InfoBarSeverity.Informational),
+                QrCodeSizeRecommendationKind.LowContrast => (
+                    "Exact minimum size unavailable",
+                    "Color contrast is too low to produce a reliable minimum size recommendation.",
+                    InfoBarSeverity.Warning),
+                QrCodeSizeRecommendationKind.Error => (
+                    "Exact minimum size unavailable",
+                    "The selected maximum scan distance does not produce a reliable minimum size recommendation.",
+                    InfoBarSeverity.Warning),
+                _ => (
+                    "Exact minimum size unavailable",
+                    "There is no exact minimum size to copy for this QR Code.",
+                    InfoBarSeverity.Informational)
+            };
+
+            WeakReferenceMessenger.Default.Send(new RequestShowMessage(
+                title,
+                message,
+                severity));
+            return;
+        }
+
         DataPackage dataPackage = new();
-        dataPackage.SetText(SmallestSide);
+        dataPackage.SetText(SizeRecommendationText);
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
         WeakReferenceMessenger.Default.Send(new RequestShowMessage("QR Code size copied to the clipboard", string.Empty, InfoBarSeverity.Success));
     }

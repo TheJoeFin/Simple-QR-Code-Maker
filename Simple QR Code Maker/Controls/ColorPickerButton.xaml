@@ -7,23 +7,48 @@
     xmlns:converters="using:Simple_QR_Code_Maker.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Simple_QR_Code_Maker.Models"
     xmlns:toolkitControls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 
     <UserControl.Resources>
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
+        <DataTemplate x:Key="ColorPickerListItemTemplate" x:DataType="models:ColorPickerListItem">
+            <Grid Padding="8,6" ToolTipService.ToolTip="{x:Bind Label}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border
+                    Width="16"
+                    Height="16"
+                    VerticalAlignment="Center"
+                    Background="{x:Bind Color,
+                                        Converter={StaticResource ColorToBrush}}"
+                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4" />
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="{x:Bind Label}"
+                    TextTrimming="CharacterEllipsis" />
+            </Grid>
+        </DataTemplate>
     </UserControl.Resources>
 
-    <Button Width="48" ToolTipService.ToolTip="Pick color">
+    <Button x:Name="PickerButton" Width="48">
         <Button.Flyout>
-            <Flyout x:Name="PickerFlyout">
+            <Flyout x:Name="PickerFlyout" Placement="Bottom">
                 <StackPanel Spacing="10">
 
                     <!--  Mode switcher  -->
                     <toolkitControls:Segmented
                         x:Name="ModePicker"
                         HorizontalAlignment="Stretch"
-                        SelectedIndex="0">
+                        SelectedIndex="0"
+                        SelectionChanged="ModePicker_SelectionChanged">
                         <toolkitControls:SegmentedItem Content="Color" Tag="color">
                             <toolkitControls:SegmentedItem.Icon>
                                 <FontIcon Glyph="&#xE790;" />
@@ -34,36 +59,145 @@
                                 <SymbolIcon Symbol="Pictures" />
                             </toolkitControls:SegmentedItem.Icon>
                         </toolkitControls:SegmentedItem>
+                        <toolkitControls:SegmentedItem
+                            x:Name="ListModePickerItem"
+                            Content="List"
+                            Tag="list"
+                            Visibility="Collapsed">
+                            <toolkitControls:SegmentedItem.Icon>
+                                <SymbolIcon Symbol="List" />
+                            </toolkitControls:SegmentedItem.Icon>
+                        </toolkitControls:SegmentedItem>
                     </toolkitControls:Segmented>
 
-                    <toolkitControls:SwitchPresenter Value="{Binding SelectedItem.Tag, ElementName=ModePicker}">
-                        <toolkitControls:Case Value="color">
-                            <ColorPicker
-                                ColorChanged="OnColorPickerColorChanged"
-                                ColorSpectrumShape="Ring"
-                                IsAlphaEnabled="True"
-                                IsMoreButtonVisible="True"
-                                Color="{x:Bind Color,
-                                               Mode=OneWay}" />
-                        </toolkitControls:Case>
-                        <toolkitControls:Case Value="image">
-                            <controls:ImageColorPickerControl
-                                DefaultImagePath="{x:Bind DefaultImagePath,
-                                                          Mode=OneWay}"
-                                Loaded="OnImagePickerLoaded"
-                                Color="{x:Bind Color,
-                                               Mode=OneWay}" />
-                        </toolkitControls:Case>
-                    </toolkitControls:SwitchPresenter>
+                    <Grid>
+                        <ColorPicker
+                            x:Name="ColorModePanel"
+                            ColorChanged="OnColorPickerColorChanged"
+                            ColorSpectrumShape="Ring"
+                            IsAlphaEnabled="True"
+                            IsMoreButtonVisible="True"
+                            Color="{x:Bind Color,
+                                           Mode=OneWay}" />
+                        <ContentControl x:Name="ImageModeHost" Visibility="Collapsed" />
+                        <ScrollViewer
+                            x:Name="ListModePanel"
+                            Width="320"
+                            MaxHeight="360"
+                            VerticalScrollBarVisibility="Auto"
+                            VerticalScrollMode="Auto"
+                            Visibility="Collapsed">
+                            <StackPanel Spacing="10">
+                                <StackPanel
+                                    x:Name="BrandColorsSection"
+                                    Spacing="6"
+                                    Visibility="Collapsed">
+                                    <TextBlock
+                                        FontSize="12"
+                                        FontWeight="SemiBold"
+                                        Text="Brands" />
+                                    <ListView
+                                        x:Name="BrandColorsListView"
+                                        IsItemClickEnabled="True"
+                                        ItemClick="SavedColorItem_ItemClick"
+                                        ItemTemplate="{StaticResource ColorPickerListItemTemplate}"
+                                        ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                        ScrollViewer.VerticalScrollMode="Disabled"
+                                        SelectionMode="None">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+                                    </ListView>
+                                </StackPanel>
+                                <StackPanel
+                                    x:Name="RecentColorsSection"
+                                    MinHeight="300"
+                                    Spacing="6"
+                                    Visibility="Collapsed">
+                                    <TextBlock
+                                        FontSize="12"
+                                        FontWeight="SemiBold"
+                                        Text="Recent colors" />
+                                    <ListView
+                                        x:Name="RecentColorsListView"
+                                        IsItemClickEnabled="True"
+                                        ItemClick="SavedColorItem_ItemClick"
+                                        ItemTemplate="{StaticResource ColorPickerListItemTemplate}"
+                                        ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                        ScrollViewer.VerticalScrollMode="Disabled"
+                                        SelectionMode="None">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+                                    </ListView>
+                                </StackPanel>
+                                <TextBlock
+                                    x:Name="SavedColorsEmptyStateText"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="No brands or recent colors yet."
+                                    Visibility="Collapsed" />
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+
+                    <ContentControl x:Name="AdditionalFlyoutContentHost" Visibility="Collapsed" />
+
+                    <Grid
+                        x:Name="ClipboardSuggestionContainer"
+                        Margin="0,2,0,0"
+                        IsHitTestVisible="False"
+                        Opacity="0">
+                        <StackPanel
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Clipboard" />
+                            <Button
+                                x:Name="PasteClipboardColorButton"
+                                MinWidth="0"
+                                Padding="8,4"
+                                Click="PasteClipboardColorButton_Click"
+                                IsEnabled="False">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <SymbolIcon Symbol="Paste" />
+                                    <Border
+                                        x:Name="PasteClipboardColorSwatch"
+                                        Width="16"
+                                        Height="16"
+                                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
 
                 </StackPanel>
             </Flyout>
         </Button.Flyout>
-        <Rectangle
-            Width="16"
-            Height="16"
-            Fill="{x:Bind Color,
-                          Mode=OneWay,
-                          Converter={StaticResource ColorToBrush}}" />
+        <Grid>
+            <Rectangle
+                x:Name="DefaultColorSwatch"
+                Width="16"
+                Height="16"
+                Fill="{x:Bind Color,
+                              Mode=OneWay,
+                              Converter={StaticResource ColorToBrush}}" />
+            <ContentControl
+                x:Name="ButtonContentHost"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Visibility="Collapsed" />
+        </Grid>
     </Button>
 </UserControl>

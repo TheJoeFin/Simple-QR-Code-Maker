@@ -40,8 +40,6 @@ public partial class App : Application
 
     public static WindowEx MainWindow { get; } = new MainWindow();
 
-    public static UIElement? AppTitlebar { get; set; }
-
     public App()
     {
         InitializeComponent();
@@ -77,6 +75,8 @@ public partial class App : Application
             services.AddTransient<SettingsPage>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
+            services.AddTransient<SpreadsheetImportViewModel>();
+            services.AddTransient<SpreadsheetImportPage>();
             services.AddTransient<ShellViewModel>();
             services.AddTransient<ShellPage>();
 
