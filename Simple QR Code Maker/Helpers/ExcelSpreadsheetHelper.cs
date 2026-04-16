@@ -111,6 +111,8 @@ public static class ExcelSpreadsheetHelper
                 Missing);
 
             worksheets = GetProperty(workbook, "Worksheets");
+            if (worksheets is null)
+                return [];
             worksheet = GetFirstWorksheetWithData(worksheets)
                 ?? throw new InvalidOperationException("Unable to find a worksheet with data.");
 
@@ -125,24 +127,27 @@ public static class ExcelSpreadsheetHelper
             if (rowCount <= 0 || columnCount <= 0)
                 return [];
 
-            List<List<string>> rows = new(rowCount);
+            List<List<string>> rows = [with(rowCount)];
 
-            for (int row = 1; row <= rowCount; row++)
+            if (cellsCollection is not null)
             {
-                List<string> currentRow = new(columnCount);
-                bool hasContent = false;
-
-                for (int column = 1; column <= columnCount; column++)
+                for (int row = 1; row <= rowCount; row++)
                 {
-                    string cellText = GetDisplayedCellText(cellsCollection, row, column);
-                    if (!string.IsNullOrWhiteSpace(cellText))
-                        hasContent = true;
+                    List<string> currentRow = [with(columnCount)];
+                    bool hasContent = false;
 
-                    currentRow.Add(cellText);
+                    for (int column = 1; column <= columnCount; column++)
+                    {
+                        string cellText = GetDisplayedCellText(cellsCollection, row, column);
+                        if (!string.IsNullOrWhiteSpace(cellText))
+                            hasContent = true;
+
+                        currentRow.Add(cellText);
+                    }
+
+                    if (hasContent)
+                        rows.Add(currentRow);
                 }
-
-                if (hasContent)
-                    rows.Add(currentRow);
             }
 
             return rows;

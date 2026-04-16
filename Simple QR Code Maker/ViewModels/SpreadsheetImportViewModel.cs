@@ -19,33 +19,33 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     private int _importableValueCount;
 
     [ObservableProperty]
-    private ObservableCollection<string> columnNames = [];
+    public partial ObservableCollection<string> ColumnNames { get; set; } = [];
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanImport))]
-    private int selectedColumnIndex = -1;
+    public partial int SelectedColumnIndex { get; set; } = -1;
 
     [ObservableProperty]
-    private bool firstRowIsHeader = true;
+    public partial bool FirstRowIsHeader { get; set; } = true;
 
     [ObservableProperty]
-    private string rowCountDescription = string.Empty;
+    public partial string RowCountDescription { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string importCountDescription = string.Empty;
+    public partial string ImportCountDescription { get; set; } = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FileDescription))]
-    private string sourceFileName = string.Empty;
+    public partial string SourceFileName { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string textBeforeImportedLine = string.Empty;
+    public partial string TextBeforeImportedLine { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string textAfterImportedLine = string.Empty;
+    public partial string TextAfterImportedLine { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private bool removeDuplicates = true;
+    public partial bool RemoveDuplicates { get; set; } = true;
 
     public SpreadsheetImportViewModel(INavigationService navigationService)
     {
@@ -62,7 +62,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
 
     public IReadOnlyList<IReadOnlyList<string>> PreviewRows =>
         _dataRows.Count > PreviewRowLimit
-            ? (IReadOnlyList<IReadOnlyList<string>>)_dataRows.Take(PreviewRowLimit).ToList()
+            ? (IReadOnlyList<IReadOnlyList<string>>)[.. _dataRows.Take(PreviewRowLimit)]
             : _dataRows;
 
     partial void OnFirstRowIsHeaderChanged(bool value)
@@ -175,12 +175,12 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
                     : $"Column {i + 1}";
             }
 
-            _dataRows = _allRows.Skip(1).ToList();
+            _dataRows = [.. _allRows.Skip(1)];
         }
         else
         {
-            _headers = Enumerable.Range(1, columnCount).Select(i => $"Column {i}").ToArray();
-            _dataRows = _allRows.ToList();
+            _headers = [.. Enumerable.Range(1, columnCount).Select(i => $"Column {i}")];
+            _dataRows = [.. _allRows];
         }
 
         ColumnNames.Clear();
@@ -233,7 +233,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         if (RemoveDuplicates)
             values = values.Distinct(StringComparer.Ordinal);
 
-        return values.ToList();
+        return [.. values];
     }
 
     private static HistoryItem CloneHistoryItem(HistoryItem source)

@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:settingsControls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:tableView="using:WinUI.TableView"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
@@ -129,20 +130,14 @@
                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     CornerRadius="4">
-                    <ListView
-                        x:Name="PreviewListView"
-                        MaxHeight="400"
+                    <tableView:TableView
+                        x:Name="PreviewTableView"
+                        AutoGenerateColumns="False"
                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
                         ScrollViewer.HorizontalScrollMode="Enabled"
-                        ContainerContentChanging="PreviewListView_ContainerContentChanging"
-                        SelectionMode="None">
-                        <ListView.ItemContainerStyle>
-                            <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                <Setter Property="Padding" Value="0" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                    </ListView>
+                        ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                        ScrollViewer.VerticalScrollMode="Disabled"
+                        SelectionMode="None" />
                 </Border>
             </StackPanel>
         </ScrollViewer>
