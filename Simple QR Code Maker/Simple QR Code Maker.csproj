@@ -16,7 +16,8 @@
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	  <LangVersion>preview</LangVersion>
+    <LangVersion>preview</LangVersion>
+    <PublishAot>true</PublishAot>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\AdvancedToolsControl.xaml" />
