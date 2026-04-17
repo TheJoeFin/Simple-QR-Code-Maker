@@ -38,6 +38,11 @@
                                          Mode=OneWay}"
                         Icon="Copy"
                         Text="Copy PNG" />
+                    <MenuFlyoutItem
+                        Command="{x:Bind Data.ShareCodeContextCommand,
+                                         Mode=OneWay}"
+                        Icon="Share"
+                        Text="Share..." />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem
                         Command="{x:Bind Data.SaveCodeSvgContextCommand,

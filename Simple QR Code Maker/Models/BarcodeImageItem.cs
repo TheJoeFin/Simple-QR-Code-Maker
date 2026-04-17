@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -247,6 +248,44 @@ public partial class BarcodeImageItem : ObservableRecipient
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
 
         WeakReferenceMessenger.Default.Send(new RequestShowMessage("SVG QR Code copied to the clipboard", string.Empty, InfoBarSeverity.Success));
+        WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
+    }
+
+    [RelayCommand]
+    private async Task ShareCodeContext()
+    {
+        if (CodeAsBitmap is null)
+        {
+            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to share QR Code", "No QR Code to share", InfoBarSeverity.Error));
+            return;
+        }
+
+        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
+        string imageNameFileName = $"{CodeAsText.ToSafeFileName()}.png";
+        StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
+
+        if (!await CodeAsBitmap.SavePngToStorageFile(file))
+        {
+            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to share QR Code", "Could not prepare PNG for sharing", InfoBarSeverity.Error));
+            return;
+        }
+
+        IntPtr hwnd = WindowNative.GetWindowHandle(App.MainWindow);
+        DataTransferManager dtm = ShareHelper.GetForWindow(hwnd);
+
+        TypedEventHandler<DataTransferManager, DataRequestedEventArgs>? handler = null;
+        handler = (sender, args) =>
+        {
+            DataRequest request = args.Request;
+            request.Data.Properties.Title = "QR Code";
+            request.Data.Properties.Description = CodeAsText;
+            request.Data.SetStorageItems(new[] { file });
+            request.Data.SetBitmap(RandomAccessStreamReference.CreateFromFile(file));
+            sender.DataRequested -= handler;
+        };
+        dtm.DataRequested += handler;
+
+        ShareHelper.ShowShareUIForWindow(hwnd);
         WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
     }
 
