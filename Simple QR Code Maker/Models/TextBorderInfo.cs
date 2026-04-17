@@ -6,10 +6,10 @@ namespace Simple_QR_Code_Maker.Models;
 public partial class TextBorderInfo : ObservableRecipient
 {
     [ObservableProperty]
-    private string text = string.Empty;
+    public partial string Text { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private Rect borderRect = Rect.Empty;
+    public partial Rect BorderRect { get; set; } = Rect.Empty;
 
     public TextBorderInfo(ZXing.Result result)
     {

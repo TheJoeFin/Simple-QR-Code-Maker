@@ -32,11 +32,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanSaveImage))]
-    private string urlText = "";
+    public partial string UrlText { get; set; } = "";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanSaveImage))]
-    private ObservableCollection<BarcodeImageItem> qrCodeBitmaps = [];
+    public partial ObservableCollection<BarcodeImageItem> QrCodeBitmaps { get; set; } = [];
 
     private readonly List<RequestedQrCodeItem> requestedQrCodes = [];
 
@@ -59,21 +59,21 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [NotifyCanExecuteChangedFor(nameof(CopySvgToClipboardCommand))]
     [NotifyCanExecuteChangedFor(nameof(CopySvgTextToClipboardCommand))]
     [NotifyCanExecuteChangedFor(nameof(CopyBothToClipboardCommand))]
-    private int requestedCodeCount;
+    public partial int RequestedCodeCount { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanLoadMorePreviews))]
     [NotifyPropertyChangedFor(nameof(PreviewSummaryText))]
     [NotifyCanExecuteChangedFor(nameof(LoadMorePreviewsCommand))]
-    private int loadedPreviewCount;
+    public partial int LoadedPreviewCount { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(BulkOperationStatusText))]
-    private int bulkOperationCompletedItemCount;
+    public partial int BulkOperationCompletedItemCount { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(BulkOperationStatusText))]
-    private int bulkOperationTotalItemCount;
+    public partial int BulkOperationTotalItemCount { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsBulkClipboardEnabled))]
@@ -88,10 +88,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [NotifyCanExecuteChangedFor(nameof(CopySvgToClipboardCommand))]
     [NotifyCanExecuteChangedFor(nameof(CopySvgTextToClipboardCommand))]
     [NotifyCanExecuteChangedFor(nameof(CopyBothToClipboardCommand))]
-    private bool isBulkOperationRunning;
+    public partial bool IsBulkOperationRunning { get; set; }
 
     [ObservableProperty]
-    private string placeholderText = "ex: http://www.example.com";
+    public partial string PlaceholderText { get; set; } = "ex: http://www.example.com";
 
     private readonly string[] placeholdersList =
     [
@@ -105,35 +105,34 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     ];
 
     [ObservableProperty]
-    private Windows.UI.Color backgroundColor = Windows.UI.Color.FromArgb(255, 255, 255, 255);
+    public partial Windows.UI.Color BackgroundColor { get; set; } = Windows.UI.Color.FromArgb(255, 255, 255, 255);
 
     [ObservableProperty]
-    private Windows.UI.Color foregroundColor = Windows.UI.Color.FromArgb(255, 0, 0, 0);
+    public partial Windows.UI.Color ForegroundColor { get; set; } = Windows.UI.Color.FromArgb(255, 0, 0, 0);
 
     [ObservableProperty]
-    private ErrorCorrectionOptions selectedOption = new("M", "Medium 15%", ErrorCorrectionLevel.M);
+    public partial ErrorCorrectionOptions SelectedOption { get; set; } = new("M", "Medium 15%", ErrorCorrectionLevel.M);
 
     [ObservableProperty]
-    private double qrPaddingModules = 2.0;
+    public partial double QrPaddingModules { get; set; } = 2.0;
 
     [ObservableProperty]
-    private bool isFaqPaneOpen = false;
+    public partial bool IsFaqPaneOpen { get; set; } = false;
 
     [ObservableProperty]
-    private bool isHistoryPaneOpen = false;
+    public partial bool IsHistoryPaneOpen { get; set; } = false;
 
     [ObservableProperty]
-    private ObservableCollection<HistoryItem> historyItems = [];
+    public partial ObservableCollection<HistoryItem> HistoryItems { get; set; } = [];
 
     [ObservableProperty]
-    private HistoryItem? selectedHistoryItem = null;
+    public partial HistoryItem? SelectedHistoryItem { get; set; } = null;
 
     [ObservableProperty]
-    private ObservableCollection<BrandItem> brandItems = [];
+    public partial ObservableCollection<BrandItem> BrandItems { get; set; } = [];
 
     [ObservableProperty]
-    private BrandItem? selectedBrand = null;
-
+    public partial BrandItem? SelectedBrand { get; set; } = null;
     public ObservableCollection<ColorPickerListItem> ForegroundBrandColorItems { get; } = [];
 
     public ObservableCollection<ColorPickerListItem> BackgroundBrandColorItems { get; } = [];
@@ -145,25 +144,25 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private bool _isApplyingBrand = false;
 
     [ObservableProperty]
-    private string newBrandName = string.Empty;
+    public partial string NewBrandName { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private bool includeForeground = true;
+    public partial bool IncludeForeground { get; set; } = true;
 
     [ObservableProperty]
-    private bool includeBackground = true;
+    public partial bool IncludeBackground { get; set; } = true;
 
     [ObservableProperty]
-    private bool includeUrl;
+    public partial bool IncludeUrl { get; set; }
 
     [ObservableProperty]
-    private bool includeCenterImage = true;
+    public partial bool IncludeCenterImage { get; set; } = true;
 
     [ObservableProperty]
-    private bool includeErrorCorrection = true;
+    public partial bool IncludeErrorCorrection { get; set; } = true;
 
     [ObservableProperty]
-    private bool isNewBrandFormVisible;
+    public partial bool IsNewBrandFormVisible { get; set; }
 
     private MultiLineCodeMode MultiLineCodeMode = MultiLineCodeMode.OneLineOneCode;
     private string BaseText = string.Empty;
@@ -172,55 +171,55 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private string QuickSaveLocation = string.Empty;
 
     [ObservableProperty]
-    private bool showSaveBothButton = false;
+    public partial bool ShowSaveBothButton { get; set; } = false;
 
     [ObservableProperty]
-    private bool canPasteText = false;
+    public partial bool CanPasteText { get; set; } = false;
 
     [ObservableProperty]
-    private bool showCodeInfoBar = false;
+    public partial bool ShowCodeInfoBar { get; set; } = false;
 
     [ObservableProperty]
-    private InfoBarSeverity codeInfoBarSeverity = InfoBarSeverity.Success;
+    public partial InfoBarSeverity CodeInfoBarSeverity { get; set; } = InfoBarSeverity.Success;
 
     [ObservableProperty]
-    private string codeInfoBarTitle = "QR Code copied to clipboard";
+    public partial string CodeInfoBarTitle { get; set; } = "QR Code copied to clipboard";
 
     [ObservableProperty]
-    private string codeInfoBarMessage = string.Empty;
+    public partial string CodeInfoBarMessage { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string savedFolderPath = string.Empty;
+    public partial string SavedFolderPath { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private bool copySharePopupOpen = false;
+    public partial bool CopySharePopupOpen { get; set; } = false;
 
     [ObservableProperty]
-    private System.Drawing.Bitmap? logoImage = null;
+    public partial System.Drawing.Bitmap? LogoImage { get; set; } = null;
 
     [ObservableProperty]
-    private string? logoSvgContent = null;
+    public partial string? LogoSvgContent { get; set; } = null;
 
     [ObservableProperty]
-    private bool hasLogo = false;
+    public partial bool HasLogo { get; set; } = false;
 
     [ObservableProperty]
-    private BitmapImage? logoPreviewImage = null;
+    public partial BitmapImage? LogoPreviewImage { get; set; } = null;
 
     [ObservableProperty]
-    private bool isBackgroundRemovalAvailable = false;
+    public partial bool IsBackgroundRemovalAvailable { get; set; } = false;
 
     [ObservableProperty]
-    private bool isSpreadsheetImportAvailable = false;
+    public partial bool IsSpreadsheetImportAvailable { get; set; } = false;
 
     [ObservableProperty]
-    private double logoPaddingPixels = 4.0;
+    public partial double LogoPaddingPixels { get; set; } = 4.0;
 
     [ObservableProperty]
-    private double logoSizePercentage = 15;
+    public partial double LogoSizePercentage { get; set; } = 15;
 
     [ObservableProperty]
-    private double logoSizeMaxPercentage = 20;
+    public partial double LogoSizeMaxPercentage { get; set; } = 20;
 
     private string? currentLogoPath = null;
 
@@ -313,11 +312,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             SelectedBrand = null;
 
         // Ensure logo size doesn't exceed the new error correction level's maximum
-        if (logoSizePercentage > logoSizeMaxPercentage)
+        if (LogoSizePercentage > LogoSizeMaxPercentage)
         {
-            logoSizePercentage = logoSizeMaxPercentage;
+            LogoSizePercentage = LogoSizeMaxPercentage;
         }
-        OnPropertyChanged(nameof(logoSizeMaxPercentage));
+        OnPropertyChanged(nameof(LogoSizeMaxPercentage));
 
         LogoSizeMaxPercentage = BarcodeHelpers.GetMaxLogoSizePercentage(value.ErrorCorrectionLevel);
 
@@ -515,12 +514,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             SelectedBrand = null;
 
         // Update max logo size when text changes (affects QR version/density)
-        OnPropertyChanged(nameof(logoSizeMaxPercentage));
+        OnPropertyChanged(nameof(LogoSizeMaxPercentage));
 
         // Ensure current logo size doesn't exceed the new maximum
-        if (logoSizePercentage > logoSizeMaxPercentage)
+        if (LogoSizePercentage > LogoSizeMaxPercentage)
         {
-            logoSizePercentage = logoSizeMaxPercentage;
+            LogoSizePercentage = LogoSizeMaxPercentage;
         }
 
         if (!_isApplyingBrand)

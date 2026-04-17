@@ -15,14 +15,13 @@ namespace Simple_QR_Code_Maker.ViewModels;
 public partial class AboutQrCodesWebViewModel : ObservableRecipient, INavigationAware
 {
     [ObservableProperty]
-    private Uri source = new("https://en.wikipedia.org/wiki/QR_code");
+    public partial Uri Source { get; set; } = new("https://en.wikipedia.org/wiki/QR_code");
 
     [ObservableProperty]
-    private bool isLoading = true;
+    public partial bool IsLoading { get; set; } = true;
 
     [ObservableProperty]
-    private bool hasFailures;
-
+    public partial bool HasFailures { get; set; }
     public IWebViewService WebViewService { get; }
 
     public INavigationService NavigationService { get; }

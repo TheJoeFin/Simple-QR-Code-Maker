@@ -23,35 +23,47 @@ public sealed partial class BrandEditDialog : ContentDialog
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNameValid))]
-    private string editName = string.Empty;
+    public partial string EditName { get; set; } = string.Empty;
 
-    [ObservableProperty] private bool includeForeground;
-    [ObservableProperty] private Windows.UI.Color foregroundColor;
+    [ObservableProperty]
+    public partial bool IncludeForeground { get; set; }
 
-    [ObservableProperty] private bool includeBackground;
-    [ObservableProperty] private Windows.UI.Color backgroundColor;
+    [ObservableProperty]
+    public partial Windows.UI.Color ForegroundColor { get; set; }
 
-    [ObservableProperty] private bool includeErrorCorrection;
-    [ObservableProperty] private int selectedCorrectionIndex = 1;
+    [ObservableProperty]
+    public partial bool IncludeBackground { get; set; }
 
-    [ObservableProperty] private bool includeUrl;
-    [ObservableProperty] private string urlContent = string.Empty;
+    [ObservableProperty]
+    public partial Windows.UI.Color BackgroundColor { get; set; }
+
+    [ObservableProperty]
+    public partial bool IncludeErrorCorrection { get; set; }
+
+    [ObservableProperty]
+    public partial int SelectedCorrectionIndex { get; set; } = 1;
+
+    [ObservableProperty]
+    public partial bool IncludeUrl { get; set; }
+
+    [ObservableProperty]
+    public partial string UrlContent { get; set; } = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasLogoPath))]
-    private bool includeLogo;
+    public partial bool IncludeLogo { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasLogoPath))]
-    private string? logoPath;
+    public partial string? LogoPath { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(LogoSizeDescription))]
-    private double logoSize;
+    public partial double LogoSize { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(LogoPaddingDescription))]
-    private double logoPadding;
+    public partial double LogoPadding { get; set; }
 
     public bool IsNameValid => !string.IsNullOrWhiteSpace(EditName);
     public bool HasLogoPath => IncludeLogo && LogoPath is not null;

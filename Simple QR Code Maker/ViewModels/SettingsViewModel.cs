@@ -28,57 +28,57 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private readonly IThemeSelectorService _themeSelectorService;
 
     [ObservableProperty]
-    private ElementTheme _elementTheme;
+    public partial ElementTheme ElementTheme { get; set; }
 
     [ObservableProperty]
-    private string _versionDescription;
+    public partial string VersionDescription { get; set; }
 
     [ObservableProperty]
-    private MultiLineCodeMode _multiLineCodeMode = MultiLineCodeMode.OneLineOneCode;
+    public partial MultiLineCodeMode MultiLineCodeMode { get; set; } = MultiLineCodeMode.OneLineOneCode;
 
     [ObservableProperty]
-    private string baseText = string.Empty;
+    public partial string BaseText { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private bool warnWhenNotUrl = true;
+    public partial bool WarnWhenNotUrl { get; set; } = true;
 
     [ObservableProperty]
-    private bool hideMinimumSizeText = false;
+    public partial bool HideMinimumSizeText { get; set; } = false;
 
     [ObservableProperty]
-    private bool showSaveBothButton = false;
+    public partial bool ShowSaveBothButton { get; set; } = false;
 
     [ObservableProperty]
-    private double minSizeScanDistanceScaleFactor = 1.0;
+    public partial double MinSizeScanDistanceScaleFactor { get; set; } = 1.0;
 
     [ObservableProperty]
-    private string maxScanDistanceText = "36in or 1m";
+    public partial string MaxScanDistanceText { get; set; } = "36in or 1m";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(QrPaddingDescription))]
     [NotifyPropertyChangedFor(nameof(QrPaddingSettingsDescription))]
-    private double qrPaddingModules = 2.0;
+    public partial double QrPaddingModules { get; set; } = 2.0;
 
     [ObservableProperty]
-    private string quickSaveLocation = string.Empty;
+    public partial string QuickSaveLocation { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private bool hasQuickSaveLocation = false;
+    public partial bool HasQuickSaveLocation { get; set; } = false;
 
     [ObservableProperty]
-    private bool exportIncludeSettings = true;
+    public partial bool ExportIncludeSettings { get; set; } = true;
 
     [ObservableProperty]
-    private bool exportIncludeBrands = true;
+    public partial bool ExportIncludeBrands { get; set; } = true;
 
     [ObservableProperty]
-    private bool exportIncludeHistory = true;
+    public partial bool ExportIncludeHistory { get; set; } = true;
 
     [ObservableProperty]
-    private string importExportStatusMessage = string.Empty;
+    public partial string ImportExportStatusMessage { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private InfoBarSeverity importExportStatusSeverity = InfoBarSeverity.Success;
+    public partial InfoBarSeverity ImportExportStatusSeverity { get; set; } = InfoBarSeverity.Success;
 
     public bool HasImportExportStatus => !string.IsNullOrEmpty(ImportExportStatusMessage);
 
@@ -120,8 +120,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         NavigationService = navigationService;
         LocalSettingsService = localSettingsService;
         _themeSelectorService = themeSelectorService;
-        _elementTheme = _themeSelectorService.Theme;
-        _versionDescription = GetVersionDescription();
+        ElementTheme = _themeSelectorService.Theme;
+        VersionDescription = GetVersionDescription();
 
         settingChangedDebounceTimer.Interval = TimeSpan.FromMilliseconds(500);
         settingChangedDebounceTimer.Tick -= SettingChangedDebounceTimer_Tick;

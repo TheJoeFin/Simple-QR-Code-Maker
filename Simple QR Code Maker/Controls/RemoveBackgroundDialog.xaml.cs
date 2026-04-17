@@ -21,7 +21,7 @@ public sealed partial class RemoveBackgroundDialog : ContentDialog
     private readonly Bitmap _sourceImage;
 
     [ObservableProperty]
-    private bool isPrimaryEnabled = false;
+    public partial bool IsPrimaryEnabled { get; set; } = false;
 
     /// <summary>
     /// The resulting bitmap with background removed, or null if cancelled / failed.

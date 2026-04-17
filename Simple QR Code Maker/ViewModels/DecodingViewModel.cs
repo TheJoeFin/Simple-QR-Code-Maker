@@ -24,33 +24,33 @@ namespace Simple_QR_Code_Maker.ViewModels;
 public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 {
     [ObservableProperty]
-    private string infoBarMessage = string.Empty;
+    public partial string InfoBarMessage { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private bool isInfoBarShowing = false;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasImage))]
-    private BitmapImage? pickedImage;
-
-    [ObservableProperty]
-    private bool canPasteImage = false;
+    public partial bool IsInfoBarShowing { get; set; } = false;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasImage))]
-    private DecodingImageItem? currentDecodingItem = null;
+    public partial BitmapImage? PickedImage { get; set; }
 
     [ObservableProperty]
-    private bool isAdvancedToolsVisible = false;
+    public partial bool CanPasteImage { get; set; } = false;
 
     [ObservableProperty]
-    private bool isFaqPaneOpen = false;
+    [NotifyPropertyChangedFor(nameof(HasImage))]
+    public partial DecodingImageItem? CurrentDecodingItem { get; set; } = null;
 
     [ObservableProperty]
-    private bool isLoading = false;
+    public partial bool IsAdvancedToolsVisible { get; set; } = false;
 
     [ObservableProperty]
-    private string loadingMessage = string.Empty;
+    public partial bool IsFaqPaneOpen { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool IsLoading { get; set; } = false;
+
+    [ObservableProperty]
+    public partial string LoadingMessage { get; set; } = string.Empty;
 
     public bool HasImage => CurrentDecodingItem is not null;
 

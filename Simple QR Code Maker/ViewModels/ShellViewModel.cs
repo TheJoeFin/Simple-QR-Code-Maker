@@ -19,11 +19,10 @@ public partial class ShellViewModel : ObservableRecipient
     private int titleBarSearchRequestVersion;
 
     [ObservableProperty]
-    private bool isBackEnabled;
+    public partial bool IsBackEnabled { get; set; }
 
     [ObservableProperty]
-    private object? selected;
-
+    public partial object? Selected { get; set; }
     public ObservableCollection<TitleBarSearchResult> TitleBarSearchResults { get; } = [];
 
     [RelayCommand]

@@ -9,10 +9,10 @@ namespace Simple_QR_Code_Maker.ViewModels;
 public partial class FaqsContentViewModel : ObservableRecipient
 {
     [ObservableProperty]
-    public ObservableCollection<FaqItem> faqItems = [];
+    public partial ObservableCollection<FaqItem> FaqItems { get; set; } = [];
 
     [ObservableProperty]
-    private string searchText = string.Empty;
+    public partial string SearchText { get; set; } = string.Empty;
 
     public FaqsContentViewModel()
     {

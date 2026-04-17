@@ -68,8 +68,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     }
 
     [ObservableProperty]
-    public Visibility sizeTextVisible = Visibility.Visible;
-
+    public partial Visibility SizeTextVisible { get; set; } = Visibility.Visible;
     public double MaxSizeScaleFactor { get; set; }
 
     public string SizeRecommendationTitle => SizeRecommendation.IsExact ? "Minimum size" : "Print sizing unavailable";
