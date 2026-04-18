@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
@@ -108,6 +109,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public partial Windows.UI.Color BackgroundColor { get; set; } = Windows.UI.Color.FromArgb(255, 255, 255, 255);
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CurrentEmojiPreviewForegroundBrush))]
     public partial Windows.UI.Color ForegroundColor { get; set; } = Windows.UI.Color.FromArgb(255, 0, 0, 0);
 
     [ObservableProperty]
@@ -177,6 +179,29 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public partial bool CanPasteText { get; set; } = false;
 
     [ObservableProperty]
+    public partial bool CanPasteLogoImage { get; set; } = false;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsImageLogoPickerMode))]
+    [NotifyPropertyChangedFor(nameof(IsEmojiLogoPickerMode))]
+    public partial int LogoPickerModeIndex { get; set; } = 0;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CurrentEmojiFontFamily))]
+    [NotifyPropertyChangedFor(nameof(IsColorEmojiFontEnabled))]
+    [NotifyPropertyChangedFor(nameof(CurrentEmojiPreviewForegroundBrush))]
+    public partial int EmojiStyleIndex { get; set; } = 0;
+
+    [ObservableProperty]
+    public partial EmojiLogoOption? SelectedEmojiOption { get; set; } = null;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasImageLogoSelection))]
+    [NotifyPropertyChangedFor(nameof(HasEmojiLogoSelection))]
+    [NotifyPropertyChangedFor(nameof(CanRemoveLogoBackground))]
+    public partial bool IsEmojiLogoSelected { get; set; } = false;
+
+    [ObservableProperty]
     public partial bool ShowCodeInfoBar { get; set; } = false;
 
     [ObservableProperty]
@@ -226,6 +251,46 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private double MinSizeScanDistanceScaleFactor = 1;
 
     private readonly DispatcherTimer copyInfoBarTimer = new();
+    private bool _suppressEmojiSelectionChanges = false;
+    private int _emojiPreviewRefreshVersion = 0;
+
+    private static readonly string[] supportedLogoFileTypes =
+    [
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".bmp",
+        ".gif",
+        ".svg",
+    ];
+
+    public ObservableCollection<EmojiLogoOption> EmojiOptions { get; } =
+    [
+        new("😀", "Smile"),
+        new("😎", "Cool"),
+        new("🤖", "Robot"),
+        new("🚀", "Rocket"),
+        new("⭐", "Star"),
+        new("🔥", "Fire"),
+        new("💡", "Idea"),
+        new("✅", "Check"),
+        new("❤️", "Heart"),
+        new("🎯", "Target"),
+        new("🎉", "Party"),
+        new("📦", "Package"),
+        new("🛒", "Cart"),
+        new("☕", "Coffee"),
+        new("🎵", "Music"),
+        new("🎮", "Gaming"),
+        new("🧠", "Brain"),
+        new("📍", "Pin"),
+        new("🌎", "Globe"),
+        new("🐱", "Cat"),
+        new("🐶", "Dog"),
+        new("🍕", "Pizza"),
+        new("🍔", "Burger"),
+        new("🌟", "Sparkles"),
+    ];
 
     partial void OnSelectedHistoryItemChanged(HistoryItem? value)
     {
@@ -238,17 +303,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         BackgroundColor = value.Background;
         SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == value.ErrorCorrection);
 
-        // Restore logo image and size if available
-        if (!string.IsNullOrEmpty(value.LogoImagePath))
-        {
-            _ = LoadLogoFromHistory(value.LogoImagePath);
-        }
-        else
-        {
-            // Clear logo if history item has no logo
-            LogoImage?.Dispose();
-            LogoImage = null;
-        }
+        _ = RestoreLogoAsync(value.LogoImagePath, value.LogoEmoji, value.LogoEmojiStyle, clearWhenMissing: true);
 
         LogoSizePercentage = value.LogoSizePercentage;
         LogoPaddingPixels = value.LogoPaddingPixels;
@@ -262,29 +317,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         {
             if (!File.Exists(logoPath))
             {
+                RemoveLogo();
                 return;
             }
-            // Dispose old logo first
-            LogoImage?.Dispose();
-
-            if (logoPath.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
-            {
-                string svgContent = await File.ReadAllTextAsync(logoPath);
-                LogoSvgContent = svgContent;
-                LogoImage = BarcodeHelpers.RasterizeSvgToBitmap(svgContent, 512, 512);
-                currentLogoPath = logoPath;
-                return;
-            }
-
-            // Raster logo: clear any stale SVG content
-            LogoSvgContent = null;
             StorageFile file = await StorageFile.GetFileFromPathAsync(logoPath);
-            using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
-            // GDI+ keeps an internal reference to the original stream; create an independent
-            // copy before the stream is disposed so that later Save() calls don't fail.
-            using System.Drawing.Bitmap tmp = new(stream.AsStreamForRead());
-            LogoImage = new System.Drawing.Bitmap(tmp);
-            currentLogoPath = logoPath;
+            await LoadLogoFromStorageFileAsync(file);
         }
         catch (Exception ex)
         {
@@ -293,7 +330,95 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoImage = null;
             LogoSvgContent = null;
             currentLogoPath = null;
+            IsEmojiLogoSelected = false;
         }
+    }
+
+    private EmojiLogoStyle GetSelectedEmojiStyle()
+    {
+        return EmojiStyleIndex switch
+        {
+            1 => EmojiLogoStyle.ThreeDimensional,
+            _ => EmojiLogoStyle.Monochrome,
+        };
+    }
+
+    private static int GetEmojiStyleIndex(EmojiLogoStyle? style)
+    {
+        return style switch
+        {
+            EmojiLogoStyle.ThreeDimensional => 1,
+            _ => 0,
+        };
+    }
+
+    private EmojiLogoOption GetOrCreateEmojiOption(string emoji)
+    {
+        EmojiLogoOption? existing = EmojiOptions.FirstOrDefault(option => option.Emoji == emoji);
+        if (existing is not null)
+            return existing;
+
+        EmojiLogoOption created = new(emoji, emoji);
+        EmojiOptions.Insert(0, created);
+        return created;
+    }
+
+    private async Task ApplyEmojiLogoAsync(EmojiLogoOption option, bool persistToDisk)
+    {
+        try
+        {
+            using EmojiLogoAsset emojiAsset = await EmojiLogoHelper.CreateEmojiLogoAssetAsync(option.Emoji, GetSelectedEmojiStyle(), ForegroundColor.ToSystemDrawingColor());
+            LogoImage?.Dispose();
+            LogoSvgContent = emojiAsset.SvgContent;
+            LogoImage = new System.Drawing.Bitmap(emojiAsset.PreviewBitmap);
+            IsEmojiLogoSelected = true;
+            LogoPickerModeIndex = 1;
+            currentLogoPath = null;
+
+            if (persistToDisk)
+                await SaveLogoImageToDisk();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to render emoji logo: {ex.Message}");
+            ShowLogoLoadFailure("Failed to render the selected emoji");
+        }
+    }
+
+    private async Task RestoreEmojiLogoAsync(string emoji, EmojiLogoStyle? style, string? logoPath)
+    {
+        _suppressEmojiSelectionChanges = true;
+        EmojiStyleIndex = GetEmojiStyleIndex(style);
+        SelectedEmojiOption = GetOrCreateEmojiOption(emoji);
+        _suppressEmojiSelectionChanges = false;
+
+        if (SelectedEmojiOption is null)
+            return;
+
+        await ApplyEmojiLogoAsync(SelectedEmojiOption, persistToDisk: false);
+
+        if (!string.IsNullOrWhiteSpace(logoPath) && File.Exists(logoPath))
+            currentLogoPath = logoPath;
+        else
+            await SaveLogoImageToDisk();
+    }
+
+    private async Task RestoreLogoAsync(string? logoPath, string? logoEmoji, EmojiLogoStyle? logoEmojiStyle, bool clearWhenMissing)
+    {
+        if (!string.IsNullOrWhiteSpace(logoEmoji))
+        {
+            await RestoreEmojiLogoAsync(logoEmoji, logoEmojiStyle, logoPath);
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(logoPath))
+        {
+            await LoadLogoFromHistory(logoPath);
+            return;
+        }
+
+        if (clearWhenMissing)
+            RemoveLogo();
     }
 
     public ObservableCollection<ErrorCorrectionOptions> ErrorCorrectionLevels { get; set; } = new(allCorrectionLevels);
@@ -345,6 +470,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             debounceTimer.Stop();
             debounceTimer.Start();
         }
+
+        _ = RefreshEmojiOptionPreviewsAsync();
+
+        if (_suppressEmojiSelectionChanges || !IsEmojiLogoSelected || SelectedEmojiOption is null || EmojiStyleIndex != 0)
+            return;
+
+        _ = ApplyEmojiLogoAsync(SelectedEmojiOption, persistToDisk: true);
     }
 
     partial void OnLogoImageChanged(System.Drawing.Bitmap? value)
@@ -352,6 +484,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (!_isApplyingBrand)
             SelectedBrand = null;
         HasLogo = value != null;
+        OnPropertyChanged(nameof(HasImageLogoSelection));
+        OnPropertyChanged(nameof(HasEmojiLogoSelection));
+        OnPropertyChanged(nameof(CanRemoveLogoBackground));
 
         if (HasLogo)
         {
@@ -389,17 +524,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         try
         {
-            using MemoryStream ms = new();
-            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            ms.Position = 0;
-
-            BitmapImage bitmapImage = new();
-            using InMemoryRandomAccessStream randomAccessStream = new();
-            await randomAccessStream.WriteAsync(ms.ToArray().AsBuffer());
-            randomAccessStream.Seek(0);
-            await bitmapImage.SetSourceAsync(randomAccessStream);
-
-            LogoPreviewImage = bitmapImage;
+            LogoPreviewImage = await CreateBitmapImageAsync(bitmap);
         }
         catch (Exception ex)
         {
@@ -419,14 +544,89 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         OnPropertyChanged(nameof(CanRemoveLogoBackground));
     }
 
-    partial void OnIsSpreadsheetImportAvailableChanged(bool value)
-    {
-        OpenSpreadsheetFileCommand.NotifyCanExecuteChanged();
-    }
-
     public bool IsSvgLogo => LogoSvgContent != null;
 
-    public bool CanRemoveLogoBackground => IsBackgroundRemovalAvailable && !IsSvgLogo;
+    public bool CanRemoveLogoBackground => IsBackgroundRemovalAvailable && !IsSvgLogo && HasImageLogoSelection;
+
+    public bool IsImageLogoPickerMode => LogoPickerModeIndex == 0;
+
+    public bool IsEmojiLogoPickerMode => LogoPickerModeIndex == 1;
+
+    public bool HasImageLogoSelection => HasLogo && !IsEmojiLogoSelected;
+
+    public bool HasEmojiLogoSelection => HasLogo && IsEmojiLogoSelected;
+
+    public FontFamily CurrentEmojiFontFamily => new(EmojiLogoHelper.GetFontFamilyName(GetSelectedEmojiStyle()));
+
+    public bool IsColorEmojiFontEnabled => EmojiLogoHelper.IsColorFontEnabled(GetSelectedEmojiStyle());
+
+    public Brush CurrentEmojiPreviewForegroundBrush => new SolidColorBrush(ForegroundColor);
+
+    public string SelectedEmojiStyleLabel => EmojiStyleIndex switch
+    {
+        1 => "Selected style: 3D",
+        _ => "Selected style: Black/White",
+    };
+
+    partial void OnLogoPickerModeIndexChanged(int value)
+    {
+        OnPropertyChanged(nameof(IsImageLogoPickerMode));
+        OnPropertyChanged(nameof(IsEmojiLogoPickerMode));
+    }
+
+    partial void OnEmojiStyleIndexChanged(int value)
+    {
+        OnPropertyChanged(nameof(CurrentEmojiFontFamily));
+        OnPropertyChanged(nameof(IsColorEmojiFontEnabled));
+        OnPropertyChanged(nameof(CurrentEmojiPreviewForegroundBrush));
+        OnPropertyChanged(nameof(SelectedEmojiStyleLabel));
+        _ = RefreshEmojiOptionPreviewsAsync();
+
+        if (_suppressEmojiSelectionChanges || !IsEmojiLogoSelected || SelectedEmojiOption is null)
+            return;
+
+        _ = ApplyEmojiLogoAsync(SelectedEmojiOption, persistToDisk: true);
+    }
+
+    partial void OnSelectedEmojiOptionChanged(EmojiLogoOption? value)
+    {
+        if (_suppressEmojiSelectionChanges || value is null)
+            return;
+
+        _ = ApplyEmojiLogoAsync(value, persistToDisk: true);
+    }
+
+    private async Task RefreshEmojiOptionPreviewsAsync()
+    {
+        int refreshVersion = Interlocked.Increment(ref _emojiPreviewRefreshVersion);
+        EmojiLogoStyle style = GetSelectedEmojiStyle();
+        System.Drawing.Color foreground = ForegroundColor.ToSystemDrawingColor();
+
+        foreach (EmojiLogoOption option in EmojiOptions)
+        {
+            using System.Drawing.Bitmap bitmap = await EmojiLogoHelper.RenderEmojiToBitmapAsync(option.Emoji, style, foreground, 96);
+            BitmapImage previewImage = await CreateBitmapImageAsync(bitmap);
+
+            if (refreshVersion != _emojiPreviewRefreshVersion)
+                return;
+
+            option.PreviewImage = previewImage;
+        }
+    }
+
+    private static async Task<BitmapImage> CreateBitmapImageAsync(System.Drawing.Bitmap bitmap)
+    {
+        using MemoryStream ms = new();
+        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+        ms.Position = 0;
+
+        BitmapImage bitmapImage = new();
+        using InMemoryRandomAccessStream randomAccessStream = new();
+        await randomAccessStream.WriteAsync(ms.ToArray().AsBuffer());
+        randomAccessStream.Seek(0);
+        await bitmapImage.SetSourceAsync(randomAccessStream);
+        return bitmapImage;
+    }
 
     partial void OnLogoSizePercentageChanged(double value)
     {
@@ -558,9 +758,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
         Clipboard.ContentChanged += Clipboard_ContentChanged;
 
+        _ = RefreshClipboardCapabilitiesAsync();
+
         HistoryItems.CollectionChanged += HistoryItems_CollectionChanged;
         BrandItems.CollectionChanged += BrandItems_CollectionChanged;
         RefreshColorPickerListItems();
+        _ = RefreshEmojiOptionPreviewsAsync();
 
         WeakReferenceMessenger.Default.Register<RequestShowMessage>(this, OnRequestShowMessage);
         WeakReferenceMessenger.Default.Register<SaveHistoryMessage>(this, OnSaveHistoryMessage);
@@ -710,24 +913,37 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    private void Clipboard_ContentChanged(object? sender, object e) => CheckCanPasteText();
+    private async void Clipboard_ContentChanged(object? sender, object e) => await RefreshClipboardCapabilitiesAsync();
 
-    private void CheckCanPasteText()
+    private async Task RefreshClipboardCapabilitiesAsync()
     {
         try
         {
             DataPackageView clipboardData = Clipboard.GetContent();
-
-            if (clipboardData.Contains(StandardDataFormats.Text))
-                CanPasteText = true;
-            else
-                CanPasteText = false;
+            CanPasteText = clipboardData.Contains(StandardDataFormats.Text);
+            CanPasteLogoImage = clipboardData.Contains(StandardDataFormats.Bitmap)
+                || await ClipboardContainsSupportedLogoFileAsync(clipboardData);
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to check clipboard: {ex.Message}");
             CanPasteText = false;
+            CanPasteLogoImage = false;
         }
+    }
+
+    private static async Task<bool> ClipboardContainsSupportedLogoFileAsync(DataPackageView clipboardData)
+    {
+        if (!clipboardData.Contains(StandardDataFormats.StorageItems))
+            return false;
+
+        IReadOnlyList<IStorageItem> clipboardItems = await clipboardData.GetStorageItemsAsync();
+        return clipboardItems.OfType<StorageFile>().Any(IsSupportedLogoFile);
+    }
+
+    private static bool IsSupportedLogoFile(StorageFile file)
+    {
+        return supportedLogoFileTypes.Contains(file.FileType, StringComparer.OrdinalIgnoreCase);
     }
 
     private async Task CheckBackgroundRemovalAvailability()
@@ -912,6 +1128,43 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
+    private async Task PasteLogoFromClipboard()
+    {
+        try
+        {
+            DataPackageView clipboardData = Clipboard.GetContent();
+
+            if (clipboardData.Contains(StandardDataFormats.StorageItems))
+            {
+                IReadOnlyList<IStorageItem> clipboardItems = await clipboardData.GetStorageItemsAsync();
+                StorageFile? imageFile = clipboardItems.OfType<StorageFile>().FirstOrDefault(IsSupportedLogoFile);
+
+                if (imageFile is not null)
+                {
+                    await LoadLogoFromStorageFileAsync(imageFile);
+                    return;
+                }
+            }
+
+            if (clipboardData.Contains(StandardDataFormats.Bitmap))
+            {
+                RandomAccessStreamReference bitmapStreamReference = await clipboardData.GetBitmapAsync();
+                using IRandomAccessStreamWithContentType stream = await bitmapStreamReference.OpenReadAsync();
+                await LoadRasterLogoFromStreamAsync(stream, null);
+                await SaveLogoImageToDisk();
+                return;
+            }
+
+            ShowLogoLoadFailure("Clipboard does not contain an image");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to paste logo image: {ex.Message}");
+            ShowLogoLoadFailure("Failed to load the image from the clipboard");
+        }
+    }
+
+    [RelayCommand]
     private async Task OpenTextFile()
     {
         FileOpenPicker picker = new()
@@ -949,26 +1202,20 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    [RelayCommand(CanExecute = nameof(CanOpenSpreadsheetFile))]
+    [RelayCommand]
     private async Task OpenSpreadsheetFile()
     {
-        if (!IsSpreadsheetImportAvailable)
-        {
-            CodeInfoBarMessage = "Install Microsoft Excel to import spreadsheet files right now.";
-            CodeInfoBarTitle = "Spreadsheet import unavailable";
-            CodeInfoBarSeverity = InfoBarSeverity.Warning;
-            ShowCodeInfoBar = true;
-            return;
-        }
-
         FileOpenPicker picker = new()
         {
             SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
         };
         picker.FileTypeFilter.Add(".csv");
         picker.FileTypeFilter.Add(".tsv");
-        picker.FileTypeFilter.Add(".xlsx");
-        picker.FileTypeFilter.Add(".xls");
+        if (IsSpreadsheetImportAvailable)
+        {
+            picker.FileTypeFilter.Add(".xlsx");
+            picker.FileTypeFilter.Add(".xls");
+        }
 
         InitializeWithWindow.Initialize(picker, App.MainWindow.GetWindowHandle());
 
@@ -980,6 +1227,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         try
         {
             rows = await ExcelSpreadsheetHelper.ReadRowsAsync(file.Path);
+        }
+        catch (InvalidOperationException ex) when (!IsSpreadsheetImportAvailable)
+        {
+            Debug.WriteLine($"Excel workbook import unavailable: {ex.Message}");
+            CodeInfoBarMessage = "CSV and TSV imports are available. Install Microsoft Excel to import Excel workbooks.";
+            CodeInfoBarTitle = "Excel workbooks unavailable";
+            CodeInfoBarSeverity = InfoBarSeverity.Warning;
+            ShowCodeInfoBar = true;
+            return;
         }
         catch (Exception ex)
         {
@@ -1008,11 +1264,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 Rows = rows.Select(row => (IReadOnlyList<string>)[.. row]).ToList(),
                 SourceFileName = file.Name,
             });
-    }
-
-    private bool CanOpenSpreadsheetFile()
-    {
-        return IsSpreadsheetImportAvailable;
     }
 
     private RequestedQrCodeItem[] GetRequestedCodeSnapshot() => [.. requestedQrCodes];
@@ -1353,6 +1604,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (string.IsNullOrWhiteSpace(NewBrandName))
             return;
 
+        string? logoPath = IncludeCenterImage && LogoImage != null
+            ? (GetCurrentLogoPath() ?? await SaveLogoImageToDisk())
+            : null;
+
         BrandItem brand = new()
         {
             Name = NewBrandName.Trim(),
@@ -1360,7 +1615,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             Background = IncludeBackground ? BackgroundColor : null,
             UrlContent = IncludeUrl ? UrlText : null,
             ErrorCorrectionLevelAsString = IncludeErrorCorrection ? SelectedOption.ErrorCorrectionLevel.ToString() : null,
-            LogoImagePath = IncludeCenterImage && LogoImage != null ? GetCurrentLogoPath() : null,
+            LogoImagePath = logoPath,
+            LogoEmoji = IncludeCenterImage && HasEmojiLogoSelection ? SelectedEmojiOption?.Emoji : null,
+            LogoEmojiStyle = IncludeCenterImage && HasEmojiLogoSelection ? GetSelectedEmojiStyle() : null,
             LogoSizePercentage = IncludeCenterImage ? LogoSizePercentage : null,
             LogoPaddingPixels = IncludeCenterImage ? LogoPaddingPixels : null,
         };
@@ -1401,8 +1658,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                     SelectedOption = match.Value;
             }
 
-            if (brand.LogoImagePath is not null)
-                await LoadLogoFromHistory(brand.LogoImagePath);
+            if (brand.LogoImagePath is not null || brand.LogoEmoji is not null)
+                await RestoreLogoAsync(brand.LogoImagePath, brand.LogoEmoji, brand.LogoEmojiStyle, clearWhenMissing: false);
 
             if (brand.LogoSizePercentage.HasValue)
                 LogoSizePercentage = brand.LogoSizePercentage.Value;
@@ -1530,6 +1787,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             Background = BackgroundColor,
             ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
             LogoImagePath = LogoImage != null ? GetCurrentLogoPath() : null,
+            LogoEmoji = HasEmojiLogoSelection ? SelectedEmojiOption?.Emoji : null,
+            LogoEmojiStyle = HasEmojiLogoSelection ? GetSelectedEmojiStyle() : null,
             LogoSizePercentage = LogoSizePercentage,
             LogoPaddingPixels = LogoPaddingPixels,
         };
@@ -1718,16 +1977,16 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private async Task SelectLogo()
     {
+        LogoPickerModeIndex = 0;
+
         FileOpenPicker openPicker = new()
         {
             SuggestedStartLocation = PickerLocationId.PicturesLibrary,
         };
-        openPicker.FileTypeFilter.Add(".png");
-        openPicker.FileTypeFilter.Add(".jpg");
-        openPicker.FileTypeFilter.Add(".jpeg");
-        openPicker.FileTypeFilter.Add(".bmp");
-        openPicker.FileTypeFilter.Add(".gif");
-        openPicker.FileTypeFilter.Add(".svg");
+        foreach (string fileType in supportedLogoFileTypes)
+        {
+            openPicker.FileTypeFilter.Add(fileType);
+        }
 
         Window window = new();
         IntPtr windowHandle = WindowNative.GetWindowHandle(window);
@@ -1740,37 +1999,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         try
         {
-            // Dispose of the old logo if it exists
-            LogoImage?.Dispose();
-
-            if (file.FileType.Equals(".svg", StringComparison.OrdinalIgnoreCase))
-            {
-                // SVG logo: store raw content for lossless SVG export; rasterize for preview and PNG export
-                string svgContent = await FileIO.ReadTextAsync(file);
-                LogoSvgContent = svgContent;
-                LogoImage = BarcodeHelpers.RasterizeSvgToBitmap(svgContent, 512, 512);
-            }
-            else
-            {
-                // Raster logo: clear any previous SVG content, load bitmap directly
-                LogoSvgContent = null;
-                using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
-                // GDI+ keeps an internal reference to the original stream; create an independent
-                // copy before the stream is disposed so that later Save() calls don't fail.
-                using System.Drawing.Bitmap tmp = new(stream.AsStreamForRead());
-                LogoImage = new System.Drawing.Bitmap(tmp);
-            }
-
-            // Store the selected file path so it can be saved to history
-            currentLogoPath = file.Path;
+            await LoadLogoFromStorageFileAsync(file);
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to load logo image: {ex.Message}");
-            CodeInfoBarMessage = "Failed to load the selected image";
-            ShowCodeInfoBar = true;
-            CodeInfoBarSeverity = InfoBarSeverity.Error;
-            CodeInfoBarTitle = "Error loading logo";
+            ShowLogoLoadFailure("Failed to load the selected image");
         }
     }
 
@@ -1781,6 +2015,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         LogoImage = null;
         LogoSvgContent = null;
         currentLogoPath = null;
+        IsEmojiLogoSelected = false;
     }
 
     [RelayCommand]
@@ -1805,6 +2040,49 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             // is valid for SaveHistoryOnShutdown and CreateCurrentStateHistoryItem.
             await SaveLogoImageToDisk();
         }
+    }
+
+    private async Task LoadLogoFromStorageFileAsync(StorageFile file)
+    {
+        LogoImage?.Dispose();
+        IsEmojiLogoSelected = false;
+        LogoPickerModeIndex = 0;
+
+        if (file.FileType.Equals(".svg", StringComparison.OrdinalIgnoreCase))
+        {
+            string svgContent = await FileIO.ReadTextAsync(file);
+            LogoSvgContent = svgContent;
+            LogoImage = BarcodeHelpers.RasterizeSvgToBitmap(svgContent, 512, 512);
+            currentLogoPath = string.IsNullOrWhiteSpace(file.Path) ? null : file.Path;
+            return;
+        }
+
+        using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
+        await LoadRasterLogoFromStreamAsync(
+            stream,
+            string.IsNullOrWhiteSpace(file.Path) ? null : file.Path);
+    }
+
+    private Task LoadRasterLogoFromStreamAsync(IRandomAccessStreamWithContentType stream, string? logoPath)
+    {
+        LogoSvgContent = null;
+        IsEmojiLogoSelected = false;
+        LogoPickerModeIndex = 0;
+
+        // GDI+ keeps an internal reference to the original stream; create an independent
+        // copy before the stream is disposed so that later Save() calls don't fail.
+        using System.Drawing.Bitmap tmp = new(stream.AsStreamForRead());
+        LogoImage = new System.Drawing.Bitmap(tmp);
+        currentLogoPath = logoPath;
+        return Task.CompletedTask;
+    }
+
+    private void ShowLogoLoadFailure(string message)
+    {
+        CodeInfoBarMessage = message;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Error;
+        CodeInfoBarTitle = "Error loading logo";
     }
 
     /// <summary>
@@ -2077,7 +2355,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         OnPropertyChanged(nameof(HistoryItems));
         OnPropertyChanged(nameof(BrandItems));
 
-        CheckCanPasteText();
+        await RefreshClipboardCapabilitiesAsync();
         _ = CheckBackgroundRemovalAvailability();
         _ = CheckSpreadsheetImportAvailability();
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
@@ -2152,18 +2430,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         BackgroundColor = historyItem.Background;
         SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == historyItem.ErrorCorrection);
 
-        // Restore logo image and settings if available
-        if (!string.IsNullOrEmpty(historyItem.LogoImagePath))
-        {
-            _ = LoadLogoFromHistory(historyItem.LogoImagePath);
-        }
-        else
-        {
-            // Clear logo if history item has no logo
-            LogoImage?.Dispose();
-            LogoImage = null;
-            currentLogoPath = null;
-        }
+        _ = RestoreLogoAsync(historyItem.LogoImagePath, historyItem.LogoEmoji, historyItem.LogoEmojiStyle, clearWhenMissing: true);
 
         LogoSizePercentage = historyItem.LogoSizePercentage;
         LogoPaddingPixels = historyItem.LogoPaddingPixels;
@@ -2210,6 +2477,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 Background = BackgroundColor,
                 ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
                 LogoImagePath = currentLogoPath,
+                LogoEmoji = HasEmojiLogoSelection ? SelectedEmojiOption?.Emoji : null,
+                LogoEmojiStyle = HasEmojiLogoSelection ? GetSelectedEmojiStyle() : null,
                 LogoSizePercentage = LogoSizePercentage,
                 LogoPaddingPixels = LogoPaddingPixels,
             };
@@ -2243,6 +2512,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             Background = BackgroundColor,
             ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
             LogoImagePath = logoImagePath ?? currentLogoPath, // Use saved path or current path
+            LogoEmoji = HasEmojiLogoSelection ? SelectedEmojiOption?.Emoji : null,
+            LogoEmojiStyle = HasEmojiLogoSelection ? GetSelectedEmojiStyle() : null,
             LogoSizePercentage = LogoSizePercentage,
             LogoPaddingPixels = LogoPaddingPixels,
         };

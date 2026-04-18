@@ -319,6 +319,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
                 Background = navigationHistoryItem.Background,
                 ErrorCorrection = navigationHistoryItem.ErrorCorrection,
                 LogoImagePath = navigationHistoryItem.LogoImagePath,
+                LogoEmoji = navigationHistoryItem.LogoEmoji,
+                LogoEmojiStyle = navigationHistoryItem.LogoEmojiStyle,
                 LogoSizePercentage = navigationHistoryItem.LogoSizePercentage,
                 LogoPaddingPixels = navigationHistoryItem.LogoPaddingPixels,
             }

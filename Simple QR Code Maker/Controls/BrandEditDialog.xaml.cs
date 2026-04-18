@@ -90,7 +90,7 @@ public sealed partial class BrandEditDialog : ContentDialog
         IncludeUrl = original.UrlContent is not null;
         UrlContent = original.UrlContent ?? string.Empty;
 
-        IncludeLogo = original.LogoImagePath is not null;
+        IncludeLogo = original.LogoImagePath is not null || original.LogoEmoji is not null;
         LogoPath = original.LogoImagePath;
         LogoSize = original.LogoSizePercentage ?? 15;
         LogoPadding = original.LogoPaddingPixels ?? 4;
@@ -139,6 +139,12 @@ public sealed partial class BrandEditDialog : ContentDialog
             UrlContent = IncludeUrl && !string.IsNullOrWhiteSpace(UrlContent) ? UrlContent.Trim() : null,
             ErrorCorrectionLevelAsString = IncludeErrorCorrection ? AllCorrectionLevels[SelectedCorrectionIndex].ErrorCorrectionLevel.ToString() : null,
             LogoImagePath = IncludeLogo ? LogoPath : null,
+            LogoEmoji = IncludeLogo && string.Equals(LogoPath, _original.LogoImagePath, StringComparison.OrdinalIgnoreCase)
+                ? _original.LogoEmoji
+                : null,
+            LogoEmojiStyle = IncludeLogo && string.Equals(LogoPath, _original.LogoImagePath, StringComparison.OrdinalIgnoreCase)
+                ? _original.LogoEmojiStyle
+                : null,
             LogoSizePercentage = IncludeLogo ? LogoSize : null,
             LogoPaddingPixels = IncludeLogo ? LogoPadding : null,
         };

@@ -245,6 +245,8 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
             Background = source.Background,
             ErrorCorrection = source.ErrorCorrection,
             LogoImagePath = source.LogoImagePath,
+            LogoEmoji = source.LogoEmoji,
+            LogoEmojiStyle = source.LogoEmojiStyle,
             LogoSizePercentage = source.LogoSizePercentage,
             LogoPaddingPixels = source.LogoPaddingPixels,
         };

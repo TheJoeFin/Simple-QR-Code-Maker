@@ -9,8 +9,4 @@
   <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="10.0.6" />
-  </ItemGroup>
 </Project>
