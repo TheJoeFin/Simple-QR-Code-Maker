@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Simple_QR_Code_Maker.Controls.QrLogoDesignerControl"
+    x:Name="Root"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:Simple_QR_Code_Maker.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Simple_QR_Code_Maker.Models"
+    xmlns:toolkitControls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:ColorToBrushConverter x:Key="ColorToBrush" />
+        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+
+    <SplitButton Command="{x:Bind ViewModel.SelectLogoCommand}" ToolTipService.ToolTip="Add image to the center of the QR Code">
+        <SplitButton.Content>
+            <Viewbox Height="16" Margin="1">
+                <SymbolIcon Symbol="Pictures" />
+            </Viewbox>
+        </SplitButton.Content>
+        <SplitButton.Flyout>
+            <Flyout>
+                <StackPanel
+                    Width="240"
+                    HorizontalAlignment="Stretch"
+                    Spacing="12">
+                    <toolkitControls:Segmented HorizontalAlignment="Stretch" SelectedIndex="{x:Bind ViewModel.LogoPickerModeIndex, Mode=TwoWay}">
+                        <toolkitControls:SegmentedItem Content="Image">
+                            <toolkitControls:SegmentedItem.Icon>
+                                <SymbolIcon Symbol="Pictures" />
+                            </toolkitControls:SegmentedItem.Icon>
+                        </toolkitControls:SegmentedItem>
+                        <toolkitControls:SegmentedItem Content="Emoji">
+                            <toolkitControls:SegmentedItem.Icon>
+                                <FontIcon Glyph="&#xE899;" />
+                            </toolkitControls:SegmentedItem.Icon>
+                        </toolkitControls:SegmentedItem>
+                    </toolkitControls:Segmented>
+
+                    <toolkitControls:SwitchPresenter
+                        HorizontalAlignment="Stretch"
+                        TargetType="x:Int32"
+                        Value="{x:Bind ViewModel.LogoPickerModeIndex,
+                                       Mode=OneWay}">
+                        <toolkitControls:Case Value="0">
+                            <StackPanel Spacing="12">
+                                <Grid
+                                    x:Name="LogoPreviewContainer"
+                                    Width="240"
+                                    Height="240"
+                                    HorizontalAlignment="Center"
+                                    Background="Transparent"
+                                    CornerRadius="4"
+                                    PointerEntered="LogoPreviewContainer_PointerEntered"
+                                    PointerExited="LogoPreviewContainer_PointerExited">
+                                    <Border
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Visibility="{x:Bind ViewModel.HasImageLogoSelection,
+                                                            Converter={StaticResource BoolToVisibility},
+                                                            ConverterParameter=True,
+                                                            Mode=OneWay}">
+                                        <StackPanel
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Opacity="0.4"
+                                            Spacing="8">
+                                            <Viewbox Width="40" Height="40">
+                                                <SymbolIcon Symbol="Pictures" />
+                                            </Viewbox>
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Text="No image selected" />
+                                        </StackPanel>
+                                    </Border>
+                                    <Border
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Visibility="{x:Bind ViewModel.HasImageLogoSelection,
+                                                            Mode=OneWay,
+                                                            Converter={StaticResource BoolToVisibility}}">
+                                        <Image
+                                            MaxWidth="150"
+                                            MaxHeight="150"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Source="{x:Bind ViewModel.LogoPreviewImage,
+                                                            Mode=OneWay}"
+                                            Stretch="Uniform" />
+                                    </Border>
+                                    <Border
+                                        x:Name="PickImageOverlay"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+                                        CornerRadius="4"
+                                        IsHitTestVisible="False"
+                                        Opacity="0">
+                                        <StackPanel
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Orientation="Vertical"
+                                            Spacing="8">
+                                            <Button
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Command="{x:Bind ViewModel.SelectLogoCommand}"
+                                                Style="{StaticResource AccentButtonStyle}">
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <SymbolIcon Symbol="Pictures" />
+                                                    <TextBlock Text="Pick Image" />
+                                                </StackPanel>
+                                            </Button>
+                                            <HyperlinkButton
+                                                HorizontalAlignment="Stretch"
+                                                Command="{x:Bind ViewModel.PasteLogoFromClipboardCommand}"
+                                                Visibility="{x:Bind ViewModel.CanPasteLogoImage,
+                                                                    Mode=OneWay,
+                                                                    Converter={StaticResource BoolToVisibility}}">
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <SymbolIcon Symbol="Paste" />
+                                                    <TextBlock Text="Paste" />
+                                                </StackPanel>
+                                            </HyperlinkButton>
+                                        </StackPanel>
+                                    </Border>
+                                    <Button
+                                        Width="24"
+                                        Height="24"
+                                        Margin="4"
+                                        Padding="0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Command="{x:Bind ViewModel.RemoveLogoCommand}"
+                                        CornerRadius="12"
+                                        ToolTipService.ToolTip="Remove image"
+                                        Visibility="{x:Bind ViewModel.HasImageLogoSelection,
+                                                            Mode=OneWay,
+                                                            Converter={StaticResource BoolToVisibility}}">
+                                        <Viewbox Width="10" Height="10">
+                                            <SymbolIcon Symbol="Cancel" />
+                                        </Viewbox>
+                                    </Button>
+                                </Grid>
+                                <Button
+                                    Width="160"
+                                    HorizontalAlignment="Center"
+                                    Command="{x:Bind ViewModel.RemoveLogoBackgroundCommand}"
+                                    IsEnabled="{x:Bind ViewModel.HasImageLogoSelection,
+                                                       Mode=OneWay}"
+                                    ToolTipService.ToolTip="Use on-device AI to remove the background from the logo image"
+                                    Visibility="{x:Bind ViewModel.CanRemoveLogoBackground,
+                                                        Mode=OneWay,
+                                                        Converter={StaticResource BoolToVisibility}}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <FontIcon FontSize="16" Glyph="&#xE945;" />
+                                        <TextBlock Text="Erase Background" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </toolkitControls:Case>
+                        <toolkitControls:Case Value="1">
+                            <StackPanel Width="210" Spacing="12">
+                                <toolkitControls:Segmented HorizontalAlignment="Stretch" SelectedIndex="{x:Bind ViewModel.EmojiStyleIndex, Mode=TwoWay}">
+                                    <toolkitControls:SegmentedItem>
+                                        <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                FontFamily="Segoe UI Emoji"
+                                                FontSize="18"
+                                                Foreground="{x:Bind ViewModel.ForegroundColor,
+                                                                    Mode=OneWay,
+                                                                    Converter={StaticResource ColorToBrush}}"
+                                                IsColorFontEnabled="False"
+                                                Text="😀" />
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                FontSize="10"
+                                                Text="Solid" />
+                                        </StackPanel>
+                                    </toolkitControls:SegmentedItem>
+                                    <toolkitControls:SegmentedItem>
+                                        <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                FontFamily="Segoe Fluent Emoji"
+                                                FontSize="18"
+                                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                                IsColorFontEnabled="True"
+                                                Text="😀" />
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                FontSize="10"
+                                                Text="3D" />
+                                        </StackPanel>
+                                    </toolkitControls:SegmentedItem>
+                                </toolkitControls:Segmented>
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="{x:Bind ViewModel.SelectedEmojiStyleLabel,
+                                                  Mode=OneWay}"
+                                    Visibility="Collapsed" />
+                                <GridView
+                                    Width="240"
+                                    Height="180"
+                                    IsItemClickEnabled="False"
+                                    ItemsSource="{x:Bind ViewModel.EmojiOptions,
+                                                         Mode=OneWay}"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                    SelectedItem="{x:Bind ViewModel.SelectedEmojiOption,
+                                                          Mode=TwoWay}"
+                                    SelectionMode="Single">
+                                    <GridView.ItemContainerStyle>
+                                        <Style TargetType="GridViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                        </Style>
+                                    </GridView.ItemContainerStyle>
+                                    <GridView.ItemTemplate>
+                                        <DataTemplate x:DataType="models:EmojiLogoOption">
+                                            <StackPanel
+                                                Width="64"
+                                                Height="72"
+                                                Padding="4"
+                                                HorizontalAlignment="Center"
+                                                AutomationProperties.Name="{x:Bind Name}"
+                                                Spacing="6">
+                                                <Image
+                                                    Width="34"
+                                                    Height="34"
+                                                    HorizontalAlignment="Center"
+                                                    Source="{x:Bind PreviewImage,
+                                                                    Mode=OneWay}" />
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    FontSize="11"
+                                                    Text="{x:Bind Name}"
+                                                    TextAlignment="Center"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    TextWrapping="WrapWholeWords" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridView.ItemTemplate>
+                                </GridView>
+                                <Button
+                                    HorizontalAlignment="Stretch"
+                                    Command="{x:Bind ViewModel.RemoveLogoCommand}"
+                                    Visibility="{x:Bind ViewModel.HasEmojiLogoSelection,
+                                                        Mode=OneWay,
+                                                        Converter={StaticResource BoolToVisibility}}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <SymbolIcon Symbol="Cancel" />
+                                        <TextBlock Text="Clear Emoji" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </toolkitControls:Case>
+                    </toolkitControls:SwitchPresenter>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock
+                            FontSize="12"
+                            FontWeight="SemiBold"
+                            Text="Center Logo Size" />
+                        <Slider
+                            Maximum="{x:Bind ViewModel.LogoSizeMaxPercentage,
+                                             Mode=OneWay}"
+                            Minimum="7"
+                            StepFrequency="1"
+                            TickFrequency="2"
+                            TickPlacement="BottomRight"
+                            ToolTipService.ToolTip="Adjust the logo size relative to the size of the QR Code"
+                            Value="{x:Bind ViewModel.LogoSizePercentage,
+                                           Mode=TwoWay}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="12">
+                            <Run Text="{x:Bind ViewModel.LogoSizePercentage, Mode=OneWay}" />
+                            <Run Text="percent" />
+                        </TextBlock>
+                    </StackPanel>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock
+                            FontSize="12"
+                            FontWeight="SemiBold"
+                            Text="Padding around center logo" />
+                        <Slider
+                            Maximum="50"
+                            Minimum="-50"
+                            StepFrequency="1"
+                            TickFrequency="8"
+                            TickPlacement="BottomRight"
+                            ToolTipService.ToolTip="Scale the logo image to fit it better in the space (positive = smaller logo with space, negative = larger logo)"
+                            Value="{x:Bind ViewModel.LogoPaddingPixels,
+                                           Mode=TwoWay}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="12">
+                            <Run Text="{x:Bind ViewModel.LogoPaddingPixels, Mode=OneWay}" />
+                            <Run Text="px" />
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Flyout>
+        </SplitButton.Flyout>
+    </SplitButton>
+</UserControl>

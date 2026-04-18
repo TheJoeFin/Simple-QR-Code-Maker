@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Simple_QR_Code_Maker.Controls.BrandManagementControl"
+    x:Name="Root"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:Simple_QR_Code_Maker.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Simple_QR_Code_Maker.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Simple_QR_Code_Maker.Models"
+    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:EmptyCollectionToVisibilityConverter x:Key="EmptyCollectionToVisibility" />
+        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+
+    <Button ToolTipService.ToolTip="Save and manage Brands">
+        <Button.Flyout>
+            <Flyout x:Name="BrandFlyout" Placement="Bottom">
+                <StackPanel Width="280" Spacing="12">
+                    <TextBlock
+                        FontWeight="SemiBold"
+                        Style="{StaticResource SubtitleTextBlockStyle}"
+                        Text="Brands" />
+                    <ListView
+                        x:Name="BrandListView"
+                        MaxHeight="200"
+                        ItemsSource="{x:Bind ViewModel.BrandItems,
+                                             Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.SelectedBrand,
+                                              Mode=OneWay}"
+                        SelectionChanged="BrandListView_SelectionChanged"
+                        SelectionMode="Single">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:BrandItem">
+                                <local:BrandRowItem
+                                    Background="Transparent"
+                                    Data="{x:Bind}"
+                                    DeleteRequested="BrandRowItem_DeleteRequested"
+                                    EditRequested="BrandRowItem_EditRequested"
+                                    SetDefaultRequested="BrandRowItem_SetDefaultRequested"
+                                    ShowActions="True" />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="No brands saved yet."
+                        Visibility="{x:Bind ViewModel.BrandItems.Count,
+                                            Converter={StaticResource EmptyCollectionToVisibility},
+                                            Mode=OneWay}" />
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        Click="ToggleNewBrandForm_Click"
+                        Visibility="{x:Bind ViewModel.IsNewBrandFormVisible,
+                                            Converter={StaticResource BoolToVisibility},
+                                            ConverterParameter=True,
+                                            Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <SymbolIcon Symbol="Add" />
+                            <TextBlock Text="Save as brand" />
+                        </StackPanel>
+                    </Button>
+                    <StackPanel
+                        Spacing="8"
+                        Visibility="{x:Bind ViewModel.IsNewBrandFormVisible,
+                                            Converter={StaticResource BoolToVisibility},
+                                            Mode=OneWay}">
+                        <TextBlock
+                            FontSize="12"
+                            FontWeight="SemiBold"
+                            Text="Save current settings as brand" />
+                        <TextBox
+                            x:Name="BrandNameTextBox"
+                            KeyDown="BrandNameTextBox_KeyDown"
+                            PlaceholderText="Brand name"
+                            Text="{x:Bind ViewModel.NewBrandName,
+                                          Mode=TwoWay,
+                                          UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.KeyboardAccelerators>
+                                <KeyboardAccelerator
+                                    Key="S"
+                                    Invoked="BrandSaveAccelerator_Invoked"
+                                    Modifiers="Control" />
+                            </TextBox.KeyboardAccelerators>
+                        </TextBox>
+                        <StackPanel Spacing="4">
+                            <CheckBox Content="Foreground color" IsChecked="{x:Bind ViewModel.IncludeForeground, Mode=TwoWay}" />
+                            <CheckBox Content="Background color" IsChecked="{x:Bind ViewModel.IncludeBackground, Mode=TwoWay}" />
+                            <CheckBox Content="Error correction" IsChecked="{x:Bind ViewModel.IncludeErrorCorrection, Mode=TwoWay}" />
+                            <CheckBox Content="URL / text" IsChecked="{x:Bind ViewModel.IncludeUrl, Mode=TwoWay}" />
+                            <CheckBox Content="Center image" IsChecked="{x:Bind ViewModel.IncludeCenterImage, Mode=TwoWay}" />
+                        </StackPanel>
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.CreateNewBrandCommand}"
+                            Style="{StaticResource AccentButtonStyle}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <SymbolIcon Symbol="Save" />
+                                <TextBlock Text="Save Brand" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                    <HyperlinkButton
+                        Padding="0"
+                        Click="LearnMoreAboutBrands_Click"
+                        FontSize="12"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                        <TextBlock Text="Learn more about Brands" />
+                    </HyperlinkButton>
+                </StackPanel>
+            </Flyout>
+        </Button.Flyout>
+        <Button.Content>
+            <Viewbox Width="16" Height="16">
+                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE734;" />
+            </Viewbox>
+        </Button.Content>
+    </Button>
+</UserControl>

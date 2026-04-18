@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Simple_QR_Code_Maker.Controls.QrExportActionsControl"
+    x:Name="Root"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:Simple_QR_Code_Maker.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Simple_QR_Code_Maker.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:EmptyStringToCollapsedConverter x:Key="EmptyStringToCollapsed" />
+        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+
+    <StackPanel
+        HorizontalAlignment="Center"
+        Orientation="Vertical"
+        Spacing="8">
+        <StackPanel
+            HorizontalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="10"
+            Visibility="{x:Bind ViewModel.HasRequestedCodes,
+                                Converter={StaticResource BoolToVisibility},
+                                Mode=OneWay}">
+            <TextBlock VerticalAlignment="Center" Text="Save as" />
+            <SplitButton
+                Command="{x:Bind ViewModel.SavePngCommand}"
+                ToolTipService.ToolTip="Save code(s) as PNG files">
+                <SplitButton.Content>
+                    <local:IconAndTextContent ContentText="PNG" Icon="Save" />
+                </SplitButton.Content>
+                <SplitButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.SavePngCommand}"
+                            Icon="SaveLocal"
+                            Text="Save all to files (default)" />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.SavePngAsZipCommand}"
+                            Icon="SaveLocal"
+                            Text="Save all to zip" />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.CopyPngToClipboardCommand}"
+                            Icon="Copy"
+                            IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled,
+                                               Mode=OneWay}"
+                            Text="Copy all to clipboard" />
+                    </MenuFlyout>
+                </SplitButton.Flyout>
+            </SplitButton>
+            <SplitButton
+                Command="{x:Bind ViewModel.SaveSvgCommand}"
+                ToolTipService.ToolTip="Save code(s) as SVG files">
+                <SplitButton.Content>
+                    <local:IconAndTextContent ContentText="SVG" Icon="Save" />
+                </SplitButton.Content>
+                <SplitButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.SaveSvgCommand}"
+                            Icon="SaveLocal"
+                            Text="Save all to files (default)" />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.SaveSvgAsZipCommand}"
+                            Icon="SaveLocal"
+                            Text="Save all to zip" />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.CopySvgToClipboardCommand}"
+                            Icon="Copy"
+                            IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled,
+                                               Mode=OneWay}"
+                            Text="Copy all to clipboard" />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.CopySvgTextToClipboardCommand}"
+                            Icon="Copy"
+                            IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled,
+                                               Mode=OneWay}"
+                            Text="Copy all as text to clipboard" />
+                    </MenuFlyout>
+                </SplitButton.Flyout>
+            </SplitButton>
+            <SplitButton
+                Command="{x:Bind ViewModel.SaveBothCommand}"
+                ToolTipService.ToolTip="Save code(s) as both PNG and SVG files"
+                Visibility="{x:Bind ViewModel.ShowSaveBothButton,
+                                    Converter={StaticResource BoolToVisibility},
+                                    Mode=OneWay}">
+                <SplitButton.Content>
+                    <local:IconAndTextContent ContentText="Both" Icon="Save" />
+                </SplitButton.Content>
+                <SplitButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.SaveBothCommand}"
+                            Icon="SaveLocal"
+                            Text="Save all to files (default)" />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.SaveBothAsZipCommand}"
+                            Icon="SaveLocal"
+                            Text="Save all to zip" />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.CopyBothToClipboardCommand}"
+                            Icon="Copy"
+                            IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled,
+                                               Mode=OneWay}"
+                            Text="Copy all to clipboard" />
+                    </MenuFlyout>
+                </SplitButton.Flyout>
+            </SplitButton>
+            <FontIcon
+                Glyph="&#xE946;"
+                ToolTipService.ToolTip="{x:Bind ViewModel.BulkClipboardRestrictionText,
+                                                Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.BulkClipboardRestrictionText,
+                                    Converter={StaticResource EmptyStringToCollapsed},
+                                    Mode=OneWay}" />
+        </StackPanel>
+        <StackPanel
+            HorizontalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="8"
+            Visibility="{x:Bind ViewModel.IsBulkOperationRunning,
+                                Converter={StaticResource BoolToVisibility},
+                                Mode=OneWay}">
+            <ProgressRing
+                Width="20"
+                Height="20"
+                IsActive="True" />
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.BulkOperationStatusText, Mode=OneWay}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

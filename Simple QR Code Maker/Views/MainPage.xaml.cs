@@ -1,9 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media.Animation;
-using Simple_QR_Code_Maker.Controls;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
 using System.ComponentModel;
@@ -69,115 +66,6 @@ public sealed partial class MainPage : Page
         _ = await Windows.System.Launcher.LaunchUriAsync(new Uri(appStoreUrl));
     }
 
-    private void LogoPreviewContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
-        AnimateOverlayOpacity(0.9);
-        PickImageOverlay.IsHitTestVisible = true;
-    }
-
-    private void LogoPreviewContainer_PointerExited(object sender, PointerRoutedEventArgs e)
-    {
-        AnimateOverlayOpacity(0);
-        PickImageOverlay.IsHitTestVisible = false;
-    }
-
-    private void AnimateOverlayOpacity(double targetOpacity)
-    {
-        DoubleAnimation animation = new()
-        {
-            To = targetOpacity,
-            Duration = new Duration(TimeSpan.FromMilliseconds(200)),
-            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut },
-        };
-        Storyboard.SetTarget(animation, PickImageOverlay);
-        Storyboard.SetTargetProperty(animation, "Opacity");
-
-        Storyboard storyboard = new();
-        storyboard.Children.Add(animation);
-        storyboard.Begin();
-    }
-
-    private void BrandForegroundColor_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button button && button.Tag is BrandItem brand)
-        {
-            ViewModel.ApplyBrandForegroundCommand.Execute(brand);
-        }
-    }
-
-    private void BrandBackgroundColor_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button button && button.Tag is BrandItem brand)
-        {
-            ViewModel.ApplyBrandBackgroundCommand.Execute(brand);
-        }
-    }
-
-    private void BrandListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (sender is not ListView listView)
-            return;
-
-        if (TryApplySelectedBrand(listView))
-            BrandFlyout.Hide();
-    }
-
-    private void BrandPickerListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (sender is not ListView listView)
-            return;
-
-        if (TryApplySelectedBrand(listView))
-            BrandPickerFlyout.Hide();
-    }
-
-    private void ToggleNewBrandForm_Click(object sender, RoutedEventArgs e)
-    {
-        ViewModel.IsNewBrandFormVisible = true;
-    }
-
-    private void BrandRowItem_EditRequested(object sender, RoutedEventArgs e)
-    {
-        if (sender is BrandRowItem row)
-            ViewModel.EditBrandCommand.Execute(row.Data);
-    }
-
-    private void BrandRowItem_SetDefaultRequested(object sender, RoutedEventArgs e)
-    {
-        if (sender is BrandRowItem row)
-            ViewModel.SetDefaultBrandCommand.Execute(row.Data);
-    }
-
-    private void BrandRowItem_DeleteRequested(object sender, RoutedEventArgs e)
-    {
-        if (sender is BrandRowItem row)
-            ViewModel.DeleteBrandCommand.Execute(row.Data);
-    }
-
-    private bool TryApplySelectedBrand(ListView listView)
-    {
-        if (listView.SelectedItem is not BrandItem brand || brand.Equals(ViewModel.SelectedBrand))
-            return false;
-
-        ViewModel.ApplyBrandCommand.Execute(brand);
-        return true;
-    }
-
-    private void BrandNameTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == Windows.System.VirtualKey.Enter)
-        {
-            ViewModel.CreateNewBrandCommand.Execute(null);
-            e.Handled = true;
-        }
-    }
-
-    private void BrandSaveAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
-    {
-        ViewModel.CreateNewBrandCommand.Execute(null);
-        args.Handled = true;
-    }
-
     private void ErrorCorrectionItem_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button button && button.Tag is ErrorCorrectionOptions option)
@@ -191,12 +79,6 @@ public sealed partial class MainPage : Page
     {
         ErrorCorrectionFlyout.Hide();
         WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, "error correction"));
-    }
-
-    private void LearnMoreAboutBrands_Click(object sender, RoutedEventArgs e)
-    {
-        BrandFlyout.Hide();
-        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, "brand"));
     }
 
     private void HookScrollToCodesEvents()
