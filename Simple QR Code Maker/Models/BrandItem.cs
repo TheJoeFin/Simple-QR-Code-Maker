@@ -24,6 +24,11 @@ public class BrandItem : IEquatable<BrandItem>
 
     public string? LogoImagePath { get; set; }
 
+    public string? LogoEmoji { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter<EmojiLogoStyle>))]
+    public EmojiLogoStyle? LogoEmojiStyle { get; set; }
+
     public double? LogoSizePercentage { get; set; }
 
     public double? LogoPaddingPixels { get; set; }

@@ -1,10 +1,11 @@
-﻿using Humanizer;
+using Humanizer;
 using System.Text.Json.Serialization;
 using Windows.UI;
 using ZXing;
 using ZXing.QrCode.Internal;
 
 namespace Simple_QR_Code_Maker.Models;
+
 public class HistoryItem : IEquatable<HistoryItem>
 {
     public DateTime SavedDateTime { get; set; } = DateTime.Now;
@@ -44,9 +45,14 @@ public class HistoryItem : IEquatable<HistoryItem>
     public BarcodeFormat Format { get; set; } = BarcodeFormat.QR_CODE;
 
     public string? LogoImagePath { get; set; }
-    
+
+    public string? LogoEmoji { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter<EmojiLogoStyle>))]
+    public EmojiLogoStyle? LogoEmojiStyle { get; set; }
+
     public double LogoSizePercentage { get; set; } = 15;
-    
+
     public double LogoPaddingPixels { get; set; } = 4.0;
 
     public HistoryItem()

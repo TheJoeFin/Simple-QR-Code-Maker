@@ -581,18 +581,76 @@ public static partial class BarcodeHelpers
             }
         };
 
-        Result[] results = barcodeReader.DecodeMultiple(bitmap);
+        foreach (int decodePadding in GetDecodePaddings(bitmap))
+        {
+            Bitmap? paddedBitmap = decodePadding > 0
+                ? AddOuterDecodePadding(bitmap, decodePadding)
+                : null;
+            Bitmap decodeBitmap = paddedBitmap ?? bitmap;
 
+            Result[] results = barcodeReader.DecodeMultiple(decodeBitmap);
+            List<(string, Result)> strings = ConvertResultsToStrings(results, decodePadding);
+            paddedBitmap?.Dispose();
+
+            if (strings.Count > 0)
+                return strings;
+        }
+
+        return [];
+    }
+
+    private static List<(string, Result)> ConvertResultsToStrings(Result[]? results, int decodePadding)
+    {
         List<(string, Result)> strings = [];
 
         if (results == null || results.Length == 0)
             return strings;
 
         foreach (Result result in results)
-            if (!string.IsNullOrWhiteSpace(result.Text))
-                strings.Add((result.Text, result));
+        {
+            if (string.IsNullOrWhiteSpace(result.Text))
+                continue;
+
+            if (decodePadding > 0)
+                ShiftResultPointsToOriginalImage(result, decodePadding);
+
+            strings.Add((result.Text, result));
+        }
 
         return strings;
+    }
+
+    private static void ShiftResultPointsToOriginalImage(Result result, int decodePadding)
+    {
+        ResultPoint[]? points = result.ResultPoints;
+        if (points == null)
+            return;
+
+        for (int i = 0; i < points.Length; i++)
+        {
+            ResultPoint p = points[i];
+            if (p != null)
+                points[i] = new ResultPoint(p.X - decodePadding, p.Y - decodePadding);
+        }
+    }
+
+    private static IEnumerable<int> GetDecodePaddings(Bitmap bitmap)
+    {
+        int minDimension = Math.Min(bitmap.Width, bitmap.Height);
+        int mediumPadding = Math.Clamp((int)Math.Round(minDimension * 0.03, MidpointRounding.AwayFromZero), 8, 24);
+        int largePadding = Math.Clamp((int)Math.Round(minDimension * 0.08, MidpointRounding.AwayFromZero), 16, 64);
+
+        int[] paddings = [0, mediumPadding, largePadding];
+        return paddings.Distinct().Order();
+    }
+
+    private static Bitmap AddOuterDecodePadding(Bitmap source, int padding)
+    {
+        Bitmap padded = new(source.Width + (padding * 2), source.Height + (padding * 2), PixelFormat.Format32bppArgb);
+        using Graphics g = Graphics.FromImage(padded);
+        g.Clear(System.Drawing.Color.White);
+        g.DrawImageUnscaled(source, padding, padding);
+        return padded;
     }
 
     /// <summary>

@@ -369,7 +369,16 @@ public static class HistoryStorageHelper
 
             LogoImagePath = element.TryGetProperty("LogoImagePath", out JsonElement logoElem)
                 ? logoElem.GetString()
-                : null
+                : null,
+
+            LogoEmoji = element.TryGetProperty("LogoEmoji", out JsonElement emojiElem)
+                ? emojiElem.GetString()
+                : null,
+
+            LogoEmojiStyle = element.TryGetProperty("LogoEmojiStyle", out JsonElement emojiStyleElem)
+                && Enum.TryParse(emojiStyleElem.GetString(), ignoreCase: true, out EmojiLogoStyle parsedEmojiStyle)
+                    ? parsedEmojiStyle
+                    : null
         };
 
         // Parse colors

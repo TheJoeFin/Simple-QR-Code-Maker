@@ -47,14 +47,11 @@ public static class ExcelSpreadsheetHelper
         if (!SupportedExtensions.Contains(extension))
             throw new NotSupportedException($"Unsupported spreadsheet file type: {extension}");
 
-        if (!await CheckIsAvailableAsync())
-            throw new InvalidOperationException("Microsoft Excel is not installed.");
-
         return extension.ToLowerInvariant() switch
         {
             ".csv" => await ReadDelimitedRowsAsync(filePath, ','),
             ".tsv" => await ReadDelimitedRowsAsync(filePath, '\t'),
-            ".xlsx" or ".xls" => await RunStaAsync(() => ReadWorkbookRowsInternal(filePath)),
+            ".xlsx" or ".xls" => await ReadWorkbookRowsAsync(filePath),
             _ => throw new NotSupportedException($"Unsupported spreadsheet file type: {extension}"),
         };
     }
@@ -63,6 +60,14 @@ public static class ExcelSpreadsheetHelper
     {
         string contents = await File.ReadAllTextAsync(filePath);
         return CsvParser.Parse(contents, delimiter);
+    }
+
+    private static async Task<List<List<string>>> ReadWorkbookRowsAsync(string filePath)
+    {
+        if (!await CheckIsAvailableAsync())
+            throw new InvalidOperationException("Microsoft Excel is not installed.");
+
+        return await RunStaAsync(() => ReadWorkbookRowsInternal(filePath));
     }
 
     private static List<List<string>> ReadWorkbookRowsInternal(string filePath)
