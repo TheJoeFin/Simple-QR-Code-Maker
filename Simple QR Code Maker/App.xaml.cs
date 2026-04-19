@@ -62,6 +62,10 @@ public partial class App : Application
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<IBrandService, BrandService>();
+            services.AddSingleton<IHistoryService, HistoryService>();
+            services.AddSingleton<ILogoService, LogoService>();
+            services.AddSingleton<IQrExportService, QrExportService>();
 
             // Core Services
             services.AddSingleton<IFileService, FileService>();

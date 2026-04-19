@@ -14,8 +14,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO.Compression;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -29,7 +27,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 {
     private const int LargeBatchThreshold = 24;
     private const int PreviewBatchSize = LargeBatchThreshold;
-    private const int MaxBulkSaveConcurrency = 4;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanSaveImage))]
@@ -254,16 +251,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private bool _suppressEmojiSelectionChanges = false;
     private int _emojiPreviewRefreshVersion = 0;
 
-    private static readonly string[] supportedLogoFileTypes =
-    [
-        ".png",
-        ".jpg",
-        ".jpeg",
-        ".bmp",
-        ".gif",
-        ".svg",
-    ];
-
     public ObservableCollection<EmojiLogoOption> EmojiOptions { get; } =
     [
         .. EmojiLogoPresets.All.Select(static preset => new EmojiLogoOption(preset.Emoji, preset.Name)),
@@ -275,15 +262,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             return;
 
         IsHistoryPaneOpen = false;
-        UrlText = value.CodesContent;
-        ForegroundColor = value.Foreground;
-        BackgroundColor = value.Background;
-        SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == value.ErrorCorrection);
-
-        _ = RestoreLogoAsync(value.LogoImagePath, value.LogoEmoji, value.LogoEmojiStyle, clearWhenMissing: true);
-
-        LogoSizePercentage = value.LogoSizePercentage;
-        LogoPaddingPixels = value.LogoPaddingPixels;
+        ApplyDesignState(QrCodeDesignStateMapper.FromHistoryItem(value));
 
         SelectedHistoryItem = null;
     }
@@ -344,10 +323,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         try
         {
-            using EmojiLogoAsset emojiAsset = await EmojiLogoHelper.CreateEmojiLogoAssetAsync(option.Emoji, GetSelectedEmojiStyle(), ForegroundColor.ToSystemDrawingColor());
+            LogoImageResult emojiResult = await logoService.CreateEmojiLogoAsync(option.Emoji, GetSelectedEmojiStyle(), ForegroundColor);
             LogoImage?.Dispose();
-            LogoSvgContent = emojiAsset.SvgContent;
-            LogoImage = new System.Drawing.Bitmap(emojiAsset.PreviewBitmap);
+            LogoSvgContent = emojiResult.SvgContent;
+            LogoImage = emojiResult.LogoImage;
             IsEmojiLogoSelected = true;
             LogoPickerModeIndex = 1;
             currentLogoPath = null;
@@ -493,15 +472,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private async Task UpdateLogoPreviewImageAsync(System.Drawing.Bitmap? bitmap)
     {
-        if (bitmap is null)
-        {
-            LogoPreviewImage = null;
-            return;
-        }
-
         try
         {
-            LogoPreviewImage = await CreateBitmapImageAsync(bitmap);
+            LogoPreviewImage = await logoService.CreateBitmapImageAsync(bitmap);
         }
         catch (Exception ex)
         {
@@ -577,32 +550,16 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         int refreshVersion = Interlocked.Increment(ref _emojiPreviewRefreshVersion);
         EmojiLogoStyle style = GetSelectedEmojiStyle();
-        System.Drawing.Color foreground = ForegroundColor.ToSystemDrawingColor();
 
         foreach (EmojiLogoOption option in EmojiOptions)
         {
-            using System.Drawing.Bitmap bitmap = await EmojiLogoHelper.RenderEmojiToBitmapAsync(option.Emoji, style, foreground, 96);
-            BitmapImage previewImage = await CreateBitmapImageAsync(bitmap);
+            BitmapImage previewImage = await logoService.RenderEmojiPreviewAsync(option.Emoji, style, ForegroundColor, 96);
 
             if (refreshVersion != _emojiPreviewRefreshVersion)
                 return;
 
             option.PreviewImage = previewImage;
         }
-    }
-
-    private static async Task<BitmapImage> CreateBitmapImageAsync(System.Drawing.Bitmap bitmap)
-    {
-        using MemoryStream ms = new();
-        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-        ms.Position = 0;
-
-        BitmapImage bitmapImage = new();
-        using InMemoryRandomAccessStream randomAccessStream = new();
-        await randomAccessStream.WriteAsync(ms.ToArray().AsBuffer());
-        randomAccessStream.Seek(0);
-        await bitmapImage.SetSourceAsync(randomAccessStream);
-        return bitmapImage;
     }
 
     partial void OnLogoSizePercentageChanged(double value)
@@ -714,7 +671,18 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     public ILocalSettingsService LocalSettingsService { get; }
 
-    public MainViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService)
+    private readonly IBrandService brandService;
+    private readonly IHistoryService historyService;
+    private readonly ILogoService logoService;
+    private readonly IQrExportService qrExportService;
+
+    public MainViewModel(
+        INavigationService navigationService,
+        ILocalSettingsService localSettingsService,
+        IBrandService brandService,
+        IHistoryService historyService,
+        ILogoService logoService,
+        IQrExportService qrExportService)
     {
         debounceTimer.Interval = TimeSpan.FromMilliseconds(600);
         debounceTimer.Tick -= DebounceTimer_Tick;
@@ -731,6 +699,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         NavigationService = navigationService;
         LocalSettingsService = localSettingsService;
+        this.brandService = brandService;
+        this.historyService = historyService;
+        this.logoService = logoService;
+        this.qrExportService = qrExportService;
 
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
         Clipboard.ContentChanged += Clipboard_ContentChanged;
@@ -765,79 +737,16 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private void RefreshBrandColorPickerListItems()
     {
-        IReadOnlyList<ColorPickerListItem> brandColorItems = [.. GetBrandColorPickerListItems()];
-        ReplaceColorPickerListItems(ForegroundBrandColorItems, brandColorItems);
-        ReplaceColorPickerListItems(BackgroundBrandColorItems, brandColorItems);
+        IReadOnlyList<ColorPickerListItem> brandColorItems = ColorPickerListBuilder.FromBrands(BrandItems);
+        ColorPickerListBuilder.ReplaceItems(ForegroundBrandColorItems, brandColorItems);
+        ColorPickerListBuilder.ReplaceItems(BackgroundBrandColorItems, brandColorItems);
     }
 
     private void RefreshRecentColorPickerListItems()
     {
-        IReadOnlyList<ColorPickerListItem> recentColorItems = [.. GetHistoryColorPickerListItems()];
-        ReplaceColorPickerListItems(ForegroundRecentColorItems, recentColorItems);
-        ReplaceColorPickerListItems(BackgroundRecentColorItems, recentColorItems);
-    }
-
-    private IEnumerable<ColorPickerListItem> GetBrandColorPickerListItems()
-    {
-        foreach (BrandItem brand in BrandItems)
-        {
-            if (brand.Foreground is Windows.UI.Color foreground)
-                yield return new ColorPickerListItem(foreground, BuildColorPickerListLabel("Foreground", brand.Name));
-
-            if (brand.Background is Windows.UI.Color background)
-                yield return new ColorPickerListItem(background, BuildColorPickerListLabel("Background", brand.Name));
-        }
-    }
-
-    private IEnumerable<ColorPickerListItem> GetHistoryColorPickerListItems()
-    {
-        foreach (HistoryItem historyItem in HistoryItems)
-        {
-            yield return new ColorPickerListItem(
-                historyItem.Foreground,
-                BuildColorPickerListLabel("Foreground", historyItem.CodesContent));
-
-            yield return new ColorPickerListItem(
-                historyItem.Background,
-                BuildColorPickerListLabel("Background", historyItem.CodesContent));
-        }
-    }
-
-    private static void ReplaceColorPickerListItems(
-        ObservableCollection<ColorPickerListItem> target,
-        IEnumerable<ColorPickerListItem> source)
-    {
-        target.Clear();
-
-        foreach (ColorPickerListItem item in source)
-        {
-            target.Add(item);
-        }
-    }
-
-    private static string BuildColorPickerListLabel(string prefix, string source)
-    {
-        return $"{prefix}, {NormalizeColorPickerListSource(source)}";
-    }
-
-    private static string NormalizeColorPickerListSource(string source)
-    {
-        if (string.IsNullOrWhiteSpace(source))
-            return "(empty)";
-
-        string normalized = source
-            .Replace("\r\n", " ", StringComparison.Ordinal)
-            .Replace('\r', ' ')
-            .Replace('\n', ' ')
-            .Replace('\t', ' ')
-            .Trim();
-
-        while (normalized.Contains("  ", StringComparison.Ordinal))
-        {
-            normalized = normalized.Replace("  ", " ", StringComparison.Ordinal);
-        }
-
-        return normalized.Length == 0 ? "(empty)" : normalized;
+        IReadOnlyList<ColorPickerListItem> recentColorItems = ColorPickerListBuilder.FromHistory(HistoryItems);
+        ColorPickerListBuilder.ReplaceItems(ForegroundRecentColorItems, recentColorItems);
+        ColorPickerListBuilder.ReplaceItems(BackgroundRecentColorItems, recentColorItems);
     }
 
     private void OnRequestPaneChange(object recipient, RequestPaneChange message)
@@ -899,7 +808,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             DataPackageView clipboardData = Clipboard.GetContent();
             CanPasteText = clipboardData.Contains(StandardDataFormats.Text);
             CanPasteLogoImage = clipboardData.Contains(StandardDataFormats.Bitmap)
-                || await ClipboardContainsSupportedLogoFileAsync(clipboardData);
+                || await logoService.ClipboardContainsSupportedLogoFileAsync(clipboardData);
         }
         catch (Exception ex)
         {
@@ -907,20 +816,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             CanPasteText = false;
             CanPasteLogoImage = false;
         }
-    }
-
-    private static async Task<bool> ClipboardContainsSupportedLogoFileAsync(DataPackageView clipboardData)
-    {
-        if (!clipboardData.Contains(StandardDataFormats.StorageItems))
-            return false;
-
-        IReadOnlyList<IStorageItem> clipboardItems = await clipboardData.GetStorageItemsAsync();
-        return clipboardItems.OfType<StorageFile>().Any(IsSupportedLogoFile);
-    }
-
-    private static bool IsSupportedLogoFile(StorageFile file)
-    {
-        return supportedLogoFileTypes.Contains(file.FileType, StringComparer.OrdinalIgnoreCase);
     }
 
     private async Task CheckBackgroundRemovalAvailability()
@@ -1114,7 +1009,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             if (clipboardData.Contains(StandardDataFormats.StorageItems))
             {
                 IReadOnlyList<IStorageItem> clipboardItems = await clipboardData.GetStorageItemsAsync();
-                StorageFile? imageFile = clipboardItems.OfType<StorageFile>().FirstOrDefault(IsSupportedLogoFile);
+                StorageFile? imageFile = clipboardItems.OfType<StorageFile>().FirstOrDefault(logoService.IsSupportedLogoFile);
 
                 if (imageFile is not null)
                 {
@@ -1249,13 +1144,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private bool CanRunBulkClipboardOperation() => RequestedCodeCount > 0 && !IsBulkOperationRunning && !IsLargeBatchPreview;
 
-    private RenderSettingsSnapshot CreateRenderSettingsSnapshot()
+    private QrRenderSettingsSnapshot CreateRenderSettingsSnapshot()
     {
-        return new RenderSettingsSnapshot(
+        return QrRenderSettingsSnapshot.Create(
             SelectedOption.ErrorCorrectionLevel,
             ForegroundColor.ToSystemDrawingColor(),
             BackgroundColor.ToSystemDrawingColor(),
-            LogoImage is null ? null : new System.Drawing.Bitmap(LogoImage),
+            LogoImage,
             LogoSizePercentage,
             LogoPaddingPixels,
             LogoSvgContent,
@@ -1295,120 +1190,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         copyInfoBarTimer.Start();
     }
 
-    private static async Task<byte[]> RenderRequestedCodePngBytesAsync(RequestedQrCodeItem requestedCode, RenderSettingsSnapshot renderSettings)
-    {
-        return await Task.Run(() =>
-        {
-            using MemoryStream ms = new();
-            BarcodeHelpers.SaveQrCodePngToStream(
-                ms,
-                requestedCode.CodeAsText,
-                renderSettings.ErrorCorrectionLevel,
-                renderSettings.ForegroundColor,
-                renderSettings.BackgroundColor,
-                renderSettings.LogoImage,
-                renderSettings.LogoSizePercentage,
-                renderSettings.LogoPaddingPixels,
-                renderSettings.QrPaddingModules);
-            return ms.ToArray();
-        });
-    }
-
-    private static async Task<string> GetRequestedCodeAsSvgTextAsync(RequestedQrCodeItem requestedCode, RenderSettingsSnapshot renderSettings)
-    {
-        return await Task.Run(() =>
-            BarcodeHelpers.GetSvgQrCodeForText(
-                requestedCode.CodeAsText,
-                renderSettings.ErrorCorrectionLevel,
-                renderSettings.ForegroundColor,
-                renderSettings.BackgroundColor,
-                renderSettings.LogoImage,
-                renderSettings.LogoSizePercentage,
-                renderSettings.LogoPaddingPixels,
-                renderSettings.LogoSvgContent,
-                renderSettings.QrPaddingModules).Content);
-    }
-
-    private static async Task WriteRequestedCodeToFileAsync(RequestedQrCodeItem requestedCode, StorageFile file, FileKind kindOfFile, RenderSettingsSnapshot renderSettings)
-    {
-        switch (kindOfFile)
-        {
-            case FileKind.None:
-                return;
-            case FileKind.PNG:
-                {
-                    byte[] pngBytes = await RenderRequestedCodePngBytesAsync(requestedCode, renderSettings);
-                    using IRandomAccessStream outputStream = await file.OpenAsync(FileAccessMode.ReadWrite);
-                    outputStream.Size = 0;
-                    using Stream output = outputStream.AsStreamForWrite();
-                    await output.WriteAsync(pngBytes);
-                    await output.FlushAsync();
-                    break;
-                }
-            case FileKind.SVG:
-                {
-                    string svgText = await GetRequestedCodeAsSvgTextAsync(requestedCode, renderSettings);
-                    using IRandomAccessStream outputStream = await file.OpenAsync(FileAccessMode.ReadWrite);
-                    outputStream.Size = 0;
-                    using Stream output = outputStream.AsStreamForWrite();
-                    using StreamWriter writer = new(output, new System.Text.UTF8Encoding(false), 1024, leaveOpen: true);
-                    await writer.WriteAsync(svgText);
-                    await writer.FlushAsync();
-                    break;
-                }
-            default:
-                return;
-        }
-    }
-
-    private static async Task WriteRequestedCodeToZipEntryAsync(RequestedQrCodeItem requestedCode, Stream entryStream, FileKind kindOfFile, RenderSettingsSnapshot renderSettings)
-    {
-        switch (kindOfFile)
-        {
-            case FileKind.None:
-                return;
-            case FileKind.PNG:
-                {
-                    byte[] pngBytes = await RenderRequestedCodePngBytesAsync(requestedCode, renderSettings);
-                    await entryStream.WriteAsync(pngBytes);
-                    await entryStream.FlushAsync();
-                    break;
-                }
-            case FileKind.SVG:
-                {
-                    string svgText = await GetRequestedCodeAsSvgTextAsync(requestedCode, renderSettings);
-                    using StreamWriter writer = new(entryStream, new System.Text.UTF8Encoding(false), 1024, leaveOpen: true);
-                    await writer.WriteAsync(svgText);
-                    await writer.FlushAsync();
-                    break;
-                }
-            default:
-                return;
-        }
-    }
-
-    private static async Task<List<StorageFile>> CreateRequestedCodeFilesAsync(StorageFolder folder, RequestedQrCodeItem[] requestedCodes, RenderSettingsSnapshot renderSettings, params FileKind[] fileKinds)
-    {
-        List<StorageFile> files = [];
-
-        foreach (RequestedQrCodeItem requestedCode in requestedCodes)
-        {
-            if (string.IsNullOrWhiteSpace(requestedCode.SafeFileNameBase))
-                continue;
-
-            foreach (FileKind kindOfFile in fileKinds)
-            {
-                StorageFile file = await folder.CreateFileAsync(
-                    requestedCode.SafeFileNameBase + GetFileExtension(kindOfFile),
-                    CreationCollisionOption.ReplaceExisting);
-                await WriteRequestedCodeToFileAsync(requestedCode, file, kindOfFile, renderSettings);
-                files.Add(file);
-            }
-        }
-
-        return files;
-    }
-
     [RelayCommand(CanExecute = nameof(CanRunBulkClipboardOperation))]
     private async Task CopyPngToClipboard()
     {
@@ -1427,8 +1208,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         try
         {
             StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-            using RenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
-            List<StorageFile> files = await CreateRequestedCodeFilesAsync(folder, requestedCodes, renderSettings, FileKind.PNG);
+            using QrRenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+            IReadOnlyList<StorageFile> files = await qrExportService.CreateFilesAsync(folder, requestedCodes, renderSettings, FileKind.PNG);
 
             if (files.Count == 0)
             {
@@ -1470,8 +1251,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         try
         {
             StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-            using RenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
-            List<StorageFile> files = await CreateRequestedCodeFilesAsync(folder, requestedCodes, renderSettings, FileKind.SVG);
+            using QrRenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+            IReadOnlyList<StorageFile> files = await qrExportService.CreateFilesAsync(folder, requestedCodes, renderSettings, FileKind.SVG);
 
             if (files.Count == 0)
             {
@@ -1512,14 +1293,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         try
         {
-            using RenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
-            List<string> textStrings = [];
-            foreach (RequestedQrCodeItem requestedCode in requestedCodes)
-            {
-                string svgText = await GetRequestedCodeAsSvgTextAsync(requestedCode, renderSettings);
-                if (!string.IsNullOrWhiteSpace(svgText))
-                    textStrings.Add(svgText);
-            }
+            using QrRenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+            IReadOnlyList<string> textStrings = await qrExportService.RenderSvgTextsAsync(requestedCodes, renderSettings);
 
             if (textStrings.Count == 0)
             {
@@ -1575,7 +1350,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private void SelectErrorCorrectionLevel(ErrorCorrectionOptions option) => SelectedOption = option;
 
     [RelayCommand]
-    [RequiresUnreferencedCode("Calls BrandStorageHelper.SaveBrandsAsync")]
+    [RequiresUnreferencedCode("Calls BrandService persistence methods")]
     private async Task CreateNewBrand()
     {
         if (string.IsNullOrWhiteSpace(NewBrandName))
@@ -1585,23 +1360,19 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             ? (GetCurrentLogoPath() ?? await SaveLogoImageToDisk())
             : null;
 
-        BrandItem brand = new()
-        {
-            Name = NewBrandName.Trim(),
-            Foreground = IncludeForeground ? ForegroundColor : null,
-            Background = IncludeBackground ? BackgroundColor : null,
-            UrlContent = IncludeUrl ? UrlText : null,
-            ErrorCorrectionLevelAsString = IncludeErrorCorrection ? SelectedOption.ErrorCorrectionLevel.ToString() : null,
-            LogoImagePath = logoPath,
-            LogoEmoji = IncludeCenterImage && HasEmojiLogoSelection ? SelectedEmojiOption?.Emoji : null,
-            LogoEmojiStyle = IncludeCenterImage && HasEmojiLogoSelection ? GetSelectedEmojiStyle() : null,
-            LogoSizePercentage = IncludeCenterImage ? LogoSizePercentage : null,
-            LogoPaddingPixels = IncludeCenterImage ? LogoPaddingPixels : null,
-        };
+        BrandItem brand = QrCodeDesignStateMapper.ToBrandItem(
+            CreateCurrentDesignState(logoPath),
+            NewBrandName,
+            new BrandCreationOptions
+            {
+                IncludeForeground = IncludeForeground,
+                IncludeBackground = IncludeBackground,
+                IncludeUrl = IncludeUrl,
+                IncludeCenterImage = IncludeCenterImage,
+                IncludeErrorCorrection = IncludeErrorCorrection,
+            });
 
-        BrandItems.Remove(brand);
-        BrandItems.Insert(0, brand);
-        await BrandStorageHelper.SaveBrandsAsync(BrandItems);
+        await brandService.AddOrReplaceAndSaveAsync(BrandItems, brand);
         NewBrandName = string.Empty;
         IsNewBrandFormVisible = false;
 
@@ -1669,42 +1440,30 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    [RequiresUnreferencedCode("Calls BrandStorageHelper.SaveBrandsAsync")]
+    [RequiresUnreferencedCode("Calls BrandService persistence methods")]
     private async Task DeleteBrand(BrandItem? brand)
     {
         if (brand is null)
             return;
 
-        BrandItems.Remove(brand);
+        await brandService.DeleteAndSaveAsync(BrandItems, brand);
 
         if (SelectedBrand is not null && SelectedBrand.Equals(brand))
             SelectedBrand = null;
-
-        await BrandStorageHelper.SaveBrandsAsync(BrandItems);
     }
 
     [RelayCommand]
-    [RequiresUnreferencedCode("Calls BrandStorageHelper.SaveBrandsAsync")]
+    [RequiresUnreferencedCode("Calls BrandService persistence methods")]
     private async Task SetDefaultBrand(BrandItem? brand)
     {
         if (brand is null)
             return;
 
-        BrandItem? previousDefault = BrandItems.FirstOrDefault(b => b.IsDefault);
-        bool isAlreadyDefault = brand.IsDefault;
-
-        foreach (BrandItem item in BrandItems)
-            item.IsDefault = !isAlreadyDefault && item.Equals(brand);
-
-        if (previousDefault is not null && !previousDefault.Equals(brand))
-            RefreshBrandItemInList(previousDefault);
-        RefreshBrandItemInList(brand);
-
-        await BrandStorageHelper.SaveBrandsAsync(BrandItems);
+        await brandService.SetDefaultAndSaveAsync(BrandItems, brand);
     }
 
     [RelayCommand]
-    [RequiresUnreferencedCode("Calls BrandStorageHelper.SaveBrandsAsync")]
+    [RequiresUnreferencedCode("Calls BrandService persistence methods")]
     private async Task EditBrand(BrandItem? brand)
     {
         if (brand is null)
@@ -1721,29 +1480,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             return;
 
         BrandItem edited = dialog.EditedItem;
-        int index = BrandItems.IndexOf(brand);
-        if (index < 0)
+        bool replaced = await brandService.ReplaceAndSaveAsync(BrandItems, brand, edited);
+        if (!replaced)
             return;
-
-        BrandItems.RemoveAt(index);
-        BrandItems.Insert(index, edited);
 
         if (SelectedBrand is not null && SelectedBrand.Equals(brand))
             SelectedBrand = edited;
 
-        await BrandStorageHelper.SaveBrandsAsync(BrandItems);
-
         WeakReferenceMessenger.Default.Send(
             new RequestShowMessage("Brand updated", $"\"{edited.Name}\" has been updated", InfoBarSeverity.Success));
-    }
-
-    private void RefreshBrandItemInList(BrandItem brand)
-    {
-        int index = BrandItems.IndexOf(brand);
-        if (index < 0)
-            return;
-        BrandItems.RemoveAt(index);
-        BrandItems.Insert(index, brand);
     }
 
     [RelayCommand]
@@ -1757,18 +1502,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private HistoryItem CreateCurrentStateHistoryItem()
     {
-        return new HistoryItem
-        {
-            CodesContent = UrlText,
-            Foreground = ForegroundColor,
-            Background = BackgroundColor,
-            ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
-            LogoImagePath = LogoImage != null ? GetCurrentLogoPath() : null,
-            LogoEmoji = HasEmojiLogoSelection ? SelectedEmojiOption?.Emoji : null,
-            LogoEmojiStyle = HasEmojiLogoSelection ? GetSelectedEmojiStyle() : null,
-            LogoSizePercentage = LogoSizePercentage,
-            LogoPaddingPixels = LogoPaddingPixels,
-        };
+        return QrCodeDesignStateMapper.ToHistoryItem(CreateCurrentDesignState(LogoImage != null ? GetCurrentLogoPath() : null));
     }
 
     private string? GetCurrentLogoPath() => currentLogoPath;
@@ -1913,8 +1647,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         try
         {
             StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-            using RenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
-            List<StorageFile> files = await CreateRequestedCodeFilesAsync(folder, requestedCodes, renderSettings, FileKind.PNG, FileKind.SVG);
+            using QrRenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+            IReadOnlyList<StorageFile> files = await qrExportService.CreateFilesAsync(folder, requestedCodes, renderSettings, FileKind.PNG, FileKind.SVG);
 
             if (files.Count == 0)
             {
@@ -1960,7 +1694,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         {
             SuggestedStartLocation = PickerLocationId.PicturesLibrary,
         };
-        foreach (string fileType in supportedLogoFileTypes)
+        foreach (string fileType in logoService.SupportedLogoFileTypes)
         {
             openPicker.FileTypeFilter.Add(fileType);
         }
@@ -2025,33 +1759,20 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         IsEmojiLogoSelected = false;
         LogoPickerModeIndex = 0;
 
-        if (file.FileType.Equals(".svg", StringComparison.OrdinalIgnoreCase))
-        {
-            string svgContent = await FileIO.ReadTextAsync(file);
-            LogoSvgContent = svgContent;
-            LogoImage = BarcodeHelpers.RasterizeSvgToBitmap(svgContent, 512, 512);
-            currentLogoPath = string.IsNullOrWhiteSpace(file.Path) ? null : file.Path;
-            return;
-        }
-
-        using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
-        await LoadRasterLogoFromStreamAsync(
-            stream,
-            string.IsNullOrWhiteSpace(file.Path) ? null : file.Path);
+        LogoImageResult loadedLogo = await logoService.LoadFromStorageFileAsync(file);
+        LogoSvgContent = loadedLogo.SvgContent;
+        LogoImage = loadedLogo.LogoImage;
+        currentLogoPath = loadedLogo.LogoPath;
     }
 
-    private Task LoadRasterLogoFromStreamAsync(IRandomAccessStreamWithContentType stream, string? logoPath)
+    private async Task LoadRasterLogoFromStreamAsync(IRandomAccessStreamWithContentType stream, string? logoPath)
     {
-        LogoSvgContent = null;
+        LogoImageResult rasterLogo = await logoService.LoadRasterFromStreamAsync(stream, logoPath);
+        LogoSvgContent = rasterLogo.SvgContent;
         IsEmojiLogoSelected = false;
         LogoPickerModeIndex = 0;
-
-        // GDI+ keeps an internal reference to the original stream; create an independent
-        // copy before the stream is disposed so that later Save() calls don't fail.
-        using System.Drawing.Bitmap tmp = new(stream.AsStreamForRead());
-        LogoImage = new System.Drawing.Bitmap(tmp);
-        currentLogoPath = logoPath;
-        return Task.CompletedTask;
+        LogoImage = rasterLogo.LogoImage;
+        currentLogoPath = rasterLogo.LogoPath;
     }
 
     private void ShowLogoLoadFailure(string message)
@@ -2068,83 +1789,19 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     /// </summary>
     private async Task<string?> SaveLogoImageToDisk()
     {
-        if (LogoImage is null)
-            return null;
-
         try
         {
-            StorageFolder logoFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("LogoImages", CreationCollisionOption.OpenIfExists);
+            string? savedLogoPath = await logoService.SaveLogoImageToDiskAsync(LogoImage, LogoSvgContent);
+            if (savedLogoPath is not null)
+                currentLogoPath = savedLogoPath;
 
-            if (LogoSvgContent != null)
-            {
-                string svgFileName = $"logo_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.svg";
-                StorageFile svgFile = await logoFolder.CreateFileAsync(svgFileName, CreationCollisionOption.ReplaceExisting);
-                await FileIO.WriteTextAsync(svgFile, LogoSvgContent);
-                currentLogoPath = svgFile.Path;
-                return svgFile.Path;
-            }
-
-            string fileName = $"logo_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.png";
-            StorageFile logoFile = await logoFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-
-            using IRandomAccessStream stream = await logoFile.OpenAsync(FileAccessMode.ReadWrite);
-            using IOutputStream outputStream = stream.GetOutputStreamAt(0);
-            using DataWriter dataWriter = new(outputStream);
-            using MemoryStream ms = new();
-            LogoImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            byte[] bytes = ms.ToArray();
-            dataWriter.WriteBytes(bytes);
-            await dataWriter.StoreAsync();
-
-            currentLogoPath = logoFile.Path;
-            return logoFile.Path;
+            return savedLogoPath;
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to save logo image: {ex.Message}");
             return null;
         }
-    }
-
-    private static string GetFileExtension(FileKind kindOfFile)
-    {
-        return $".{kindOfFile.ToString().ToLowerInvariant()}";
-    }
-
-    private async Task<StorageFolder?> PickSaveFolderAsync(string? overrideFolderPath)
-    {
-        if (overrideFolderPath is not null)
-            return await StorageFolder.GetFolderFromPathAsync(overrideFolderPath);
-
-        if (!string.IsNullOrWhiteSpace(QuickSaveLocation) && Directory.Exists(QuickSaveLocation))
-            return await StorageFolder.GetFolderFromPathAsync(QuickSaveLocation);
-
-        FolderPicker folderPicker = new()
-        {
-            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-        };
-
-        Window saveWindow = new();
-        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
-        InitializeWithWindow.Initialize(folderPicker, windowHandleSave);
-
-        return await folderPicker.PickSingleFolderAsync();
-    }
-
-    private static async Task<StorageFile?> PickSaveZipFileAsync()
-    {
-        FileSavePicker savePicker = new()
-        {
-            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-            SuggestedFileName = $"QR Codes {DateTime.Now:yyyy-MM-dd}",
-        };
-        savePicker.FileTypeChoices.Add("ZIP Archive", [".zip"]);
-
-        Window saveWindow = new();
-        IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
-        InitializeWithWindow.Initialize(savePicker, windowHandleSave);
-
-        return await savePicker.PickSaveFileAsync();
     }
 
     private void BeginBulkSaveOperation(int totalItemCount)
@@ -2175,49 +1832,18 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     public async Task<string?> SaveAllFiles(RequestedQrCodeItem[] requestedCodes, string? overrideFolderPath = null, params FileKind[] fileKinds)
     {
-        StorageFolder? folder = await PickSaveFolderAsync(overrideFolderPath);
-        if (folder is null)
-            return null;
-
-        using RenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
-        int completedItemCount = 0;
-        int maxConcurrency = renderSettings.LogoImage is null ? MaxBulkSaveConcurrency : 1;
-        using SemaphoreSlim semaphore = new(maxConcurrency, maxConcurrency);
-        List<Task> tasks = [];
-
         BeginBulkSaveOperation(requestedCodes.Length);
 
         try
         {
-            foreach (RequestedQrCodeItem requestedCode in requestedCodes)
-            {
-                await semaphore.WaitAsync();
-                tasks.Add(Task.Run(async () =>
-                {
-                    try
-                    {
-                        if (!string.IsNullOrWhiteSpace(requestedCode.SafeFileNameBase))
-                        {
-                            foreach (FileKind kindOfFile in fileKinds)
-                            {
-                                StorageFile file = await folder.CreateFileAsync(
-                                    requestedCode.SafeFileNameBase + GetFileExtension(kindOfFile),
-                                    CreationCollisionOption.ReplaceExisting);
-                                await WriteRequestedCodeToFileAsync(requestedCode, file, kindOfFile, renderSettings);
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        int completed = Interlocked.Increment(ref completedItemCount);
-                        UpdateBulkSaveProgress(completed);
-                        semaphore.Release();
-                    }
-                }));
-            }
-
-            await Task.WhenAll(tasks);
-            return folder.Path;
+            using QrRenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+            return await qrExportService.SaveFilesAsync(
+                requestedCodes,
+                renderSettings,
+                QuickSaveLocation,
+                overrideFolderPath,
+                UpdateBulkSaveProgress,
+                fileKinds);
         }
         catch (Exception ex)
         {
@@ -2243,41 +1869,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     public async Task<bool> SaveAllFilesAsZip(RequestedQrCodeItem[] requestedCodes, params FileKind[] fileKinds)
     {
-        StorageFile? zipFile = await PickSaveZipFileAsync();
-        if (zipFile is null)
-            return false;
-
-        using RenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
         BeginBulkSaveOperation(requestedCodes.Length);
 
         try
         {
-            using IRandomAccessStream outputStream = await zipFile.OpenAsync(FileAccessMode.ReadWrite);
-            outputStream.Size = 0;
-            using Stream output = outputStream.AsStreamForWrite();
-            using ZipArchive archive = new(output, ZipArchiveMode.Create, leaveOpen: true);
-
-            for (int index = 0; index < requestedCodes.Length; index++)
-            {
-                RequestedQrCodeItem requestedCode = requestedCodes[index];
-
-                if (!string.IsNullOrWhiteSpace(requestedCode.SafeFileNameBase))
-                {
-                    foreach (FileKind kindOfFile in fileKinds)
-                    {
-                        ZipArchiveEntry entry = archive.CreateEntry(
-                            requestedCode.SafeFileNameBase + GetFileExtension(kindOfFile),
-                            CompressionLevel.Optimal);
-                        using Stream entryStream = entry.Open();
-                        await WriteRequestedCodeToZipEntryAsync(requestedCode, entryStream, kindOfFile, renderSettings);
-                    }
-                }
-
-                BulkOperationCompletedItemCount = index + 1;
-            }
-
-            await output.FlushAsync();
-            return true;
+            using QrRenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+            return await qrExportService.SaveFilesAsZipAsync(requestedCodes, renderSettings, UpdateBulkSaveProgress, fileKinds);
         }
         catch (Exception ex)
         {
@@ -2291,42 +1888,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    private sealed partial class RenderSettingsSnapshot(
-        ErrorCorrectionLevel errorCorrectionLevel,
-        System.Drawing.Color foregroundColor,
-        System.Drawing.Color backgroundColor,
-        System.Drawing.Bitmap? logoImage,
-        double logoSizePercentage,
-        double logoPaddingPixels,
-        string? logoSvgContent,
-        double qrPaddingModules) : IDisposable
-    {
-        public ErrorCorrectionLevel ErrorCorrectionLevel { get; } = errorCorrectionLevel;
-
-        public System.Drawing.Color ForegroundColor { get; } = foregroundColor;
-
-        public System.Drawing.Color BackgroundColor { get; } = backgroundColor;
-
-        public System.Drawing.Bitmap? LogoImage { get; } = logoImage;
-
-        public double LogoSizePercentage { get; } = logoSizePercentage;
-
-        public double LogoPaddingPixels { get; } = logoPaddingPixels;
-
-        public string? LogoSvgContent { get; } = logoSvgContent;
-
-        public double QrPaddingModules { get; } = qrPaddingModules;
-
-        public void Dispose()
-        {
-            LogoImage?.Dispose();
-        }
-    }
-
     public async void OnNavigatedTo(object parameter)
     {
-        await LoadHistory();
-        await LoadBrands();
+        await historyService.LoadAsync(HistoryItems);
+        await brandService.LoadAsync(BrandItems);
 
         // Force property change notification to refresh UI bindings after history loads
         OnPropertyChanged(nameof(HistoryItems));
@@ -2402,15 +1967,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private void RestoreFromHistoryItem(HistoryItem historyItem)
     {
-        UrlText = historyItem.CodesContent;
-        ForegroundColor = historyItem.Foreground;
-        BackgroundColor = historyItem.Background;
-        SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == historyItem.ErrorCorrection);
-
-        _ = RestoreLogoAsync(historyItem.LogoImagePath, historyItem.LogoEmoji, historyItem.LogoEmojiStyle, clearWhenMissing: true);
-
-        LogoSizePercentage = historyItem.LogoSizePercentage;
-        LogoPaddingPixels = historyItem.LogoPaddingPixels;
+        ApplyDesignState(QrCodeDesignStateMapper.FromHistoryItem(historyItem));
     }
 
     public void OnNavigatedFrom()
@@ -2447,28 +2004,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         try
         {
-            HistoryItem historyItem = new()
-            {
-                CodesContent = UrlText,
-                Foreground = ForegroundColor,
-                Background = BackgroundColor,
-                ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
-                LogoImagePath = currentLogoPath,
-                LogoEmoji = HasEmojiLogoSelection ? SelectedEmojiOption?.Emoji : null,
-                LogoEmojiStyle = HasEmojiLogoSelection ? GetSelectedEmojiStyle() : null,
-                LogoSizePercentage = LogoSizePercentage,
-                LogoPaddingPixels = LogoPaddingPixels,
-            };
-
-            // Build an unbound snapshot list to avoid modifying the
-            // ObservableCollection that is bound to the XAML ListView.
-            // Modifying a bound collection during Window.Closed causes
-            // a native WinRT stowed exception (0xc000027b).
-            ObservableCollection<HistoryItem> snapshot = new(
-                HistoryItems.Where(h => !h.Equals(historyItem)));
-            snapshot.Insert(0, historyItem);
-
-            _ = HistoryStorageHelper.SaveHistoryAsync(snapshot);
+            HistoryItem historyItem = QrCodeDesignStateMapper.ToHistoryItem(CreateCurrentDesignState(currentLogoPath));
+            historyService.SaveSnapshotOnShutdown(HistoryItems, historyItem);
         }
         catch (Exception ex)
         {
@@ -2482,57 +2019,34 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         // Save logo image to local app storage if present
         string? logoImagePath = await SaveLogoImageToDisk();
 
-        HistoryItem historyItem = new()
+        HistoryItem historyItem = QrCodeDesignStateMapper.ToHistoryItem(CreateCurrentDesignState(logoImagePath ?? currentLogoPath));
+        await historyService.AddOrReplaceAndSaveAsync(HistoryItems, historyItem);
+    }
+
+    private QrCodeDesignState CreateCurrentDesignState(string? logoImagePath = null)
+    {
+        return new QrCodeDesignState
         {
             CodesContent = UrlText,
             Foreground = ForegroundColor,
             Background = BackgroundColor,
             ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
-            LogoImagePath = logoImagePath ?? currentLogoPath, // Use saved path or current path
+            LogoImagePath = logoImagePath,
             LogoEmoji = HasEmojiLogoSelection ? SelectedEmojiOption?.Emoji : null,
             LogoEmojiStyle = HasEmojiLogoSelection ? GetSelectedEmojiStyle() : null,
             LogoSizePercentage = LogoSizePercentage,
             LogoPaddingPixels = LogoPaddingPixels,
         };
-
-        HistoryItems.Remove(historyItem);
-        HistoryItems.Insert(0, historyItem);
-
-        await SaveHistoryToFile();
     }
 
-    [RequiresUnreferencedCode("Calls HistoryStorageHelper.SaveHistoryAsync")]
-    private async Task SaveHistoryToFile()
+    private void ApplyDesignState(QrCodeDesignState state)
     {
-        try
-        {
-            await HistoryStorageHelper.SaveHistoryAsync(HistoryItems);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"❌ Failed to save history: {ex.Message}");
-        }
-    }
-
-    [RequiresUnreferencedCode("Calls HistoryStorageHelper.LoadHistoryAsync")]
-    private async Task LoadHistory()
-    {
-        ObservableCollection<HistoryItem> loadedHistory = await HistoryStorageHelper.LoadHistoryAsync();
-
-        foreach (HistoryItem item in loadedHistory)
-        {
-            HistoryItems.Add(item);
-        }
-    }
-
-    [RequiresUnreferencedCode("Calls BrandStorageHelper.LoadBrandsAsync")]
-    private async Task LoadBrands()
-    {
-        ObservableCollection<BrandItem> loadedBrands = await BrandStorageHelper.LoadBrandsAsync();
-
-        foreach (BrandItem item in loadedBrands)
-        {
-            BrandItems.Add(item);
-        }
+        UrlText = state.CodesContent;
+        ForegroundColor = state.Foreground;
+        BackgroundColor = state.Background;
+        SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == state.ErrorCorrection);
+        _ = RestoreLogoAsync(state.LogoImagePath, state.LogoEmoji, state.LogoEmojiStyle, clearWhenMissing: true);
+        LogoSizePercentage = state.LogoSizePercentage;
+        LogoPaddingPixels = state.LogoPaddingPixels;
     }
 }
