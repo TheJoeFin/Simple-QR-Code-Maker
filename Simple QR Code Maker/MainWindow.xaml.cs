@@ -1,4 +1,7 @@
-﻿using Simple_QR_Code_Maker.Helpers;
+using Simple_QR_Code_Maker.Helpers;
+
+using Microsoft.UI.Composition.SystemBackdrops;
+using Microsoft.UI.Xaml.Media;
 
 using Windows.UI.ViewManagement;
 
@@ -13,6 +16,7 @@ public sealed partial class MainWindow : WindowEx
     public MainWindow()
     {
         InitializeComponent();
+        ApplySystemBackdrop();
 
         AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/WindowIcon.ico"));
         Content = null;
@@ -22,6 +26,20 @@ public sealed partial class MainWindow : WindowEx
         dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
         settings = new UISettings();
         settings.ColorValuesChanged += Settings_ColorValuesChanged; // cannot use FrameworkElement.ActualThemeChanged event
+    }
+
+    private void ApplySystemBackdrop()
+    {
+        if (MicaController.IsSupported())
+        {
+            SystemBackdrop = new MicaBackdrop();
+            return;
+        }
+
+        if (DesktopAcrylicController.IsSupported())
+        {
+            SystemBackdrop = new DesktopAcrylicBackdrop();
+        }
     }
 
     // this handles updating the caption button colors correctly when windows system theme is changed
