@@ -25,7 +25,7 @@ public sealed partial class ColorPickerButton : UserControl
             nameof(Color),
             typeof(WinColor),
             typeof(ColorPickerButton),
-            new PropertyMetadata(WinColor.FromArgb(255, 0, 0, 0)));
+            new PropertyMetadata(WinColor.FromArgb(255, 0, 0, 0), OnColorChanged));
 
     public WinColor Color
     {
@@ -176,6 +176,12 @@ public sealed partial class ColorPickerButton : UserControl
     {
         if (d is ColorPickerButton control)
             control.ApplyImagePickerDefaults();
+    }
+
+    private static void OnColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ColorPickerButton control && e.NewValue is WinColor color)
+            control.SyncDisplayedColor(color);
     }
 
     // ColorPicker → Color property
@@ -374,12 +380,30 @@ public sealed partial class ColorPickerButton : UserControl
 
     private void SetSelectedColor(WinColor color)
     {
-        if (_updatingColor) return;
-        _updatingColor = true;
+        if (_updatingColor || Color == color)
+            return;
+
         Color = color;
-        if (_imageModePanel is not null && _imageModePanel.Color != color)
-            _imageModePanel.Color = color;
-        _updatingColor = false;
+    }
+
+    private void SyncDisplayedColor(WinColor color)
+    {
+        if (_updatingColor)
+            return;
+
+        _updatingColor = true;
+        try
+        {
+            if (ColorModePanel is not null && ColorModePanel.Color != color)
+                ColorModePanel.Color = color;
+
+            if (_imageModePanel is not null && _imageModePanel.Color != color)
+                _imageModePanel.Color = color;
+        }
+        finally
+        {
+            _updatingColor = false;
+        }
     }
 
     private void UpdateModeVisibility()
@@ -424,6 +448,7 @@ public sealed partial class ColorPickerButton : UserControl
 
         _imageModePanel = picker;
         ImageModeHost.Content = picker;
+        SyncDisplayedColor(Color);
         return picker;
     }
 

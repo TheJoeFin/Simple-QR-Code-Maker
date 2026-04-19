@@ -48,12 +48,27 @@ public sealed partial class ImageColorPickerControl : UserControl
 
     private static void OnDefaultImagePathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        var control = (ImageColorPickerControl)d;
-        if (e.NewValue is not string path || string.IsNullOrEmpty(path) || control._imageLoaded)
+        ImageColorPickerControl control = (ImageColorPickerControl)d;
+        string? path = e.NewValue as string;
+        string? previousPath = e.OldValue as string;
+
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            if (control._loadedFromDefaultImagePath)
+                control.ClearLoadedImage();
+            return;
+        }
+
+        bool shouldLoadDefaultImage =
+            !control._imageLoaded
+            || control._loadedFromDefaultImagePath
+            || string.Equals(control._loadedImagePath, previousPath, StringComparison.Ordinal);
+
+        if (!shouldLoadDefaultImage)
             return;
 
         if (control.IsLoaded)
-            _ = control.LoadImageFromPathAsync(path);
+            _ = control.LoadImageFromPathAsync(path, loadedFromDefaultImagePath: true);
         else
             control.Loaded += control.OnLoadedAutoLoad;
     }
@@ -62,13 +77,15 @@ public sealed partial class ImageColorPickerControl : UserControl
     {
         Loaded -= OnLoadedAutoLoad;
         if (!_imageLoaded && DefaultImagePath is string path && !string.IsNullOrEmpty(path))
-            _ = LoadImageFromPathAsync(path);
+            _ = LoadImageFromPathAsync(path, loadedFromDefaultImagePath: true);
     }
 
     // ── Private state ───────────────────────────────────────────────────────
     private Bitmap? _bitmap;
     private bool _imageLoaded;
     private int _loadRequestVersion;
+    private string? _loadedImagePath;
+    private bool _loadedFromDefaultImagePath;
 
     // Letterbox geometry — rendered image bounds inside the 280×200 container
     private double _renderWidth;
@@ -88,6 +105,8 @@ public sealed partial class ImageColorPickerControl : UserControl
         SetLoadingState(false);
         _bitmap?.Dispose();
         _bitmap = null;
+        _loadedImagePath = null;
+        _loadedFromDefaultImagePath = false;
     }
 
     // ── Image loading ───────────────────────────────────────────────────────
@@ -133,7 +152,7 @@ public sealed partial class ImageColorPickerControl : UserControl
             if (loadRequestVersion != _loadRequestVersion)
                 return;
 
-            await ApplyPreparedImageAsync(preparedImage);
+            await ApplyPreparedImageAsync(preparedImage, file.Path, loadedFromDefaultImagePath: false);
             preparedImage = null;
         }
         catch (Exception ex)
@@ -148,7 +167,7 @@ public sealed partial class ImageColorPickerControl : UserControl
         }
     }
 
-    private async Task LoadImageFromPathAsync(string path)
+    private async Task LoadImageFromPathAsync(string path, bool loadedFromDefaultImagePath)
     {
         if (!File.Exists(path)) return;
         bool hadLoadedImage = _imageLoaded;
@@ -161,7 +180,7 @@ public sealed partial class ImageColorPickerControl : UserControl
             if (loadRequestVersion != _loadRequestVersion)
                 return;
 
-            await ApplyPreparedImageAsync(preparedImage);
+            await ApplyPreparedImageAsync(preparedImage, path, loadedFromDefaultImagePath);
             preparedImage = null;
         }
         catch (Exception ex)
@@ -201,10 +220,28 @@ public sealed partial class ImageColorPickerControl : UserControl
         PointerOverlay.IsHitTestVisible = !isLoading;
     }
 
-    private async Task ApplyPreparedImageAsync(PreparedImageData preparedImage)
+    private void ClearLoadedImage()
+    {
+        _loadRequestVersion++;
+        _bitmap?.Dispose();
+        _bitmap = null;
+        _imageLoaded = false;
+        _loadedImagePath = null;
+        _loadedFromDefaultImagePath = false;
+        PreviewImage.Source = null;
+        NoImagePlaceholder.Visibility = Visibility.Visible;
+        SuggestedColorsPanel.Visibility = Visibility.Collapsed;
+        SwatchRow.Children.Clear();
+        SetCrosshairVisible(false);
+        SetLoadingState(false);
+    }
+
+    private async Task ApplyPreparedImageAsync(PreparedImageData preparedImage, string? imagePath, bool loadedFromDefaultImagePath)
     {
         _bitmap?.Dispose();
         _bitmap = preparedImage.Bitmap;
+        _loadedImagePath = imagePath;
+        _loadedFromDefaultImagePath = loadedFromDefaultImagePath;
 
         PreviewImage.Source = await CreateBitmapImageAsync(preparedImage.PreviewBytes);
         ComputeLetterboxGeometry(_bitmap.Width, _bitmap.Height);

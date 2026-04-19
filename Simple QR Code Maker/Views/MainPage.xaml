@@ -126,8 +126,10 @@
                                     <controls:ColorPickerButton
                                         BrandColorItems="{x:Bind ViewModel.ForegroundBrandColorItems,
                                                                  Mode=OneWay}"
+                                        DefaultImagePath="{x:Bind ViewModel.CurrentLogoPath,
+                                                                   Mode=OneWay}"
                                         RecentColorItems="{x:Bind ViewModel.ForegroundRecentColorItems,
-                                                                  Mode=OneWay}"
+                                                                   Mode=OneWay}"
                                         ToolTipText="Code Color"
                                         Color="{x:Bind ViewModel.ForegroundColor,
                                                        Mode=TwoWay}">
@@ -140,8 +142,10 @@
                                     <controls:ColorPickerButton
                                         BrandColorItems="{x:Bind ViewModel.BackgroundBrandColorItems,
                                                                  Mode=OneWay}"
+                                        DefaultImagePath="{x:Bind ViewModel.CurrentLogoPath,
+                                                                   Mode=OneWay}"
                                         RecentColorItems="{x:Bind ViewModel.BackgroundRecentColorItems,
-                                                                  Mode=OneWay}"
+                                                                   Mode=OneWay}"
                                         ToolTipText="Background Color"
                                         Color="{x:Bind ViewModel.BackgroundColor,
                                                        Mode=TwoWay}" />

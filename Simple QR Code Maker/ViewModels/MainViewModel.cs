@@ -243,7 +243,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     public partial double LogoSizeMaxPercentage { get; set; } = 20;
 
-    private string? currentLogoPath = null;
+    [ObservableProperty]
+    public partial string? CurrentLogoPath { get; set; } = null;
 
     private double MinSizeScanDistanceScaleFactor = 1;
 
@@ -285,7 +286,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoImage?.Dispose();
             LogoImage = null;
             LogoSvgContent = null;
-            currentLogoPath = null;
+            CurrentLogoPath = null;
             IsEmojiLogoSelected = false;
         }
     }
@@ -329,7 +330,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoImage = emojiResult.LogoImage;
             IsEmojiLogoSelected = true;
             LogoPickerModeIndex = 1;
-            currentLogoPath = null;
+            CurrentLogoPath = null;
 
             if (persistToDisk)
                 await SaveLogoImageToDisk();
@@ -354,7 +355,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         await ApplyEmojiLogoAsync(SelectedEmojiOption, persistToDisk: false);
 
         if (!string.IsNullOrWhiteSpace(logoPath) && File.Exists(logoPath))
-            currentLogoPath = logoPath;
+            CurrentLogoPath = logoPath;
         else
             await SaveLogoImageToDisk();
     }
@@ -468,6 +469,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             debounceTimer.Stop();
             debounceTimer.Start();
         }
+    }
+
+    partial void OnCurrentLogoPathChanged(string? value)
+    {
+        if (!_isApplyingBrand)
+            debounceTimer.Start();
     }
 
     private async Task UpdateLogoPreviewImageAsync(System.Drawing.Bitmap? bitmap)
@@ -1505,7 +1512,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         return QrCodeDesignStateMapper.ToHistoryItem(CreateCurrentDesignState(LogoImage != null ? GetCurrentLogoPath() : null));
     }
 
-    private string? GetCurrentLogoPath() => currentLogoPath;
+    private string? GetCurrentLogoPath() => CurrentLogoPath;
 
     [RelayCommand(CanExecute = nameof(CanRunBulkSaveOperation))]
     private async Task SavePng()
@@ -1725,7 +1732,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         LogoImage?.Dispose();
         LogoImage = null;
         LogoSvgContent = null;
-        currentLogoPath = null;
+        CurrentLogoPath = null;
         IsEmojiLogoSelected = false;
     }
 
@@ -1747,7 +1754,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoImage?.Dispose();
             LogoImage = dialog.ResultBitmap;
 
-            // Persist the background-removed logo to disk so currentLogoPath
+            // Persist the background-removed logo to disk so CurrentLogoPath
             // is valid for SaveHistoryOnShutdown and CreateCurrentStateHistoryItem.
             await SaveLogoImageToDisk();
         }
@@ -1762,7 +1769,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         LogoImageResult loadedLogo = await logoService.LoadFromStorageFileAsync(file);
         LogoSvgContent = loadedLogo.SvgContent;
         LogoImage = loadedLogo.LogoImage;
-        currentLogoPath = loadedLogo.LogoPath;
+        CurrentLogoPath = loadedLogo.LogoPath;
     }
 
     private async Task LoadRasterLogoFromStreamAsync(IRandomAccessStreamWithContentType stream, string? logoPath)
@@ -1772,7 +1779,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         IsEmojiLogoSelected = false;
         LogoPickerModeIndex = 0;
         LogoImage = rasterLogo.LogoImage;
-        currentLogoPath = rasterLogo.LogoPath;
+        CurrentLogoPath = rasterLogo.LogoPath;
     }
 
     private void ShowLogoLoadFailure(string message)
@@ -1784,7 +1791,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     /// <summary>
-    /// Saves the current logo to the local LogoImages folder and updates <see cref="currentLogoPath"/>.
+    /// Saves the current logo to the local LogoImages folder and updates <see cref="CurrentLogoPath"/>.
     /// SVG logos are saved as .svg; raster logos are saved as .png.
     /// </summary>
     private async Task<string?> SaveLogoImageToDisk()
@@ -1793,7 +1800,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         {
             string? savedLogoPath = await logoService.SaveLogoImageToDiskAsync(LogoImage, LogoSvgContent);
             if (savedLogoPath is not null)
-                currentLogoPath = savedLogoPath;
+                CurrentLogoPath = savedLogoPath;
 
             return savedLogoPath;
         }
@@ -2004,7 +2011,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         try
         {
-            HistoryItem historyItem = QrCodeDesignStateMapper.ToHistoryItem(CreateCurrentDesignState(currentLogoPath));
+            HistoryItem historyItem = QrCodeDesignStateMapper.ToHistoryItem(CreateCurrentDesignState(CurrentLogoPath));
             historyService.SaveSnapshotOnShutdown(HistoryItems, historyItem);
         }
         catch (Exception ex)
@@ -2019,7 +2026,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         // Save logo image to local app storage if present
         string? logoImagePath = await SaveLogoImageToDisk();
 
-        HistoryItem historyItem = QrCodeDesignStateMapper.ToHistoryItem(CreateCurrentDesignState(logoImagePath ?? currentLogoPath));
+        HistoryItem historyItem = QrCodeDesignStateMapper.ToHistoryItem(CreateCurrentDesignState(logoImagePath ?? CurrentLogoPath));
         await historyService.AddOrReplaceAndSaveAsync(HistoryItems, historyItem);
     }
 
