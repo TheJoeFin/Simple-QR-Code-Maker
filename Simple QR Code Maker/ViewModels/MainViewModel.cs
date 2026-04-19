@@ -266,30 +266,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     public ObservableCollection<EmojiLogoOption> EmojiOptions { get; } =
     [
-        new("😀", "Smile"),
-        new("😎", "Cool"),
-        new("🤖", "Robot"),
-        new("🚀", "Rocket"),
-        new("⭐", "Star"),
-        new("🔥", "Fire"),
-        new("💡", "Idea"),
-        new("✅", "Check"),
-        new("❤️", "Heart"),
-        new("🎯", "Target"),
-        new("🎉", "Party"),
-        new("📦", "Package"),
-        new("🛒", "Cart"),
-        new("☕", "Coffee"),
-        new("🎵", "Music"),
-        new("🎮", "Gaming"),
-        new("🧠", "Brain"),
-        new("📍", "Pin"),
-        new("🌎", "Globe"),
-        new("🐱", "Cat"),
-        new("🐶", "Dog"),
-        new("🍕", "Pizza"),
-        new("🍔", "Burger"),
-        new("🌟", "Sparkles"),
+        .. EmojiLogoPresets.All.Select(static preset => new EmojiLogoOption(preset.Emoji, preset.Name)),
     ];
 
     partial void OnSelectedHistoryItemChanged(HistoryItem? value)

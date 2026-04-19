@@ -226,7 +226,7 @@ public static class EmojiLogoHelper
         };
     }
 
-    private static string? TryCreateMonochromeSvgContent(string emoji, System.Drawing.Color monochromeColor)
+    private static string? TryCreateMonochromeSvgContent(string emoji, Color monochromeColor)
     {
         using GraphicsPath glyphPath = new(FillMode.Winding);
         using FontFamily fontFamily = new(GetFontFamilyName(EmojiLogoStyle.Monochrome));
