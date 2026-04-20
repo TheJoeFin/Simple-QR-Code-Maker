@@ -51,69 +51,77 @@
                             x:Name="MainContentScrollViewer"
                             HorizontalScrollBarVisibility="Disabled"
                             VerticalScrollBarVisibility="Auto">
-                            <StackPanel
-                                x:Name="MainContentStackPanel"
-                                Margin="20"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Orientation="Vertical"
-                                Spacing="12">
-                                <controls:BrandPickerControl ViewModel="{x:Bind ViewModel}" />
-
+                            <Grid Margin="20">
                                 <StackPanel
-                                    x:Name="QrCodeInputRow"
-                                    HorizontalAlignment="Center"
-                                    Orientation="Horizontal"
-                                    Spacing="6">
-                                    <TextBox
-                                        x:Name="UrlTextBox"
-                                        MinWidth="258"
-                                        MaxWidth="800"
-                                        AcceptsReturn="True"
-                                        PlaceholderText="{x:Bind ViewModel.PlaceholderText,
+                                    x:Name="MainContentStackPanel"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    Orientation="Vertical"
+                                    Spacing="12">
+                                    <controls:BrandPickerControl ViewModel="{x:Bind ViewModel}" />
+
+                                    <Grid
+                                        x:Name="QrCodeInputRow"
+                                        HorizontalAlignment="Stretch"
+                                        ColumnSpacing="6"
+                                        SizeChanged="QrCodeInputRow_SizeChanged">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox
+                                            x:Name="UrlTextBox"
+                                            Grid.Column="0"
+                                            MinWidth="0"
+                                            MaxWidth="800"
+                                            AcceptsReturn="True"
+                                            HorizontalAlignment="Stretch"
+                                            PlaceholderText="{x:Bind ViewModel.PlaceholderText,
                                                                  Mode=OneWay}"
-                                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                        Text="{x:Bind ViewModel.UrlText,
+                                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                            Text="{x:Bind ViewModel.UrlText,
                                                       Mode=TwoWay,
                                                       UpdateSourceTrigger=PropertyChanged}"
-                                        TextChanged="UrlTextBox_TextChanged"
-                                        TextWrapping="NoWrap" />
-                                    <Button
-                                        Width="36"
-                                        Height="36"
-                                        Margin="0,0,0,-1"
-                                        Padding="0"
-                                        VerticalAlignment="Bottom"
-                                        ToolTipService.ToolTip="Import text">
-                                        <Button.Flyout>
-                                            <MenuFlyout Placement="Bottom">
-                                                <MenuFlyoutItem
-                                                    Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
-                                                    IsEnabled="{x:Bind ViewModel.CanPasteText,
-                                                                       Mode=OneWay}"
-                                                    Text="Paste">
-                                                    <MenuFlyoutItem.Icon>
-                                                        <SymbolIcon Symbol="Paste" />
-                                                    </MenuFlyoutItem.Icon>
-                                                </MenuFlyoutItem>
-                                                <MenuFlyoutSeparator />
-                                                <MenuFlyoutItem Command="{x:Bind ViewModel.OpenTextFileCommand}" Text="Open text file">
-                                                    <MenuFlyoutItem.Icon>
-                                                        <FontIcon Glyph="&#xE8A5;" />
-                                                    </MenuFlyoutItem.Icon>
-                                                </MenuFlyoutItem>
-                                                <MenuFlyoutItem Command="{x:Bind ViewModel.OpenSpreadsheetFileCommand}" Text="Open spreadsheet">
-                                                    <MenuFlyoutItem.Icon>
-                                                        <FontIcon Glyph="&#xF232;" />
-                                                    </MenuFlyoutItem.Icon>
-                                                </MenuFlyoutItem>
-                                            </MenuFlyout>
-                                        </Button.Flyout>
-                                        <Viewbox Width="16" Height="16">
-                                            <SymbolIcon Symbol="Add" />
-                                        </Viewbox>
-                                    </Button>
-                                </StackPanel>
+                                            TextChanged="UrlTextBox_TextChanged"
+                                            TextWrapping="NoWrap" />
+                                        <Button
+                                            x:Name="UrlImportButton"
+                                            Grid.Column="1"
+                                            Width="36"
+                                            Height="36"
+                                            Margin="0,0,0,-1"
+                                            Padding="0"
+                                            VerticalAlignment="Bottom"
+                                            ToolTipService.ToolTip="Import text">
+                                            <Button.Flyout>
+                                                <MenuFlyout Placement="Bottom">
+                                                    <MenuFlyoutItem
+                                                        Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
+                                                        IsEnabled="{x:Bind ViewModel.CanPasteText,
+                                                                        Mode=OneWay}"
+                                                        Text="Paste">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <SymbolIcon Symbol="Paste" />
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutSeparator />
+                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.OpenTextFileCommand}" Text="Open text file">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE8A5;" />
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.OpenSpreadsheetFileCommand}" Text="Open spreadsheet">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xF232;" />
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                </MenuFlyout>
+                                            </Button.Flyout>
+                                            <Viewbox Width="16" Height="16">
+                                                <SymbolIcon Symbol="Add" />
+                                            </Viewbox>
+                                        </Button>
+                                    </Grid>
 
                                 <StackPanel
                                     x:Name="QrCodeOptions"
@@ -180,27 +188,30 @@
                                     <controls:BrandManagementControl ViewModel="{x:Bind ViewModel}" />
                                 </StackPanel>
 
-                                <StackPanel x:Name="CodesSection" HorizontalAlignment="Center">
+                                <StackPanel x:Name="CodesSection" HorizontalAlignment="Stretch">
                                     <Border
+                                        x:Name="CodesBorder"
                                         MinWidth="300"
                                         MinHeight="300"
                                         HorizontalAlignment="Center"
                                         Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
                                         CornerRadius="4">
-                                        <GridView
+                                        <ItemsControl
                                             x:Name="ListOfCodes"
-                                            Margin="0"
-                                            Padding="0"
+                                            HorizontalAlignment="Stretch"
                                             ItemsSource="{x:Bind ViewModel.QrCodeBitmaps,
-                                                                 Mode=OneWay}"
-                                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                            ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                            <GridView.ItemTemplate>
+                                                                 Mode=OneWay}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapGrid Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
                                                 <DataTemplate x:DataType="models:BarcodeImageItem">
                                                     <controls:QrCodeImageControl Data="{x:Bind}" />
                                                 </DataTemplate>
-                                            </GridView.ItemTemplate>
-                                        </GridView>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </Border>
 
                                     <!--  If there are more than 24 codes show this UI below  -->
@@ -252,7 +263,8 @@
                                         </controls:IconAndTextButton.Icon>
                                     </controls:IconAndTextButton>
                                 </StackPanel>
-                            </StackPanel>
+                                </StackPanel>
+                            </Grid>
                         </ScrollViewer>
 
                         <Button

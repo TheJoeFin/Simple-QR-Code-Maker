@@ -1,8 +1,6 @@
-using Simple_QR_Code_Maker.Helpers;
-
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml.Media;
-
+using Simple_QR_Code_Maker.Helpers;
 using Windows.UI.ViewManagement;
 
 namespace Simple_QR_Code_Maker;
@@ -11,7 +9,7 @@ public sealed partial class MainWindow : WindowEx
 {
     private Microsoft.UI.Dispatching.DispatcherQueue dispatcherQueue;
 
-    private UISettings settings;
+    private readonly UISettings settings;
 
     public MainWindow()
     {
