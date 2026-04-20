@@ -21,9 +21,9 @@ public sealed partial class FaqsContent : UserControl
         _ = await Launcher.LaunchUriAsync(new Uri("mailto:joe@joefinapps.com"));
     }
 
-    private void FaqActionButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private async void FaqActionButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         if (sender is HyperlinkButton { Tag: FaqItem faqItem })
-            ViewModel.ActivateFeature(faqItem);
+            await ViewModel.ActivateFeatureAsync(faqItem);
     }
 }

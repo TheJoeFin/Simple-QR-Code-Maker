@@ -30,7 +30,7 @@ public partial class FaqsContentViewModel : ObservableRecipient
         WeakReferenceMessenger.Default.Register<RequestPaneChange>(this, OnRequestPaneChange);
     }
 
-    public void ActivateFeature(FaqItem faqItem)
+    public async Task ActivateFeatureAsync(FaqItem faqItem)
     {
         object? currentPageViewModel = navigationService.Frame?.GetPageViewModel();
 
@@ -45,7 +45,47 @@ public partial class FaqsContentViewModel : ObservableRecipient
             case FaqActionKind.OpenSettings:
                 OpenSettings(currentPageViewModel);
                 break;
+            case FaqActionKind.OpenUrlBuilder:
+                await OpenBuilderAsync(currentPageViewModel, static viewModel => viewModel.OpenUrlBuilderCommand.ExecuteAsync(null));
+                break;
+            case FaqActionKind.OpenVCardBuilder:
+                await OpenBuilderAsync(currentPageViewModel, static viewModel => viewModel.OpenVCardBuilderCommand.ExecuteAsync(null));
+                break;
+            case FaqActionKind.OpenWifiBuilder:
+                await OpenBuilderAsync(currentPageViewModel, static viewModel => viewModel.OpenWifiBuilderCommand.ExecuteAsync(null));
+                break;
             default:
+                break;
+        }
+    }
+
+    private async Task OpenBuilderAsync(object? currentPageViewModel, Func<MainViewModel, Task> openBuilderAsync)
+    {
+        CloseFaqPane(currentPageViewModel);
+
+        MainViewModel? mainViewModel = currentPageViewModel as MainViewModel;
+        if (mainViewModel is null)
+        {
+            navigationService.NavigateTo(typeof(MainViewModel).FullName!);
+            mainViewModel = navigationService.Frame?.GetPageViewModel() as MainViewModel;
+        }
+
+        if (mainViewModel is null)
+            throw new InvalidOperationException("Could not resolve the main page view model for FAQ navigation.");
+
+        mainViewModel.IsFaqPaneOpen = false;
+        await openBuilderAsync(mainViewModel);
+    }
+
+    private static void CloseFaqPane(object? currentPageViewModel)
+    {
+        switch (currentPageViewModel)
+        {
+            case MainViewModel mainViewModel:
+                mainViewModel.IsFaqPaneOpen = false;
+                break;
+            case DecodingViewModel decodingViewModel:
+                decodingViewModel.IsFaqPaneOpen = false;
                 break;
         }
     }
