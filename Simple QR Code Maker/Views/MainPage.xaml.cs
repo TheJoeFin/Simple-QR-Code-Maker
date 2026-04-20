@@ -95,6 +95,12 @@ public sealed partial class MainPage : Page
         WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, "error correction"));
     }
 
+    private void VCardSingleCodeDefault_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleMenuFlyoutItem toggleItem)
+            ViewModel.SetVCardSingleCodeDefaultCommand.Execute(toggleItem.IsChecked);
+    }
+
     private void HookScrollToCodesEvents()
     {
         if (_isScrollToCodesEventsHooked)

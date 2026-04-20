@@ -241,6 +241,8 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         return new HistoryItem
         {
             CodesContent = source.CodesContent,
+            ContentKind = source.ContentKind,
+            MultiLineCodeModeOverride = source.MultiLineCodeModeOverride,
             Foreground = source.Foreground,
             Background = source.Background,
             ErrorCorrection = source.ErrorCorrection,

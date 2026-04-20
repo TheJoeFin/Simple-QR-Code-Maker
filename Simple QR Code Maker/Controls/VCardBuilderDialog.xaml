@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="Simple_QR_Code_Maker.Controls.VCardBuilderDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Build vCard"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonText="Apply"
+    mc:Ignorable="d">
+
+    <ScrollViewer
+        x:Name="DialogScrollViewer"
+        MaxHeight="680"
+        HorizontalScrollBarVisibility="Disabled"
+        HorizontalScrollMode="Disabled"
+        VerticalScrollBarVisibility="Auto">
+        <Border
+            Width="{Binding ElementName=DialogScrollViewer, Path=ActualWidth}"
+            MinWidth="460"
+            Padding="0,0,12,0">
+            <StackPanel HorizontalAlignment="Stretch" Spacing="12">
+                <TextBlock
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Start with the common contact fields, then use + to add optional details." />
+
+                <TextBox
+                    x:Name="FormattedNameTextBox"
+                    Header="Formatted name"
+                    PlaceholderText="Jane Doe"
+                    Text="{x:Bind FormattedName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <Grid ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
+                        Grid.Column="0"
+                        Header="First name"
+                        PlaceholderText="Jane"
+                        Text="{x:Bind FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox
+                        Grid.Column="1"
+                        Header="Last name"
+                        PlaceholderText="Doe"
+                        Text="{x:Bind LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+
+                <Grid ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
+                        Grid.Column="0"
+                        Header="Middle"
+                        Text="{x:Bind MiddleName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox
+                        Grid.Column="1"
+                        Header="Prefix"
+                        PlaceholderText="Dr."
+                        Text="{x:Bind Prefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox
+                        Grid.Column="2"
+                        Header="Suffix"
+                        PlaceholderText="Jr."
+                        Text="{x:Bind Suffix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+
+                <TextBox
+                    Header="Organization"
+                    PlaceholderText="Contoso"
+                    Text="{x:Bind Organization, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox
+                    Header="Title"
+                    PlaceholderText="Product Manager"
+                    Text="{x:Bind JobTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox
+                    Header="Mobile phone"
+                    PlaceholderText="+1 555 0100"
+                    Text="{x:Bind MobilePhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox
+                    Header="Email"
+                    PlaceholderText="jane@example.com"
+                    Text="{x:Bind Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox
+                    Header="Website"
+                    PlaceholderText="https://example.com"
+                    Text="{x:Bind Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <Button
+                    HorizontalAlignment="Left"
+                    ToolTipService.ToolTip="Add an optional vCard field">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <SymbolIcon Symbol="Add" />
+                        <TextBlock Text="Add field" />
+                    </StackPanel>
+                    <Button.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Click="AddOptionalField_Click" Tag="WorkPhone" Text="Work phone" />
+                            <MenuFlyoutItem Click="AddOptionalField_Click" Tag="HomePhone" Text="Home phone" />
+                            <MenuFlyoutItem Click="AddOptionalField_Click" Tag="Nickname" Text="Nickname" />
+                            <MenuFlyoutItem Click="AddOptionalField_Click" Tag="Birthday" Text="Birthday" />
+                            <MenuFlyoutItem Click="AddOptionalField_Click" Tag="Address" Text="Address" />
+                            <MenuFlyoutItem Click="AddOptionalField_Click" Tag="Note" Text="Note" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+
+                <Border
+                    Padding="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Visibility="{x:Bind WorkPhoneVisibility, Mode=OneWay}">
+                    <StackPanel Spacing="8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Text="Work phone" />
+                            <HyperlinkButton
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Click="RemoveOptionalField_Click"
+                                Tag="WorkPhone"
+                                ToolTipService.ToolTip="Remove work phone">
+                                <SymbolIcon Symbol="Delete" />
+                            </HyperlinkButton>
+                        </Grid>
+                        <TextBox
+                            PlaceholderText="+1 555 0101"
+                            Text="{x:Bind WorkPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Padding="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Visibility="{x:Bind HomePhoneVisibility, Mode=OneWay}">
+                    <StackPanel Spacing="8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Text="Home phone" />
+                            <HyperlinkButton
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Click="RemoveOptionalField_Click"
+                                Tag="HomePhone"
+                                ToolTipService.ToolTip="Remove home phone">
+                                <SymbolIcon Symbol="Delete" />
+                            </HyperlinkButton>
+                        </Grid>
+                        <TextBox
+                            PlaceholderText="+1 555 0102"
+                            Text="{x:Bind HomePhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Padding="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Visibility="{x:Bind NicknameVisibility, Mode=OneWay}">
+                    <StackPanel Spacing="8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Text="Nickname" />
+                            <HyperlinkButton
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Click="RemoveOptionalField_Click"
+                                Tag="Nickname"
+                                ToolTipService.ToolTip="Remove nickname">
+                                <SymbolIcon Symbol="Delete" />
+                            </HyperlinkButton>
+                        </Grid>
+                        <TextBox
+                            PlaceholderText="Janie"
+                            Text="{x:Bind Nickname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Padding="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Visibility="{x:Bind BirthdayVisibility, Mode=OneWay}">
+                    <StackPanel Spacing="8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Text="Birthday" />
+                            <HyperlinkButton
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Click="RemoveOptionalField_Click"
+                                Tag="Birthday"
+                                ToolTipService.ToolTip="Remove birthday">
+                                <SymbolIcon Symbol="Delete" />
+                            </HyperlinkButton>
+                        </Grid>
+                        <TextBox
+                            PlaceholderText="1990-10-21"
+                            Text="{x:Bind Birthday, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Padding="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Visibility="{x:Bind AddressVisibility, Mode=OneWay}">
+                    <StackPanel Spacing="8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Text="Address" />
+                            <HyperlinkButton
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Click="RemoveOptionalField_Click"
+                                Tag="Address"
+                                ToolTipService.ToolTip="Remove address">
+                                <SymbolIcon Symbol="Delete" />
+                            </HyperlinkButton>
+                        </Grid>
+                        <TextBox
+                            Header="Street"
+                            Text="{x:Bind StreetAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <Grid ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox
+                                Grid.Column="0"
+                                Header="City"
+                                Text="{x:Bind Locality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox
+                                Grid.Column="1"
+                                Header="State / region"
+                                Text="{x:Bind Region, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                        <Grid ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox
+                                Grid.Column="0"
+                                Header="Postal code"
+                                Text="{x:Bind PostalCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox
+                                Grid.Column="1"
+                                Header="Country"
+                                Text="{x:Bind Country, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Padding="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Visibility="{x:Bind NoteVisibility, Mode=OneWay}">
+                    <StackPanel Spacing="8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Text="Note" />
+                            <HyperlinkButton
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Click="RemoveOptionalField_Click"
+                                Tag="Note"
+                                ToolTipService.ToolTip="Remove note">
+                                <SymbolIcon Symbol="Delete" />
+                            </HyperlinkButton>
+                        </Grid>
+                        <TextBox
+                            MinHeight="72"
+                            AcceptsReturn="True"
+                            PlaceholderText="Add contact notes"
+                            Text="{x:Bind Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <TextBox
+                    MinHeight="128"
+                    AcceptsReturn="True"
+                    Header="Preview"
+                    IsReadOnly="True"
+                    Text="{x:Bind PreviewVCard, Mode=OneWay}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</ContentDialog>

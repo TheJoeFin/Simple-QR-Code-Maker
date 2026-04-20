@@ -12,3 +12,9 @@ public enum MultiLineCodeMode
     OneLineOneCode = 0,
     MultilineOneCode = 1,
 }
+
+public enum QrContentKind
+{
+    PlainText = 0,
+    VCard = 1,
+}

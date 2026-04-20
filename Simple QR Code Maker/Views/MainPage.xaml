@@ -109,17 +109,35 @@
                                                             <FontIcon Glyph="&#xE71B;" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
-                                                    <MenuFlyoutSeparator />
+                                                    <MenuFlyoutItem
+                                                        Command="{x:Bind ViewModel.OpenVCardBuilderCommand}"
+                                                        Text="Build vCard"
+                                                        ToolTipService.ToolTip="Build business cards to easily share contact information through QR Codes">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <SymbolIcon Symbol="Contact" />
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
                                                     <MenuFlyoutItem Command="{x:Bind ViewModel.OpenTextFileCommand}" Text="Open text file">
                                                         <MenuFlyoutItem.Icon>
                                                             <FontIcon Glyph="&#xE8A5;" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
+                                                    <MenuFlyoutSeparator />
                                                     <MenuFlyoutItem Command="{x:Bind ViewModel.OpenSpreadsheetFileCommand}" Text="Open spreadsheet">
                                                         <MenuFlyoutItem.Icon>
                                                             <FontIcon Glyph="&#xF232;" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
+                                                    <MenuFlyoutSeparator />
+                                                    <ToggleMenuFlyoutItem
+                                                        Click="VCardSingleCodeDefault_Click"
+                                                        IsChecked="{x:Bind ViewModel.UseSingleCodeForCurrentDocument,
+                                                                            Mode=OneWay}"
+                                                        Text="Multi line codes">
+                                                        <ToggleMenuFlyoutItem.Icon>
+                                                            <SymbolIcon Symbol="Bullets" />
+                                                        </ToggleMenuFlyoutItem.Icon>
+                                                    </ToggleMenuFlyoutItem>
                                                 </MenuFlyout>
                                             </Button.Flyout>
                                             <Viewbox Width="16" Height="16">

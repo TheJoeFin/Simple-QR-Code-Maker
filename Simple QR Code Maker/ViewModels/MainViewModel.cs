@@ -169,6 +169,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private bool WarnWhenNotUrl = true;
     private bool HideMinimumSizeText = false;
     private string QuickSaveLocation = string.Empty;
+    private QrContentKind currentContentKind = QrContentKind.PlainText;
+    private MultiLineCodeMode? multiLineCodeModeOverride = null;
 
     [ObservableProperty]
     public partial bool ShowSaveBothButton { get; set; } = false;
@@ -178,6 +180,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     public partial bool CanPasteLogoImage { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool UseSingleCodeForVCardByDefault { get; set; } = false;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsImageLogoPickerMode))]
@@ -267,6 +272,56 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         ApplyDesignState(QrCodeDesignStateMapper.FromHistoryItem(value));
 
         SelectedHistoryItem = null;
+    }
+
+    private MultiLineCodeMode GetEffectiveMultiLineCodeMode()
+    {
+        return multiLineCodeModeOverride ?? MultiLineCodeMode;
+    }
+
+    private MultiLineCodeMode? GetDefaultVCardMultiLineOverride()
+    {
+        return UseSingleCodeForVCardByDefault
+            ? MultiLineCodeMode.MultilineOneCode
+            : null;
+    }
+
+    public bool UseSingleCodeForCurrentDocument
+    {
+        get
+        {
+            if (multiLineCodeModeOverride.HasValue)
+                return multiLineCodeModeOverride.Value == MultiLineCodeMode.MultilineOneCode;
+
+            return currentContentKind == QrContentKind.VCard && UseSingleCodeForVCardByDefault;
+        }
+    }
+
+    private void SetCurrentDocumentMetadata(QrContentKind contentKind, MultiLineCodeMode? overrideMode)
+    {
+        currentContentKind = contentKind;
+        multiLineCodeModeOverride = overrideMode;
+        OnPropertyChanged(nameof(UseSingleCodeForCurrentDocument));
+    }
+
+    private void ApplyDocumentText(
+        string text,
+        QrContentKind contentKind = QrContentKind.PlainText,
+        MultiLineCodeMode? overrideMode = null)
+    {
+        SetCurrentDocumentMetadata(contentKind, overrideMode);
+        UrlText = text;
+    }
+
+    private void RefreshCodesFromMultiLineOptionChange()
+    {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+
+    partial void OnUseSingleCodeForVCardByDefaultChanged(bool value)
+    {
+        OnPropertyChanged(nameof(UseSingleCodeForCurrentDocument));
     }
 
     private async Task LoadLogoFromHistory(string logoPath)
@@ -912,7 +967,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private IEnumerable<string> EnumerateRequestedCodeTexts()
     {
-        if (MultiLineCodeMode != MultiLineCodeMode.OneLineOneCode)
+        if (GetEffectiveMultiLineCodeMode() != MultiLineCodeMode.OneLineOneCode)
         {
             string singleCode = UrlText.Trim();
             if (!string.IsNullOrWhiteSpace(singleCode))
@@ -1002,7 +1057,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             if (!string.IsNullOrWhiteSpace(text))
             {
                 text = text.Trim();
-                UrlText = text;
+                ApplyDocumentText(text);
             }
         }
     }
@@ -1017,7 +1072,37 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         ContentDialogResult result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary && dialog.ResultText is not null)
-            UrlText = dialog.ResultText;
+            ApplyDocumentText(dialog.ResultText);
+    }
+
+    [RelayCommand]
+    private async Task OpenVCardBuilder()
+    {
+        VCardBuilderDialog dialog = new(UrlText)
+        {
+            XamlRoot = App.MainWindow.Content.XamlRoot
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary && dialog.ResultText is not null)
+        {
+            ApplyDocumentText(
+                dialog.ResultText,
+                QrContentKind.VCard,
+                MultiLineCodeMode.MultilineOneCode);
+        }
+    }
+
+    [RelayCommand]
+    private async Task SetVCardSingleCodeDefault(bool isEnabled)
+    {
+        multiLineCodeModeOverride = isEnabled
+            ? MultiLineCodeMode.MultilineOneCode
+            : null;
+        UseSingleCodeForVCardByDefault = isEnabled;
+        await LocalSettingsService.SaveSettingAsync(nameof(UseSingleCodeForVCardByDefault), isEnabled);
+        OnPropertyChanged(nameof(UseSingleCodeForCurrentDocument));
+        RefreshCodesFromMultiLineOptionChange();
     }
 
     [RelayCommand]
@@ -1080,9 +1165,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             if (!string.IsNullOrWhiteSpace(text))
             {
                 text = text.TrimEnd();
-                UrlText = string.IsNullOrWhiteSpace(UrlText)
+                string updatedText = string.IsNullOrWhiteSpace(UrlText)
                     ? text
                     : UrlText + "\r" + text;
+                ApplyDocumentText(updatedText);
             }
         }
         catch (Exception ex)
@@ -1417,7 +1503,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 BackgroundColor = brand.Background.Value;
 
             if (brand.UrlContent is not null)
-                UrlText = brand.UrlContent;
+                ApplyDocumentText(brand.UrlContent);
 
             if (brand.ErrorCorrectionLevelAsString is not null)
             {
@@ -1696,6 +1782,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void AddNewLine()
     {
+        SetCurrentDocumentMetadata(QrContentKind.PlainText, null);
+
         string stringToAdd = "https://";
         if (!string.IsNullOrWhiteSpace(BaseText))
             stringToAdd = BaseText;
@@ -1922,8 +2010,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         _ = CheckBackgroundRemovalAvailability();
         _ = CheckSpreadsheetImportAvailability();
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
+        UseSingleCodeForVCardByDefault = await LocalSettingsService.ReadSettingAsync<bool>(nameof(UseSingleCodeForVCardByDefault));
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
-        UrlText = BaseText;
+        ApplyDocumentText(BaseText);
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
         ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton));
@@ -1950,7 +2039,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         // Otherwise check for text rehydration from other pages
         else if (parameter is string textParam && !string.IsNullOrWhiteSpace(textParam))
         {
-            UrlText = textParam;
+            ApplyDocumentText(textParam);
         }
         else
         {
@@ -2049,6 +2138,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         return new QrCodeDesignState
         {
             CodesContent = UrlText,
+            ContentKind = currentContentKind,
+            MultiLineCodeModeOverride = multiLineCodeModeOverride,
             Foreground = ForegroundColor,
             Background = BackgroundColor,
             ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
@@ -2062,6 +2153,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private void ApplyDesignState(QrCodeDesignState state)
     {
+        SetCurrentDocumentMetadata(state.ContentKind, state.MultiLineCodeModeOverride);
         UrlText = state.CodesContent;
         ForegroundColor = state.Foreground;
         BackgroundColor = state.Background;

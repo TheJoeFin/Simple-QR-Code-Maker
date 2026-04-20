@@ -1,4 +1,5 @@
 using Humanizer;
+using Simple_QR_Code_Maker.Helpers;
 using System.Text.Json.Serialization;
 using Windows.UI;
 using ZXing;
@@ -13,6 +14,11 @@ public class HistoryItem : IEquatable<HistoryItem>
     public string SaveDateAsString => SavedDateTime.Humanize();
 
     public string CodesContent { get; set; } = string.Empty;
+
+    [JsonConverter(typeof(JsonStringEnumConverter<QrContentKind>))]
+    public QrContentKind ContentKind { get; set; } = QrContentKind.PlainText;
+
+    public MultiLineCodeMode? MultiLineCodeModeOverride { get; set; }
 
     [JsonConverter(typeof(ColorJsonConverter))]
     public Color Foreground { get; set; } = Color.FromArgb(255, 0, 0, 0);
@@ -54,6 +60,18 @@ public class HistoryItem : IEquatable<HistoryItem>
     public double LogoSizePercentage { get; set; } = 15;
 
     public double LogoPaddingPixels { get; set; } = 4.0;
+
+    [JsonIgnore]
+    public string DisplayText => ContentKind == QrContentKind.VCard
+        ? VCardBuilderHelper.GetDisplayName(CodesContent)
+        : CodesContent;
+
+    [JsonIgnore]
+    public string ContentKindLabel => ContentKind switch
+    {
+        QrContentKind.VCard => "vCard",
+        _ => string.Empty,
+    };
 
     public HistoryItem()
     {
