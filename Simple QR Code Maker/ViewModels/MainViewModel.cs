@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Simple_QR_Code_Maker.Controls;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Extensions;
@@ -1004,6 +1005,19 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 UrlText = text;
             }
         }
+    }
+
+    [RelayCommand]
+    private async Task OpenUrlBuilder()
+    {
+        UrlBuilderDialog dialog = new(UrlText)
+        {
+            XamlRoot = App.MainWindow.Content.XamlRoot
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary && dialog.ResultText is not null)
+            UrlText = dialog.ResultText;
     }
 
     [RelayCommand]

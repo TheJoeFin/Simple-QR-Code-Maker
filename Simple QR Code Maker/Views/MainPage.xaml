@@ -74,14 +74,14 @@
                                             Grid.Column="0"
                                             MinWidth="0"
                                             MaxWidth="800"
-                                            AcceptsReturn="True"
                                             HorizontalAlignment="Stretch"
+                                            AcceptsReturn="True"
                                             PlaceholderText="{x:Bind ViewModel.PlaceholderText,
-                                                                 Mode=OneWay}"
+                                                                     Mode=OneWay}"
                                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                             Text="{x:Bind ViewModel.UrlText,
-                                                      Mode=TwoWay,
-                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                          Mode=TwoWay,
+                                                          UpdateSourceTrigger=PropertyChanged}"
                                             TextChanged="UrlTextBox_TextChanged"
                                             TextWrapping="NoWrap" />
                                         <Button
@@ -92,16 +92,21 @@
                                             Margin="0,0,0,-1"
                                             Padding="0"
                                             VerticalAlignment="Bottom"
-                                            ToolTipService.ToolTip="Import text">
+                                            ToolTipService.ToolTip="Add or import text">
                                             <Button.Flyout>
                                                 <MenuFlyout Placement="Bottom">
                                                     <MenuFlyoutItem
                                                         Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
                                                         IsEnabled="{x:Bind ViewModel.CanPasteText,
-                                                                        Mode=OneWay}"
+                                                                           Mode=OneWay}"
                                                         Text="Paste">
                                                         <MenuFlyoutItem.Icon>
                                                             <SymbolIcon Symbol="Paste" />
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.OpenUrlBuilderCommand}" Text="Build URL">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE71B;" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
                                                     <MenuFlyoutSeparator />
@@ -123,146 +128,146 @@
                                         </Button>
                                     </Grid>
 
-                                <StackPanel
-                                    x:Name="QrCodeOptions"
-                                    HorizontalAlignment="Center"
-                                    Orientation="Horizontal"
-                                    Spacing="6"
-                                    Visibility="{x:Bind ViewModel.CanSaveImage,
-                                                        Mode=OneWay,
-                                                        Converter={StaticResource BoolToVisibility}}">
-                                    <controls:ColorPickerButton
-                                        BrandColorItems="{x:Bind ViewModel.ForegroundBrandColorItems,
-                                                                 Mode=OneWay}"
-                                        DefaultImagePath="{x:Bind ViewModel.CurrentLogoPath,
-                                                                   Mode=OneWay}"
-                                        RecentColorItems="{x:Bind ViewModel.ForegroundRecentColorItems,
-                                                                   Mode=OneWay}"
-                                        ToolTipText="Code Color"
-                                        Color="{x:Bind ViewModel.ForegroundColor,
-                                                       Mode=TwoWay}">
-                                        <controls:ColorPickerButton.ButtonContent>
-                                            <Viewbox Width="18" Height="18">
-                                                <controls:QrCodeIcon Foreground="{x:Bind ViewModel.ForegroundColor, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
-                                            </Viewbox>
-                                        </controls:ColorPickerButton.ButtonContent>
-                                    </controls:ColorPickerButton>
-                                    <controls:ColorPickerButton
-                                        BrandColorItems="{x:Bind ViewModel.BackgroundBrandColorItems,
-                                                                 Mode=OneWay}"
-                                        DefaultImagePath="{x:Bind ViewModel.CurrentLogoPath,
-                                                                   Mode=OneWay}"
-                                        RecentColorItems="{x:Bind ViewModel.BackgroundRecentColorItems,
-                                                                   Mode=OneWay}"
-                                        ToolTipText="Background Color"
-                                        Color="{x:Bind ViewModel.BackgroundColor,
-                                                       Mode=TwoWay}" />
-                                    <DropDownButton Width="60" ToolTipService.ToolTip="Level of Error Correction">
-                                        <TextBlock Text="{x:Bind ViewModel.SelectedOption.ShortDescription, Mode=OneWay}" />
-                                        <DropDownButton.Flyout>
-                                            <Flyout x:Name="ErrorCorrectionFlyout" Placement="Bottom">
-                                                <StackPanel Spacing="8">
-                                                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.ErrorCorrectionLevels, Mode=OneWay}">
-                                                        <ItemsRepeater.Layout>
-                                                            <StackLayout Spacing="2" />
-                                                        </ItemsRepeater.Layout>
-                                                        <ItemsRepeater.ItemTemplate>
-                                                            <DataTemplate x:DataType="models:ErrorCorrectionOptions">
-                                                                <Button
-                                                                    HorizontalAlignment="Stretch"
-                                                                    HorizontalContentAlignment="Left"
-                                                                    Click="ErrorCorrectionItem_Click"
-                                                                    Content="{x:Bind Description}"
-                                                                    Tag="{x:Bind}" />
-                                                            </DataTemplate>
-                                                        </ItemsRepeater.ItemTemplate>
-                                                    </ItemsRepeater>
-                                                    <HyperlinkButton Click="WhatIsErrorCorrection_Click" FontSize="12">
-                                                        <TextBlock Text="What is error correction?" />
-                                                    </HyperlinkButton>
-                                                </StackPanel>
-                                            </Flyout>
-                                        </DropDownButton.Flyout>
-                                    </DropDownButton>
-                                    <controls:QrLogoDesignerControl ViewModel="{x:Bind ViewModel}" />
-                                    <controls:BrandManagementControl ViewModel="{x:Bind ViewModel}" />
-                                </StackPanel>
-
-                                <StackPanel x:Name="CodesSection" HorizontalAlignment="Stretch">
-                                    <Border
-                                        x:Name="CodesBorder"
-                                        MinWidth="300"
-                                        MinHeight="300"
+                                    <StackPanel
+                                        x:Name="QrCodeOptions"
                                         HorizontalAlignment="Center"
-                                        Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
-                                        CornerRadius="4">
-                                        <ItemsControl
-                                            x:Name="ListOfCodes"
-                                            HorizontalAlignment="Stretch"
-                                            ItemsSource="{x:Bind ViewModel.QrCodeBitmaps,
-                                                                 Mode=OneWay}">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <WrapGrid Orientation="Horizontal" />
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate x:DataType="models:BarcodeImageItem">
-                                                    <controls:QrCodeImageControl Data="{x:Bind}" />
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </Border>
-
-                                    <!--  If there are more than 24 codes show this UI below  -->
-                                    <StackPanel Orientation="Vertical" Visibility="{x:Bind ViewModel.CanLoadMorePreviews, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            FontWeight="SemiBold"
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Text="{x:Bind ViewModel.PreviewSummaryText,
-                                                          Mode=OneWay}"
-                                            Visibility="{x:Bind ViewModel.PreviewSummaryText,
-                                                                Converter={StaticResource EmptyStringToCollapsed},
-                                                                Mode=OneWay}" />
-                                        <HyperlinkButton
-                                            Margin="0,8,0,0"
-                                            HorizontalAlignment="Center"
-                                            Command="{x:Bind ViewModel.LoadMorePreviewsCommand}"
-                                            Visibility="{x:Bind ViewModel.CanLoadMorePreviews,
-                                                                Converter={StaticResource BoolToVisibility},
-                                                                Mode=OneWay}">
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <SymbolIcon Symbol="Download" />
-                                                <TextBlock Text="Load more" />
-                                            </StackPanel>
-                                        </HyperlinkButton>
+                                        Orientation="Horizontal"
+                                        Spacing="6"
+                                        Visibility="{x:Bind ViewModel.CanSaveImage,
+                                                            Mode=OneWay,
+                                                            Converter={StaticResource BoolToVisibility}}">
+                                        <controls:ColorPickerButton
+                                            BrandColorItems="{x:Bind ViewModel.ForegroundBrandColorItems,
+                                                                     Mode=OneWay}"
+                                            DefaultImagePath="{x:Bind ViewModel.CurrentLogoPath,
+                                                                      Mode=OneWay}"
+                                            RecentColorItems="{x:Bind ViewModel.ForegroundRecentColorItems,
+                                                                      Mode=OneWay}"
+                                            ToolTipText="Code Color"
+                                            Color="{x:Bind ViewModel.ForegroundColor,
+                                                           Mode=TwoWay}">
+                                            <controls:ColorPickerButton.ButtonContent>
+                                                <Viewbox Width="18" Height="18">
+                                                    <controls:QrCodeIcon Foreground="{x:Bind ViewModel.ForegroundColor, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
+                                                </Viewbox>
+                                            </controls:ColorPickerButton.ButtonContent>
+                                        </controls:ColorPickerButton>
+                                        <controls:ColorPickerButton
+                                            BrandColorItems="{x:Bind ViewModel.BackgroundBrandColorItems,
+                                                                     Mode=OneWay}"
+                                            DefaultImagePath="{x:Bind ViewModel.CurrentLogoPath,
+                                                                      Mode=OneWay}"
+                                            RecentColorItems="{x:Bind ViewModel.BackgroundRecentColorItems,
+                                                                      Mode=OneWay}"
+                                            ToolTipText="Background Color"
+                                            Color="{x:Bind ViewModel.BackgroundColor,
+                                                           Mode=TwoWay}" />
+                                        <DropDownButton Width="60" ToolTipService.ToolTip="Level of Error Correction">
+                                            <TextBlock Text="{x:Bind ViewModel.SelectedOption.ShortDescription, Mode=OneWay}" />
+                                            <DropDownButton.Flyout>
+                                                <Flyout x:Name="ErrorCorrectionFlyout" Placement="Bottom">
+                                                    <StackPanel Spacing="8">
+                                                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.ErrorCorrectionLevels, Mode=OneWay}">
+                                                            <ItemsRepeater.Layout>
+                                                                <StackLayout Spacing="2" />
+                                                            </ItemsRepeater.Layout>
+                                                            <ItemsRepeater.ItemTemplate>
+                                                                <DataTemplate x:DataType="models:ErrorCorrectionOptions">
+                                                                    <Button
+                                                                        HorizontalAlignment="Stretch"
+                                                                        HorizontalContentAlignment="Left"
+                                                                        Click="ErrorCorrectionItem_Click"
+                                                                        Content="{x:Bind Description}"
+                                                                        Tag="{x:Bind}" />
+                                                                </DataTemplate>
+                                                            </ItemsRepeater.ItemTemplate>
+                                                        </ItemsRepeater>
+                                                        <HyperlinkButton Click="WhatIsErrorCorrection_Click" FontSize="12">
+                                                            <TextBlock Text="What is error correction?" />
+                                                        </HyperlinkButton>
+                                                    </StackPanel>
+                                                </Flyout>
+                                            </DropDownButton.Flyout>
+                                        </DropDownButton>
+                                        <controls:QrLogoDesignerControl ViewModel="{x:Bind ViewModel}" />
+                                        <controls:BrandManagementControl ViewModel="{x:Bind ViewModel}" />
                                     </StackPanel>
-                                </StackPanel>
 
-                                <controls:QrExportActionsControl ViewModel="{x:Bind ViewModel}" />
+                                    <StackPanel x:Name="CodesSection" HorizontalAlignment="Stretch">
+                                        <Border
+                                            x:Name="CodesBorder"
+                                            MinWidth="300"
+                                            MinHeight="300"
+                                            HorizontalAlignment="Center"
+                                            Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
+                                            CornerRadius="4">
+                                            <ItemsControl
+                                                x:Name="ListOfCodes"
+                                                HorizontalAlignment="Stretch"
+                                                ItemsSource="{x:Bind ViewModel.QrCodeBitmaps,
+                                                                     Mode=OneWay}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapGrid Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate x:DataType="models:BarcodeImageItem">
+                                                        <controls:QrCodeImageControl Data="{x:Bind}" />
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Border>
 
-                                <StackPanel
-                                    HorizontalAlignment="Center"
-                                    Orientation="Horizontal"
-                                    Spacing="10">
-                                    <controls:IconAndTextButton
-                                        Command="{x:Bind ViewModel.OpenFileCommand}"
-                                        Text="Read Codes"
-                                        ToolTipService.ToolTip="Open an image to read and extract text from any codes">
-                                        <controls:IconAndTextButton.Icon>
-                                            <controls:ScanIcon />
-                                        </controls:IconAndTextButton.Icon>
-                                    </controls:IconAndTextButton>
-                                    <controls:IconAndTextButton
-                                        Command="{x:Bind ViewModel.GoToSettingsCommand}"
-                                        Text="Settings"
-                                        ToolTipService.ToolTip="Simple QR Code Maker Settings">
-                                        <controls:IconAndTextButton.Icon>
-                                            <SymbolIcon Symbol="Setting" />
-                                        </controls:IconAndTextButton.Icon>
-                                    </controls:IconAndTextButton>
-                                </StackPanel>
+                                        <!--  If there are more than 24 codes show this UI below  -->
+                                        <StackPanel Orientation="Vertical" Visibility="{x:Bind ViewModel.CanLoadMorePreviews, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                FontWeight="SemiBold"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Text="{x:Bind ViewModel.PreviewSummaryText,
+                                                              Mode=OneWay}"
+                                                Visibility="{x:Bind ViewModel.PreviewSummaryText,
+                                                                    Converter={StaticResource EmptyStringToCollapsed},
+                                                                    Mode=OneWay}" />
+                                            <HyperlinkButton
+                                                Margin="0,8,0,0"
+                                                HorizontalAlignment="Center"
+                                                Command="{x:Bind ViewModel.LoadMorePreviewsCommand}"
+                                                Visibility="{x:Bind ViewModel.CanLoadMorePreviews,
+                                                                    Converter={StaticResource BoolToVisibility},
+                                                                    Mode=OneWay}">
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <SymbolIcon Symbol="Download" />
+                                                    <TextBlock Text="Load more" />
+                                                </StackPanel>
+                                            </HyperlinkButton>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <controls:QrExportActionsControl ViewModel="{x:Bind ViewModel}" />
+
+                                    <StackPanel
+                                        HorizontalAlignment="Center"
+                                        Orientation="Horizontal"
+                                        Spacing="10">
+                                        <controls:IconAndTextButton
+                                            Command="{x:Bind ViewModel.OpenFileCommand}"
+                                            Text="Read Codes"
+                                            ToolTipService.ToolTip="Open an image to read and extract text from any codes">
+                                            <controls:IconAndTextButton.Icon>
+                                                <controls:ScanIcon />
+                                            </controls:IconAndTextButton.Icon>
+                                        </controls:IconAndTextButton>
+                                        <controls:IconAndTextButton
+                                            Command="{x:Bind ViewModel.GoToSettingsCommand}"
+                                            Text="Settings"
+                                            ToolTipService.ToolTip="Simple QR Code Maker Settings">
+                                            <controls:IconAndTextButton.Icon>
+                                                <SymbolIcon Symbol="Setting" />
+                                            </controls:IconAndTextButton.Icon>
+                                        </controls:IconAndTextButton>
+                                    </StackPanel>
                                 </StackPanel>
                             </Grid>
                         </ScrollViewer>
