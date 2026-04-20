@@ -8,10 +8,12 @@
     xmlns:local="using:Simple_QR_Code_Maker.Controls"
     xmlns:m="using:Simple_QR_Code_Maker.Models"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Root"
     mc:Ignorable="d">
 
     <UserControl.Resources>
         <converters:EmptyCollectionToVisibilityConverter x:Key="EmptyCollectionToVisibility" />
+        <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
     </UserControl.Resources>
 
     <Grid Padding="12,20,20,20">
@@ -63,6 +65,16 @@
                                     Text="{x:Bind Content,
                                                   Mode=OneTime}"
                                     TextWrapping="WrapWholeWords" />
+                                <HyperlinkButton
+                                    Margin="0,8,0,0"
+                                    Padding="0"
+                                    Click="FaqActionButton_Click"
+                                    Content="{x:Bind ActionText,
+                                                     Mode=OneTime}"
+                                    Tag="{x:Bind}"
+                                    Visibility="{x:Bind ActionText,
+                                                        Converter={StaticResource NullToVisibility},
+                                                        Mode=OneWay}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
