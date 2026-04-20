@@ -189,9 +189,9 @@ public partial class ShellViewModel : ObservableRecipient
             {
                 Kind = TitleBarSearchResultKind.History,
                 Title = Truncate(item.DisplayText),
-                Subtitle = item.ContentKind == QrContentKind.VCard
-                    ? $"vCard - Saved {item.SaveDateAsString}"
-                    : $"Saved {item.SaveDateAsString}",
+                Subtitle = string.IsNullOrWhiteSpace(item.ContentKindLabel)
+                    ? $"Saved {item.SaveDateAsString}"
+                    : $"{item.ContentKindLabel} - Saved {item.SaveDateAsString}",
                 SearchText = item.CodesContent,
                 HistoryItem = item,
             });

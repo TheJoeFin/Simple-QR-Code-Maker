@@ -62,14 +62,18 @@ public class HistoryItem : IEquatable<HistoryItem>
     public double LogoPaddingPixels { get; set; } = 4.0;
 
     [JsonIgnore]
-    public string DisplayText => ContentKind == QrContentKind.VCard
-        ? VCardBuilderHelper.GetDisplayName(CodesContent)
-        : CodesContent;
+    public string DisplayText => ContentKind switch
+    {
+        QrContentKind.VCard => VCardBuilderHelper.GetDisplayName(CodesContent),
+        QrContentKind.WiFi => WifiBuilderHelper.GetDisplayName(CodesContent),
+        _ => CodesContent,
+    };
 
     [JsonIgnore]
     public string ContentKindLabel => ContentKind switch
     {
         QrContentKind.VCard => "vCard",
+        QrContentKind.WiFi => "WiFi",
         _ => string.Empty,
     };
 

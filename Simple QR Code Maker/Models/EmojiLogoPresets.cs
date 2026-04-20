@@ -66,6 +66,7 @@ public static class EmojiLogoPresets
         new("🏢", "Office"),
         new("💻", "Laptop"),
         new("🌎", "Globe"),
+        new("🛜", "WiFi"),
         new("🌈", "Rainbow"),
         new("🌻", "Sunflower"),
         new("🐱", "Cat"),

@@ -1094,6 +1094,24 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
+    private async Task OpenWifiBuilder()
+    {
+        WifiBuilderDialog dialog = new(UrlText)
+        {
+            XamlRoot = App.MainWindow.Content.XamlRoot
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary && dialog.ResultText is not null)
+        {
+            ApplyDocumentText(
+                dialog.ResultText,
+                QrContentKind.WiFi,
+                MultiLineCodeMode.MultilineOneCode);
+        }
+    }
+
+    [RelayCommand]
     private async Task SetVCardSingleCodeDefault(bool isEnabled)
     {
         multiLineCodeModeOverride = isEnabled

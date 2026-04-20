@@ -311,8 +311,15 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             return;
 
         bool isVCard = VCardBuilderHelper.IsVCard(InfoBarMessage);
-        QrContentKind contentKind = isVCard ? QrContentKind.VCard : QrContentKind.PlainText;
-        MultiLineCodeMode? overrideMode = isVCard ? MultiLineCodeMode.MultilineOneCode : null;
+        bool isWifi = WifiBuilderHelper.IsWifi(InfoBarMessage);
+        QrContentKind contentKind = isVCard
+            ? QrContentKind.VCard
+            : isWifi
+                ? QrContentKind.WiFi
+                : QrContentKind.PlainText;
+        MultiLineCodeMode? overrideMode = contentKind == QrContentKind.PlainText
+            ? null
+            : MultiLineCodeMode.MultilineOneCode;
 
         // Create a new HistoryItem with the decoded text, preserving other state if available
         HistoryItem editHistoryItem = navigationHistoryItem != null

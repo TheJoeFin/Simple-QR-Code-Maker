@@ -117,6 +117,14 @@
                                                             <SymbolIcon Symbol="Contact" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
+                                                    <MenuFlyoutItem
+                                                        Command="{x:Bind ViewModel.OpenWifiBuilderCommand}"
+                                                        Text="Build WiFi"
+                                                        ToolTipService.ToolTip="Build a WiFi QR Code that can share network credentials">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE701;" />
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
                                                     <MenuFlyoutItem Command="{x:Bind ViewModel.OpenTextFileCommand}" Text="Open text file">
                                                         <MenuFlyoutItem.Icon>
                                                             <FontIcon Glyph="&#xE8A5;" />
