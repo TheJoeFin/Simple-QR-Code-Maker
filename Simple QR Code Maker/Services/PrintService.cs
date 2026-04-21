@@ -1,7 +1,6 @@
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Printing;
@@ -9,7 +8,6 @@ using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
 using Windows.Graphics.Printing;
 using Windows.Storage.Streams;
 using WinRT.Interop;
@@ -18,13 +16,33 @@ namespace Simple_QR_Code_Maker.Services;
 
 public class PrintService : IPrintService
 {
+    // A Canvas that lives permanently in ShellPage's root Grid.
+    // Must be in the live visual tree (not moved off-screen) so the compositor
+    // allocates real resources for pages added to it — exactly the pattern used
+    // by the official Windows printing SDK sample (PrintHelper.PrintCanvas).
+    private Canvas? _printCanvas;
+
+    private Canvas EnsurePrintCanvas()
+    {
+        if (_printCanvas is not null)
+            return _printCanvas;
+
+        // Opacity near-zero: compositor keeps the visual alive, user sees nothing.
+        _printCanvas = new Canvas { Opacity = 0.001, IsHitTestVisible = false };
+
+        if (App.MainWindow.Content is Page { Content: Panel rootPanel })
+            rootPanel.Children.Add(_printCanvas);
+
+        return _printCanvas;
+    }
+
     public async Task PrintQrCodesAsync(
         IReadOnlyList<RequestedQrCodeItem> codes,
         QrRenderSettingsSnapshot renderSettings,
         PrintJobSettings printSettings)
     {
-        // Render QR codes to PNG bytes on a background thread
-        List<byte[]> pngBytes = await Task.Run(() =>
+        // ── 1. Render PNG bytes on a background thread ────────────────────────
+        List<byte[]> pngBytesList = await Task.Run(() =>
             codes.Select(code =>
             {
                 using MemoryStream ms = new();
@@ -41,73 +59,78 @@ public class PrintService : IPrintService
                 return ms.ToArray();
             }).ToList());
 
-        // Load PNG bytes as BitmapImage on the UI thread
+        // ── 2. Decode to BitmapImage on UI thread ─────────────────────────────
         List<BitmapImage> bitmapImages = [];
-        foreach (byte[] bytes in pngBytes)
+        foreach (byte[] bytes in pngBytesList)
         {
-            BitmapImage bitmapImage = new();
+            BitmapImage bmi = new();
             using InMemoryRandomAccessStream stream = new();
             await stream.WriteAsync(bytes.AsBuffer());
             stream.Seek(0);
-            await bitmapImage.SetSourceAsync(stream);
-            bitmapImages.Add(bitmapImage);
+            await bmi.SetSourceAsync(stream);
+            bitmapImages.Add(bmi);
         }
 
-        // A Popup connected to the XamlRoot gives off-screen elements
-        // a real compositor-tree slot so the print system can render them.
-        Canvas stagingCanvas = new() { Opacity = 0, IsHitTestVisible = false };
-        Popup stagingPopup = new()
-        {
-            Child = stagingCanvas,
-            XamlRoot = App.MainWindow.Content.XamlRoot,
-            IsOpen = true,
-        };
+        // ── 3. Ensure live-tree print canvas exists ───────────────────────────
+        Canvas printCanvas = EnsurePrintCanvas();
 
+        // ── 4. Wire PrintDocument ─────────────────────────────────────────────
         PrintDocument printDocument = new();
         IPrintDocumentSource printDocumentSource = printDocument.DocumentSource;
-        PrintPageDescription pageDescription = default;
-        int pageCount = 0;
-        Dictionary<int, Canvas> pageCache = [];
 
-        void ClearCache()
-        {
-            stagingCanvas.Children.Clear();
-            pageCache.Clear();
-        }
-
-        Canvas GetOrBuildPage(int pageIndex)
-        {
-            if (!pageCache.TryGetValue(pageIndex, out Canvas? page))
-            {
-                page = BuildPrintPage(pageIndex, pageDescription, printSettings, bitmapImages, codes);
-                stagingCanvas.Children.Add(page);
-                stagingCanvas.UpdateLayout();
-                pageCache[pageIndex] = page;
-            }
-            return page;
-        }
+        // Pages are built in Paginate (same as the official SDK sample) and
+        // cached here so GetPreviewPage and AddPages can reuse them without rebuild.
+        List<Canvas> previewPages = [];
 
         void OnPaginate(object sender, PaginateEventArgs e)
         {
-            pageDescription = e.PrintTaskOptions.GetPageDescription(0);
-            pageCount = (int)Math.Ceiling((double)bitmapImages.Count / printSettings.CodesPerPage);
-            ClearCache();
-            printDocument.SetPreviewPageCount(pageCount, PreviewPageCountType.Final);
+            // Mirrors PrintHelper.CreatePrintPreviewPages from the SDK sample.
+            lock (previewPages)
+            {
+                previewPages.Clear();
+                printCanvas.Children.Clear();
+
+                PrintPageDescription desc = e.PrintTaskOptions.GetPageDescription(0);
+                double pw = desc.PageSize.Width;
+                double ph = desc.PageSize.Height;
+                double il = desc.ImageableRect.X;
+                double it = desc.ImageableRect.Y;
+                double iw = desc.ImageableRect.Width;
+                double ih = desc.ImageableRect.Height;
+
+                int count = (int)Math.Ceiling((double)bitmapImages.Count / printSettings.CodesPerPage);
+
+                for (int i = 0; i < count; i++)
+                {
+                    Canvas pg = BuildPrintPage(i, pw, ph, il, it, iw, ih, printSettings, bitmapImages, codes);
+
+                    // Add to live visual tree, then force layout — exact SDK sample pattern.
+                    printCanvas.Children.Add(pg);
+                    printCanvas.InvalidateMeasure();
+                    printCanvas.UpdateLayout();
+
+                    previewPages.Add(pg);
+                }
+
+                printDocument.SetPreviewPageCount(previewPages.Count, PreviewPageCountType.Intermediate);
+            }
         }
 
         void OnGetPreviewPage(object sender, GetPreviewPageEventArgs e)
         {
-            Canvas page = GetOrBuildPage(e.PageNumber - 1);
-            printDocument.SetPreviewPage(e.PageNumber, page);
+            lock (previewPages)
+            {
+                printDocument.SetPreviewPage(e.PageNumber, previewPages[e.PageNumber - 1]);
+            }
         }
 
         void OnAddPages(object sender, AddPagesEventArgs e)
         {
-            ClearCache();
-            for (int i = 0; i < pageCount; i++)
+            // Reuse the same pages built in Paginate — exactly as the SDK sample does.
+            lock (previewPages)
             {
-                Canvas page = GetOrBuildPage(i);
-                printDocument.AddPage(page);
+                foreach (Canvas pg in previewPages)
+                    printDocument.AddPage(pg);
             }
             printDocument.AddPagesComplete();
         }
@@ -121,8 +144,7 @@ public class PrintService : IPrintService
 
         void OnPrintTaskRequested(PrintManager sender, PrintTaskRequestedEventArgs args)
         {
-            args.Request.CreatePrintTask("QR Codes", sourceRequestedArgs =>
-                sourceRequestedArgs.SetSource(printDocumentSource));
+            args.Request.CreatePrintTask("QR Codes", src => src.SetSource(printDocumentSource));
         }
 
         printManager.PrintTaskRequested += OnPrintTaskRequested;
@@ -137,33 +159,26 @@ public class PrintService : IPrintService
             printDocument.Paginate -= OnPaginate;
             printDocument.GetPreviewPage -= OnGetPreviewPage;
             printDocument.AddPages -= OnAddPages;
-            stagingPopup.IsOpen = false;
-            stagingCanvas.Children.Clear();
+            printCanvas.Children.Clear();
         }
     }
 
     private static Canvas BuildPrintPage(
         int pageIndex,
-        PrintPageDescription pageDescription,
-        PrintJobSettings printSettings,
+        double pageWidth, double pageHeight,
+        double imgLeft, double imgTop,
+        double imgWidth, double imgHeight,
+        PrintJobSettings settings,
         IList<BitmapImage> bitmapImages,
         IReadOnlyList<RequestedQrCodeItem> codes)
     {
-        double pageWidth = pageDescription.PageSize.Width;
-        double pageHeight = pageDescription.PageSize.Height;
-        double marginX = pageDescription.ImageableRect.X;
-        double marginY = pageDescription.ImageableRect.Y;
-        double printableWidth = pageDescription.ImageableRect.Width;
-        double printableHeight = pageDescription.ImageableRect.Height;
+        double userMargin = settings.MarginMm * 96.0 / 25.4;
+        double usableLeft = imgLeft + userMargin;
+        double usableTop = imgTop + userMargin;
+        double usableW = Math.Max(imgWidth - 2 * userMargin, 1);
+        double usableH = Math.Max(imgHeight - 2 * userMargin, 1);
 
-        double userMarginPx = printSettings.MarginMm * 96.0 / 25.4;
-
-        double usableLeft = marginX + userMarginPx;
-        double usableTop = marginY + userMarginPx;
-        double usableWidth = Math.Max(printableWidth - 2 * userMarginPx, 1);
-        double usableHeight = Math.Max(printableHeight - 2 * userMarginPx, 1);
-
-        (int rows, int cols) = GetGridDimensions(printSettings.CodesPerPage);
+        (int rows, int cols) = GetGridDimensions(settings.CodesPerPage);
 
         Canvas page = new()
         {
@@ -172,11 +187,7 @@ public class PrintService : IPrintService
             Background = new SolidColorBrush(Colors.White),
         };
 
-        Grid codesGrid = new()
-        {
-            Width = usableWidth,
-            Height = usableHeight,
-        };
+        Grid codesGrid = new() { Width = usableW, Height = usableH };
         for (int r = 0; r < rows; r++)
             codesGrid.RowDefinitions.Add(new RowDefinition());
         for (int c = 0; c < cols; c++)
@@ -186,18 +197,15 @@ public class PrintService : IPrintService
         Canvas.SetTop(codesGrid, usableTop);
         page.Children.Add(codesGrid);
 
-        int startIndex = pageIndex * printSettings.CodesPerPage;
-        int endIndex = Math.Min(startIndex + printSettings.CodesPerPage, bitmapImages.Count);
+        int start = pageIndex * settings.CodesPerPage;
+        int end = Math.Min(start + settings.CodesPerPage, bitmapImages.Count);
 
-        for (int i = startIndex; i < endIndex; i++)
+        for (int i = start; i < end; i++)
         {
-            int localIndex = i - startIndex;
-            int row = localIndex / cols;
-            int col = localIndex % cols;
-
-            FrameworkElement cell = BuildCell(bitmapImages[i], codes[i].CodeAsText, printSettings.ShowLabels);
-            Grid.SetRow(cell, row);
-            Grid.SetColumn(cell, col);
+            int local = i - start;
+            FrameworkElement cell = BuildCell(bitmapImages[i], codes[i].CodeAsText, settings.ShowLabels);
+            Grid.SetRow(cell, local / cols);
+            Grid.SetColumn(cell, local % cols);
             codesGrid.Children.Add(cell);
         }
 
@@ -223,7 +231,7 @@ public class PrintService : IPrintService
 
         if (showLabel)
         {
-            TextBlock labelBlock = new()
+            TextBlock tb = new()
             {
                 Text = label,
                 HorizontalAlignment = HorizontalAlignment.Center,
@@ -231,8 +239,8 @@ public class PrintService : IPrintService
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 VerticalAlignment = VerticalAlignment.Center,
             };
-            Grid.SetRow(labelBlock, 1);
-            cell.Children.Add(labelBlock);
+            Grid.SetRow(tb, 1);
+            cell.Children.Add(tb);
         }
 
         return cell;
