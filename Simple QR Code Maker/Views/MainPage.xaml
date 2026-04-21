@@ -125,12 +125,12 @@
                                                             <FontIcon Glyph="&#xE701;" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
+                                                    <MenuFlyoutSeparator />
                                                     <MenuFlyoutItem Command="{x:Bind ViewModel.OpenTextFileCommand}" Text="Open text file">
                                                         <MenuFlyoutItem.Icon>
                                                             <FontIcon Glyph="&#xE8A5;" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
-                                                    <MenuFlyoutSeparator />
                                                     <MenuFlyoutItem Command="{x:Bind ViewModel.OpenSpreadsheetFileCommand}" Text="Open spreadsheet">
                                                         <MenuFlyoutItem.Icon>
                                                             <FontIcon Glyph="&#xF232;" />
@@ -140,7 +140,7 @@
                                                     <ToggleMenuFlyoutItem
                                                         Click="VCardSingleCodeDefault_Click"
                                                         IsChecked="{x:Bind ViewModel.UseSingleCodeForCurrentDocument,
-                                                                            Mode=OneWay}"
+                                                                           Mode=OneWay}"
                                                         Text="Multi line codes">
                                                         <ToggleMenuFlyoutItem.Icon>
                                                             <SymbolIcon Symbol="Bullets" />
@@ -271,7 +271,12 @@
                                         </StackPanel>
                                     </StackPanel>
 
-                                    <controls:QrExportActionsControl ViewModel="{x:Bind ViewModel}" />
+                                    <controls:QrExportActionsControl
+                                        Name="SaveButtons"
+                                        ViewModel="{x:Bind ViewModel}"
+                                        Visibility="{x:Bind ViewModel.HasRequestedCodes,
+                                                            Converter={StaticResource BoolToVisibility},
+                                                            Mode=OneWay}" />
 
                                     <StackPanel
                                         HorizontalAlignment="Center"
