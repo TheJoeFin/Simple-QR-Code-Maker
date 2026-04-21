@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="Simple_QR_Code_Maker.Controls.PrintSettingsDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Print Settings"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonText="Print"
+    mc:Ignorable="d">
+
+    <StackPanel MinWidth="300" Spacing="16">
+
+        <ComboBox
+            x:Name="CodesPerPageCombo"
+            Header="Codes per page"
+            HorizontalAlignment="Stretch">
+            <ComboBoxItem Content="1 per page" Tag="1" />
+            <ComboBoxItem Content="2 per page" Tag="2" />
+            <ComboBoxItem Content="4 per page" Tag="4" />
+            <ComboBoxItem Content="6 per page" Tag="6" />
+            <ComboBoxItem Content="9 per page" Tag="9" />
+            <ComboBoxItem Content="12 per page" Tag="12" />
+        </ComboBox>
+
+        <NumberBox
+            x:Name="MarginMmBox"
+            Header="Margin (mm)"
+            Maximum="50"
+            Minimum="0"
+            SmallChange="1"
+            SpinButtonPlacementMode="Compact" />
+
+        <ToggleSwitch
+            x:Name="ShowLabelsSwitch"
+            Header="Show labels below codes"
+            OffContent="Off"
+            OnContent="On" />
+
+    </StackPanel>
+</ContentDialog>

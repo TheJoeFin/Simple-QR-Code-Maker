@@ -112,6 +112,11 @@
                     </MenuFlyout>
                 </SplitButton.Flyout>
             </SplitButton>
+            <Button
+                Command="{x:Bind ViewModel.PrintCommand}"
+                ToolTipService.ToolTip="Print QR code(s)">
+                <local:IconAndTextContent ContentText="Print" Icon="Print" />
+            </Button>
             <FontIcon
                 Glyph="&#xE946;"
                 ToolTipService.ToolTip="{x:Bind ViewModel.BulkClipboardRestrictionText,
