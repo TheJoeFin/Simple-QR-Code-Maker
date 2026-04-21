@@ -106,7 +106,7 @@ public sealed partial class UrlBuilderDialog : ContentDialog
 
     private void RemoveQueryParameterButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is Button button && button.Tag is UrlBuilderQueryParameter parameter)
+        if (sender is FrameworkElement element && element.Tag is UrlBuilderQueryParameter parameter)
             QueryParameters.Remove(parameter);
     }
 

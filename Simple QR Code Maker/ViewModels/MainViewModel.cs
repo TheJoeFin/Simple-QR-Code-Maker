@@ -1089,7 +1089,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             ApplyDocumentText(
                 dialog.ResultText,
                 QrContentKind.VCard,
-                MultiLineCodeMode.MultilineOneCode);
+                GetDefaultVCardMultiLineOverride());
         }
     }
 

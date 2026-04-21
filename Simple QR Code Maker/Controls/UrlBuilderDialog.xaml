@@ -140,7 +140,7 @@
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Bottom"
                                         Tag="{x:Bind}"
-                                        Tapped="RemoveQueryParameterButton_Click"
+                                        Click="RemoveQueryParameterButton_Click"
                                         ToolTipService.ToolTip="Remove parameter">
                                         <SymbolIcon Symbol="Delete" />
                                     </HyperlinkButton>
