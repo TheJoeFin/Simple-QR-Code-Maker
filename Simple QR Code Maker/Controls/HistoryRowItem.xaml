@@ -12,6 +12,7 @@
 
     <UserControl.Resources>
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
+        <converters:EmptyStringToCollapsedConverter x:Key="EmptyStringToCollapsed" />
         <converters:FilePathToImageSourceConverter x:Key="FilePathToImage" />
         <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
     </UserControl.Resources>
@@ -29,7 +30,7 @@
         <TextBlock
             MaxLines="24"
             Style="{StaticResource BodyTextStyle}"
-            Text="{x:Bind Data.CodesContent,
+            Text="{x:Bind Data.DisplayText,
                           Mode=OneWay}"
             TextTrimming="CharacterEllipsis" />
         <StackPanel
@@ -45,6 +46,11 @@
             <Rectangle Fill="{x:Bind Data.Foreground, Converter={StaticResource ColorToBrush}, Mode=OneWay}" />
             <Rectangle Fill="{x:Bind Data.Background, Converter={StaticResource ColorToBrush}, Mode=OneWay}" />
             <TextBlock Text="{x:Bind Data.ErrorCorrectionLevelAsString}" />
+            <TextBlock
+                Text="{x:Bind Data.ContentKindLabel}"
+                Visibility="{x:Bind Data.ContentKindLabel,
+                                     Converter={StaticResource EmptyStringToCollapsed},
+                                     Mode=OneWay}" />
         </StackPanel>
         <TextBlock
             Grid.Row="2"

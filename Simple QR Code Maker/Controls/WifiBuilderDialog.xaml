@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="Simple_QR_Code_Maker.Controls.WifiBuilderDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Build WiFi"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonText="Apply"
+    mc:Ignorable="d">
+
+    <ScrollViewer
+        x:Name="DialogScrollViewer"
+        MaxHeight="640"
+        HorizontalScrollBarVisibility="Disabled"
+        HorizontalScrollMode="Disabled"
+        VerticalScrollBarVisibility="Auto">
+        <Border
+            Width="{Binding ElementName=DialogScrollViewer, Path=ActualWidth}"
+            MinWidth="420"
+            Padding="0,0,12,0">
+            <StackPanel HorizontalAlignment="Stretch" Spacing="12">
+                <TextBlock
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Create a QR Code that shares WiFi credentials for phones and other scanners that understand the standard WiFi payload format." />
+
+                <TextBox
+                    x:Name="SsidTextBox"
+                    Header="Network name (SSID)"
+                    PlaceholderText="Contoso Guest"
+                    Text="{x:Bind Ssid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <ComboBox
+                    x:Name="AuthenticationTypeComboBox"
+                    Header="Security type"
+                    SelectionChanged="AuthenticationTypeComboBox_SelectionChanged">
+                    <ComboBoxItem Tag="WPA">WPA / WPA2 / WPA3</ComboBoxItem>
+                    <ComboBoxItem Tag="WEP">WEP (Legacy)</ComboBoxItem>
+                    <ComboBoxItem Tag="None">None (Open network)</ComboBoxItem>
+                </ComboBox>
+
+                <TextBox
+                    Header="Password"
+                    PlaceholderText="Enter the WiFi password"
+                    Text="{x:Bind Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Visibility="{x:Bind PasswordVisibility, Mode=OneWay}" />
+
+                <CheckBox
+                    Content="This is a hidden network"
+                    IsChecked="{x:Bind IsHiddenNetwork, Mode=TwoWay}" />
+
+                <InfoBar
+                    IsOpen="True"
+                    IsClosable="False"
+                    Message="Open networks do not use a password, and many devices will still show the network details before joining."
+                    Severity="Informational"
+                    Title="Open network"
+                    Visibility="{x:Bind OpenNetworkInfoVisibility, Mode=OneWay}" />
+
+                <InfoBar
+                    IsOpen="True"
+                    IsClosable="False"
+                    Message="WEP is obsolete and insecure. Only use it if you need compatibility with very old equipment."
+                    Severity="Warning"
+                    Title="Legacy security"
+                    Visibility="{x:Bind LegacySecurityWarningVisibility, Mode=OneWay}" />
+
+                <InfoBar
+                    IsOpen="True"
+                    IsClosable="False"
+                    Message="Anyone who scans or photographs this QR Code can recover the WiFi credentials. Newer iPhone and Android devices usually recognize it, but older cameras and some third-party scanners may only show the raw text."
+                    Severity="Warning"
+                    Title="Before you share this"
+                    Visibility="Visible" />
+
+                <TextBox
+                    MinHeight="72"
+                    AcceptsReturn="True"
+                    Header="Preview"
+                    IsReadOnly="True"
+                    Text="{x:Bind PreviewWifiPayload, Mode=OneWay}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</ContentDialog>

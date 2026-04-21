@@ -310,11 +310,24 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         if (string.IsNullOrWhiteSpace(InfoBarMessage))
             return;
 
+        bool isVCard = VCardBuilderHelper.IsVCard(InfoBarMessage);
+        bool isWifi = WifiBuilderHelper.IsWifi(InfoBarMessage);
+        QrContentKind contentKind = isVCard
+            ? QrContentKind.VCard
+            : isWifi
+                ? QrContentKind.WiFi
+                : QrContentKind.PlainText;
+        MultiLineCodeMode? overrideMode = contentKind == QrContentKind.PlainText
+            ? null
+            : MultiLineCodeMode.MultilineOneCode;
+
         // Create a new HistoryItem with the decoded text, preserving other state if available
         HistoryItem editHistoryItem = navigationHistoryItem != null
             ? new HistoryItem
             {
                 CodesContent = InfoBarMessage,
+                ContentKind = contentKind,
+                MultiLineCodeModeOverride = overrideMode,
                 Foreground = navigationHistoryItem.Foreground,
                 Background = navigationHistoryItem.Background,
                 ErrorCorrection = navigationHistoryItem.ErrorCorrection,
@@ -324,7 +337,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
                 LogoSizePercentage = navigationHistoryItem.LogoSizePercentage,
                 LogoPaddingPixels = navigationHistoryItem.LogoPaddingPixels,
             }
-            : new HistoryItem { CodesContent = InfoBarMessage };
+            : new HistoryItem
+            {
+                CodesContent = InfoBarMessage,
+                ContentKind = contentKind,
+                MultiLineCodeModeOverride = overrideMode,
+            };
 
         NavigationService.NavigateTo(typeof(MainViewModel).FullName!, editHistoryItem);
     }

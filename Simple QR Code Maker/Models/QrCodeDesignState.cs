@@ -6,6 +6,10 @@ public sealed record QrCodeDesignState
 {
     public required string CodesContent { get; init; }
 
+    public QrContentKind ContentKind { get; init; } = QrContentKind.PlainText;
+
+    public MultiLineCodeMode? MultiLineCodeModeOverride { get; init; }
+
     public required Windows.UI.Color Foreground { get; init; }
 
     public required Windows.UI.Color Background { get; init; }

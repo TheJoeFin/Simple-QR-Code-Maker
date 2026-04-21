@@ -123,9 +123,9 @@
                     x:Name="LoadingProgressRing"
                     Width="36"
                     Height="36"
-                    IsActive="False"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center" />
+                    VerticalAlignment="Center"
+                    IsActive="False" />
             </Grid>
 
         </Grid>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="Simple_QR_Code_Maker.Controls.UrlBuilderDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Simple_QR_Code_Maker.Models"
+    Title="Build URL"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonText="Apply"
+    mc:Ignorable="d">
+
+    <ScrollViewer
+        x:Name="DialogScrollViewer"
+        MaxHeight="640"
+        HorizontalScrollBarVisibility="Disabled"
+        HorizontalScrollMode="Disabled"
+        VerticalScrollBarVisibility="Auto">
+        <Border
+            Width="{Binding ElementName=DialogScrollViewer,
+                            Path=ActualWidth}"
+            MinWidth="420"
+            Padding="0,0,12,0">
+            <StackPanel HorizontalAlignment="Stretch" Spacing="12">
+                <Grid ColumnSpacing="8" Visibility="{x:Bind LineNavigationVisibility, Mode=OneWay}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        Grid.Column="0"
+                        AccessKey="P"
+                        Command="{x:Bind GoToPreviousLineCommand}"
+                        IsEnabled="{x:Bind CanGoPrevious,
+                                           Mode=OneWay}"
+                        ToolTipService.ToolTip="Go to the previous line">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <SymbolIcon Symbol="Back" />
+                            <TextBlock Text="Previous" />
+                        </StackPanel>
+                    </Button>
+                    <TextBlock
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Text="{x:Bind CurrentLineLabel,
+                                      Mode=OneWay}" />
+                    <Button
+                        Grid.Column="2"
+                        HorizontalAlignment="Right"
+                        AccessKey="N"
+                        Command="{x:Bind GoToNextLineCommand}"
+                        IsEnabled="{x:Bind CanGoNext,
+                                           Mode=OneWay}"
+                        ToolTipService.ToolTip="Go to the next line">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="Next" />
+                            <SymbolIcon Symbol="Forward" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
+                <TextBox
+                    x:Name="SchemeTextBox"
+                    Header="Scheme"
+                    PlaceholderText="https"
+                    Text="{x:Bind Scheme,
+                                  Mode=TwoWay,
+                                  UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox
+                    x:Name="AuthorityTextBox"
+                    Header="Authority / host"
+                    PlaceholderText="example.com"
+                    Text="{x:Bind Authority,
+                                  Mode=TwoWay,
+                                  UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox
+                    Header="Path"
+                    PlaceholderText="/products/qr codes"
+                    Text="{x:Bind Path,
+                                  Mode=TwoWay,
+                                  UpdateSourceTrigger=PropertyChanged}" />
+
+                <StackPanel Spacing="8">
+                    <TextBlock
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Text="Query parameters" />
+                    <Button
+                        HorizontalAlignment="Left"
+                        Command="{x:Bind AddQueryParameterCommand}"
+                        ToolTipService.ToolTip="Add a query parameter">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <SymbolIcon Symbol="Add" />
+                            <TextBlock Text="Add parameter" />
+                        </StackPanel>
+                    </Button>
+
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="No query parameters yet"
+                        Visibility="{x:Bind EmptyQueryParametersVisibility,
+                                            Mode=OneWay}" />
+
+                    <ItemsControl HorizontalAlignment="Stretch" ItemsSource="{x:Bind QueryParameters, Mode=OneWay}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:UrlBuilderQueryParameter">
+                                <Grid
+                                    Margin="0,0,0,8"
+                                    HorizontalAlignment="Stretch"
+                                    ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox
+                                        Grid.Column="0"
+                                        Header="Name"
+                                        PlaceholderText="utm_source"
+                                        Text="{x:Bind Name,
+                                                      Mode=TwoWay,
+                                                      UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBox
+                                        Grid.Column="1"
+                                        Header="Value"
+                                        PlaceholderText="newsletter"
+                                        Text="{x:Bind Value,
+                                                      Mode=TwoWay,
+                                                      UpdateSourceTrigger=PropertyChanged}" />
+                                    <HyperlinkButton
+                                        Grid.Column="2"
+                                        Margin="0,22,0,0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        Tag="{x:Bind}"
+                                        Click="RemoveQueryParameterButton_Click"
+                                        ToolTipService.ToolTip="Remove parameter">
+                                        <SymbolIcon Symbol="Delete" />
+                                    </HyperlinkButton>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <TextBox
+                    Header="Fragment"
+                    PlaceholderText="section-1"
+                    Text="{x:Bind Fragment,
+                                  Mode=TwoWay,
+                                  UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox
+                    MinHeight="72"
+                    AcceptsReturn="True"
+                    Header="Preview"
+                    IsReadOnly="True"
+                    Text="{x:Bind PreviewUrl,
+                                  Mode=OneWay}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</ContentDialog>

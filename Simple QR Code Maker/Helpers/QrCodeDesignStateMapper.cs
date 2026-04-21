@@ -9,6 +9,8 @@ public static class QrCodeDesignStateMapper
         return new QrCodeDesignState
         {
             CodesContent = historyItem.CodesContent,
+            ContentKind = historyItem.ContentKind,
+            MultiLineCodeModeOverride = historyItem.MultiLineCodeModeOverride,
             Foreground = historyItem.Foreground,
             Background = historyItem.Background,
             ErrorCorrection = historyItem.ErrorCorrection,
@@ -25,6 +27,8 @@ public static class QrCodeDesignStateMapper
         return new HistoryItem
         {
             CodesContent = state.CodesContent,
+            ContentKind = state.ContentKind,
+            MultiLineCodeModeOverride = state.MultiLineCodeModeOverride,
             Foreground = state.Foreground,
             Background = state.Background,
             ErrorCorrection = state.ErrorCorrection,
