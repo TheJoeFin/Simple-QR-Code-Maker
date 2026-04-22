@@ -1624,6 +1624,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [RelayCommand(CanExecute = nameof(CanRunBulkSaveOperation))]
     private async Task Print()
     {
+        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
+        if (requestedCodes.Length == 0)
+            return;
+
         PrintJobSettings initialSettings = new()
         {
             CodesPerPage = await LocalSettingsService.ReadSettingAsync<int?>("PrintCodesPerPage") ?? 4,
@@ -1631,7 +1635,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             ShowLabels = await LocalSettingsService.ReadSettingAsync<bool?>("PrintShowLabels") ?? true,
         };
 
-        Controls.PrintSettingsDialog dialog = new(initialSettings)
+        using QrRenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+
+        Controls.PrintSettingsDialog dialog = new(printService, requestedCodes, renderSettings, initialSettings)
         {
             XamlRoot = App.MainWindow.Content.XamlRoot,
         };
@@ -1644,21 +1650,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         await LocalSettingsService.SaveSettingAsync("PrintCodesPerPage", settings.CodesPerPage);
         await LocalSettingsService.SaveSettingAsync("PrintMarginMm", settings.MarginMm);
         await LocalSettingsService.SaveSettingAsync("PrintShowLabels", settings.ShowLabels);
-
-        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
-        if (requestedCodes.Length == 0)
-            return;
-
-        using QrRenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
-
-        try
-        {
-            await printService.PrintQrCodesAsync(requestedCodes, renderSettings, settings);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Print failed: {ex.Message}");
-        }
     }
 
     [RelayCommand]

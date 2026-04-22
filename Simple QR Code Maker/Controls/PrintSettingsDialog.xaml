@@ -11,33 +11,102 @@
     PrimaryButtonText="Print"
     mc:Ignorable="d">
 
-    <StackPanel MinWidth="300" Spacing="16">
+    <Grid MinWidth="960" MinHeight="640" ColumnSpacing="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <ComboBox
-            x:Name="CodesPerPageCombo"
-            Header="Codes per page"
-            HorizontalAlignment="Stretch">
-            <ComboBoxItem Content="1 per page" Tag="1" />
-            <ComboBoxItem Content="2 per page" Tag="2" />
-            <ComboBoxItem Content="4 per page" Tag="4" />
-            <ComboBoxItem Content="6 per page" Tag="6" />
-            <ComboBoxItem Content="9 per page" Tag="9" />
-            <ComboBoxItem Content="12 per page" Tag="12" />
-        </ComboBox>
+        <StackPanel Grid.Column="0" Spacing="16">
+            <TextBlock
+                Style="{StaticResource BodyStrongTextBlockStyle}"
+                Text="Preview updates automatically" />
 
-        <NumberBox
-            x:Name="MarginMmBox"
-            Header="Margin (mm)"
-            Maximum="50"
-            Minimum="0"
-            SmallChange="1"
-            SpinButtonPlacementMode="Compact" />
+            <ComboBox
+                x:Name="CodesPerPageCombo"
+                Header="Codes per page"
+                HorizontalAlignment="Stretch"
+                SelectionChanged="CodesPerPageCombo_SelectionChanged">
+                <ComboBoxItem Content="1 per page" Tag="1" />
+                <ComboBoxItem Content="2 per page" Tag="2" />
+                <ComboBoxItem Content="4 per page" Tag="4" />
+                <ComboBoxItem Content="6 per page" Tag="6" />
+                <ComboBoxItem Content="9 per page" Tag="9" />
+                <ComboBoxItem Content="12 per page" Tag="12" />
+            </ComboBox>
 
-        <ToggleSwitch
-            x:Name="ShowLabelsSwitch"
-            Header="Show labels below codes"
-            OffContent="Off"
-            OnContent="On" />
+            <NumberBox
+                x:Name="MarginMmBox"
+                Header="Margin (mm)"
+                Maximum="50"
+                Minimum="0"
+                SmallChange="1"
+                SpinButtonPlacementMode="Compact"
+                ValueChanged="MarginMmBox_ValueChanged" />
 
-    </StackPanel>
+            <ToggleSwitch
+                x:Name="ShowLabelsSwitch"
+                Header="Show labels below codes"
+                OffContent="Off"
+                OnContent="On"
+                Toggled="ShowLabelsSwitch_Toggled" />
+
+            <TextBlock
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Text="The preview PDF is regenerated whenever these options change." />
+        </StackPanel>
+
+        <Grid Grid.Column="1">
+            <Border
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="8">
+                <ScrollViewer
+                    x:Name="PreviewScrollViewer"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Auto">
+                    <StackPanel
+                        x:Name="PreviewPagesPanel"
+                        HorizontalAlignment="Center"
+                        Spacing="16" />
+                </ScrollViewer>
+            </Border>
+
+            <StackPanel
+                x:Name="PreviewLoadingPanel"
+                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                Margin="24"
+                HorizontalAlignment="Center"
+                MaxWidth="360"
+                Spacing="12"
+                VerticalAlignment="Center">
+                <ProgressRing IsActive="True" />
+                <TextBlock
+                    Text="Updating PDF preview..."
+                    TextAlignment="Center"
+                    TextWrapping="WrapWholeWords" />
+            </StackPanel>
+
+            <StackPanel
+                x:Name="PreviewErrorPanel"
+                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                Margin="24"
+                HorizontalAlignment="Center"
+                MaxWidth="360"
+                Spacing="12"
+                VerticalAlignment="Center"
+                Visibility="Collapsed">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    Glyph="&#xEA39;" />
+                <TextBlock
+                    x:Name="PreviewErrorTextBlock"
+                    TextAlignment="Center"
+                    TextWrapping="WrapWholeWords" />
+            </StackPanel>
+        </Grid>
+    </Grid>
 </ContentDialog>
