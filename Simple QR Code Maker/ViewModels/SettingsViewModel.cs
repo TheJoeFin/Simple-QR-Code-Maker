@@ -49,6 +49,12 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     public partial bool ShowSaveBothButton { get; set; } = false;
 
     [ObservableProperty]
+    public partial bool ShowPrintButton { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool ShowZipSaveOptions { get; set; } = true;
+
+    [ObservableProperty]
     public partial double MinSizeScanDistanceScaleFactor { get; set; } = 1.0;
 
     [ObservableProperty]
@@ -158,6 +164,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         await SaveSingleSettingAsync(nameof(WarnWhenNotUrl), WarnWhenNotUrl);
         await SaveSingleSettingAsync(nameof(HideMinimumSizeText), HideMinimumSizeText);
         await SaveSingleSettingAsync(nameof(ShowSaveBothButton), ShowSaveBothButton);
+        await SaveSingleSettingAsync(nameof(ShowPrintButton), ShowPrintButton);
+        await SaveSingleSettingAsync(nameof(ShowZipSaveOptions), ShowZipSaveOptions);
         await SaveSingleSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
         await SaveSingleSettingAsync(nameof(QrPaddingModules), QrPaddingModules);
         await SaveSingleSettingAsync(nameof(QuickSaveLocation), QuickSaveLocation);
@@ -202,6 +210,16 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     }
 
     partial void OnShowSaveBothButtonChanged(bool value)
+    {
+        RestartDebounceTimer();
+    }
+
+    partial void OnShowPrintButtonChanged(bool value)
+    {
+        RestartDebounceTimer();
+    }
+
+    partial void OnShowZipSaveOptionsChanged(bool value)
     {
         RestartDebounceTimer();
     }
@@ -804,6 +822,12 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
             await LoadSettingAsync(nameof(ShowSaveBothButton), async () =>
                 ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton)));
+
+            await LoadSettingAsync(nameof(ShowPrintButton), async () =>
+                ShowPrintButton = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowPrintButton)) ?? true);
+
+            await LoadSettingAsync(nameof(ShowZipSaveOptions), async () =>
+                ShowZipSaveOptions = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowZipSaveOptions)) ?? true);
 
             await LoadSettingAsync(nameof(MinSizeScanDistanceScaleFactor), async () =>
             {

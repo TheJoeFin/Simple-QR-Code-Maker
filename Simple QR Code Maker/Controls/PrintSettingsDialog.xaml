@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="Simple_QR_Code_Maker.Controls.PrintSettingsDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Print Settings"
+    Width="760"
+    MinWidth="720"
+    MaxHeight="900"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonText="Print"
+    mc:Ignorable="d">
+
+    <ScrollViewer
+        x:Name="DialogScrollViewer"
+        HorizontalScrollBarVisibility="Disabled"
+        HorizontalScrollMode="Disabled"
+        VerticalScrollBarVisibility="Auto"
+        VerticalScrollMode="Auto"
+        ZoomMode="Disabled">
+        <StackPanel Spacing="16">
+            <Border
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <StackPanel Padding="16" Spacing="12">
+                    <Grid ColumnSpacing="12" RowSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <ComboBox
+                            x:Name="QuickPresetCombo"
+                            Grid.Row="0"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Stretch"
+                            Header="Quick setup"
+                            SelectionChanged="QuickPresetCombo_SelectionChanged">
+                            <ComboBoxItem Content="Custom" />
+                            <ComboBoxItem Content="Product labels" />
+                            <ComboBoxItem Content="Flyers or handouts" />
+                            <ComboBoxItem Content="Table tents or menus" />
+                            <ComboBoxItem Content="Posters or signs" />
+                        </ComboBox>
+
+                        <TextBlock
+                            x:Name="QuickPresetDescriptionTextBlock"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Choose a common QR printing scenario or keep the layout fully custom."
+                            TextWrapping="WrapWholeWords" />
+
+                        <ComboBox
+                            x:Name="CodesPerPageCombo"
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            HorizontalAlignment="Stretch"
+                            Header="Codes per page"
+                            SelectionChanged="CodesPerPageCombo_SelectionChanged">
+                            <ComboBoxItem Content="As many fit" Tag="fit" />
+                            <ComboBoxItem Content="1 per page" Tag="1" />
+                            <ComboBoxItem Content="2 per page" Tag="2" />
+                            <ComboBoxItem Content="4 per page" Tag="4" />
+                            <ComboBoxItem Content="6 per page" Tag="6" />
+                            <ComboBoxItem Content="9 per page" Tag="9" />
+                            <ComboBoxItem Content="12 per page" Tag="12" />
+                            <ComboBoxItem Content="16 per page" Tag="16" />
+                        </ComboBox>
+
+                        <ComboBox
+                            x:Name="PageTypeCombo"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            HorizontalAlignment="Stretch"
+                            Header="Page type"
+                            SelectionChanged="PageTypeCombo_SelectionChanged">
+                            <ComboBoxItem Content="Letter" />
+                            <ComboBoxItem Content="Legal" />
+                            <ComboBoxItem Content="Statement" />
+                            <ComboBoxItem Content="Executive" />
+                            <ComboBoxItem Content="Tabloid" />
+                            <ComboBoxItem Content="Ledger" />
+                            <ComboBoxItem Content="A3" />
+                            <ComboBoxItem Content="A4" />
+                            <ComboBoxItem Content="A5" />
+                            <ComboBoxItem Content="B4" />
+                            <ComboBoxItem Content="B5" />
+                        </ComboBox>
+
+                        <ComboBox
+                            x:Name="PageLayoutCombo"
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            HorizontalAlignment="Stretch"
+                            Header="Page layout"
+                            SelectionChanged="PageLayoutCombo_SelectionChanged">
+                            <ComboBoxItem Content="Portrait" />
+                            <ComboBoxItem Content="Landscape" />
+                        </ComboBox>
+
+                        <ToggleSwitch
+                            x:Name="ShowLabelsSwitch"
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Header="Show labels"
+                            OffContent="Off"
+                            OnContent="On"
+                            Toggled="ShowLabelsSwitch_Toggled" />
+                    </Grid>
+
+                    <Grid ColumnSpacing="12" RowSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <NumberBox
+                            x:Name="CodeSizeMmBox"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Header="QR size (mm)"
+                            Maximum="250"
+                            Minimum="5"
+                            SmallChange="1"
+                            SpinButtonPlacementMode="Compact"
+                            ValueChanged="CodeSizeMmBox_ValueChanged" />
+
+                        <NumberBox
+                            x:Name="SpacingMmBox"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Header="Spacing (mm)"
+                            Maximum="25"
+                            Minimum="0"
+                            SmallChange="1"
+                            SpinButtonPlacementMode="Compact"
+                            ValueChanged="SpacingMmBox_ValueChanged" />
+
+                        <NumberBox
+                            x:Name="MarginMmBox"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Header="Page margin (mm)"
+                            Maximum="50"
+                            Minimum="0"
+                            SmallChange="1"
+                            SpinButtonPlacementMode="Compact"
+                            ValueChanged="MarginMmBox_ValueChanged" />
+                    </Grid>
+
+
+                </StackPanel>
+            </Border>
+
+            <Grid RowSpacing="12">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="Preview" />
+
+                    <StackPanel
+                        Grid.Column="1"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <Button Click="FitPreviewButton_Click" Content="Fit width" />
+                        <Button Click="ZoomOutButton_Click" Content="-" />
+                        <TextBlock
+                            x:Name="PreviewZoomTextBlock"
+                            MinWidth="56"
+                            VerticalAlignment="Center"
+                            HorizontalTextAlignment="Center"
+                            Text="100%" />
+                        <Button Click="ZoomInButton_Click" Content="+" />
+                    </StackPanel>
+                </Grid>
+
+                <Border
+                    Grid.Row="1"
+                    Padding="8"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <ScrollViewer
+                        x:Name="PreviewScrollViewer"
+                        VerticalAlignment="Top"
+                        HorizontalScrollBarVisibility="Auto"
+                        HorizontalScrollMode="Enabled"
+                        MaxZoomFactor="4"
+                        MinZoomFactor="0.25"
+                        SizeChanged="PreviewScrollViewer_SizeChanged"
+                        VerticalScrollBarVisibility="Disabled"
+                        VerticalScrollMode="Disabled"
+                        ViewChanged="PreviewScrollViewer_ViewChanged"
+                        ZoomMode="Enabled">
+                        <StackPanel
+                            x:Name="PreviewPagesPanel"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            Spacing="16" />
+                    </ScrollViewer>
+                </Border>
+
+                <StackPanel
+                    x:Name="PreviewLoadingPanel"
+                    Grid.Row="1"
+                    MaxWidth="360"
+                    Margin="24"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                    Spacing="12">
+                    <ProgressRing IsActive="True" />
+                    <TextBlock
+                        Text="Updating PDF preview..."
+                        TextAlignment="Center"
+                        TextWrapping="WrapWholeWords" />
+                </StackPanel>
+
+                <StackPanel
+                    x:Name="PreviewErrorPanel"
+                    Grid.Row="1"
+                    MaxWidth="360"
+                    Margin="24"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                    Spacing="12"
+                    Visibility="Collapsed">
+                    <FontIcon
+                        HorizontalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        Glyph="&#xEA39;" />
+                    <TextBlock
+                        x:Name="PreviewErrorTextBlock"
+                        TextAlignment="Center"
+                        TextWrapping="WrapWholeWords" />
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</ContentDialog>

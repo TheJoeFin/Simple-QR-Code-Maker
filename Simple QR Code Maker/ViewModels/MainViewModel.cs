@@ -58,6 +58,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [NotifyCanExecuteChangedFor(nameof(CopySvgToClipboardCommand))]
     [NotifyCanExecuteChangedFor(nameof(CopySvgTextToClipboardCommand))]
     [NotifyCanExecuteChangedFor(nameof(CopyBothToClipboardCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PrintCommand))]
     public partial int RequestedCodeCount { get; set; }
 
     [ObservableProperty]
@@ -87,6 +88,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     [NotifyCanExecuteChangedFor(nameof(CopySvgToClipboardCommand))]
     [NotifyCanExecuteChangedFor(nameof(CopySvgTextToClipboardCommand))]
     [NotifyCanExecuteChangedFor(nameof(CopyBothToClipboardCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PrintCommand))]
     public partial bool IsBulkOperationRunning { get; set; }
 
     [ObservableProperty]
@@ -174,6 +176,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     public partial bool ShowSaveBothButton { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool ShowPrintButton { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool ShowZipSaveOptions { get; set; } = true;
 
     [ObservableProperty]
     public partial bool CanPasteText { get; set; } = false;
@@ -738,6 +746,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private readonly IHistoryService historyService;
     private readonly ILogoService logoService;
     private readonly IQrExportService qrExportService;
+    private readonly IPrintService printService;
 
     public MainViewModel(
         INavigationService navigationService,
@@ -745,7 +754,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         IBrandService brandService,
         IHistoryService historyService,
         ILogoService logoService,
-        IQrExportService qrExportService)
+        IQrExportService qrExportService,
+        IPrintService printService)
     {
         debounceTimer.Interval = TimeSpan.FromMilliseconds(600);
         debounceTimer.Tick -= DebounceTimer_Tick;
@@ -766,6 +776,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         this.historyService = historyService;
         this.logoService = logoService;
         this.qrExportService = qrExportService;
+        this.printService = printService;
 
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
         Clipboard.ContentChanged += Clipboard_ContentChanged;
@@ -1121,6 +1132,27 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         await LocalSettingsService.SaveSettingAsync(nameof(UseSingleCodeForVCardByDefault), isEnabled);
         OnPropertyChanged(nameof(UseSingleCodeForCurrentDocument));
         RefreshCodesFromMultiLineOptionChange();
+    }
+
+    [RelayCommand]
+    private async Task ToggleSaveBothButtonVisibility()
+    {
+        ShowSaveBothButton = !ShowSaveBothButton;
+        await LocalSettingsService.SaveSettingAsync(nameof(ShowSaveBothButton), ShowSaveBothButton);
+    }
+
+    [RelayCommand]
+    private async Task TogglePrintButtonVisibility()
+    {
+        ShowPrintButton = !ShowPrintButton;
+        await LocalSettingsService.SaveSettingAsync(nameof(ShowPrintButton), ShowPrintButton);
+    }
+
+    [RelayCommand]
+    private async Task ToggleZipSaveOptionsVisibility()
+    {
+        ShowZipSaveOptions = !ShowZipSaveOptions;
+        await LocalSettingsService.SaveSettingAsync(nameof(ShowZipSaveOptions), ShowZipSaveOptions);
     }
 
     [RelayCommand]
@@ -1616,6 +1648,47 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             new RequestShowMessage("Brand updated", $"\"{edited.Name}\" has been updated", InfoBarSeverity.Success));
     }
 
+    [RelayCommand(CanExecute = nameof(CanRunBulkSaveOperation))]
+    private async Task Print()
+    {
+        RequestedQrCodeItem[] requestedCodes = GetRequestedCodeSnapshot();
+        if (requestedCodes.Length == 0)
+            return;
+
+        PrintJobSettings initialSettings = new PrintJobSettings()
+        {
+            CodesPerPage = await LocalSettingsService.ReadSettingAsync<int?>("PrintCodesPerPage") ?? PrintJobSettings.DefaultCodesPerPage,
+            PageType = await LocalSettingsService.ReadSettingAsync<PrintPageType?>("PrintPageType") ?? PrintPageTypeHelper.GetRegionalDefault(),
+            PageLayout = await LocalSettingsService.ReadSettingAsync<PrintPageLayout?>("PrintPageLayout") ?? PrintJobSettings.DefaultPageLayout,
+            MarginMm = await LocalSettingsService.ReadSettingAsync<double?>("PrintMarginMm") ?? PrintJobSettings.DefaultMarginMm,
+            CodeSizeMm = await LocalSettingsService.ReadSettingAsync<double?>("PrintCodeSizeMm") ?? PrintJobSettings.DefaultCodeSizeMm,
+            SpacingMm = await LocalSettingsService.ReadSettingAsync<double?>("PrintSpacingMm") ?? PrintJobSettings.DefaultSpacingMm,
+            ShowLabels = await LocalSettingsService.ReadSettingAsync<bool?>("PrintShowLabels") ?? PrintJobSettings.DefaultShowLabels,
+            FitAsManyAsPossible = await LocalSettingsService.ReadSettingAsync<bool?>("PrintFitAsManyAsPossible") ?? PrintJobSettings.DefaultFitAsManyAsPossible,
+        }.Normalize();
+
+        using QrRenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
+
+        Controls.PrintSettingsDialog dialog = new(printService, requestedCodes, renderSettings, initialSettings)
+        {
+            XamlRoot = App.MainWindow.Content.XamlRoot,
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+        if (result != ContentDialogResult.Primary)
+            return;
+
+        PrintJobSettings settings = dialog.ResultSettings;
+        await LocalSettingsService.SaveSettingAsync("PrintCodesPerPage", settings.CodesPerPage);
+        await LocalSettingsService.SaveSettingAsync("PrintPageType", settings.PageType);
+        await LocalSettingsService.SaveSettingAsync("PrintPageLayout", settings.PageLayout);
+        await LocalSettingsService.SaveSettingAsync("PrintMarginMm", settings.MarginMm);
+        await LocalSettingsService.SaveSettingAsync("PrintCodeSizeMm", settings.CodeSizeMm);
+        await LocalSettingsService.SaveSettingAsync("PrintSpacingMm", settings.SpacingMm);
+        await LocalSettingsService.SaveSettingAsync("PrintShowLabels", settings.ShowLabels);
+        await LocalSettingsService.SaveSettingAsync("PrintFitAsManyAsPossible", settings.FitAsManyAsPossible);
+    }
+
     [RelayCommand]
     private void OpenFile() => NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!, CreateCurrentStateHistoryItem());
 
@@ -2034,6 +2107,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
         ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton));
+        ShowPrintButton = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowPrintButton)) ?? true;
+        ShowZipSaveOptions = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowZipSaveOptions)) ?? true;
         QuickSaveLocation = await LocalSettingsService.ReadSettingAsync<string>(nameof(QuickSaveLocation)) ?? string.Empty;
         MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
         QrPaddingModules = BarcodeHelpers.NormalizeQrPaddingModules(

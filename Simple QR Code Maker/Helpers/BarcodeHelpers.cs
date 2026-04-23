@@ -317,6 +317,43 @@ public static partial class BarcodeHelpers
         return (slope * contrastRatio) + yIntercept;
     }
 
+    public static bool TryGetMinimumRecommendedSideMillimeters(
+        double distance,
+        int numberOfBlocks,
+        Windows.UI.Color foreground,
+        Windows.UI.Color background,
+        out double minimumSideMillimeters,
+        double qrPaddingModules = 2.0)
+    {
+        minimumSideMillimeters = 0;
+
+        if (foreground.A < 255 || background.A < 255)
+        {
+            return false;
+        }
+
+        if (!IsSizeRecommendationAvailableForPadding(qrPaddingModules))
+        {
+            return false;
+        }
+
+        double smallestSideInches = SmallestCodeSide(distance, numberOfBlocks, qrPaddingModules);
+        if (smallestSideInches == 0)
+        {
+            return false;
+        }
+
+        double contrastRatio = ColorHelpers.GetContrastRatio(foreground, background);
+        if (contrastRatio < 2.5)
+        {
+            return false;
+        }
+
+        double fractionalLoss = ContrastRatioLossFrac(contrastRatio);
+        minimumSideMillimeters = (smallestSideInches / fractionalLoss) * 25.4;
+        return true;
+    }
+
     public static QrCodeSizeRecommendation GetSizeRecommendation(double distance, int numberOfBlocks, Windows.UI.Color foreground, Windows.UI.Color background, double qrPaddingModules = 2.0)
     {
         if (foreground.A < 255 || background.A < 255)
@@ -353,18 +390,22 @@ public static partial class BarcodeHelpers
                 "Color contrast too low");
         }
 
-        double fractionalLoss = ContrastRatioLossFrac(contrastRatio);
-
-        smallestSide /= fractionalLoss;
+        if (!TryGetMinimumRecommendedSideMillimeters(distance, numberOfBlocks, foreground, background, out double minimumSideMillimeters, qrPaddingModules))
+        {
+            return new QrCodeSizeRecommendation(
+                QrCodeSizeRecommendationKind.Error,
+                "Error at selected max distance.");
+        }
 
         if (!isMetric)
         {
+            double smallestSideInches = minimumSideMillimeters / 25.4;
             return new QrCodeSizeRecommendation(
                 QrCodeSizeRecommendationKind.Exact,
-                $"{smallestSide:F2} x {smallestSide:F2} in");
+                $"{smallestSideInches:F2} x {smallestSideInches:F2} in");
         }
 
-        double smallestSideCm = smallestSide * 2.54;
+        double smallestSideCm = minimumSideMillimeters / 10.0;
         return new QrCodeSizeRecommendation(
             QrCodeSizeRecommendationKind.Exact,
             $"{smallestSideCm:F2} x {smallestSideCm:F2} cm");

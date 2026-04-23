@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <UserControl
     x:Class="Simple_QR_Code_Maker.Controls.QrExportActionsControl"
-    x:Name="Root"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:Simple_QR_Code_Maker.Converters"
@@ -9,6 +8,7 @@
     xmlns:local="using:Simple_QR_Code_Maker.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
+    x:Name="Root"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -28,9 +28,7 @@
                                 Converter={StaticResource BoolToVisibility},
                                 Mode=OneWay}">
             <TextBlock VerticalAlignment="Center" Text="Save as" />
-            <SplitButton
-                Command="{x:Bind ViewModel.SavePngCommand}"
-                ToolTipService.ToolTip="Save code(s) as PNG files">
+            <SplitButton Command="{x:Bind ViewModel.SavePngCommand}" ToolTipService.ToolTip="Save code(s) as PNG files">
                 <SplitButton.Content>
                     <local:IconAndTextContent ContentText="PNG" Icon="Save" />
                 </SplitButton.Content>
@@ -43,7 +41,10 @@
                         <MenuFlyoutItem
                             Command="{x:Bind ViewModel.SavePngAsZipCommand}"
                             Icon="SaveLocal"
-                            Text="Save all to zip" />
+                            Text="Save all to zip"
+                            Visibility="{x:Bind ViewModel.ShowZipSaveOptions,
+                                                Converter={StaticResource BoolToVisibility},
+                                                Mode=OneWay}" />
                         <MenuFlyoutItem
                             Command="{x:Bind ViewModel.CopyPngToClipboardCommand}"
                             Icon="Copy"
@@ -53,9 +54,7 @@
                     </MenuFlyout>
                 </SplitButton.Flyout>
             </SplitButton>
-            <SplitButton
-                Command="{x:Bind ViewModel.SaveSvgCommand}"
-                ToolTipService.ToolTip="Save code(s) as SVG files">
+            <SplitButton Command="{x:Bind ViewModel.SaveSvgCommand}" ToolTipService.ToolTip="Save code(s) as SVG files">
                 <SplitButton.Content>
                     <local:IconAndTextContent ContentText="SVG" Icon="Save" />
                 </SplitButton.Content>
@@ -68,7 +67,10 @@
                         <MenuFlyoutItem
                             Command="{x:Bind ViewModel.SaveSvgAsZipCommand}"
                             Icon="SaveLocal"
-                            Text="Save all to zip" />
+                            Text="Save all to zip"
+                            Visibility="{x:Bind ViewModel.ShowZipSaveOptions,
+                                                Converter={StaticResource BoolToVisibility},
+                                                Mode=OneWay}" />
                         <MenuFlyoutItem
                             Command="{x:Bind ViewModel.CopySvgToClipboardCommand}"
                             Icon="Copy"
@@ -102,7 +104,10 @@
                         <MenuFlyoutItem
                             Command="{x:Bind ViewModel.SaveBothAsZipCommand}"
                             Icon="SaveLocal"
-                            Text="Save all to zip" />
+                            Text="Save all to zip"
+                            Visibility="{x:Bind ViewModel.ShowZipSaveOptions,
+                                                Converter={StaticResource BoolToVisibility},
+                                                Mode=OneWay}" />
                         <MenuFlyoutItem
                             Command="{x:Bind ViewModel.CopyBothToClipboardCommand}"
                             Icon="Copy"
@@ -112,6 +117,46 @@
                     </MenuFlyout>
                 </SplitButton.Flyout>
             </SplitButton>
+            <Button
+                Command="{x:Bind ViewModel.PrintCommand}"
+                ToolTipService.ToolTip="Print QR code(s)"
+                Visibility="{x:Bind ViewModel.ShowPrintButton,
+                                    Converter={StaticResource BoolToVisibility},
+                                    Mode=OneWay}">
+                <local:IconAndTextContent ContentText="Print" Icon="Print" />
+            </Button>
+            <Button
+                Width="32"
+                Height="32"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                ToolTipService.ToolTip="Quickly show or hide export options">
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <ToggleMenuFlyoutItem
+                            Command="{x:Bind ViewModel.ToggleSaveBothButtonVisibilityCommand}"
+                            IsChecked="{x:Bind ViewModel.ShowSaveBothButton,
+                                               Mode=OneWay}"
+                            Text="Show Save Both button">
+                            <ToggleMenuFlyoutItem.Icon>
+                                <SymbolIcon Symbol="Save" />
+                            </ToggleMenuFlyoutItem.Icon>
+                        </ToggleMenuFlyoutItem>
+                        <ToggleMenuFlyoutItem
+                            Command="{x:Bind ViewModel.TogglePrintButtonVisibilityCommand}"
+                            IsChecked="{x:Bind ViewModel.ShowPrintButton,
+                                               Mode=OneWay}"
+                            Text="Show Print button">
+                            <ToggleMenuFlyoutItem.Icon>
+                                <SymbolIcon Symbol="Print" />
+                            </ToggleMenuFlyoutItem.Icon>
+                        </ToggleMenuFlyoutItem>
+                    </MenuFlyout>
+                </Button.Flyout>
+                <FontIcon Glyph="&#xE712;" />
+            </Button>
             <FontIcon
                 Glyph="&#xE946;"
                 ToolTipService.ToolTip="{x:Bind ViewModel.BulkClipboardRestrictionText,

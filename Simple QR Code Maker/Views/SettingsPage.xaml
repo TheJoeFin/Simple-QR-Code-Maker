@@ -198,6 +198,30 @@
                         OnContent="Showing" />
                 </settingsControls:SettingsCard>
 
+                <settingsControls:SettingsCard Description="Show the Print button with the export actions" Header="Print button">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE749;" />
+                    </settingsControls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.ShowPrintButton,
+                                      Mode=TwoWay,
+                                      UpdateSourceTrigger=PropertyChanged}"
+                        OffContent="Hidden"
+                        OnContent="Showing" />
+                </settingsControls:SettingsCard>
+
+                <settingsControls:SettingsCard Description="Show zip save options in the export menus" Header="Zip save options">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE7B8;" />
+                    </settingsControls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.ShowZipSaveOptions,
+                                      Mode=TwoWay,
+                                      UpdateSourceTrigger=PropertyChanged}"
+                        OffContent="Hidden"
+                        OnContent="Showing" />
+                </settingsControls:SettingsCard>
+
                 <!--  Max scan distance  -->
                 <settingsControls:SettingsCard Description="{x:Bind ViewModel.MaxScanDistanceText, Mode=OneWay}" Header="Max scan distance at minimum size">
                     <settingsControls:SettingsCard.HeaderIcon>
