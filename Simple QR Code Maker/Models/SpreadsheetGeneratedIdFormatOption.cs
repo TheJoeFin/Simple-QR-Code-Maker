@@ -2,9 +2,9 @@ namespace Simple_QR_Code_Maker.Models;
 
 public sealed class SpreadsheetGeneratedIdFormatOption
 {
-    public required string DisplayName { get; init; }
+    public string DisplayName { get; init; } = string.Empty;
 
-    public required SpreadsheetGeneratedIdFormat Format { get; init; }
+    public SpreadsheetGeneratedIdFormat Format { get; init; }
 
     public static IReadOnlyList<SpreadsheetGeneratedIdFormatOption> All { get; } =
     [

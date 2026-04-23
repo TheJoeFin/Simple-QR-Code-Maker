@@ -22,7 +22,11 @@ internal static class PrintLayoutHelper
     internal const double PointsPerInch = 72.0;
     internal const double MillimetersPerInch = 25.4;
     internal const double CellPaddingPoints = 12.0;
-    internal const double LabelHeightPoints = 20.0;
+    internal const double LabelFontSizePoints = 10.0;
+    internal const double MinimumLabelFontSizePoints = 6.0;
+    internal const double LabelLineHeightMultiplier = 1.2;
+    internal const int LabelMaxLineCount = 2;
+    internal const double LabelHeightPoints = LabelFontSizePoints * LabelLineHeightMultiplier * LabelMaxLineCount;
     internal const double LabelSpacingPoints = 6.0;
 
     internal static PrintLayoutMetrics CreateMetrics(PrintJobSettings settings)

@@ -38,11 +38,15 @@
                     TextWrapping="Wrap" />
 
                 <InfoBar
+                    Title="{x:Bind ViewModel.StatusTitle,
+                                   Mode=OneWay}"
                     IsClosable="True"
-                    IsOpen="{x:Bind ViewModel.IsStatusVisible, Mode=TwoWay}"
-                    Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
-                    Severity="{x:Bind ViewModel.StatusSeverity, Mode=OneWay}"
-                    Title="{x:Bind ViewModel.StatusTitle, Mode=OneWay}" />
+                    IsOpen="{x:Bind ViewModel.IsStatusVisible,
+                                    Mode=TwoWay}"
+                    Message="{x:Bind ViewModel.StatusMessage,
+                                     Mode=OneWay}"
+                    Severity="{x:Bind ViewModel.StatusSeverity,
+                                      Mode=OneWay}" />
 
                 <settingsControls:SettingsCard Description="Choose whether the first row should be used as the column names." Header="Header row">
                     <settingsControls:SettingsCard.HeaderIcon>
@@ -66,13 +70,13 @@
                             OffContent=""
                             OnContent="" />
                         <ComboBox
-                            DisplayMemberPath="DisplayName"
+                            MinWidth="220"
                             HorizontalAlignment="Stretch"
+                            DisplayMemberPath="DisplayName"
                             IsEnabled="{x:Bind ViewModel.CanConfigureGeneratedIdFormat,
                                                Mode=OneWay}"
                             ItemsSource="{x:Bind ViewModel.GeneratedIdFormatOptions,
                                                  Mode=OneWay}"
-                            MinWidth="220"
                             SelectedItem="{x:Bind ViewModel.SelectedGeneratedIdFormatOption,
                                                   Mode=TwoWay}" />
                     </StackPanel>
@@ -142,12 +146,12 @@
                 </StackPanel>
 
                 <Button
-                        MinWidth="220"
-                        HorizontalAlignment="Left"
-                        Command="{x:Bind ViewModel.ImportCommand}"
-                        IsEnabled="{x:Bind ViewModel.CanImport,
+                    MinWidth="220"
+                    HorizontalAlignment="Left"
+                    Command="{x:Bind ViewModel.ImportCommand}"
+                    IsEnabled="{x:Bind ViewModel.CanImport,
                                        Mode=OneWay}"
-                        Style="{StaticResource AccentButtonStyle}">
+                    Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <SymbolIcon Symbol="Accept" />
                         <TextBlock Text="{x:Bind ViewModel.ImportButtonText, Mode=OneWay}" />

@@ -471,8 +471,12 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         if (_generatedIds.TryGetValue(sourceRowIndex, out string? existingValue))
             return existingValue;
 
-        SpreadsheetGeneratedIdFormat format = SelectedGeneratedIdFormatOption?.Format ?? SpreadsheetGeneratedIdFormat.Guid;
-        string value = SpreadsheetIdGenerator.Create(format);
+        GeneratedIdOptions options = new()
+        {
+            Format = SelectedGeneratedIdFormatOption?.Format ?? SpreadsheetGeneratedIdFormat.Guid,
+            NanoIdLength = GeneratedIdGenerator.DefaultNanoIdLength,
+        };
+        string value = GeneratedIdGenerator.Create(options);
         _generatedIds[sourceRowIndex] = value;
         return value;
     }
