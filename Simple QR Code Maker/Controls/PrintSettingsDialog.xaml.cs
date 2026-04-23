@@ -218,12 +218,7 @@ public sealed partial class PrintSettingsDialog : ContentDialog
 
             generatedPdfPaths.Add(pdfPath);
             currentPdfPath = pdfPath;
-
-            if (!string.IsNullOrEmpty(previousPdfPath) && previousPdfPath != pdfPath)
-            {
-                generatedPdfPaths.Remove(previousPdfPath);
-                TryDeleteFile(previousPdfPath);
-            }
+            DiscardSupersededPdf(previousPdfPath, pdfPath);
 
             PreviewLoadingPanel.Visibility = Visibility.Collapsed;
             PreviewErrorPanel.Visibility = Visibility.Collapsed;
@@ -231,18 +226,29 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         }
         catch (OperationCanceledException)
         {
-            if (!string.IsNullOrEmpty(pdfPath) && pdfPath != currentPdfPath)
-            {
-                TryDeleteFile(pdfPath);
-            }
+            TryDeleteUncommittedPdf(pdfPath);
         }
         catch (Exception ex)
         {
-            if (!string.IsNullOrEmpty(pdfPath) && pdfPath != currentPdfPath)
-            {
-                TryDeleteFile(pdfPath);
-            }
+            TryDeleteUncommittedPdf(pdfPath);
             ShowPreviewError($"Couldn't generate the PDF preview. {ex.Message}");
+        }
+    }
+
+    private void DiscardSupersededPdf(string? previousPdfPath, string newPdfPath)
+    {
+        if (!string.IsNullOrEmpty(previousPdfPath) && previousPdfPath != newPdfPath)
+        {
+            generatedPdfPaths.Remove(previousPdfPath);
+            TryDeleteFile(previousPdfPath);
+        }
+    }
+
+    private void TryDeleteUncommittedPdf(string? pdfPath)
+    {
+        if (!string.IsNullOrEmpty(pdfPath) && pdfPath != currentPdfPath)
+        {
+            TryDeleteFile(pdfPath);
         }
     }
 
