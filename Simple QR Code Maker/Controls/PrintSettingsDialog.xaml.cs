@@ -6,12 +6,10 @@ using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Diagnostics;
-using System.Globalization;
 using Windows.Data.Pdf;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
-using ZXing.QrCode.Internal;
 
 namespace Simple_QR_Code_Maker.Controls;
 
@@ -32,8 +30,6 @@ public sealed partial class PrintSettingsDialog : ContentDialog
     private readonly IPrintService printService;
     private readonly IReadOnlyList<RequestedQrCodeItem> codes;
     private readonly QrRenderSettingsSnapshot renderSettings;
-    private readonly double maxScanDistanceScaleFactor;
-    private readonly int largestQrDimension;
     private readonly List<string> generatedPdfPaths = [];
     private readonly List<Border> previewPageBorders = [];
     private readonly bool useMetricUnits;
@@ -50,15 +46,12 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         IPrintService printService,
         IReadOnlyList<RequestedQrCodeItem> codes,
         QrRenderSettingsSnapshot renderSettings,
-        PrintJobSettings initialSettings,
-        double maxScanDistanceScaleFactor)
+        PrintJobSettings initialSettings)
     {
         InitializeComponent();
         this.printService = printService;
         this.codes = codes;
         this.renderSettings = renderSettings;
-        this.maxScanDistanceScaleFactor = maxScanDistanceScaleFactor;
-        largestQrDimension = DetermineLargestQrDimension(codes, renderSettings.ErrorCorrectionLevel);
         useMetricUnits = UsesMetricLengths();
         lengthUnitSuffix = useMetricUnits ? "mm" : "in";
 
@@ -68,7 +61,6 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         ApplySettingsToControls(normalizedInitialSettings);
         suppressRefresh = false;
         UpdateQuickPresetSelectionFromControls();
-        UpdatePrintGuidance();
 
         IsPrimaryButtonEnabled = false;
         PrimaryButtonClick += OnPrimaryButtonClick;
@@ -174,7 +166,6 @@ public sealed partial class PrintSettingsDialog : ContentDialog
             return;
 
         UpdateQuickPresetSelectionFromControls();
-        UpdatePrintGuidance();
 
         previewRefreshDebounceCts?.Cancel();
         previewRefreshDebounceCts?.Dispose();
@@ -204,11 +195,21 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         previewCts = new CancellationTokenSource();
         CancellationToken token = previewCts.Token;
 
+        string? pdfPath = null;
+        string? previousPdfPath = currentPdfPath;
+
         ShowPreviewLoading();
 
         try
         {
-            string pdfPath = await printService.GenerateQrPdfAsync(codes, renderSettings, ResultSettings, token);
+            pdfPath = await printService.GenerateQrPdfAsync(codes, renderSettings, ResultSettings, token);
+            if (token.IsCancellationRequested)
+            {
+                TryDeleteFile(pdfPath);
+                return;
+            }
+
+            await RenderPreviewPagesAsync(pdfPath, token);
             if (token.IsCancellationRequested)
             {
                 TryDeleteFile(pdfPath);
@@ -217,19 +218,30 @@ public sealed partial class PrintSettingsDialog : ContentDialog
 
             generatedPdfPaths.Add(pdfPath);
             currentPdfPath = pdfPath;
-            await RenderPreviewPagesAsync(pdfPath, token);
-            if (!token.IsCancellationRequested)
+
+            if (!string.IsNullOrEmpty(previousPdfPath) && previousPdfPath != pdfPath)
             {
-                PreviewLoadingPanel.Visibility = Visibility.Collapsed;
-                PreviewErrorPanel.Visibility = Visibility.Collapsed;
-                IsPrimaryButtonEnabled = true;
+                generatedPdfPaths.Remove(previousPdfPath);
+                TryDeleteFile(previousPdfPath);
             }
+
+            PreviewLoadingPanel.Visibility = Visibility.Collapsed;
+            PreviewErrorPanel.Visibility = Visibility.Collapsed;
+            IsPrimaryButtonEnabled = true;
         }
         catch (OperationCanceledException)
         {
+            if (!string.IsNullOrEmpty(pdfPath) && pdfPath != currentPdfPath)
+            {
+                TryDeleteFile(pdfPath);
+            }
         }
         catch (Exception ex)
         {
+            if (!string.IsNullOrEmpty(pdfPath) && pdfPath != currentPdfPath)
+            {
+                TryDeleteFile(pdfPath);
+            }
             ShowPreviewError($"Couldn't generate the PDF preview. {ex.Message}");
         }
     }
@@ -257,7 +269,7 @@ public sealed partial class PrintSettingsDialog : ContentDialog
                 BackgroundColor = new Color { A = 255, R = 255, G = 255, B = 255 },
             };
 
-            await page.RenderToStreamAsync(renderedStream, renderOptions);
+            await page.RenderToStreamAsync(renderedStream, renderOptions).AsTask(token);
             renderedStream.Seek(0);
 
             BitmapImage bitmap = new();
@@ -446,7 +458,6 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         ApplySettingsToControls(presetSettings);
         suppressRefresh = false;
 
-        UpdatePrintGuidance();
         QueuePreviewRefresh();
     }
 
@@ -551,93 +562,10 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         };
     }
 
-    private void UpdatePrintGuidance()
-    {
-        PrintJobSettings settings = ResultSettings;
-        PrintLayoutMetrics layoutMetrics = PrintLayoutHelper.CreateMetrics(settings);
-        double actualCodeSizeMm = PrintLayoutHelper.PointsToMillimeters(layoutMetrics.ActualCodeSizePoints);
-        double requestedCodeSizeMm = settings.CodeSizeMm;
-        int pageCount = Math.Max(1, (int)Math.Ceiling((double)codes.Count / layoutMetrics.CodesPerPage));
-        bool shrinksRequestedSize = actualCodeSizeMm + ScanSizeToleranceMillimeters < requestedCodeSizeMm;
-
-        LayoutSummaryInfoBar.Severity = shrinksRequestedSize ? InfoBarSeverity.Warning : InfoBarSeverity.Informational;
-        LayoutSummaryTextBlock.Text = settings.FitAsManyAsPossible
-            ? $"This layout fits {layoutMetrics.CodesPerPage} codes per page in a {layoutMetrics.Rows} x {layoutMetrics.Columns} grid and uses {FormatCount(pageCount, "page")}. Each QR prints at {FormatLength(actualCodeSizeMm)}."
-            : $"This layout prints {layoutMetrics.CodesPerPage} codes per page in a {layoutMetrics.Rows} x {layoutMetrics.Columns} grid and uses {FormatCount(pageCount, "page")}. Each QR prints at {FormatLength(actualCodeSizeMm)}.";
-
-        if (shrinksRequestedSize)
-        {
-            LayoutSummaryTextBlock.Text += $" The requested size of {FormatLength(requestedCodeSizeMm)} is reduced to fit the page.";
-        }
-
-        Windows.UI.Color foreground = ToWindowsColor(renderSettings.ForegroundColor);
-        Windows.UI.Color background = ToWindowsColor(renderSettings.BackgroundColor);
-        double scanDistanceInches = 32 * Math.Max(maxScanDistanceScaleFactor, 0.35);
-
-        if (BarcodeHelpers.TryGetMinimumRecommendedSideMillimeters(
-            scanDistanceInches,
-            largestQrDimension,
-            foreground,
-            background,
-            out double recommendedMinimumMillimeters,
-            renderSettings.QrPaddingModules))
-        {
-            bool belowRecommendedSize = actualCodeSizeMm + ScanSizeToleranceMillimeters < recommendedMinimumMillimeters;
-            SizingGuidanceInfoBar.Title = "Scan reliability";
-            SizingGuidanceInfoBar.Severity = belowRecommendedSize
-                ? InfoBarSeverity.Warning
-                : shrinksRequestedSize
-                    ? InfoBarSeverity.Informational
-                    : InfoBarSeverity.Success;
-
-            SizingGuidanceTextBlock.Text = belowRecommendedSize
-                ? $"The densest QR in this job needs about {FormatLength(recommendedMinimumMillimeters)} for the current max scan distance, but this layout prints at {FormatLength(actualCodeSizeMm)}. Increase QR size, reduce codes per page, turn off labels, or use a larger sheet."
-                : shrinksRequestedSize
-                    ? $"The page trims the requested QR size down to {FormatLength(actualCodeSizeMm)}, which still stays above the recommended minimum of {FormatLength(recommendedMinimumMillimeters)} for the densest QR in this job."
-                    : $"The densest QR in this job stays above the recommended minimum of {FormatLength(recommendedMinimumMillimeters)} for the current max scan distance.";
-            return;
-        }
-
-        QrCodeSizeRecommendation recommendation = BarcodeHelpers.GetSizeRecommendation(
-            scanDistanceInches,
-            largestQrDimension,
-            foreground,
-            background,
-            renderSettings.QrPaddingModules);
-
-        SizingGuidanceInfoBar.Title = "Scan guidance";
-        SizingGuidanceInfoBar.Severity = recommendation.Kind is QrCodeSizeRecommendationKind.LowContrast or QrCodeSizeRecommendationKind.Error
-            ? InfoBarSeverity.Warning
-            : InfoBarSeverity.Informational;
-        SizingGuidanceTextBlock.Text = $"{recommendation.Text} This layout prints at {FormatLength(actualCodeSizeMm)}.";
-    }
-
     private string FormatLength(double millimeters)
     {
         double displayValue = ToDisplayLength(millimeters);
         return $"{displayValue:0.##} {lengthUnitSuffix}";
-    }
-
-    private static string FormatCount(int value, string singularNoun) => value == 1
-        ? $"1 {singularNoun}"
-        : $"{value} {singularNoun}s";
-
-    private static int DetermineLargestQrDimension(IReadOnlyList<RequestedQrCodeItem> requestedCodes, ErrorCorrectionLevel errorCorrectionLevel)
-    {
-        int largestDimension = 21;
-
-        foreach (RequestedQrCodeItem requestedCode in requestedCodes)
-        {
-            QRCode qrCode = Encoder.encode(requestedCode.CodeAsText, errorCorrectionLevel);
-            largestDimension = Math.Max(largestDimension, qrCode.Version.DimensionForVersion);
-        }
-
-        return largestDimension;
-    }
-
-    private static Windows.UI.Color ToWindowsColor(System.Drawing.Color color)
-    {
-        return Windows.UI.Color.FromArgb(color.A, color.R, color.G, color.B);
     }
 
     private void ApplyZoomStep(float delta)

@@ -11,7 +11,6 @@ using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Diagnostics;
-using System.Globalization;
 using Windows.Graphics.Printing;
 using Windows.Storage;
 using Windows.Storage.Streams;

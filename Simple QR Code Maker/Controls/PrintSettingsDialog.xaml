@@ -164,29 +164,7 @@
                             ValueChanged="MarginMmBox_ValueChanged" />
                     </Grid>
 
-                    <InfoBar
-                        x:Name="LayoutSummaryInfoBar"
-                        Title="Layout summary"
-                        IsClosable="False"
-                        IsOpen="True"
-                        Severity="Informational"
-                        Visibility="Collapsed">
-                        <InfoBar.Content>
-                            <TextBlock x:Name="LayoutSummaryTextBlock" TextWrapping="WrapWholeWords" />
-                        </InfoBar.Content>
-                    </InfoBar>
 
-                    <InfoBar
-                        x:Name="SizingGuidanceInfoBar"
-                        Title="Scan reliability"
-                        IsClosable="False"
-                        IsOpen="True"
-                        Severity="Informational"
-                        Visibility="Collapsed">
-                        <InfoBar.Content>
-                            <TextBlock x:Name="SizingGuidanceTextBlock" TextWrapping="WrapWholeWords" />
-                        </InfoBar.Content>
-                    </InfoBar>
                 </StackPanel>
             </Border>
 

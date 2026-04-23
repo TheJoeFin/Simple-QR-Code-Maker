@@ -1669,7 +1669,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         using QrRenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
 
-        Controls.PrintSettingsDialog dialog = new(printService, requestedCodes, renderSettings, initialSettings, MinSizeScanDistanceScaleFactor)
+        Controls.PrintSettingsDialog dialog = new(printService, requestedCodes, renderSettings, initialSettings)
         {
             XamlRoot = App.MainWindow.Content.XamlRoot,
         };
