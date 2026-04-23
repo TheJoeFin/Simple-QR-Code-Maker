@@ -1628,16 +1628,21 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (requestedCodes.Length == 0)
             return;
 
-        PrintJobSettings initialSettings = new()
+        PrintJobSettings initialSettings = new PrintJobSettings()
         {
-            CodesPerPage = await LocalSettingsService.ReadSettingAsync<int?>("PrintCodesPerPage") ?? 4,
-            MarginMm = await LocalSettingsService.ReadSettingAsync<double?>("PrintMarginMm") ?? 10,
-            ShowLabels = await LocalSettingsService.ReadSettingAsync<bool?>("PrintShowLabels") ?? true,
-        };
+            CodesPerPage = await LocalSettingsService.ReadSettingAsync<int?>("PrintCodesPerPage") ?? PrintJobSettings.DefaultCodesPerPage,
+            PageType = await LocalSettingsService.ReadSettingAsync<PrintPageType?>("PrintPageType") ?? PrintPageTypeHelper.GetRegionalDefault(),
+            PageLayout = await LocalSettingsService.ReadSettingAsync<PrintPageLayout?>("PrintPageLayout") ?? PrintJobSettings.DefaultPageLayout,
+            MarginMm = await LocalSettingsService.ReadSettingAsync<double?>("PrintMarginMm") ?? PrintJobSettings.DefaultMarginMm,
+            CodeSizeMm = await LocalSettingsService.ReadSettingAsync<double?>("PrintCodeSizeMm") ?? PrintJobSettings.DefaultCodeSizeMm,
+            SpacingMm = await LocalSettingsService.ReadSettingAsync<double?>("PrintSpacingMm") ?? PrintJobSettings.DefaultSpacingMm,
+            ShowLabels = await LocalSettingsService.ReadSettingAsync<bool?>("PrintShowLabels") ?? PrintJobSettings.DefaultShowLabels,
+            FitAsManyAsPossible = await LocalSettingsService.ReadSettingAsync<bool?>("PrintFitAsManyAsPossible") ?? PrintJobSettings.DefaultFitAsManyAsPossible,
+        }.Normalize();
 
         using QrRenderSettingsSnapshot renderSettings = CreateRenderSettingsSnapshot();
 
-        Controls.PrintSettingsDialog dialog = new(printService, requestedCodes, renderSettings, initialSettings)
+        Controls.PrintSettingsDialog dialog = new(printService, requestedCodes, renderSettings, initialSettings, MinSizeScanDistanceScaleFactor)
         {
             XamlRoot = App.MainWindow.Content.XamlRoot,
         };
@@ -1648,8 +1653,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
         PrintJobSettings settings = dialog.ResultSettings;
         await LocalSettingsService.SaveSettingAsync("PrintCodesPerPage", settings.CodesPerPage);
+        await LocalSettingsService.SaveSettingAsync("PrintPageType", settings.PageType);
+        await LocalSettingsService.SaveSettingAsync("PrintPageLayout", settings.PageLayout);
         await LocalSettingsService.SaveSettingAsync("PrintMarginMm", settings.MarginMm);
+        await LocalSettingsService.SaveSettingAsync("PrintCodeSizeMm", settings.CodeSizeMm);
+        await LocalSettingsService.SaveSettingAsync("PrintSpacingMm", settings.SpacingMm);
         await LocalSettingsService.SaveSettingAsync("PrintShowLabels", settings.ShowLabels);
+        await LocalSettingsService.SaveSettingAsync("PrintFitAsManyAsPossible", settings.FitAsManyAsPossible);
     }
 
     [RelayCommand]

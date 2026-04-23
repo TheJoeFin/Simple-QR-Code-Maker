@@ -9,4 +9,8 @@ public interface IPrintService
         QrRenderSettingsSnapshot renderSettings,
         PrintJobSettings printSettings,
         CancellationToken cancellationToken = default);
+
+    Task PrintPdfAsync(
+        string pdfPath,
+        CancellationToken cancellationToken = default);
 }
