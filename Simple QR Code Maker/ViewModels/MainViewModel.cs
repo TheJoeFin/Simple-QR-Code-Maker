@@ -321,6 +321,18 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         UrlText = text;
     }
 
+    private void AppendDocumentText(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return;
+
+        string normalizedText = text.TrimEnd('\r', '\n');
+        string updatedText = string.IsNullOrWhiteSpace(UrlText)
+            ? normalizedText
+            : UrlText + "\r" + normalizedText;
+        ApplyDocumentText(updatedText);
+    }
+
     private void RefreshCodesFromMultiLineOptionChange()
     {
         debounceTimer.Stop();
@@ -1123,6 +1135,19 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
+    private async Task OpenGenerateIdsDialog()
+    {
+        GenerateIdsDialog dialog = new()
+        {
+            XamlRoot = App.MainWindow.Content.XamlRoot
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary && !string.IsNullOrWhiteSpace(dialog.ResultText))
+            AppendDocumentText(dialog.ResultText);
+    }
+
+    [RelayCommand]
     private async Task SetVCardSingleCodeDefault(bool isEnabled)
     {
         multiLineCodeModeOverride = isEnabled
@@ -1213,13 +1238,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         {
             string text = await FileIO.ReadTextAsync(file);
             if (!string.IsNullOrWhiteSpace(text))
-            {
-                text = text.TrimEnd();
-                string updatedText = string.IsNullOrWhiteSpace(UrlText)
-                    ? text
-                    : UrlText + "\r" + text;
-                ApplyDocumentText(updatedText);
-            }
+                AppendDocumentText(text);
         }
         catch (Exception ex)
         {
@@ -1252,10 +1271,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (file is null)
             return;
 
-        List<List<string>> rows;
+        SpreadsheetReadResult spreadsheet;
         try
         {
-            rows = await ExcelSpreadsheetHelper.ReadRowsAsync(file.Path);
+            spreadsheet = await ExcelSpreadsheetHelper.ReadAsync(file.Path);
         }
         catch (InvalidOperationException ex) when (!IsSpreadsheetImportAvailable)
         {
@@ -1276,7 +1295,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        if (rows.Count == 0)
+        if (spreadsheet.Rows.Count == 0)
         {
             CodeInfoBarMessage = "The selected spreadsheet did not contain any data.";
             CodeInfoBarTitle = "Nothing to import";
@@ -1290,8 +1309,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             new SpreadsheetImportNavigationData
             {
                 ReturnState = CreateCurrentStateHistoryItem(),
-                Rows = rows.Select(row => (IReadOnlyList<string>)[.. row]).ToList(),
+                Rows = spreadsheet.Rows,
                 SourceFileName = file.Name,
+                SourceFilePath = file.Path,
             });
     }
 

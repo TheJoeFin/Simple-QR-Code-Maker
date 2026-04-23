@@ -194,36 +194,148 @@ public class PrintService : IPrintService
         if (!settings.ShowLabels)
             return;
 
-        XFont labelFont = new("Arial", 10);
         XRect labelRect = new(
             paddedRect.X,
             paddedRect.Bottom - PrintLayoutHelper.LabelHeightPoints,
             paddedRect.Width,
             PrintLayoutHelper.LabelHeightPoints);
 
-        string trimmedLabel = TrimTextToWidth(graphics, label, labelFont, labelRect.Width);
-        graphics.DrawString(trimmedLabel, labelFont, XBrushes.Black, labelRect, XStringFormats.Center);
+        DrawWrappedLabel(graphics, label, labelRect);
     }
 
-    private static string TrimTextToWidth(XGraphics graphics, string value, XFont font, double availableWidth)
+    private static void DrawWrappedLabel(XGraphics graphics, string value, XRect labelRect)
     {
         if (string.IsNullOrWhiteSpace(value))
-            return string.Empty;
+            return;
 
-        if (graphics.MeasureString(value, font).Width <= availableWidth)
-            return value;
+        double fontSize = GetLabelFontSize(graphics, value, labelRect.Width);
+        XFont labelFont = new("Arial", fontSize);
+        List<string> lines = WrapLabelLines(
+            graphics,
+            value,
+            labelFont,
+            labelRect.Width,
+            PrintLayoutHelper.LabelMaxLineCount,
+            out _);
+        double lineHeight = fontSize * PrintLayoutHelper.LabelLineHeightMultiplier;
+        double totalTextHeight = lines.Count * lineHeight;
+        double top = labelRect.Y + Math.Max((labelRect.Height - totalTextHeight) / 2, 0);
 
-        const string ellipsis = "...";
-        for (int length = value.Length - 1; length > 0; length--)
+        foreach (string line in lines)
         {
-            string candidate = $"{value[..length].TrimEnd()}{ellipsis}";
-            if (graphics.MeasureString(candidate, font).Width <= availableWidth)
-            {
-                return candidate;
-            }
+            XRect lineRect = new(labelRect.X, top, labelRect.Width, lineHeight);
+            graphics.DrawString(line, labelFont, XBrushes.Black, lineRect, XStringFormats.Center);
+            top += lineHeight;
+        }
+    }
+
+    private static double GetLabelFontSize(XGraphics graphics, string value, double availableWidth)
+    {
+        for (double fontSize = PrintLayoutHelper.LabelFontSizePoints;
+             fontSize >= PrintLayoutHelper.MinimumLabelFontSizePoints;
+             fontSize -= 0.5)
+        {
+            XFont font = new("Arial", fontSize);
+            _ = WrapLabelLines(
+                graphics,
+                value,
+                font,
+                availableWidth,
+                PrintLayoutHelper.LabelMaxLineCount,
+                out bool fitsCompletely);
+
+            if (fitsCompletely)
+                return fontSize;
         }
 
-        return ellipsis;
+        return PrintLayoutHelper.MinimumLabelFontSizePoints;
+    }
+
+    private static List<string> WrapLabelLines(
+        XGraphics graphics,
+        string value,
+        XFont font,
+        double availableWidth,
+        int maxLineCount,
+        out bool fitsCompletely)
+    {
+        string normalized = value
+            .Replace("\r\n", " ", StringComparison.Ordinal)
+            .Replace('\r', ' ')
+            .Replace('\n', ' ')
+            .Trim();
+        List<string> lines = [];
+
+        if (string.IsNullOrWhiteSpace(normalized))
+        {
+            fitsCompletely = true;
+            return lines;
+        }
+
+        int start = 0;
+        while (start < normalized.Length && lines.Count < maxLineCount)
+        {
+            while (start < normalized.Length && char.IsWhiteSpace(normalized[start]))
+                start++;
+
+            if (start >= normalized.Length)
+                break;
+
+            int nextBreak = FindWrapBreakIndex(graphics, normalized, start, font, availableWidth);
+            string line = normalized[start..nextBreak].Trim();
+            if (line.Length == 0)
+            {
+                nextBreak = Math.Min(start + 1, normalized.Length);
+                line = normalized[start..nextBreak];
+            }
+
+            lines.Add(line);
+            start = nextBreak;
+        }
+
+        while (start < normalized.Length && char.IsWhiteSpace(normalized[start]))
+            start++;
+
+        fitsCompletely = start >= normalized.Length;
+        return lines;
+    }
+
+    private static int FindWrapBreakIndex(
+        XGraphics graphics,
+        string value,
+        int start,
+        XFont font,
+        double availableWidth)
+    {
+        int lastPreferredBreak = -1;
+
+        for (int index = start + 1; index <= value.Length; index++)
+        {
+            string candidate = value[start..index].TrimEnd();
+            if (candidate.Length == 0)
+                continue;
+
+            if (graphics.MeasureString(candidate, font).Width <= availableWidth)
+            {
+                if (index < value.Length && IsPreferredWrapBoundary(value[index - 1]))
+                    lastPreferredBreak = index;
+
+                continue;
+            }
+
+            if (lastPreferredBreak > start)
+                return lastPreferredBreak;
+
+            return Math.Max(start + 1, index - 1);
+        }
+
+        return value.Length;
+    }
+
+    private static bool IsPreferredWrapBoundary(char character)
+    {
+        return char.IsWhiteSpace(character)
+            || character is '-' or '_' or '/' or '\\' or '.' or '?' or '&' or '=';
     }
 
     private void RegisterForPrinting(IntPtr windowHandle)

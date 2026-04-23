@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="Simple_QR_Code_Maker.Controls.GenerateIdsDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Generate IDs"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonText="Add"
+    mc:Ignorable="d">
+
+    <ScrollViewer
+        x:Name="DialogScrollViewer"
+        MaxHeight="640"
+        HorizontalScrollBarVisibility="Disabled"
+        HorizontalScrollMode="Disabled"
+        VerticalScrollBarVisibility="Auto">
+        <Border
+            Width="{Binding ElementName=DialogScrollViewer,
+                            Path=ActualWidth}"
+            MinWidth="420"
+            Padding="0,0,12,0">
+            <StackPanel HorizontalAlignment="Stretch" Spacing="12">
+                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Generate one random ID per line and add them into the current text." />
+
+                <NumberBox
+                    x:Name="CountNumberBox"
+                    Header="How many IDs"
+                    Minimum="1"
+                    SmallChange="1"
+                    SpinButtonPlacementMode="Compact"
+                    ValueChanged="NumberBox_ValueChanged"
+                    Value="20" />
+
+                <ComboBox
+                    DisplayMemberPath="DisplayName"
+                    Header="ID style"
+                    ItemsSource="{x:Bind GeneratedIdFormatOptions,
+                                         Mode=OneWay}"
+                    SelectedItem="{x:Bind SelectedGeneratedIdFormatOption,
+                                          Mode=TwoWay}" />
+
+                <NumberBox
+                    x:Name="NanoIdLengthNumberBox"
+                    Header="NanoID length"
+                    IsEnabled="{x:Bind IsNanoIdLengthEnabled,
+                                       Mode=OneWay}"
+                    Minimum="1"
+                    SmallChange="1"
+                    SpinButtonPlacementMode="Compact"
+                    ValueChanged="NumberBox_ValueChanged"
+                    Visibility="{x:Bind NanoIdLengthVisibility,
+                                        Mode=OneWay}"
+                    Value="12" />
+
+                <TextBox
+                    Header="Text before each ID"
+                    PlaceholderText="https://example.com/"
+                    Text="{x:Bind PrefixText,
+                                  Mode=TwoWay,
+                                  UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox
+                    Header="Text after each ID"
+                    PlaceholderText="?source=qr-code"
+                    Text="{x:Bind SuffixText,
+                                  Mode=TwoWay,
+                                  UpdateSourceTrigger=PropertyChanged}" />
+
+                <StackPanel Spacing="6">
+                    <TextBlock
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Text="Preview" />
+                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind PreviewDescription, Mode=OneWay}" />
+                    <TextBox
+                        MinHeight="112"
+                        AcceptsReturn="True"
+                        IsReadOnly="True"
+                        Text="{x:Bind PreviewText,
+                                      Mode=OneWay}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+
+                <InfoBar
+                    Title="Check your settings"
+                    IsClosable="False"
+                    IsOpen="{x:Bind IsValidationVisible,
+                                    Mode=OneWay}"
+                    Message="{x:Bind ValidationMessage,
+                                     Mode=OneWay}"
+                    Severity="Error" />
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</ContentDialog>

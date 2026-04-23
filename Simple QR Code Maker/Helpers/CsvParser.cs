@@ -13,15 +13,15 @@ public static class CsvParser
     /// </summary>
     public static List<List<string>> Parse(string csv, char delimiter = ',')
     {
-        var rows = new List<List<string>>();
+        List<List<string>> rows = [];
         if (string.IsNullOrEmpty(csv))
             return rows;
 
         // Normalise line endings to LF only so we can treat \n as the row separator.
         csv = csv.Replace("\r\n", "\n").Replace('\r', '\n');
 
-        var currentRow = new List<string>();
-        var currentField = new StringBuilder();
+        List<string> currentRow = [];
+        StringBuilder currentField = new();
         bool inQuotes = false;
         int i = 0;
 
@@ -89,5 +89,42 @@ public static class CsvParser
             rows.Add(currentRow);
 
         return rows;
+    }
+
+    public static string Serialize(IEnumerable<IReadOnlyList<string>> rows, char delimiter = ',')
+    {
+        StringBuilder builder = new();
+        bool isFirstRow = true;
+
+        foreach (IReadOnlyList<string> row in rows)
+        {
+            if (!isFirstRow)
+                builder.Append("\r\n");
+
+            for (int index = 0; index < row.Count; index++)
+            {
+                if (index > 0)
+                    builder.Append(delimiter);
+
+                builder.Append(EscapeField(row[index], delimiter));
+            }
+
+            isFirstRow = false;
+        }
+
+        return builder.ToString();
+    }
+
+    private static string EscapeField(string field, char delimiter)
+    {
+        bool requiresQuotes = field.Contains(delimiter)
+            || field.Contains('"')
+            || field.Contains('\r')
+            || field.Contains('\n');
+
+        if (!requiresQuotes)
+            return field;
+
+        return "\"" + field.Replace("\"", "\"\"") + "\"";
     }
 }

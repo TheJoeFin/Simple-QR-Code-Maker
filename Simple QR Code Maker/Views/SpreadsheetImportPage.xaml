@@ -37,6 +37,17 @@
                                   Mode=OneWay}"
                     TextWrapping="Wrap" />
 
+                <InfoBar
+                    Title="{x:Bind ViewModel.StatusTitle,
+                                   Mode=OneWay}"
+                    IsClosable="True"
+                    IsOpen="{x:Bind ViewModel.IsStatusVisible,
+                                    Mode=TwoWay}"
+                    Message="{x:Bind ViewModel.StatusMessage,
+                                     Mode=OneWay}"
+                    Severity="{x:Bind ViewModel.StatusSeverity,
+                                      Mode=OneWay}" />
+
                 <settingsControls:SettingsCard Description="Choose whether the first row should be used as the column names." Header="Header row">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <SymbolIcon Symbol="List" />
@@ -46,6 +57,29 @@
                                       Mode=TwoWay}"
                         OffContent=""
                         OnContent="" />
+                </settingsControls:SettingsCard>
+
+                <settingsControls:SettingsCard Description="{x:Bind ViewModel.IdGenerationDescription, Mode=OneWay}" Header="Generate IDs and save back">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <SymbolIcon Symbol="Save" />
+                    </settingsControls:SettingsCard.HeaderIcon>
+                    <StackPanel Spacing="12">
+                        <ToggleSwitch
+                            IsOn="{x:Bind ViewModel.GenerateIdsToSpreadsheet,
+                                          Mode=TwoWay}"
+                            OffContent=""
+                            OnContent="" />
+                        <ComboBox
+                            MinWidth="220"
+                            HorizontalAlignment="Stretch"
+                            DisplayMemberPath="DisplayName"
+                            IsEnabled="{x:Bind ViewModel.CanConfigureGeneratedIdFormat,
+                                               Mode=OneWay}"
+                            ItemsSource="{x:Bind ViewModel.GeneratedIdFormatOptions,
+                                                 Mode=OneWay}"
+                            SelectedItem="{x:Bind ViewModel.SelectedGeneratedIdFormatOption,
+                                                  Mode=TwoWay}" />
+                    </StackPanel>
                 </settingsControls:SettingsCard>
 
                 <settingsControls:SettingsCard Description="{x:Bind ViewModel.ImportCountDescription, Mode=OneWay}" Header="Column to import">
@@ -120,7 +154,7 @@
                     Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <SymbolIcon Symbol="Accept" />
-                        <TextBlock Text="Import selected column" />
+                        <TextBlock Text="{x:Bind ViewModel.ImportButtonText, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
