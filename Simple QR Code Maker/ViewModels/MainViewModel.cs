@@ -1252,10 +1252,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         if (file is null)
             return;
 
-        List<List<string>> rows;
+        SpreadsheetReadResult spreadsheet;
         try
         {
-            rows = await ExcelSpreadsheetHelper.ReadRowsAsync(file.Path);
+            spreadsheet = await ExcelSpreadsheetHelper.ReadAsync(file.Path);
         }
         catch (InvalidOperationException ex) when (!IsSpreadsheetImportAvailable)
         {
@@ -1276,7 +1276,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        if (rows.Count == 0)
+        if (spreadsheet.Rows.Count == 0)
         {
             CodeInfoBarMessage = "The selected spreadsheet did not contain any data.";
             CodeInfoBarTitle = "Nothing to import";
@@ -1290,8 +1290,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             new SpreadsheetImportNavigationData
             {
                 ReturnState = CreateCurrentStateHistoryItem(),
-                Rows = rows.Select(row => (IReadOnlyList<string>)[.. row]).ToList(),
+                Rows = spreadsheet.Rows,
                 SourceFileName = file.Name,
+                SourceFilePath = file.Path,
             });
     }
 

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Simple_QR_Code_Maker.Models;
 
 namespace Simple_QR_Code_Maker.Helpers;
 
@@ -38,7 +39,7 @@ public static class ExcelSpreadsheetHelper
         });
     }
 
-    public static async Task<List<List<string>>> ReadRowsAsync(string filePath)
+    public static async Task<SpreadsheetReadResult> ReadAsync(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("A spreadsheet file path is required.", nameof(filePath));
@@ -56,13 +57,51 @@ public static class ExcelSpreadsheetHelper
         };
     }
 
-    private static async Task<List<List<string>>> ReadDelimitedRowsAsync(string filePath, char delimiter)
+    public static async Task WriteGeneratedIdsAsync(string filePath, SpreadsheetIdWriteRequest request)
     {
-        string contents = await File.ReadAllTextAsync(filePath);
-        return CsvParser.Parse(contents, delimiter);
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+        ArgumentNullException.ThrowIfNull(request);
+
+        string extension = Path.GetExtension(filePath);
+        if (!SupportedExtensions.Contains(extension))
+            throw new NotSupportedException($"Unsupported spreadsheet file type: {extension}");
+
+        switch (extension.ToLowerInvariant())
+        {
+            case ".csv":
+                await WriteDelimitedGeneratedIdsAsync(filePath, ',', request);
+                break;
+            case ".tsv":
+                await WriteDelimitedGeneratedIdsAsync(filePath, '\t', request);
+                break;
+            case ".xlsx":
+            case ".xls":
+                await WriteWorkbookGeneratedIdsAsync(filePath, request);
+                break;
+            default:
+                throw new NotSupportedException($"Unsupported spreadsheet file type: {extension}");
+        }
     }
 
-    private static async Task<List<List<string>>> ReadWorkbookRowsAsync(string filePath)
+    private static async Task<SpreadsheetReadResult> ReadDelimitedRowsAsync(string filePath, char delimiter)
+    {
+        string contents = await File.ReadAllTextAsync(filePath);
+        List<List<string>> rows = CsvParser.Parse(contents, delimiter);
+        List<SpreadsheetSourceRow> sourceRows = rows
+            .Select((row, index) => new SpreadsheetSourceRow
+            {
+                SourceRowIndex = index,
+                Cells = [.. row],
+            })
+            .ToList();
+
+        return new SpreadsheetReadResult
+        {
+            Rows = sourceRows,
+        };
+    }
+
+    private static async Task<SpreadsheetReadResult> ReadWorkbookRowsAsync(string filePath)
     {
         if (!await CheckIsAvailableAsync())
             throw new InvalidOperationException("Microsoft Excel is not installed.");
@@ -70,7 +109,29 @@ public static class ExcelSpreadsheetHelper
         return await RunStaAsync(() => ReadWorkbookRowsInternal(filePath));
     }
 
-    private static List<List<string>> ReadWorkbookRowsInternal(string filePath)
+    private static async Task WriteDelimitedGeneratedIdsAsync(string filePath, char delimiter, SpreadsheetIdWriteRequest request)
+    {
+        string contents = await File.ReadAllTextAsync(filePath);
+        List<List<string>> rows = CsvParser.Parse(contents, delimiter);
+        ApplyGeneratedIds(rows, request);
+
+        string updatedContents = CsvParser.Serialize(rows, delimiter);
+        await WriteTextFileAtomicallyAsync(filePath, updatedContents);
+    }
+
+    private static async Task WriteWorkbookGeneratedIdsAsync(string filePath, SpreadsheetIdWriteRequest request)
+    {
+        if (!await CheckIsAvailableAsync())
+            throw new InvalidOperationException("Microsoft Excel is not installed.");
+
+        await RunStaAsync<object?>(() =>
+        {
+            WriteWorkbookGeneratedIdsInternal(filePath, request);
+            return null;
+        });
+    }
+
+    private static SpreadsheetReadResult ReadWorkbookRowsInternal(string filePath)
     {
         object? application = null;
         object? workbooks = null;
@@ -117,7 +178,10 @@ public static class ExcelSpreadsheetHelper
 
             worksheets = GetProperty(workbook, "Worksheets");
             if (worksheets is null)
-                return [];
+                return new SpreadsheetReadResult
+                {
+                    Rows = [],
+                };
             worksheet = GetFirstWorksheetWithData(worksheets)
                 ?? throw new InvalidOperationException("Unable to find a worksheet with data.");
 
@@ -130,15 +194,18 @@ public static class ExcelSpreadsheetHelper
             int columnCount = Convert.ToInt32(GetProperty(columnsCollection, "Count"));
 
             if (rowCount <= 0 || columnCount <= 0)
-                return [];
+                return new SpreadsheetReadResult
+                {
+                    Rows = [],
+                };
 
-            List<List<string>> rows = [with(rowCount)];
+            List<SpreadsheetSourceRow> rows = new(rowCount);
 
             if (cellsCollection is not null)
             {
                 for (int row = 1; row <= rowCount; row++)
                 {
-                    List<string> currentRow = [with(columnCount)];
+                    List<string> currentRow = new(columnCount);
                     bool hasContent = false;
 
                     for (int column = 1; column <= columnCount; column++)
@@ -151,11 +218,20 @@ public static class ExcelSpreadsheetHelper
                     }
 
                     if (hasContent)
-                        rows.Add(currentRow);
+                    {
+                        rows.Add(new SpreadsheetSourceRow
+                        {
+                            SourceRowIndex = row - 1,
+                            Cells = currentRow,
+                        });
+                    }
                 }
             }
 
-            return rows;
+            return new SpreadsheetReadResult
+            {
+                Rows = rows,
+            };
         }
         finally
         {
@@ -165,6 +241,86 @@ public static class ExcelSpreadsheetHelper
             ReleaseComObject(cellsCollection);
             ReleaseComObject(columnsCollection);
             ReleaseComObject(rowsCollection);
+            ReleaseComObject(usedRange);
+            ReleaseComObject(worksheet);
+            ReleaseComObject(worksheets);
+            ReleaseComObject(workbook);
+            ReleaseComObject(workbooks);
+            ReleaseComObject(application);
+        }
+    }
+
+    private static void WriteWorkbookGeneratedIdsInternal(string filePath, SpreadsheetIdWriteRequest request)
+    {
+        object? application = null;
+        object? workbooks = null;
+        object? workbook = null;
+        object? worksheets = null;
+        object? worksheet = null;
+        object? usedRange = null;
+        object? cellsCollection = null;
+
+        try
+        {
+            Type excelType = Type.GetTypeFromProgID("Excel.Application")
+                ?? throw new InvalidOperationException("Microsoft Excel is not installed.");
+
+            application = Activator.CreateInstance(excelType)
+                ?? throw new InvalidOperationException("Unable to start Microsoft Excel.");
+
+            SetProperty(application, "Visible", false);
+            SetProperty(application, "DisplayAlerts", false);
+            SetProperty(application, "ScreenUpdating", false);
+            SetProperty(application, "EnableEvents", false);
+
+            workbooks = GetProperty(application, "Workbooks");
+            workbook = InvokeMethod(
+                workbooks,
+                "Open",
+                filePath,
+                0,
+                false,
+                Missing,
+                Missing,
+                Missing,
+                true,
+                Missing,
+                Missing,
+                Missing,
+                Missing,
+                Missing,
+                Missing,
+                true,
+                Missing);
+
+            worksheets = GetProperty(workbook, "Worksheets");
+            worksheet = worksheets is null
+                ? null
+                : GetFirstWorksheetWithData(worksheets);
+
+            if (worksheet is null)
+                throw new InvalidOperationException("Unable to find a worksheet with data.");
+
+            usedRange = GetProperty(worksheet, "UsedRange");
+            int startRow = Convert.ToInt32(GetProperty(usedRange, "Row"));
+            int startColumn = Convert.ToInt32(GetProperty(usedRange, "Column"));
+            cellsCollection = GetProperty(worksheet, "Cells");
+
+            int targetColumn = startColumn + request.IdColumnIndex;
+            if (request.CreateIdColumn && request.FirstRowIsHeader)
+                SetWorksheetCellText(cellsCollection, startRow, targetColumn, "id");
+
+            foreach (SpreadsheetIdWriteRow row in request.Rows)
+                SetWorksheetCellText(cellsCollection, startRow + row.SourceRowIndex, targetColumn, row.Value);
+
+            InvokeMethod(workbook, "Save");
+        }
+        finally
+        {
+            TryInvokeMethod(workbook, "Close", false);
+            TryInvokeMethod(application, "Quit");
+
+            ReleaseComObject(cellsCollection);
             ReleaseComObject(usedRange);
             ReleaseComObject(worksheet);
             ReleaseComObject(worksheets);
@@ -253,6 +409,65 @@ public static class ExcelSpreadsheetHelper
         finally
         {
             ReleaseComObject(cell);
+        }
+    }
+
+    private static void SetWorksheetCellText(object cellsCollection, int row, int column, string value)
+    {
+        object? cell = null;
+
+        try
+        {
+            cell = GetIndexedProperty(cellsCollection, "Item", row, column);
+            SetProperty(cell ?? throw new InvalidOperationException("Unable to access worksheet cell."), "Value2", value);
+        }
+        finally
+        {
+            ReleaseComObject(cell);
+        }
+    }
+
+    private static void ApplyGeneratedIds(List<List<string>> rows, SpreadsheetIdWriteRequest request)
+    {
+        if (request.CreateIdColumn && request.FirstRowIsHeader)
+        {
+            EnsureRowAndColumn(rows, 0, request.IdColumnIndex);
+            rows[0][request.IdColumnIndex] = "id";
+        }
+
+        foreach (SpreadsheetIdWriteRow row in request.Rows)
+        {
+            EnsureRowAndColumn(rows, row.SourceRowIndex, request.IdColumnIndex);
+            rows[row.SourceRowIndex][request.IdColumnIndex] = row.Value;
+        }
+    }
+
+    private static void EnsureRowAndColumn(List<List<string>> rows, int rowIndex, int columnIndex)
+    {
+        while (rows.Count <= rowIndex)
+            rows.Add([]);
+
+        List<string> row = rows[rowIndex];
+        while (row.Count <= columnIndex)
+            row.Add(string.Empty);
+    }
+
+    private static async Task WriteTextFileAtomicallyAsync(string filePath, string contents)
+    {
+        string directory = Path.GetDirectoryName(filePath)
+            ?? throw new InvalidOperationException("Unable to determine the spreadsheet file directory.");
+        string tempFilePath = Path.Combine(directory, $"{Path.GetFileName(filePath)}.{Guid.NewGuid():N}.tmp");
+
+        await File.WriteAllTextAsync(tempFilePath, contents);
+
+        try
+        {
+            File.Replace(tempFilePath, filePath, destinationBackupFileName: null, ignoreMetadataErrors: true);
+        }
+        finally
+        {
+            if (File.Exists(tempFilePath))
+                File.Delete(tempFilePath);
         }
     }
 
