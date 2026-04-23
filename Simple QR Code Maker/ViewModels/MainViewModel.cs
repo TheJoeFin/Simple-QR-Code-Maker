@@ -178,6 +178,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public partial bool ShowSaveBothButton { get; set; } = false;
 
     [ObservableProperty]
+    public partial bool ShowPrintButton { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool ShowZipSaveOptions { get; set; } = true;
+
+    [ObservableProperty]
     public partial bool CanPasteText { get; set; } = false;
 
     [ObservableProperty]
@@ -1126,6 +1132,27 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         await LocalSettingsService.SaveSettingAsync(nameof(UseSingleCodeForVCardByDefault), isEnabled);
         OnPropertyChanged(nameof(UseSingleCodeForCurrentDocument));
         RefreshCodesFromMultiLineOptionChange();
+    }
+
+    [RelayCommand]
+    private async Task ToggleSaveBothButtonVisibility()
+    {
+        ShowSaveBothButton = !ShowSaveBothButton;
+        await LocalSettingsService.SaveSettingAsync(nameof(ShowSaveBothButton), ShowSaveBothButton);
+    }
+
+    [RelayCommand]
+    private async Task TogglePrintButtonVisibility()
+    {
+        ShowPrintButton = !ShowPrintButton;
+        await LocalSettingsService.SaveSettingAsync(nameof(ShowPrintButton), ShowPrintButton);
+    }
+
+    [RelayCommand]
+    private async Task ToggleZipSaveOptionsVisibility()
+    {
+        ShowZipSaveOptions = !ShowZipSaveOptions;
+        await LocalSettingsService.SaveSettingAsync(nameof(ShowZipSaveOptions), ShowZipSaveOptions);
     }
 
     [RelayCommand]
@@ -2080,6 +2107,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
         ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton));
+        ShowPrintButton = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowPrintButton)) ?? true;
+        ShowZipSaveOptions = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowZipSaveOptions)) ?? true;
         QuickSaveLocation = await LocalSettingsService.ReadSettingAsync<string>(nameof(QuickSaveLocation)) ?? string.Empty;
         MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
         QrPaddingModules = BarcodeHelpers.NormalizeQrPaddingModules(
