@@ -26,6 +26,7 @@ public class PrintService : IPrintService
     private const uint PrintRenderLongEdgePixels = 2400;
     private static readonly object FontSettingsGate = new();
     private static bool fontSettingsInitialized;
+    private readonly record struct PrintableQrCodeAsset(string Label, byte[] PngBytes, QrImageLayoutMetrics ImageLayout);
     private readonly SemaphoreSlim printStateGate = new(1, 1);
     private PrintDocument? activePrintDocument;
     private IPrintDocumentSource? activePrintDocumentSource;
@@ -48,8 +49,13 @@ public class PrintService : IPrintService
             cancellationToken.ThrowIfCancellationRequested();
             EnsurePdfSharpFontSettings();
 
-            List<byte[]> pngBytesList = codes.Select(code =>
+            List<PrintableQrCodeAsset> printableCodes = codes.Select(code =>
             {
+                QrImageLayoutMetrics imageLayout = BarcodeHelpers.GetQrImageLayoutMetrics(
+                    code.CodeAsText,
+                    renderSettings.ErrorCorrectionLevel,
+                    renderSettings.QrPaddingModules,
+                    renderSettings.FramePreset);
                 using MemoryStream ms = new();
                 BarcodeHelpers.SaveQrCodePngToStream(
                     ms,
@@ -60,8 +66,10 @@ public class PrintService : IPrintService
                     renderSettings.LogoImage,
                     renderSettings.LogoSizePercentage,
                     renderSettings.LogoPaddingPixels,
-                    renderSettings.QrPaddingModules);
-                return ms.ToArray();
+                    renderSettings.QrPaddingModules,
+                    renderSettings.FramePreset,
+                    renderSettings.FrameText);
+                return new PrintableQrCodeAsset(code.CodeAsText, ms.ToArray(), imageLayout);
             }).ToList();
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -73,8 +81,9 @@ public class PrintService : IPrintService
                 document.Info.Creator = "Simple QR Code Maker";
 
                 PageSize pageSize = PrintLayoutHelper.GetPageSize(normalizedSettings.PageType);
-                PrintLayoutMetrics pageLayout = PrintLayoutHelper.CreateMetrics(normalizedSettings);
-                int pageCount = (int)Math.Ceiling((double)pngBytesList.Count / pageLayout.CodesPerPage);
+                QrImageLayoutMetrics maximumImageLayout = GetMaximumImageLayout(printableCodes);
+                PrintLayoutMetrics pageLayout = PrintLayoutHelper.CreateMetrics(normalizedSettings, maximumImageLayout);
+                int pageCount = (int)Math.Ceiling((double)printableCodes.Count / pageLayout.CodesPerPage);
 
                 for (int pageIndex = 0; pageIndex < pageCount; pageIndex++)
                 {
@@ -85,7 +94,7 @@ public class PrintService : IPrintService
                     page.Orientation = normalizedSettings.PageLayout == PrintPageLayout.Landscape
                         ? PageOrientation.Landscape
                         : PageOrientation.Portrait;
-                    DrawPage(page, pageIndex, pngBytesList, codes, normalizedSettings);
+                    DrawPage(page, pageIndex, printableCodes, normalizedSettings, maximumImageLayout);
                 }
 
                 document.Save(pdfPath);
@@ -148,17 +157,17 @@ public class PrintService : IPrintService
     private static void DrawPage(
         PdfPage page,
         int pageIndex,
-        IList<byte[]> qrPngBytes,
-        IReadOnlyList<RequestedQrCodeItem> codes,
-        PrintJobSettings settings)
+        IReadOnlyList<PrintableQrCodeAsset> printableCodes,
+        PrintJobSettings settings,
+        QrImageLayoutMetrics maximumImageLayout)
     {
-        PrintLayoutMetrics pageLayout = PrintLayoutHelper.CreateMetrics(page.Width.Point, page.Height.Point, settings);
+        PrintLayoutMetrics pageLayout = PrintLayoutHelper.CreateMetrics(page.Width.Point, page.Height.Point, settings, maximumImageLayout);
 
         using XGraphics graphics = XGraphics.FromPdfPage(page);
         graphics.DrawRectangle(XBrushes.White, 0, 0, page.Width.Point, page.Height.Point);
 
         int start = pageIndex * pageLayout.CodesPerPage;
-        int end = Math.Min(start + pageLayout.CodesPerPage, qrPngBytes.Count);
+        int end = Math.Min(start + pageLayout.CodesPerPage, printableCodes.Count);
 
         for (int i = start; i < end; i++)
         {
@@ -169,11 +178,11 @@ public class PrintService : IPrintService
                 pageLayout.CellWidth,
                 pageLayout.CellHeight);
 
-            DrawCell(graphics, cellRect, qrPngBytes[i], codes[i].CodeAsText, settings);
+            DrawCell(graphics, cellRect, printableCodes[i], settings);
         }
     }
 
-    private static void DrawCell(XGraphics graphics, XRect cellRect, byte[] qrPngBytes, string label, PrintJobSettings settings)
+    private static void DrawCell(XGraphics graphics, XRect cellRect, PrintableQrCodeAsset printableCode, PrintJobSettings settings)
     {
         XRect paddedRect = new(
             cellRect.X + PrintLayoutHelper.CellPaddingPoints,
@@ -183,13 +192,17 @@ public class PrintService : IPrintService
 
         double reservedLabelHeight = settings.ShowLabels ? PrintLayoutHelper.LabelHeightPoints + PrintLayoutHelper.LabelSpacingPoints : 0;
         double imageAreaHeight = Math.Max(paddedRect.Height - reservedLabelHeight, 1);
-        double imageSize = PrintLayoutHelper.CalculateActualCodeSizePoints(cellRect.Width, cellRect.Height, settings);
-        double imageX = paddedRect.X + ((paddedRect.Width - imageSize) / 2);
-        double imageY = paddedRect.Y + ((imageAreaHeight - imageSize) / 2);
+        PrintCodePlacement placement = PrintLayoutHelper.CalculateCodePlacement(
+            cellRect.Width,
+            cellRect.Height,
+            settings,
+            printableCode.ImageLayout);
+        double imageX = paddedRect.X + ((paddedRect.Width - placement.ImageWidthPoints) / 2);
+        double imageY = paddedRect.Y + ((imageAreaHeight - placement.ImageHeightPoints) / 2);
 
-        using MemoryStream imageStream = new(qrPngBytes, writable: false);
+        using MemoryStream imageStream = new(printableCode.PngBytes, writable: false);
         using XImage image = XImage.FromStream(imageStream);
-        graphics.DrawImage(image, imageX, imageY, imageSize, imageSize);
+        graphics.DrawImage(image, imageX, imageY, placement.ImageWidthPoints, placement.ImageHeightPoints);
 
         if (!settings.ShowLabels)
             return;
@@ -200,7 +213,7 @@ public class PrintService : IPrintService
             paddedRect.Width,
             PrintLayoutHelper.LabelHeightPoints);
 
-        DrawWrappedLabel(graphics, label, labelRect);
+        DrawWrappedLabel(graphics, printableCode.Label, labelRect);
     }
 
     private static void DrawWrappedLabel(XGraphics graphics, string value, XRect labelRect)
@@ -545,6 +558,18 @@ public class PrintService : IPrintService
 
         uint renderedWidth = (uint)Math.Max(1, Math.Round(PrintRenderLongEdgePixels * (width / height)));
         return (renderedWidth, PrintRenderLongEdgePixels);
+    }
+
+    private static QrImageLayoutMetrics GetMaximumImageLayout(IReadOnlyList<PrintableQrCodeAsset> printableCodes)
+    {
+        if (printableCodes.Count == 0)
+        {
+            return QrImageLayoutMetrics.Square;
+        }
+
+        double maxWidthPerQrSize = printableCodes.Max(static code => code.ImageLayout.WidthPerQrSize);
+        double maxHeightPerQrSize = printableCodes.Max(static code => code.ImageLayout.HeightPerQrSize);
+        return QrImageLayoutMetrics.FromScaleProfile(maxWidthPerQrSize, maxHeightPerQrSize);
     }
 
     private static void TryDeleteFile(string path)
