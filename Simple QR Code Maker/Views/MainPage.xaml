@@ -233,7 +233,12 @@
                                             Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
                                             CornerRadius="4">
                                             <Grid>
-                                                <Viewbox Height="100" Opacity="0.7">
+                                                <Viewbox
+                                                    Height="100"
+                                                    Opacity="0.7"
+                                                    Visibility="{x:Bind ViewModel.QrCodeBitmaps.Count,
+                                                                        Mode=OneWay,
+                                                                        Converter={StaticResource EmptyCollectionToVisibility}}">
                                                     <controls:QrCodeIcon />
                                                 </Viewbox>
                                                 <ItemsControl
