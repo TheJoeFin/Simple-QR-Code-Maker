@@ -5,11 +5,22 @@ namespace Simple_QR_Code_Maker.Controls;
 
 public sealed partial class AdvancedToolsUserControl : UserControl
 {
-    public AdvancedToolsViewModel ViewModel { get; }
+    private AdvancedToolsViewModel viewModel = new();
+
+    public AdvancedToolsViewModel ViewModel
+    {
+        get => viewModel;
+        set
+        {
+            viewModel = value;
+
+            if (Content is not null)
+                Bindings.Update();
+        }
+    }
 
     public AdvancedToolsUserControl()
     {
-        ViewModel = new AdvancedToolsViewModel();
         InitializeComponent();
     }
 }

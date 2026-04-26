@@ -8,34 +8,15 @@
     x:Name="Root"
     mc:Ignorable="d">
 
-    <Grid>
-        <Button
-            x:Name="StandardButton"
-            x:Load="{x:Bind IsNotCheckable, Mode=OneWay}"
-            Click="StandardButton_Click"
-            Command="{x:Bind Command, Mode=OneWay}"
-            CommandParameter="{x:Bind CommandParameter, Mode=OneWay}">
-            <StackPanel Orientation="Horizontal" Spacing="10">
-                <Viewbox Height="16" Child="{x:Bind Icon, Mode=OneWay}" />
-                <TextBlock Text="{x:Bind Text, Mode=OneWay}" />
-            </StackPanel>
-        </Button>
-
-        <ToggleButton
-            x:Name="CheckableButton"
-            x:Load="{x:Bind IsCheckable, Mode=OneWay}"
-            Checked="CheckableButton_Checked"
-            Click="CheckableButton_Click"
-            Command="{x:Bind Command, Mode=OneWay}"
-            CommandParameter="{x:Bind CommandParameter, Mode=OneWay}"
-            Indeterminate="CheckableButton_Indeterminate"
-            IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
-            IsThreeState="{x:Bind IsThreeState, Mode=OneWay}"
-            Unchecked="CheckableButton_Unchecked">
-            <StackPanel Orientation="Horizontal" Spacing="10">
-                <Viewbox Height="16" Child="{x:Bind Icon, Mode=OneWay}" />
-                <TextBlock Text="{x:Bind Text, Mode=OneWay}" />
-            </StackPanel>
-        </ToggleButton>
-    </Grid>
+    <Button
+        Click="Button_Click"
+        Command="{Binding Command, ElementName=Root}"
+        CommandParameter="{Binding CommandParameter, ElementName=Root}">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <Viewbox Height="16">
+                <ContentPresenter Content="{Binding Icon, ElementName=Root}" />
+            </Viewbox>
+            <TextBlock Text="{Binding Text, ElementName=Root}" />
+        </StackPanel>
+    </Button>
 </UserControl>

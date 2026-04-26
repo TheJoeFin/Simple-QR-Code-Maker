@@ -43,6 +43,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
         }
         else
         {
+            ClearPerspectiveSelection();
             System.Diagnostics.Debug.WriteLine("Perspective Correction Mode deactivated");
         }
     }
@@ -186,6 +187,16 @@ public partial class AdvancedToolsViewModel : ObservableObject
     public event EventHandler<MagickImage>? ImageProcessed;
     public event EventHandler? PerspectiveCornersClearedRequested;
 
+    private void ClearPerspectiveSelection()
+    {
+        TopLeftCorner = null;
+        TopRightCorner = null;
+        BottomRightCorner = null;
+        BottomLeftCorner = null;
+
+        PerspectiveCornersClearedRequested?.Invoke(this, EventArgs.Empty);
+    }
+
     public void SetOriginalImage(MagickImage image)
     {
         // Ensure EXIF orientation is applied to avoid coordinate misalignment
@@ -210,10 +221,6 @@ public partial class AdvancedToolsViewModel : ObservableObject
         BlackPointLevel = 0.0;
         WhitePointLevel = 100.0;
         IsPerspectiveCorrectionMode = false;
-        TopLeftCorner = null;
-        TopRightCorner = null;
-        BottomRightCorner = null;
-        BottomLeftCorner = null;
         BorderPixels = 20;
         SelectedBlackPointColor = null;
         SelectedWhitePointColor = null;
@@ -226,16 +233,6 @@ public partial class AdvancedToolsViewModel : ObservableObject
         OnPropertyChanged(nameof(IsCornerSelectionComplete));
         OnPropertyChanged(nameof(HasPendingChanges));
         OnPropertyChanged(nameof(IsAnyToolActive));
-
-        // Safely invoke events
-        try
-        {
-            PerspectiveCornersClearedRequested?.Invoke(this, EventArgs.Empty);
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error clearing perspective corners: {ex.Message}");
-        }
 
         if (trueOriginalImage != null)
         {
@@ -376,16 +373,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void ClearPerspectiveCorners()
-    {
-        TopLeftCorner = null;
-        TopRightCorner = null;
-        BottomRightCorner = null;
-        BottomLeftCorner = null;
-
-        // Property changes are now handled by NotifyPropertyChangedFor attributes
-        PerspectiveCornersClearedRequested?.Invoke(this, EventArgs.Empty);
-    }
+    private void ClearPerspectiveCorners() => ClearPerspectiveSelection();
 
     public void SetCornerPoint(Point point, int cornerIndex)
     {
@@ -461,10 +449,6 @@ public partial class AdvancedToolsViewModel : ObservableObject
         BlackPointLevel = 0.0;
         WhitePointLevel = 100.0;
         IsPerspectiveCorrectionMode = false;
-        TopLeftCorner = null;
-        TopRightCorner = null;
-        BottomRightCorner = null;
-        BottomLeftCorner = null;
         BorderPixels = 20;
         SelectedBlackPointColor = null;
         SelectedWhitePointColor = null;
