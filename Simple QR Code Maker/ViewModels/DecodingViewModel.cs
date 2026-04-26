@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using ImageMagick;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
@@ -28,6 +29,24 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     public partial bool IsInfoBarShowing { get; set; } = false;
+
+    [ObservableProperty]
+    public partial string DecodedContentInfoBarTitle { get; set; } = "QR Code Content";
+
+    [ObservableProperty]
+    public partial InfoBarSeverity DecodedContentInfoBarSeverity { get; set; } = InfoBarSeverity.Informational;
+
+    [ObservableProperty]
+    public partial bool IsDecodedContentUrl { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool IsLikelyRedirector { get; set; } = false;
+
+    [ObservableProperty]
+    public partial string RedirectorWarningMessage { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial bool IsRedirectorWarningVisible { get; set; } = false;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasImage))]
@@ -70,8 +89,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     public event EventHandler? PreviewStateChanged;
 
     private HistoryItem? navigationHistoryItem = null;
+    private bool warnWhenLikelyRedirector = RedirectorWarningSettingsHelper.DefaultWarnWhenLikelyRedirector;
+    private IReadOnlyList<string> safeRedirectorDomains = [];
 
     private INavigationService NavigationService { get; }
+    public ILocalSettingsService LocalSettingsService { get; }
 
     private readonly List<string> imageExtensions =
     [
@@ -81,9 +103,10 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         ".bmp",
     ];
 
-    public DecodingViewModel(INavigationService navigationService)
+    public DecodingViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService)
     {
         NavigationService = navigationService;
+        LocalSettingsService = localSettingsService;
 
         AttachClipboardHandler();
     }
@@ -110,6 +133,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     {
         IsAdvancedToolsVisible = false;
         AdvancedTools.ClearAll();
+        ResetDecodedContentInfoBar();
 
         if (value?.OriginalMagickImage is not null)
             AdvancedTools.SetOriginalImage(value.OriginalMagickImage);
@@ -160,8 +184,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         CurrentDecodingItem = null;
         PickedImage = null;
-        IsInfoBarShowing = false;
-        InfoBarMessage = string.Empty;
+        ResetDecodedContentInfoBar();
         IsAdvancedToolsVisible = false;
         IsCameraPaneOpen = false;
         IsSidePaneOpen = false;
@@ -170,10 +193,50 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         LoadingMessage = string.Empty;
     }
 
+    private void ResetDecodedContentInfoBar()
+    {
+        IsInfoBarShowing = false;
+        DecodedContentInfoBarTitle = "QR Code Content";
+        DecodedContentInfoBarSeverity = InfoBarSeverity.Informational;
+        InfoBarMessage = string.Empty;
+        IsDecodedContentUrl = false;
+        IsLikelyRedirector = false;
+        RedirectorWarningMessage = string.Empty;
+        IsRedirectorWarningVisible = false;
+    }
+
+    private void UpdateDecodedContentInfoBar(string decodedText)
+    {
+        RedirectorUrlClassification classification = RedirectorWarningHelper.Classify(decodedText, safeRedirectorDomains);
+
+        InfoBarMessage = decodedText;
+        IsDecodedContentUrl = classification.IsAbsoluteUri;
+        IsLikelyRedirector = warnWhenLikelyRedirector && classification.ShouldWarn;
+
+        if (warnWhenLikelyRedirector && classification.ShouldWarn)
+        {
+            DecodedContentInfoBarTitle = "Known redirector detected";
+            DecodedContentInfoBarSeverity = InfoBarSeverity.Warning;
+            RedirectorWarningMessage = $"This code points to {classification.Host}, which is a known redirector. Open it carefully because the final destination is hidden until after the redirect.";
+            IsRedirectorWarningVisible = true;
+        }
+        else
+        {
+            DecodedContentInfoBarTitle = "QR Code Content";
+            DecodedContentInfoBarSeverity = InfoBarSeverity.Informational;
+            RedirectorWarningMessage = string.Empty;
+            IsRedirectorWarningVisible = false;
+        }
+
+        IsInfoBarShowing = true;
+    }
+
     public async void OnNavigatedTo(object parameter)
     {
         AttachClipboardHandler();
         ResetViewState();
+        warnWhenLikelyRedirector = await RedirectorWarningSettingsHelper.ReadWarningEnabledAsync(LocalSettingsService);
+        safeRedirectorDomains = await RedirectorWarningSettingsHelper.ReadSafeDomainsAsync(LocalSettingsService);
 
         // Store the HistoryItem to pass back when returning to main page
         if (parameter is HistoryItem historyItem)
@@ -525,8 +588,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         if (sender is not TextBorder textBorder)
             return;
 
-        InfoBarMessage = textBorder.BorderInfo.Text;
-        IsInfoBarShowing = true;
+        UpdateDecodedContentInfoBar(textBorder.BorderInfo.Text);
     }
 
     public void OnNavigatedFrom()

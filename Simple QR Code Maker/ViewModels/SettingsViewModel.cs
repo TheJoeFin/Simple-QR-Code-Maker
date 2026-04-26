@@ -43,6 +43,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     public partial bool WarnWhenNotUrl { get; set; } = true;
 
     [ObservableProperty]
+    public partial bool WarnWhenLikelyRedirector { get; set; } = RedirectorWarningSettingsHelper.DefaultWarnWhenLikelyRedirector;
+
+    [ObservableProperty]
     public partial bool HideMinimumSizeText { get; set; } = false;
 
     [ObservableProperty]
@@ -86,7 +89,15 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     public partial InfoBarSeverity ImportExportStatusSeverity { get; set; } = InfoBarSeverity.Success;
 
+    public ObservableCollection<string> SafeRedirectorDomains { get; } = [];
+
     public bool HasImportExportStatus => !string.IsNullOrEmpty(ImportExportStatusMessage);
+
+    public bool HasSafeRedirectorDomains => SafeRedirectorDomains.Count > 0;
+
+    public string SafeRedirectorDomainsEmptyStateText => HasSafeRedirectorDomains
+        ? string.Empty
+        : "No safe domains yet. Use the redirector warning info bar to mark one as safe.";
 
     partial void OnImportExportStatusMessageChanged(string value)
     {
@@ -140,6 +151,12 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
             ImportExportStatusMessage = string.Empty;
         };
 
+        SafeRedirectorDomains.CollectionChanged += (s, e) =>
+        {
+            OnPropertyChanged(nameof(HasSafeRedirectorDomains));
+            OnPropertyChanged(nameof(SafeRedirectorDomainsEmptyStateText));
+        };
+
         SwitchThemeCommand = new RelayCommand<ElementTheme>(
             async (param) =>
             {
@@ -162,6 +179,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         Trace.WriteLine("[SettingsVM] SaveAllSettingsAsync started");
         await SaveSingleSettingAsync(nameof(BaseText), BaseText);
         await SaveSingleSettingAsync(nameof(WarnWhenNotUrl), WarnWhenNotUrl);
+        await RedirectorWarningSettingsHelper.SaveWarningEnabledAsync(LocalSettingsService, WarnWhenLikelyRedirector);
         await SaveSingleSettingAsync(nameof(HideMinimumSizeText), HideMinimumSizeText);
         await SaveSingleSettingAsync(nameof(ShowSaveBothButton), ShowSaveBothButton);
         await SaveSingleSettingAsync(nameof(ShowPrintButton), ShowPrintButton);
@@ -169,6 +187,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         await SaveSingleSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
         await SaveSingleSettingAsync(nameof(QrPaddingModules), QrPaddingModules);
         await SaveSingleSettingAsync(nameof(QuickSaveLocation), QuickSaveLocation);
+        await RedirectorWarningSettingsHelper.SaveSafeDomainsAsync(LocalSettingsService, SafeRedirectorDomains);
         Trace.WriteLine("[SettingsVM] SaveAllSettingsAsync completed");
     }
 
@@ -200,6 +219,11 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     }
 
     partial void OnWarnWhenNotUrlChanged(bool value)
+    {
+        RestartDebounceTimer();
+    }
+
+    partial void OnWarnWhenLikelyRedirectorChanged(bool value)
     {
         RestartDebounceTimer();
     }
@@ -297,6 +321,32 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private void ClearQuickSaveLocation()
     {
         QuickSaveLocation = string.Empty;
+    }
+
+    [RelayCommand]
+    private async Task RemoveSafeRedirectorDomain(string? domain)
+    {
+        string normalizedDomain = RedirectorWarningHelper.NormalizeHost(domain);
+        if (normalizedDomain.Length == 0)
+            return;
+
+        for (int index = SafeRedirectorDomains.Count - 1; index >= 0; index--)
+        {
+            if (string.Equals(SafeRedirectorDomains[index], normalizedDomain, StringComparison.OrdinalIgnoreCase))
+                SafeRedirectorDomains.RemoveAt(index);
+        }
+
+        await RedirectorWarningSettingsHelper.SaveSafeDomainsAsync(LocalSettingsService, SafeRedirectorDomains);
+    }
+
+    [RelayCommand]
+    private async Task ClearSafeRedirectorDomains()
+    {
+        if (!HasSafeRedirectorDomains)
+            return;
+
+        SafeRedirectorDomains.Clear();
+        await RedirectorWarningSettingsHelper.SaveSafeDomainsAsync(LocalSettingsService, SafeRedirectorDomains);
     }
 
     [RelayCommand]
@@ -817,6 +867,12 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
             await LoadSettingAsync(nameof(WarnWhenNotUrl), async () =>
                 WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(WarnWhenNotUrl)) ?? true);
 
+            await LoadSettingAsync(nameof(WarnWhenLikelyRedirector), async () =>
+                WarnWhenLikelyRedirector = await RedirectorWarningSettingsHelper.ReadWarningEnabledAsync(LocalSettingsService));
+
+            await LoadSettingAsync(nameof(SafeRedirectorDomains), async () =>
+                ReplaceSafeRedirectorDomains(await RedirectorWarningSettingsHelper.ReadSafeDomainsAsync(LocalSettingsService)));
+
             await LoadSettingAsync(nameof(HideMinimumSizeText), async () =>
                 HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText)));
 
@@ -873,6 +929,13 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         {
             Trace.TraceError($"[SettingsVM] Failed to load setting '{key}': {ex.Message}");
         }
+    }
+
+    private void ReplaceSafeRedirectorDomains(IEnumerable<string> domains)
+    {
+        SafeRedirectorDomains.Clear();
+        foreach (string domain in domains)
+            SafeRedirectorDomains.Add(domain);
     }
 
     public async void OnNavigatedFrom()

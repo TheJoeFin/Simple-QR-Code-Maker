@@ -405,6 +405,7 @@
                             x:Name="LenghErrorInfoBar"
                             Title="{x:Bind ViewModel.CodeInfoBarTitle,
                                            Mode=OneWay}"
+                            MaxWidth="600"
                             Margin="20"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
@@ -415,12 +416,34 @@
                             Severity="{x:Bind ViewModel.CodeInfoBarSeverity,
                                               Mode=OneWay}">
                             <InfoBar.Content>
-                                <HyperlinkButton
-                                    Command="{x:Bind ViewModel.OpenSavedFolderCommand}"
-                                    Content="Open folder"
-                                    Visibility="{x:Bind ViewModel.SavedFolderPath,
-                                                        Converter={StaticResource EmptyStringToCollapsed},
-                                                        Mode=OneWay}" />
+                                <StackPanel
+                                    Padding="0,0,0,10"
+                                    Orientation="Horizontal"
+                                    Spacing="12">
+                                    <HyperlinkButton
+                                        Command="{x:Bind ViewModel.OpenSavedFolderCommand}"
+                                        Content="Open folder"
+                                        Visibility="{x:Bind ViewModel.SavedFolderPath,
+                                                            Converter={StaticResource EmptyStringToCollapsed},
+                                                            Mode=OneWay}" />
+                                    <HyperlinkButton
+                                        Command="{x:Bind ViewModel.MarkRedirectorDomainSafeCommand}"
+                                        Content="{x:Bind ViewModel.RedirectorSafeActionText,
+                                                         Mode=OneWay}"
+                                        Visibility="{x:Bind ViewModel.ShowMarkRedirectorSafeAction,
+                                                            Converter={StaticResource BoolToVisibility},
+                                                            Mode=OneWay}" />
+                                    <controls:IconAndTextHyperlinkButton
+                                        Command="{x:Bind ViewModel.GoToSettingsCommand}"
+                                        Text="Settings"
+                                        Visibility="{x:Bind ViewModel.ShowRedirectorSettingsAction,
+                                                            Converter={StaticResource BoolToVisibility},
+                                                            Mode=OneWay}">
+                                        <controls:IconAndTextHyperlinkButton.Icon>
+                                            <SymbolIcon Symbol="Setting" />
+                                        </controls:IconAndTextHyperlinkButton.Icon>
+                                    </controls:IconAndTextHyperlinkButton>
+                                </StackPanel>
                             </InfoBar.Content>
                         </InfoBar>
                     </Grid>

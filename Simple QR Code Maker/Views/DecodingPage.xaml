@@ -401,7 +401,8 @@
 
                             <InfoBar
                                 x:Name="QrCodeInfoBar"
-                                Title="QR Code Content"
+                                Title="{x:Bind ViewModel.DecodedContentInfoBarTitle,
+                                               Mode=OneWay}"
                                 Grid.Row="1"
                                 Margin="20"
                                 HorizontalAlignment="Center"
@@ -411,7 +412,8 @@
                                 BorderThickness="3"
                                 IsOpen="{x:Bind ViewModel.IsInfoBarShowing,
                                                 Mode=TwoWay}"
-                                Severity="Informational">
+                                Severity="{x:Bind ViewModel.DecodedContentInfoBarSeverity,
+                                                  Mode=OneWay}">
                                 <StackPanel
                                     Margin="12,0"
                                     Orientation="Vertical"
@@ -423,6 +425,15 @@
                                         Text="{x:Bind ViewModel.InfoBarMessage,
                                                       Mode=OneWay}"
                                         TextWrapping="Wrap" />
+                                    <TextBlock
+                                        MaxWidth="500"
+                                        FontWeight="SemiBold"
+                                        Text="{x:Bind ViewModel.RedirectorWarningMessage,
+                                                      Mode=OneWay}"
+                                        TextWrapping="Wrap"
+                                        Visibility="{x:Bind ViewModel.IsRedirectorWarningVisible,
+                                                            Mode=OneWay,
+                                                            Converter={StaticResource BoolToVisibilityConverter}}" />
                                     <StackPanel
                                         HorizontalAlignment="Center"
                                         Orientation="Horizontal"

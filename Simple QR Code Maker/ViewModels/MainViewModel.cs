@@ -169,8 +169,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private MultiLineCodeMode MultiLineCodeMode = MultiLineCodeMode.OneLineOneCode;
     private string BaseText = string.Empty;
     private bool WarnWhenNotUrl = true;
+    private bool WarnWhenLikelyRedirector = RedirectorWarningSettingsHelper.DefaultWarnWhenLikelyRedirector;
     private bool HideMinimumSizeText = false;
     private string QuickSaveLocation = string.Empty;
+    private IReadOnlyList<string> SafeRedirectorDomains = [];
     private QrContentKind currentContentKind = QrContentKind.PlainText;
     private MultiLineCodeMode? multiLineCodeModeOverride = null;
 
@@ -213,16 +215,28 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public partial bool IsEmojiLogoSelected { get; set; } = false;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowMarkRedirectorSafeAction))]
+    [NotifyPropertyChangedFor(nameof(ShowRedirectorSettingsAction))]
     public partial bool ShowCodeInfoBar { get; set; } = false;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowMarkRedirectorSafeAction))]
+    [NotifyPropertyChangedFor(nameof(ShowRedirectorSettingsAction))]
     public partial InfoBarSeverity CodeInfoBarSeverity { get; set; } = InfoBarSeverity.Success;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowMarkRedirectorSafeAction))]
+    [NotifyPropertyChangedFor(nameof(ShowRedirectorSettingsAction))]
     public partial string CodeInfoBarTitle { get; set; } = "QR Code copied to clipboard";
 
     [ObservableProperty]
     public partial string CodeInfoBarMessage { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowMarkRedirectorSafeAction))]
+    [NotifyPropertyChangedFor(nameof(ShowRedirectorSettingsAction))]
+    [NotifyPropertyChangedFor(nameof(RedirectorSafeActionText))]
+    public partial string CurrentRedirectorWarningDomain { get; set; } = string.Empty;
 
     [ObservableProperty]
     public partial string SavedFolderPath { get; set; } = string.Empty;
@@ -265,6 +279,18 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private readonly DispatcherTimer copyInfoBarTimer = new();
     private bool _suppressEmojiSelectionChanges = false;
     private int _emojiPreviewRefreshVersion = 0;
+
+    public bool ShowMarkRedirectorSafeAction => IsRedirectorInfoBarActive && !string.IsNullOrWhiteSpace(CurrentRedirectorWarningDomain);
+
+    public bool ShowRedirectorSettingsAction => ShowMarkRedirectorSafeAction;
+
+    public string RedirectorSafeActionText => string.IsNullOrWhiteSpace(CurrentRedirectorWarningDomain)
+        ? string.Empty
+        : $"Mark '{CurrentRedirectorWarningDomain}' as safe";
+
+    private bool IsRedirectorInfoBarActive => ShowCodeInfoBar
+        && CodeInfoBarSeverity == InfoBarSeverity.Warning
+        && CodeInfoBarTitle == "Known redirector detected";
 
     public ObservableCollection<EmojiLogoOption> EmojiOptions { get; } =
     [
@@ -874,6 +900,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private void OnRequestShowMessage(object recipient, RequestShowMessage rsm)
     {
+        CurrentRedirectorWarningDomain = string.Empty;
         CodeInfoBarMessage = rsm.Message;
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = rsm.Severity;
@@ -939,7 +966,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     private void DebounceTimer_Tick(object? sender, object e)
     {
         debounceTimer.Stop();
+        RefreshRequestedCodes();
+    }
 
+    private void RefreshRequestedCodes()
+    {
         ResetRequestedCodeState();
 
         if (string.IsNullOrWhiteSpace(UrlText))
@@ -976,6 +1007,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             CodeInfoBarMessage = RequestedCodeCount == 0
                 ? "The text you entered is too long for a QR Code. Please try a shorter text."
                 : "Some text entries were too long for a QR Code and were skipped.";
+            CurrentRedirectorWarningDomain = string.Empty;
+            return;
+        }
+
+        if (TryGetRedirectorWarning(out RedirectorUrlClassification redirectorWarning, out int unsafeRedirectorCount))
+        {
+            ShowKnownRedirectorWarning(redirectorWarning.Host, unsafeRedirectorCount);
         }
     }
 
@@ -986,6 +1024,43 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         RequestedCodeCount = 0;
         LoadedPreviewCount = 0;
         SavedFolderPath = string.Empty;
+        CurrentRedirectorWarningDomain = string.Empty;
+    }
+
+    private bool TryGetRedirectorWarning(out RedirectorUrlClassification redirectorWarning, out int unsafeRedirectorCount)
+    {
+        redirectorWarning = RedirectorUrlClassification.None;
+        unsafeRedirectorCount = 0;
+
+        if (!WarnWhenLikelyRedirector)
+            return false;
+
+        foreach (RequestedQrCodeItem requestedQrCode in requestedQrCodes)
+        {
+            RedirectorUrlClassification classification = RedirectorWarningHelper.Classify(
+                requestedQrCode.CodeAsText,
+                SafeRedirectorDomains);
+
+            if (!classification.ShouldWarn)
+                continue;
+
+            unsafeRedirectorCount++;
+            if (redirectorWarning == RedirectorUrlClassification.None)
+                redirectorWarning = classification;
+        }
+
+        return unsafeRedirectorCount > 0;
+    }
+
+    private void ShowKnownRedirectorWarning(string host, int unsafeRedirectorCount)
+    {
+        CurrentRedirectorWarningDomain = host;
+        ShowCodeInfoBar = true;
+        CodeInfoBarSeverity = InfoBarSeverity.Warning;
+        CodeInfoBarTitle = "Known redirector detected";
+        CodeInfoBarMessage = unsafeRedirectorCount > 1
+            ? $"This set includes {unsafeRedirectorCount} URLs that use known redirectors. First detected: {host}."
+            : $"This URL uses {host}, which is a known redirector. People scanning the code may not see the final destination until after it opens.";
     }
 
     private IEnumerable<string> EnumerateRequestedCodeTexts()
@@ -1718,6 +1793,18 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         // so when coming back it can be fully restored
         NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!, CreateCurrentStateHistoryItem());
 
+    [RelayCommand]
+    private async Task MarkRedirectorDomainSafe()
+    {
+        if (string.IsNullOrWhiteSpace(CurrentRedirectorWarningDomain))
+            return;
+
+        List<string> safeDomains = [.. SafeRedirectorDomains, CurrentRedirectorWarningDomain];
+        SafeRedirectorDomains = RedirectorWarningHelper.NormalizeHosts(safeDomains);
+        await RedirectorWarningSettingsHelper.SaveSafeDomainsAsync(LocalSettingsService, SafeRedirectorDomains);
+        RefreshRequestedCodes();
+    }
+
     private HistoryItem CreateCurrentStateHistoryItem()
     {
         return QrCodeDesignStateMapper.ToHistoryItem(CreateCurrentDesignState(LogoImage != null ? GetCurrentLogoPath() : null));
@@ -2120,6 +2207,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         await RefreshClipboardCapabilitiesAsync();
         _ = CheckBackgroundRemovalAvailability();
         _ = CheckSpreadsheetImportAvailability();
+        WarnWhenLikelyRedirector = await RedirectorWarningSettingsHelper.ReadWarningEnabledAsync(LocalSettingsService);
+        SafeRedirectorDomains = await RedirectorWarningSettingsHelper.ReadSafeDomainsAsync(LocalSettingsService);
         MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode));
         UseSingleCodeForVCardByDefault = await LocalSettingsService.ReadSettingAsync<bool>(nameof(UseSingleCodeForVCardByDefault));
         BaseText = await LocalSettingsService.ReadSettingAsync<string>(nameof(BaseText)) ?? string.Empty;
