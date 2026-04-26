@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Simple_QR_Code_Maker.Controls.IconAndTextToggleButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Root"
+    mc:Ignorable="d">
+
+    <ToggleButton
+        Checked="ToggleButton_Checked"
+        Click="ToggleButton_Click"
+        Command="{Binding Command, ElementName=Root}"
+        CommandParameter="{Binding CommandParameter, ElementName=Root}"
+        Indeterminate="ToggleButton_Indeterminate"
+        IsChecked="{Binding IsChecked, ElementName=Root, Mode=TwoWay}"
+        IsThreeState="{Binding IsThreeState, ElementName=Root}"
+        Unchecked="ToggleButton_Unchecked">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <Viewbox Height="16">
+                <ContentPresenter Content="{Binding Icon, ElementName=Root}" />
+            </Viewbox>
+            <TextBlock Text="{Binding Text, ElementName=Root}" />
+        </StackPanel>
+    </ToggleButton>
+</UserControl>

@@ -25,6 +25,7 @@
     <None Remove="Controls\FaqsContent.xaml" />
     <None Remove="Controls\HistoryRowItem.xaml" />
     <None Remove="Controls\IconAndTextButton.xaml" />
+    <None Remove="Controls\IconAndTextToggleButton.xaml" />
     <None Remove="Controls\IconAndTextContent.xaml" />
     <None Remove="Controls\NewFile1.txt" />
     <None Remove="Controls\QrCodeImageControl.xaml" />
@@ -89,6 +90,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Controls\IconAndTextButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Controls\IconAndTextToggleButton.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Controls\TextBorder.xaml">
