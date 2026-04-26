@@ -19,6 +19,8 @@ public static class QrCodeDesignStateMapper
             LogoEmojiStyle = historyItem.LogoEmojiStyle,
             LogoSizePercentage = historyItem.LogoSizePercentage,
             LogoPaddingPixels = historyItem.LogoPaddingPixels,
+            FramePreset = historyItem.FramePreset,
+            FrameText = historyItem.FrameText,
         };
     }
 
@@ -37,6 +39,8 @@ public static class QrCodeDesignStateMapper
             LogoEmojiStyle = state.LogoEmojiStyle,
             LogoSizePercentage = state.LogoSizePercentage,
             LogoPaddingPixels = state.LogoPaddingPixels,
+            FramePreset = state.FramePreset,
+            FrameText = state.FrameText,
         };
     }
 

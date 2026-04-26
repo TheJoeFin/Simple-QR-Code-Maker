@@ -156,7 +156,9 @@ public class QrExportService : IQrExportService
                 renderSettings.LogoImage,
                 renderSettings.LogoSizePercentage,
                 renderSettings.LogoPaddingPixels,
-                renderSettings.QrPaddingModules);
+                renderSettings.QrPaddingModules,
+                renderSettings.FramePreset,
+                renderSettings.FrameText);
             return ms.ToArray();
         });
     }
@@ -173,7 +175,9 @@ public class QrExportService : IQrExportService
                 renderSettings.LogoSizePercentage,
                 renderSettings.LogoPaddingPixels,
                 renderSettings.LogoSvgContent,
-                renderSettings.QrPaddingModules).Content);
+                renderSettings.QrPaddingModules,
+                renderSettings.FramePreset,
+                renderSettings.FrameText).Content);
     }
 
     private static async Task WriteRequestedCodeToFileAsync(RequestedQrCodeItem requestedCode, StorageFile file, FileKind kindOfFile, QrRenderSettingsSnapshot renderSettings)
