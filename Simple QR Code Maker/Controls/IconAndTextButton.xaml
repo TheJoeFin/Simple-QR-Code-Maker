@@ -1,16 +1,41 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Button
+<UserControl
     x:Class="Simple_QR_Code_Maker.Controls.IconAndTextButton"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:Simple_QR_Code_Maker.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Style="{StaticResource DefaultButtonStyle}"
+    x:Name="Root"
     mc:Ignorable="d">
 
-    <StackPanel Orientation="Horizontal" Spacing="10">
-        <Viewbox Height="16" Child="{x:Bind Icon}" />
-        <TextBlock Text="{x:Bind Text}" />
-    </StackPanel>
-</Button>
+    <Grid>
+        <Button
+            x:Name="StandardButton"
+            x:Load="{x:Bind IsNotCheckable, Mode=OneWay}"
+            Click="StandardButton_Click"
+            Command="{x:Bind Command, Mode=OneWay}"
+            CommandParameter="{x:Bind CommandParameter, Mode=OneWay}">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Viewbox Height="16" Child="{x:Bind Icon, Mode=OneWay}" />
+                <TextBlock Text="{x:Bind Text, Mode=OneWay}" />
+            </StackPanel>
+        </Button>
+
+        <ToggleButton
+            x:Name="CheckableButton"
+            x:Load="{x:Bind IsCheckable, Mode=OneWay}"
+            Checked="CheckableButton_Checked"
+            Click="CheckableButton_Click"
+            Command="{x:Bind Command, Mode=OneWay}"
+            CommandParameter="{x:Bind CommandParameter, Mode=OneWay}"
+            Indeterminate="CheckableButton_Indeterminate"
+            IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
+            IsThreeState="{x:Bind IsThreeState, Mode=OneWay}"
+            Unchecked="CheckableButton_Unchecked">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Viewbox Height="16" Child="{x:Bind Icon, Mode=OneWay}" />
+                <TextBlock Text="{x:Bind Text, Mode=OneWay}" />
+            </StackPanel>
+        </ToggleButton>
+    </Grid>
+</UserControl>
