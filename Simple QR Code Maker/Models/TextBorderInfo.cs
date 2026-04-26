@@ -15,11 +15,18 @@ public partial class TextBorderInfo : ObservableRecipient
     {
         Text = result.Text;
 
-        if (result.ResultPoints.Length >= 3)
+        if (result.ResultPoints.Length > 0)
         {
-            Point point1 = new(result.ResultPoints[0].X, result.ResultPoints[0].Y);
-            Point point2 = new(result.ResultPoints[2].X, result.ResultPoints[2].Y);
-            BorderRect = new(point1, point2);
+            double left = result.ResultPoints.Min(point => point.X);
+            double top = result.ResultPoints.Min(point => point.Y);
+            double right = result.ResultPoints.Max(point => point.X);
+            double bottom = result.ResultPoints.Max(point => point.Y);
+
+            BorderRect = new Rect(
+                left,
+                top,
+                Math.Max(1, right - left),
+                Math.Max(1, bottom - top));
         }
     }
 }

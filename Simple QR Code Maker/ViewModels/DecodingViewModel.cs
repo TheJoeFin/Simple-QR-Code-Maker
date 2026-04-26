@@ -38,10 +38,18 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasImage))]
+    [NotifyPropertyChangedFor(nameof(HasActivePreviewSurface))]
     public partial DecodingImageItem? CurrentDecodingItem { get; set; } = null;
 
     [ObservableProperty]
     public partial bool IsAdvancedToolsVisible { get; set; } = false;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasActivePreviewSurface))]
+    public partial bool IsCameraPaneOpen { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool IsSidePaneOpen { get; set; } = false;
 
     [ObservableProperty]
     public partial bool IsFaqPaneOpen { get; set; } = false;
@@ -53,6 +61,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     public partial string LoadingMessage { get; set; } = string.Empty;
 
     public bool HasImage => CurrentDecodingItem is not null;
+
+    public bool HasActivePreviewSurface => HasImage || IsCameraPaneOpen;
 
     private HistoryItem? navigationHistoryItem = null;
 
@@ -70,10 +80,23 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     {
         NavigationService = navigationService;
 
-        CheckIfCanPaste();
+        AttachClipboardHandler();
+    }
 
-        Clipboard.ContentChanged -= Clipboard_ContentChanged;
-        Clipboard.ContentChanged += Clipboard_ContentChanged;
+    partial void OnIsAdvancedToolsVisibleChanged(bool value)
+    {
+        if (value && IsCameraPaneOpen)
+            IsCameraPaneOpen = false;
+
+        IsSidePaneOpen = value || IsCameraPaneOpen;
+    }
+
+    partial void OnIsCameraPaneOpenChanged(bool value)
+    {
+        if (value && IsAdvancedToolsVisible)
+            IsAdvancedToolsVisible = false;
+
+        IsSidePaneOpen = value || IsAdvancedToolsVisible;
     }
 
     private void Clipboard_ContentChanged(object? sender, object e) => CheckIfCanPaste();
@@ -97,8 +120,43 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         }
     }
 
+    private void AttachClipboardHandler()
+    {
+        Clipboard.ContentChanged -= Clipboard_ContentChanged;
+        Clipboard.ContentChanged += Clipboard_ContentChanged;
+        CheckIfCanPaste();
+    }
+
+    private void ResetViewState()
+    {
+        if (CurrentDecodingItem is not null)
+        {
+            CurrentDecodingItem.BitmapImage = null;
+            CurrentDecodingItem.ProcessedBitmapImage = null;
+            CurrentDecodingItem.CodeBorders.Clear();
+            CurrentDecodingItem.PerspectiveCornerMarkers.Clear();
+            CurrentDecodingItem.CurrentCornerIndex = 0;
+            CurrentDecodingItem.OriginalMagickImage = null;
+            CurrentDecodingItem.ProcessedMagickImage = null;
+        }
+
+        CurrentDecodingItem = null;
+        PickedImage = null;
+        IsInfoBarShowing = false;
+        InfoBarMessage = string.Empty;
+        IsAdvancedToolsVisible = false;
+        IsCameraPaneOpen = false;
+        IsSidePaneOpen = false;
+        IsFaqPaneOpen = false;
+        IsLoading = false;
+        LoadingMessage = string.Empty;
+    }
+
     public async void OnNavigatedTo(object parameter)
     {
+        AttachClipboardHandler();
+        ResetViewState();
+
         // Store the HistoryItem to pass back when returning to main page
         if (parameter is HistoryItem historyItem)
         {
@@ -119,28 +177,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void ClearImages()
     {
-        // Release resources on the current item before discarding it
-        if (CurrentDecodingItem is not null)
-        {
-            CurrentDecodingItem.BitmapImage = null;
-            CurrentDecodingItem.ProcessedBitmapImage = null;
-            CurrentDecodingItem.CodeBorders.Clear();
-            CurrentDecodingItem.PerspectiveCornerMarkers.Clear();
-            CurrentDecodingItem.CurrentCornerIndex = 0;
-            CurrentDecodingItem.OriginalMagickImage = null;
-            CurrentDecodingItem.ProcessedMagickImage = null;
-        }
-
-        // Setting to null triggers AdvancedToolsViewModel.ClearAll() via PropertyChanged
-        CurrentDecodingItem = null;
-
-        PickedImage = null;
-        IsInfoBarShowing = false;
-        InfoBarMessage = string.Empty;
-        IsAdvancedToolsVisible = false;
-        IsFaqPaneOpen = false;
-        IsLoading = false;
-        LoadingMessage = string.Empty;
+        ResetViewState();
     }
 
     [RelayCommand]
@@ -471,9 +508,6 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     public void OnNavigatedFrom()
     {
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
-
-        IsInfoBarShowing = false;
-        PickedImage = null;
-        CurrentDecodingItem = null;
+        ResetViewState();
     }
 }
