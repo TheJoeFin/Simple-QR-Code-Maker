@@ -61,6 +61,11 @@ public class HistoryItem : IEquatable<HistoryItem>
 
     public double LogoPaddingPixels { get; set; } = 4.0;
 
+    [JsonConverter(typeof(JsonStringEnumConverter<QrFramePreset>))]
+    public QrFramePreset FramePreset { get; set; } = QrFramePreset.None;
+
+    public string? FrameText { get; set; }
+
     [JsonIgnore]
     public string DisplayText => ContentKind switch
     {

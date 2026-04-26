@@ -12,7 +12,9 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         double logoSizePercentage,
         double logoPaddingPixels,
         string? logoSvgContent,
-        double qrPaddingModules)
+        double qrPaddingModules,
+        QrFramePreset framePreset,
+        string? frameText)
     {
         ErrorCorrectionLevel = errorCorrectionLevel;
         ForegroundColor = foregroundColor;
@@ -22,6 +24,8 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         LogoPaddingPixels = logoPaddingPixels;
         LogoSvgContent = logoSvgContent;
         QrPaddingModules = qrPaddingModules;
+        FramePreset = framePreset;
+        FrameText = frameText;
     }
 
     public ErrorCorrectionLevel ErrorCorrectionLevel { get; }
@@ -40,6 +44,10 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
 
     public double QrPaddingModules { get; }
 
+    public QrFramePreset FramePreset { get; }
+
+    public string? FrameText { get; }
+
     public static QrRenderSettingsSnapshot Create(
         ErrorCorrectionLevel errorCorrectionLevel,
         System.Drawing.Color foregroundColor,
@@ -48,7 +56,9 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         double logoSizePercentage,
         double logoPaddingPixels,
         string? logoSvgContent,
-        double qrPaddingModules)
+        double qrPaddingModules,
+        QrFramePreset framePreset,
+        string? frameText)
     {
         return new QrRenderSettingsSnapshot(
             errorCorrectionLevel,
@@ -58,7 +68,9 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
             logoSizePercentage,
             logoPaddingPixels,
             logoSvgContent,
-            qrPaddingModules);
+            qrPaddingModules,
+            framePreset,
+            frameText);
     }
 
     public void Dispose()
