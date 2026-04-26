@@ -78,13 +78,14 @@ public sealed partial class DecodingPage : Page
     {
         ViewModel = App.GetService<DecodingViewModel>();
         InitializeComponent();
+        AdvancedToolsPanel.ViewModel = ViewModel.AdvancedTools;
         CameraDeviceComboBox.ItemsSource = CameraDevices;
-        UpdateLoadingOverlay();
 
-        AdvancedToolsPanel.ViewModel.ImageProcessed += AdvancedToolsViewModel_ImageProcessed;
-        AdvancedToolsPanel.ViewModel.PropertyChanged += AdvancedToolsViewModel_PropertyChanged;
-        AdvancedToolsPanel.ViewModel.PerspectiveCornersClearedRequested += AdvancedToolsViewModel_PerspectiveCornersClearedRequested;
-        ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        ViewModel.AdvancedTools.ImageProcessed += AdvancedToolsViewModel_ImageProcessed;
+        ViewModel.AdvancedTools.PropertyChanged += AdvancedToolsViewModel_PropertyChanged;
+        ViewModel.AdvancedTools.PerspectiveCornersClearedRequested += AdvancedToolsViewModel_PerspectiveCornersClearedRequested;
+        ViewModel.CameraPaneOpenChanged += ViewModel_CameraPaneOpenChanged;
+        ViewModel.PreviewStateChanged += ViewModel_PreviewStateChanged;
         Loaded += DecodingPage_Loaded;
         Unloaded += DecodingPage_Unloaded;
     }
@@ -92,7 +93,6 @@ public sealed partial class DecodingPage : Page
     private async void DecodingPage_Loaded(object sender, RoutedEventArgs e)
     {
         isPageLoaded = true;
-        UpdateLoadingOverlay();
         UpdateBaseGridLayout();
         await RefreshCameraDevicesAsync();
 
@@ -118,31 +118,15 @@ public sealed partial class DecodingPage : Page
 
     private void AdvancedToolsViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        // Update cursor when eyedropper mode changes
-        if (e.PropertyName is (nameof(AdvancedToolsPanel.ViewModel.IsEyedropperBlackMode)) or
-            (nameof(AdvancedToolsPanel.ViewModel.IsEyedropperWhiteMode)) or
-            (nameof(AdvancedToolsPanel.ViewModel.IsPerspectiveCorrectionMode)))
+        if (e.PropertyName == nameof(AdvancedToolsViewModel.IsAnyToolActive))
         {
             UpdateCursorForModes();
-        }
-
-        // Clear markers when perspective correction mode is turned off
-        if (e.PropertyName == nameof(AdvancedToolsPanel.ViewModel.IsPerspectiveCorrectionMode) &&
-            !AdvancedToolsPanel.ViewModel.IsPerspectiveCorrectionMode)
-        {
-            if (ViewModel.CurrentDecodingItem != null)
-            {
-                ViewModel.CurrentDecodingItem.PerspectiveCornerMarkers.Clear();
-                ViewModel.CurrentDecodingItem.CurrentCornerIndex = 0;
-            }
         }
     }
 
     private void UpdateCursorForModes()
     {
-        bool isToolActive = AdvancedToolsPanel.ViewModel.IsEyedropperBlackMode ||
-            AdvancedToolsPanel.ViewModel.IsEyedropperWhiteMode ||
-            AdvancedToolsPanel.ViewModel.IsPerspectiveCorrectionMode;
+        bool isToolActive = ViewModel.AdvancedTools.IsAnyToolActive;
 
         if (isToolActive && isPointerOverImage)
         {
@@ -166,111 +150,19 @@ public sealed partial class DecodingPage : Page
         UpdateCursorForModes();
     }
 
-    private void GoBackButton_Click(object sender, RoutedEventArgs e) => ViewModel.GoBackCommand.Execute(null);
-
     private async void OpenNewFileButton_Click(object sender, RoutedEventArgs e) => await ViewModel.OpenNewFileCommand.ExecuteAsync(null);
 
     private async void PasteImageButton_Click(object sender, RoutedEventArgs e) => await ViewModel.OpenFileFromClipboardCommand.ExecuteAsync(null);
-
-    private void CameraToggleButton_Click(object sender, RoutedEventArgs e)
-    {
-        bool shouldOpenCamera = !ViewModel.IsCameraPaneOpen;
-        if (shouldOpenCamera)
-            ViewModel.IsAdvancedToolsVisible = false;
-
-        ViewModel.IsCameraPaneOpen = shouldOpenCamera;
-    }
-
-    private void AdvancedToolsToggleButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (!ViewModel.HasImage)
-            return;
-
-        bool shouldShowAdvancedTools = !ViewModel.IsAdvancedToolsVisible;
-        if (shouldShowAdvancedTools)
-        {
-            ViewModel.IsCameraPaneOpen = false;
-
-            if (ViewModel.CurrentDecodingItem?.OriginalMagickImage is not null)
-                AdvancedToolsPanel.ViewModel.SetOriginalImage(ViewModel.CurrentDecodingItem.OriginalMagickImage);
-        }
-
-        ViewModel.IsAdvancedToolsVisible = shouldShowAdvancedTools;
-    }
-
-    private async void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(ViewModel.CurrentDecodingItem))
-        {
-            if (ViewModel.CurrentDecodingItem?.OriginalMagickImage != null)
-            {
-                AdvancedToolsPanel.ViewModel.SetOriginalImage(ViewModel.CurrentDecodingItem.OriginalMagickImage);
-            }
-            else if (ViewModel.CurrentDecodingItem is null)
-            {
-                // Image was cleared — reset all advanced tools state and cursor
-                ViewModel.IsAdvancedToolsVisible = false;
-                AdvancedToolsPanel.ViewModel.ClearAll();
-                isPointerOverImage = false;
-                this.ProtectedCursor = null;
-
-                // Reset the ScrollView zoom and scroll position so the
-                // container shrinks back to its default 300×300 size.
-                ImageScrollView.ZoomTo(1, null);
-                ImageScrollView.ScrollTo(0, 0);
-            }
-        }
-
-        if (e.PropertyName is nameof(ViewModel.HasImage) or nameof(ViewModel.CurrentDecodingItem) or nameof(ViewModel.IsCameraPaneOpen) or nameof(ViewModel.HasActivePreviewSurface))
-            UpdateBaseGridLayout();
-
-        if (e.PropertyName is nameof(ViewModel.IsLoading) or nameof(ViewModel.LoadingMessage))
-            UpdateLoadingOverlay();
-
-        if (e.PropertyName == nameof(ViewModel.IsCameraPaneOpen))
-        {
-            await UpdateCameraPaneAsync();
-        }
-    }
-
-    private void ActionButtonsPanel_SizeChanged(object sender, SizeChangedEventArgs e) => UpdateBaseGridLayout();
-
-    private void UpdateLoadingOverlay()
-    {
-        bool isLoading = ViewModel.IsLoading;
-        LoadingOverlay.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
-        LoadingOverlay.IsHitTestVisible = isLoading;
-        LoadingProgressRing.IsActive = isLoading;
-        LoadingMessageTextBlock.Text = ViewModel.LoadingMessage;
-    }
-
-    private void UpdateBaseGridLayout()
-    {
-        ImageRow.Height = ViewModel.HasImage
-            ? new GridLength(1, GridUnitType.Star)
-            : GridLength.Auto;
-
-        TopSpacerRow.Height = ViewModel.HasImage
-            ? new GridLength(0)
-            : new GridLength(ActionButtonsPanel.ActualHeight);
-    }
 
     private async void AdvancedToolsViewModel_ImageProcessed(object? sender, ImageMagick.MagickImage e)
     {
         if (ViewModel.CurrentDecodingItem != null)
         {
             // Clear perspective markers and mode after successful processing
-            if (AdvancedToolsPanel.ViewModel.IsPerspectiveCorrectionMode &&
-                AdvancedToolsPanel.ViewModel.IsCornerSelectionComplete)
+            if (ViewModel.AdvancedTools.IsPerspectiveCorrectionMode &&
+                ViewModel.AdvancedTools.IsCornerSelectionComplete)
             {
-                ViewModel.CurrentDecodingItem.PerspectiveCornerMarkers.Clear();
-                ViewModel.CurrentDecodingItem.CurrentCornerIndex = 0;
-
-                // Reset corner points
-                AdvancedToolsPanel.ViewModel.ClearPerspectiveCornersCommand.Execute(null);
-
-                // Turn off perspective correction mode to reset cursor and UI
-                AdvancedToolsPanel.ViewModel.IsPerspectiveCorrectionMode = false;
+                ViewModel.AdvancedTools.IsPerspectiveCorrectionMode = false;
             }
 
             ViewModel.CurrentDecodingItem.ProcessedMagickImage = e;
@@ -350,17 +242,17 @@ public sealed partial class DecodingPage : Page
         Point imagePoint = new(pixelX, pixelY);
 
         // Handle perspective correction mode
-        if (AdvancedToolsPanel.ViewModel.IsPerspectiveCorrectionMode)
+        if (ViewModel.AdvancedTools.IsPerspectiveCorrectionMode)
         {
             HandlePerspectiveCorrectionClick(imagePoint, clickPoint);
             return;
         }
 
         // Handle eyedropper mode
-        if (AdvancedToolsPanel.ViewModel.IsEyedropperBlackMode ||
-            AdvancedToolsPanel.ViewModel.IsEyedropperWhiteMode)
+        if (ViewModel.AdvancedTools.IsEyedropperBlackMode ||
+            ViewModel.AdvancedTools.IsEyedropperWhiteMode)
         {
-            AdvancedToolsPanel.ViewModel.SetColorFromPoint(imagePoint);
+            ViewModel.AdvancedTools.SetColorFromPoint(imagePoint);
         }
     }
 
@@ -378,7 +270,7 @@ public sealed partial class DecodingPage : Page
             return;
 
         // Set the corner in the ViewModel (image space coordinates)
-        AdvancedToolsPanel.ViewModel.SetCornerPoint(imagePoint, cornerIndex);
+        ViewModel.AdvancedTools.SetCornerPoint(imagePoint, cornerIndex);
 
         // Create visual marker (display space coordinates)
         Grid marker = CreateCornerMarkerWithLabel(displayPoint, cornerIndex);
@@ -496,6 +388,34 @@ public sealed partial class DecodingPage : Page
     private async void CapturePhotoButton_Click(object sender, RoutedEventArgs e) => await CapturePhotoAsync();
 
     private async void RetakePhotoButton_Click(object sender, RoutedEventArgs e) => await RetakePhotoAsync();
+
+    private async void ViewModel_CameraPaneOpenChanged(object? sender, EventArgs e) => await UpdateCameraPaneAsync();
+
+    private void ViewModel_PreviewStateChanged(object? sender, EventArgs e)
+    {
+        UpdateBaseGridLayout();
+
+        if (ViewModel.HasImage)
+            return;
+
+        isPointerOverImage = false;
+        this.ProtectedCursor = null;
+        ImageScrollView.ZoomTo(1, null);
+        ImageScrollView.ScrollTo(0, 0);
+    }
+
+    private void ActionButtonsPanel_SizeChanged(object sender, SizeChangedEventArgs e) => UpdateBaseGridLayout();
+
+    private void UpdateBaseGridLayout()
+    {
+        ImageRow.Height = ViewModel.HasImage
+            ? new GridLength(1, GridUnitType.Star)
+            : GridLength.Auto;
+
+        TopSpacerRow.Height = ViewModel.HasImage
+            ? new GridLength(0)
+            : new GridLength(ActionButtonsPanel.ActualHeight);
+    }
 
     private async Task UpdateCameraPaneAsync()
     {
@@ -675,7 +595,6 @@ public sealed partial class DecodingPage : Page
         ViewModel.IsInfoBarShowing = false;
         ViewModel.InfoBarMessage = string.Empty;
         ViewModel.IsAdvancedToolsVisible = false;
-        AdvancedToolsPanel.ViewModel.ClearAll();
         capturedCameraImage = null;
         hasCapturedCameraImage = false;
         cameraStatusMessage = string.Empty;

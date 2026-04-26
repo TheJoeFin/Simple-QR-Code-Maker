@@ -60,9 +60,14 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     public partial string LoadingMessage { get; set; } = string.Empty;
 
+    public AdvancedToolsViewModel AdvancedTools { get; } = new();
+
     public bool HasImage => CurrentDecodingItem is not null;
 
     public bool HasActivePreviewSurface => HasImage || IsCameraPaneOpen;
+
+    public event EventHandler? CameraPaneOpenChanged;
+    public event EventHandler? PreviewStateChanged;
 
     private HistoryItem? navigationHistoryItem = null;
 
@@ -97,6 +102,19 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             IsAdvancedToolsVisible = false;
 
         IsSidePaneOpen = value || IsAdvancedToolsVisible;
+        CameraPaneOpenChanged?.Invoke(this, EventArgs.Empty);
+        PreviewStateChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    partial void OnCurrentDecodingItemChanged(DecodingImageItem? value)
+    {
+        IsAdvancedToolsVisible = false;
+        AdvancedTools.ClearAll();
+
+        if (value?.OriginalMagickImage is not null)
+            AdvancedTools.SetOriginalImage(value.OriginalMagickImage);
+
+        PreviewStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void Clipboard_ContentChanged(object? sender, object e) => CheckIfCanPaste();
@@ -183,8 +201,14 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void ToggleAdvancedTools()
     {
+        if (!HasImage)
+            return;
+
         IsAdvancedToolsVisible = !IsAdvancedToolsVisible;
     }
+
+    [RelayCommand]
+    private void ToggleCameraPane() => IsCameraPaneOpen = !IsCameraPaneOpen;
 
     [RelayCommand]
     private void ToggleFaqPaneOpen() => IsFaqPaneOpen = !IsFaqPaneOpen;

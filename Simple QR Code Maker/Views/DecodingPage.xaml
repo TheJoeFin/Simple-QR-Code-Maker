@@ -103,9 +103,12 @@
                             x:Name="LoadingOverlay"
                             Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
                             Canvas.ZIndex="100"
-                            IsHitTestVisible="False"
+                            IsHitTestVisible="{x:Bind ViewModel.IsLoading,
+                                                      Mode=OneWay}"
                             Opacity="0.92"
-                            Visibility="Collapsed">
+                            Visibility="{x:Bind ViewModel.IsLoading,
+                                                Mode=OneWay,
+                                                Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -114,12 +117,14 @@
                                     x:Name="LoadingProgressRing"
                                     Width="100"
                                     Height="100"
-                                    IsActive="False" />
+                                    IsActive="{x:Bind ViewModel.IsLoading,
+                                                      Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="LoadingMessageTextBlock"
                                     HorizontalAlignment="Center"
                                     Style="{StaticResource BodyStrongTextBlockStyle}"
-                                    Text="" />
+                                    Text="{x:Bind ViewModel.LoadingMessage,
+                                                  Mode=OneWay}" />
                             </StackPanel>
                         </Grid>
 
@@ -132,8 +137,8 @@
                                                        Mode=OneWay,
                                                        Converter={StaticResource BoolToAlignmentConverter}}">
                             <Grid.RowDefinitions>
-                                <RowDefinition x:Name="TopSpacerRow" Height="auto" />
-                                <RowDefinition x:Name="ImageRow" Height="auto" />
+                                <RowDefinition x:Name="TopSpacerRow" Height="Auto" />
+                                <RowDefinition x:Name="ImageRow" Height="Auto" />
                                 <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
 
@@ -175,7 +180,10 @@
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             Opacity="0.7"
-                                            Spacing="12">
+                                            Spacing="12"
+                                            Visibility="{x:Bind ViewModel.IsLoading,
+                                                                Mode=OneWay,
+                                                                Converter={StaticResource InvertedBoolToVisibilityConverter}}">
                                             <Viewbox Height="100">
                                                 <controls:ScanIcon />
                                             </Viewbox>
@@ -330,7 +338,7 @@
                                 Orientation="Horizontal"
                                 SizeChanged="ActionButtonsPanel_SizeChanged"
                                 Spacing="12">
-                                <Button Click="GoBackButton_Click" ToolTipService.ToolTip="Go Back to making QR Code page">
+                                <Button Command="{x:Bind ViewModel.GoBackCommand}" ToolTipService.ToolTip="Go Back to making QR Code page">
                                     <Viewbox Height="18">
                                         <SymbolIcon Symbol="Back" />
                                     </Viewbox>
@@ -356,17 +364,16 @@
                                         <SymbolIcon Symbol="Paste" />
                                     </controls:IconAndTextButton.Icon>
                                 </controls:IconAndTextButton>
-                                <controls:IconAndTextButton
-                                    Click="CameraToggleButton_Click"
-                                    IsCheckable="True"
+                                <controls:IconAndTextToggleButton
+                                    Command="{x:Bind ViewModel.ToggleCameraPaneCommand}"
                                     IsChecked="{x:Bind ViewModel.IsCameraPaneOpen,
                                                        Mode=OneWay}"
                                     Text="Camera"
                                     ToolTipService.ToolTip="Open the camera pane to capture a photo for decoding">
-                                    <controls:IconAndTextButton.Icon>
+                                    <controls:IconAndTextToggleButton.Icon>
                                         <SymbolIcon Symbol="Camera" />
-                                    </controls:IconAndTextButton.Icon>
-                                </controls:IconAndTextButton>
+                                    </controls:IconAndTextToggleButton.Icon>
+                                </controls:IconAndTextToggleButton>
                                 <!--<controls:IconAndTextButton
                                     Command="{x:Bind ViewModel.ClearImagesCommand}"
                                     IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
@@ -376,9 +383,9 @@
                                     <controls:IconAndTextButton.Icon>
                                         <SymbolIcon Symbol="Clear" />
                                     </controls:IconAndTextButton.Icon>
-                                </controls:IconAndTextButton>-->
+                                 </controls:IconAndTextButton>-->
                                 <ToggleButton
-                                    Click="AdvancedToolsToggleButton_Click"
+                                    Command="{x:Bind ViewModel.ToggleAdvancedToolsCommand}"
                                     IsChecked="{x:Bind ViewModel.IsAdvancedToolsVisible,
                                                        Mode=OneWay}"
                                     ToolTipService.ToolTip="Toggle advanced image processing tools"
