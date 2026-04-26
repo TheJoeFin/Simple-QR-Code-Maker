@@ -117,24 +117,24 @@
                                                             <SymbolIcon Symbol="Contact" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
-                                                     <MenuFlyoutItem
-                                                         Command="{x:Bind ViewModel.OpenWifiBuilderCommand}"
-                                                         Text="Build WiFi"
-                                                         ToolTipService.ToolTip="Build a WiFi QR Code that can share network credentials">
-                                                         <MenuFlyoutItem.Icon>
-                                                             <FontIcon Glyph="&#xE701;" />
-                                                         </MenuFlyoutItem.Icon>
-                                                     </MenuFlyoutItem>
-                                                     <MenuFlyoutItem Command="{x:Bind ViewModel.OpenGenerateIdsDialogCommand}" Text="Generate IDs">
-                                                         <MenuFlyoutItem.Icon>
-                                                             <SymbolIcon Symbol="Bullets" />
-                                                         </MenuFlyoutItem.Icon>
-                                                     </MenuFlyoutItem>
-                                                     <MenuFlyoutSeparator />
-                                                     <MenuFlyoutItem Command="{x:Bind ViewModel.OpenTextFileCommand}" Text="Open text file">
-                                                         <MenuFlyoutItem.Icon>
-                                                             <FontIcon Glyph="&#xE8A5;" />
-                                                         </MenuFlyoutItem.Icon>
+                                                    <MenuFlyoutItem
+                                                        Command="{x:Bind ViewModel.OpenWifiBuilderCommand}"
+                                                        Text="Build WiFi"
+                                                        ToolTipService.ToolTip="Build a WiFi QR Code that can share network credentials">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE701;" />
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.OpenGenerateIdsDialogCommand}" Text="Generate IDs">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <SymbolIcon Symbol="Bullets" />
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutSeparator />
+                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.OpenTextFileCommand}" Text="Open text file">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE8A5;" />
+                                                        </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
                                                     <MenuFlyoutItem Command="{x:Bind ViewModel.OpenSpreadsheetFileCommand}" Text="Open spreadsheet">
                                                         <MenuFlyoutItem.Icon>
@@ -232,22 +232,27 @@
                                             HorizontalAlignment="Center"
                                             Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
                                             CornerRadius="4">
-                                            <ItemsControl
-                                                x:Name="ListOfCodes"
-                                                HorizontalAlignment="Stretch"
-                                                ItemsSource="{x:Bind ViewModel.QrCodeBitmaps,
-                                                                     Mode=OneWay}">
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <WrapGrid Orientation="Horizontal" />
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate x:DataType="models:BarcodeImageItem">
-                                                        <controls:QrCodeImageControl Data="{x:Bind}" />
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
+                                            <Grid>
+                                                <Viewbox Height="100" Opacity="0.7">
+                                                    <controls:QrCodeIcon />
+                                                </Viewbox>
+                                                <ItemsControl
+                                                    x:Name="ListOfCodes"
+                                                    HorizontalAlignment="Stretch"
+                                                    ItemsSource="{x:Bind ViewModel.QrCodeBitmaps,
+                                                                         Mode=OneWay}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <WrapGrid Orientation="Horizontal" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate x:DataType="models:BarcodeImageItem">
+                                                            <controls:QrCodeImageControl Data="{x:Bind}" />
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </Grid>
                                         </Border>
 
                                         <!--  If there are more than 24 codes show this UI below  -->
