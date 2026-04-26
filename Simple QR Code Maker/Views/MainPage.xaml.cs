@@ -42,6 +42,7 @@ public sealed partial class MainPage : Page
         UrlTextBox.Select(UrlTextBox.Text.Length, 0);
         UpdateUrlInputLayout();
         UpdateCodesLayout();
+        UpdateFramePresetRadioButtons();
         HookScrollToCodesEvents();
         UpdateScrollToCodesButton();
     }
@@ -87,6 +88,34 @@ public sealed partial class MainPage : Page
             ViewModel.SelectErrorCorrectionLevelCommand.Execute(option);
             ErrorCorrectionFlyout.Hide();
         }
+    }
+
+    private void FramePresetFlyout_Opened(object sender, object e)
+    {
+        UpdateFramePresetRadioButtons();
+
+        if (!ViewModel.IsFrameTextVisible)
+            return;
+
+        FrameTextTextBox.Focus(FocusState.Programmatic);
+        FrameTextTextBox.SelectAll();
+    }
+
+    private void FramePresetRadioButton_Checked(object sender, RoutedEventArgs e)
+    {
+        if (sender is not RadioButton radioButton || radioButton.Tag is not string presetName)
+            return;
+
+        if (!Enum.TryParse(presetName, out QrFramePreset preset))
+        {
+            UpdateFramePresetRadioButtons();
+            return;
+        }
+
+        if (ViewModel.FramePreset != preset)
+            ViewModel.SelectFramePresetCommand.Execute(QrFramePresetCatalog.GetOption(preset));
+
+        UpdateFramePresetRadioButtons();
     }
 
     private void WhatIsErrorCorrection_Click(object sender, RoutedEventArgs e)
@@ -163,6 +192,19 @@ public sealed partial class MainPage : Page
         {
             UpdateScrollToCodesButton();
         }
+
+        if (e.PropertyName == nameof(MainViewModel.FramePreset))
+        {
+            UpdateFramePresetRadioButtons();
+        }
+    }
+
+    private void UpdateFramePresetRadioButtons()
+    {
+        NoFramePresetRadioButton.IsChecked = ViewModel.FramePreset == QrFramePreset.None;
+        BottomLabelFramePresetRadioButton.IsChecked = ViewModel.FramePreset == QrFramePreset.BottomLabel;
+        RoundedFramePresetRadioButton.IsChecked = ViewModel.FramePreset == QrFramePreset.RoundedFrame;
+        CornerCalloutFramePresetRadioButton.IsChecked = ViewModel.FramePreset == QrFramePreset.CornerCallout;
     }
 
     private void ScrollToCodesButton_Click(object sender, RoutedEventArgs e)

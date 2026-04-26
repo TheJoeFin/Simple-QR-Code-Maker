@@ -222,6 +222,66 @@
                                         </DropDownButton>
                                         <controls:QrLogoDesignerControl ViewModel="{x:Bind ViewModel}" />
                                         <controls:BrandManagementControl ViewModel="{x:Bind ViewModel}" />
+                                        <DropDownButton
+                                            Width="60"
+                                            Height="36"
+                                            ToolTipService.ToolTip="Choose a scan frame style">
+                                            <Viewbox Width="16" Height="16">
+                                                <controls:FrameIcon />
+                                            </Viewbox>
+                                            <DropDownButton.Flyout>
+                                                <Flyout
+                                                    x:Name="FramePresetFlyout"
+                                                    Opened="FramePresetFlyout_Opened"
+                                                    Placement="Bottom">
+                                                    <StackPanel Width="280" Spacing="12">
+                                                        <TextBlock
+                                                            FontWeight="SemiBold"
+                                                            Style="{StaticResource SubtitleTextBlockStyle}"
+                                                            Text="Frame" />
+                                                        <StackPanel Spacing="8">
+                                                            <RadioButton
+                                                                x:Name="NoFramePresetRadioButton"
+                                                                Checked="FramePresetRadioButton_Checked"
+                                                                Content="No frame"
+                                                                GroupName="FramePreset"
+                                                                IsChecked="True"
+                                                                Tag="None" />
+                                                            <RadioButton
+                                                                x:Name="BottomLabelFramePresetRadioButton"
+                                                                Checked="FramePresetRadioButton_Checked"
+                                                                Content="Bottom label"
+                                                                GroupName="FramePreset"
+                                                                Tag="BottomLabel" />
+                                                            <RadioButton
+                                                                x:Name="RoundedFramePresetRadioButton"
+                                                                Checked="FramePresetRadioButton_Checked"
+                                                                Content="Rounded frame"
+                                                                GroupName="FramePreset"
+                                                                Tag="RoundedFrame" />
+                                                            <RadioButton
+                                                                x:Name="CornerCalloutFramePresetRadioButton"
+                                                                Checked="FramePresetRadioButton_Checked"
+                                                                Content="Corner callout"
+                                                                GroupName="FramePreset"
+                                                                Tag="CornerCallout" />
+                                                        </StackPanel>
+                                                        <TextBox
+                                                            x:Name="FrameTextTextBox"
+                                                            Header="{x:Bind ViewModel.FrameTextHeader,
+                                                                            Mode=OneWay}"
+                                                            PlaceholderText="{x:Bind ViewModel.FrameTextPlaceholder,
+                                                                                     Mode=OneWay}"
+                                                            Text="{x:Bind ViewModel.FrameText,
+                                                                          Mode=TwoWay,
+                                                                          UpdateSourceTrigger=PropertyChanged}"
+                                                            Visibility="{x:Bind ViewModel.IsFrameTextVisible,
+                                                                                Mode=OneWay,
+                                                                                Converter={StaticResource BoolToVisibility}}" />
+                                                    </StackPanel>
+                                                </Flyout>
+                                            </DropDownButton.Flyout>
+                                        </DropDownButton>
                                     </StackPanel>
 
                                     <StackPanel x:Name="CodesSection" HorizontalAlignment="Stretch">
