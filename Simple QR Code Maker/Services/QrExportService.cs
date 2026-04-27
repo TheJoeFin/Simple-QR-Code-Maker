@@ -146,6 +146,7 @@ public class QrExportService : IQrExportService
     {
         return await Task.Run(() =>
         {
+            string? resolvedFrameText = ResolveFrameText(requestedCode, renderSettings);
             using MemoryStream ms = new();
             BarcodeHelpers.SaveQrCodePngToStream(
                 ms,
@@ -158,13 +159,14 @@ public class QrExportService : IQrExportService
                 renderSettings.LogoPaddingPixels,
                 renderSettings.QrPaddingModules,
                 renderSettings.FramePreset,
-                renderSettings.FrameText);
+                resolvedFrameText);
             return ms.ToArray();
         });
     }
 
     private static async Task<string> GetRequestedCodeAsSvgTextAsync(RequestedQrCodeItem requestedCode, QrRenderSettingsSnapshot renderSettings)
     {
+        string? resolvedFrameText = ResolveFrameText(requestedCode, renderSettings);
         return await Task.Run(() =>
             BarcodeHelpers.GetSvgQrCodeForText(
                 requestedCode.CodeAsText,
@@ -177,7 +179,18 @@ public class QrExportService : IQrExportService
                 renderSettings.LogoSvgContent,
                 renderSettings.QrPaddingModules,
                 renderSettings.FramePreset,
-                renderSettings.FrameText).Content);
+                resolvedFrameText).Content);
+    }
+
+    private static string? ResolveFrameText(RequestedQrCodeItem requestedCode, QrRenderSettingsSnapshot renderSettings)
+    {
+        return QrFrameTextResolver.Resolve(
+            renderSettings.FramePreset,
+            renderSettings.FrameTextSource,
+            renderSettings.FrameText,
+            requestedCode.CodeAsText,
+            requestedCode.ContentKind,
+            requestedCode.MultiLineCodeModeOverride);
     }
 
     private static async Task WriteRequestedCodeToFileAsync(RequestedQrCodeItem requestedCode, StorageFile file, FileKind kindOfFile, QrRenderSettingsSnapshot renderSettings)

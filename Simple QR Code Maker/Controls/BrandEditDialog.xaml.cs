@@ -87,13 +87,18 @@ public sealed partial class BrandEditDialog : ContentDialog
     public string LogoSizeDescription => $"{LogoSize} percent";
     public string LogoPaddingDescription => $"{LogoPadding} px";
     public bool IsFrameTextVisible => IncludeFrame && SelectedFramePresetOption.Preset != QrFramePreset.None;
-    public string FrameTextHeader => SelectedFramePresetOption.Preset switch
-    {
-        QrFramePreset.RoundedFrame => "Banner text",
-        QrFramePreset.CornerCallout => "Callout text",
-        QrFramePreset.BottomLabel => "Label text",
-        _ => string.Empty,
-    };
+    public string FrameTextHeader => _original.FrameTextSource == QrFrameTextSource.ContentSummary
+        ? "Fallback label text"
+        : SelectedFramePresetOption.Preset switch
+        {
+            QrFramePreset.RoundedFrame => "Banner text",
+            QrFramePreset.CornerCallout => "Callout text",
+            QrFramePreset.BottomLabel => "Label text",
+            _ => string.Empty,
+        };
+    public string FrameTextDescription => _original.FrameTextSource == QrFrameTextSource.ContentSummary
+        ? "Used when no content summary can be derived."
+        : string.Empty;
     public string FrameTextPlaceholder => SelectedFramePresetOption.DefaultText;
 
     public BrandItem? EditedItem { get; private set; }
@@ -176,6 +181,8 @@ public sealed partial class BrandEditDialog : ContentDialog
             Foreground = IncludeForeground ? ForegroundColor : null,
             Background = IncludeBackground ? BackgroundColor : null,
             UrlContent = IncludeUrl && !string.IsNullOrWhiteSpace(UrlContent) ? UrlContent.Trim() : null,
+            ContentKind = _original.ContentKind,
+            MultiLineCodeModeOverride = _original.MultiLineCodeModeOverride,
             ErrorCorrectionLevelAsString = IncludeErrorCorrection ? AllCorrectionLevels[SelectedCorrectionIndex].ErrorCorrectionLevel.ToString() : null,
             LogoImagePath = IncludeLogo ? LogoPath : null,
             LogoEmoji = IncludeLogo && string.Equals(LogoPath, _original.LogoImagePath, StringComparison.OrdinalIgnoreCase)
@@ -187,6 +194,7 @@ public sealed partial class BrandEditDialog : ContentDialog
             LogoSizePercentage = IncludeLogo ? LogoSize : null,
             LogoPaddingPixels = IncludeLogo ? LogoPadding : null,
             FramePreset = IncludeFrame ? selectedFramePreset : null,
+            FrameTextSource = _original.FrameTextSource,
             FrameText = IncludeFrame && selectedFramePreset != QrFramePreset.None
                 ? NormalizeFrameText(EditFrameText)
                 : null,

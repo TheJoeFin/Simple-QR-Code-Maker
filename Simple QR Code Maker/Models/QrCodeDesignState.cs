@@ -28,5 +28,7 @@ public sealed record QrCodeDesignState
 
     public QrFramePreset FramePreset { get; init; } = QrFramePreset.None;
 
+    public QrFrameTextSource FrameTextSource { get; init; } = QrFrameTextSource.Manual;
+
     public string? FrameText { get; init; }
 }

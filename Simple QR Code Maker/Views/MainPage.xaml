@@ -266,6 +266,23 @@
                                                                 GroupName="FramePreset"
                                                                 Tag="CornerCallout" />
                                                         </StackPanel>
+                                                        <StackPanel Spacing="8">
+                                                            <TextBlock
+                                                                FontWeight="SemiBold"
+                                                                Text="Label source" />
+                                                            <RadioButton
+                                                                x:Name="ManualFrameTextSourceRadioButton"
+                                                                Checked="FrameTextSourceRadioButton_Checked"
+                                                                Content="Manual text"
+                                                                GroupName="FrameTextSource"
+                                                                Tag="Manual" />
+                                                            <RadioButton
+                                                                x:Name="ContentSummaryFrameTextSourceRadioButton"
+                                                                Checked="FrameTextSourceRadioButton_Checked"
+                                                                Content="Content summary"
+                                                                GroupName="FrameTextSource"
+                                                                Tag="ContentSummary" />
+                                                        </StackPanel>
                                                         <TextBox
                                                             x:Name="FrameTextTextBox"
                                                             Header="{x:Bind ViewModel.FrameTextHeader,
@@ -276,6 +293,14 @@
                                                                           Mode=TwoWay,
                                                                           UpdateSourceTrigger=PropertyChanged}"
                                                             Visibility="{x:Bind ViewModel.IsFrameTextVisible,
+                                                                                Mode=OneWay,
+                                                                                Converter={StaticResource BoolToVisibility}}" />
+                                                        <TextBlock
+                                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                            Text="{x:Bind ViewModel.FrameTextHelperText,
+                                                                            Mode=OneWay}"
+                                                            TextWrapping="WrapWholeWords"
+                                                            Visibility="{x:Bind ViewModel.IsFrameFallbackInfoVisible,
                                                                                 Mode=OneWay,
                                                                                 Converter={StaticResource BoolToVisibility}}" />
                                                     </StackPanel>

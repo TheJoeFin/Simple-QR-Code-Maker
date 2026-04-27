@@ -14,6 +14,7 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         string? logoSvgContent,
         double qrPaddingModules,
         QrFramePreset framePreset,
+        QrFrameTextSource frameTextSource,
         string? frameText)
     {
         ErrorCorrectionLevel = errorCorrectionLevel;
@@ -25,6 +26,7 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         LogoSvgContent = logoSvgContent;
         QrPaddingModules = qrPaddingModules;
         FramePreset = framePreset;
+        FrameTextSource = frameTextSource;
         FrameText = frameText;
     }
 
@@ -46,6 +48,8 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
 
     public QrFramePreset FramePreset { get; }
 
+    public QrFrameTextSource FrameTextSource { get; }
+
     public string? FrameText { get; }
 
     public static QrRenderSettingsSnapshot Create(
@@ -58,6 +62,7 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         string? logoSvgContent,
         double qrPaddingModules,
         QrFramePreset framePreset,
+        QrFrameTextSource frameTextSource,
         string? frameText)
     {
         return new QrRenderSettingsSnapshot(
@@ -70,6 +75,7 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
             logoSvgContent,
             qrPaddingModules,
             framePreset,
+            frameTextSource,
             frameText);
     }
 

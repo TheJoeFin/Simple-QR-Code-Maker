@@ -164,9 +164,10 @@
                         </ComboBox>
                     </settingsControls:SettingsCard>
                     <settingsControls:SettingsCard
+                        Description="{x:Bind FrameTextDescription, Mode=OneWay}"
                         Header="{x:Bind FrameTextHeader, Mode=OneWay}"
                         Visibility="{x:Bind IsFrameTextVisible,
-                                            Mode=OneWay,
+                                             Mode=OneWay,
                                             Converter={StaticResource BoolToVisibility}}">
                         <TextBox
                             MinWidth="200"

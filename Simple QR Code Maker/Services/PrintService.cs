@@ -56,6 +56,13 @@ public class PrintService : IPrintService
                     renderSettings.ErrorCorrectionLevel,
                     renderSettings.QrPaddingModules,
                     renderSettings.FramePreset);
+                string? resolvedFrameText = QrFrameTextResolver.Resolve(
+                    renderSettings.FramePreset,
+                    renderSettings.FrameTextSource,
+                    renderSettings.FrameText,
+                    code.CodeAsText,
+                    code.ContentKind,
+                    code.MultiLineCodeModeOverride);
                 using MemoryStream ms = new();
                 BarcodeHelpers.SaveQrCodePngToStream(
                     ms,
@@ -68,7 +75,7 @@ public class PrintService : IPrintService
                     renderSettings.LogoPaddingPixels,
                     renderSettings.QrPaddingModules,
                     renderSettings.FramePreset,
-                    renderSettings.FrameText);
+                    resolvedFrameText);
                 return new PrintableQrCodeAsset(code.CodeAsText, ms.ToArray(), imageLayout);
             }).ToList();
 

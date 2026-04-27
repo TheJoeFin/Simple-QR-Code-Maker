@@ -120,9 +120,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsFrameTextVisible))]
+    [NotifyPropertyChangedFor(nameof(IsFrameFallbackInfoVisible))]
     [NotifyPropertyChangedFor(nameof(FrameTextHeader))]
     [NotifyPropertyChangedFor(nameof(FrameTextPlaceholder))]
     public partial QrFramePreset FramePreset { get; set; } = QrFramePreset.None;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsFrameFallbackInfoVisible))]
+    [NotifyPropertyChangedFor(nameof(FrameTextHeader))]
+    public partial QrFrameTextSource FrameTextSource { get; set; } = QrFrameTextSource.Manual;
 
     [ObservableProperty]
     public partial string FrameText { get; set; } = string.Empty;
@@ -311,13 +317,21 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     public bool IsFrameTextVisible => FramePreset != QrFramePreset.None;
 
-    public string FrameTextHeader => FramePreset switch
-    {
-        QrFramePreset.RoundedFrame => "Banner text",
-        QrFramePreset.CornerCallout => "Callout text",
-        QrFramePreset.BottomLabel => "Label text",
-        _ => string.Empty,
-    };
+    public bool IsFrameFallbackInfoVisible => IsFrameTextVisible && FrameTextSource == QrFrameTextSource.ContentSummary;
+
+    public string FrameTextHelperText => "Used when no content summary can be derived.";
+
+    public string FrameTextHeader => !IsFrameTextVisible
+        ? string.Empty
+        : FrameTextSource == QrFrameTextSource.ContentSummary
+            ? "Fallback label text"
+            : FramePreset switch
+            {
+                QrFramePreset.RoundedFrame => "Banner text",
+                QrFramePreset.CornerCallout => "Callout text",
+                QrFramePreset.BottomLabel => "Label text",
+                _ => string.Empty,
+            };
 
     public string FrameTextPlaceholder => QrFramePresetCatalog.GetOption(FramePreset).DefaultText;
 
@@ -780,6 +794,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         _ = LocalSettingsService.SaveSettingAsync(nameof(FrameText), value);
     }
 
+    partial void OnFrameTextSourceChanged(QrFrameTextSource value)
+    {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+        _ = LocalSettingsService.SaveSettingAsync(nameof(FrameTextSource), value);
+    }
+
     private bool UrlMatchesBrand(string url)
     {
         if (SelectedBrand is null)
@@ -1020,7 +1041,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             try
             {
                 _ = Encoder.encode(text, SelectedOption.ErrorCorrectionLevel);
-                requestedQrCodes.Add(new RequestedQrCodeItem(text));
+                requestedQrCodes.Add(new RequestedQrCodeItem(text, currentContentKind, multiLineCodeModeOverride));
             }
             catch (ZXing.WriterException)
             {
@@ -1137,6 +1158,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
     private BarcodeImageItem CreatePreviewItem(RequestedQrCodeItem requestedCode)
     {
+        string? resolvedFrameText = ResolveFrameText(requestedCode);
         WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(
             requestedCode.CodeAsText,
             SelectedOption.ErrorCorrectionLevel,
@@ -1147,7 +1169,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoPaddingPixels,
             QrPaddingModules,
             FramePreset,
-            FrameText);
+            resolvedFrameText);
         BarcodeImageItem barcodeImageItem = new()
         {
             CodeAsBitmap = bitmap,
@@ -1171,7 +1193,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoPaddingPixels = LogoPaddingPixels,
             LogoSvgContent = LogoSvgContent,
             FramePreset = FramePreset,
-            FrameText = FrameText,
+            FrameText = resolvedFrameText,
         };
 
         double ratio = barcodeImageItem.ColorContrastRatio;
@@ -1451,7 +1473,19 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoSvgContent,
             QrPaddingModules,
             FramePreset,
+            FrameTextSource,
             FrameText);
+    }
+
+    private string? ResolveFrameText(RequestedQrCodeItem requestedCode)
+    {
+        return QrFrameTextResolver.Resolve(
+            FramePreset,
+            FrameTextSource,
+            FrameText,
+            requestedCode.CodeAsText,
+            requestedCode.ContentKind,
+            requestedCode.MultiLineCodeModeOverride);
     }
 
     private void ShowClipboardDisabledInfoBar()
@@ -1708,7 +1742,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 BackgroundColor = brand.Background.Value;
 
             if (brand.UrlContent is not null)
-                ApplyDocumentText(brand.UrlContent);
+                ApplyDocumentText(brand.UrlContent, brand.ContentKind, brand.MultiLineCodeModeOverride);
 
             if (brand.ErrorCorrectionLevelAsString is not null)
             {
@@ -1730,6 +1764,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             if (brand.FramePreset.HasValue)
             {
                 FramePreset = brand.FramePreset.Value;
+                FrameTextSource = brand.FrameTextSource;
                 FrameText = brand.FramePreset.Value == QrFramePreset.None
                     ? string.Empty
                     : QrFramePresetCatalog.ResolveText(brand.FramePreset.Value, brand.FrameText) ?? string.Empty;
@@ -2291,6 +2326,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         QrPaddingModules = BarcodeHelpers.NormalizeQrPaddingModules(
             await LocalSettingsService.ReadSettingAsync<double?>(nameof(QrPaddingModules)) ?? 2.0);
         FramePreset = await LocalSettingsService.ReadSettingAsync<QrFramePreset?>(nameof(FramePreset)) ?? QrFramePreset.None;
+        FrameTextSource = await LocalSettingsService.ReadSettingAsync<QrFrameTextSource?>(nameof(FrameTextSource)) ?? QrFrameTextSource.Manual;
         FrameText = await LocalSettingsService.ReadSettingAsync<string>(nameof(FrameText)) ?? string.Empty;
         if (MinSizeScanDistanceScaleFactor < 0.35)
         {
@@ -2421,6 +2457,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
             LogoSizePercentage = LogoSizePercentage,
             LogoPaddingPixels = LogoPaddingPixels,
             FramePreset = FramePreset,
+            FrameTextSource = FrameTextSource,
             FrameText = FrameText,
         };
     }
@@ -2436,6 +2473,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         LogoSizePercentage = state.LogoSizePercentage;
         LogoPaddingPixels = state.LogoPaddingPixels;
         FramePreset = state.FramePreset;
+        FrameTextSource = state.FrameTextSource;
         FrameText = state.FrameText ?? string.Empty;
     }
 }
