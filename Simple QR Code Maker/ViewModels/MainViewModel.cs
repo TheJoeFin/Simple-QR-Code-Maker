@@ -173,6 +173,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     public partial bool IncludeErrorCorrection { get; set; } = true;
 
     [ObservableProperty]
+    public partial bool IncludeFrame { get; set; } = true;
+
+    [ObservableProperty]
     public partial bool IsNewBrandFormVisible { get; set; }
 
     private MultiLineCodeMode MultiLineCodeMode = MultiLineCodeMode.OneLineOneCode;
@@ -1678,6 +1681,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
                 IncludeUrl = IncludeUrl,
                 IncludeCenterImage = IncludeCenterImage,
                 IncludeErrorCorrection = IncludeErrorCorrection,
+                IncludeFrame = IncludeFrame,
             });
 
         await brandService.AddOrReplaceAndSaveAsync(BrandItems, brand);
@@ -1722,6 +1726,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 
             if (brand.LogoPaddingPixels.HasValue)
                 LogoPaddingPixels = brand.LogoPaddingPixels.Value;
+
+            if (brand.FramePreset.HasValue)
+            {
+                FramePreset = brand.FramePreset.Value;
+                FrameText = brand.FramePreset.Value == QrFramePreset.None
+                    ? string.Empty
+                    : QrFramePresetCatalog.ResolveText(brand.FramePreset.Value, brand.FrameText) ?? string.Empty;
+            }
 
             SelectedBrand = brand;
         }

@@ -120,6 +120,23 @@
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Text="Text" />
                 </StackPanel>
+
+                <StackPanel
+                    Orientation="Horizontal"
+                    Spacing="4"
+                    Visibility="{x:Bind Data.FrameDescription,
+                                        Converter={StaticResource NullToVisibility},
+                                        Mode=OneWay}">
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="Frame" />
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="{x:Bind Data.FrameDescription,
+                                      Mode=OneWay}" />
+                </StackPanel>
             </StackPanel>
 
             <TextBlock

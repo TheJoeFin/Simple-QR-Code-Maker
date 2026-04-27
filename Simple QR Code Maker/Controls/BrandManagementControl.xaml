@@ -97,6 +97,7 @@
                             <CheckBox Content="Foreground color" IsChecked="{x:Bind ViewModel.IncludeForeground, Mode=TwoWay}" />
                             <CheckBox Content="Background color" IsChecked="{x:Bind ViewModel.IncludeBackground, Mode=TwoWay}" />
                             <CheckBox Content="Error correction" IsChecked="{x:Bind ViewModel.IncludeErrorCorrection, Mode=TwoWay}" />
+                            <CheckBox Content="Frame" IsChecked="{x:Bind ViewModel.IncludeFrame, Mode=TwoWay}" />
                             <CheckBox Content="URL / text" IsChecked="{x:Bind ViewModel.IncludeUrl, Mode=TwoWay}" />
                             <CheckBox Content="Center image" IsChecked="{x:Bind ViewModel.IncludeCenterImage, Mode=TwoWay}" />
                         </StackPanel>

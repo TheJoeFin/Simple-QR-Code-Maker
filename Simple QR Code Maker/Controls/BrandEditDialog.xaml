@@ -126,6 +126,59 @@
                 </StackPanel>
             </settingsControls:SettingsCard>
 
+            <!--  Frame  -->
+            <settingsControls:SettingsExpander
+                Description="Include a frame style and frame text"
+                Header="Frame"
+                IsExpanded="{x:Bind IncludeFrame,
+                                    Mode=OneWay}">
+                <settingsControls:SettingsExpander.HeaderIcon>
+                    <SymbolIcon
+                        RenderTransformOrigin="0.5,0.5"
+                        Symbol="CalendarDay">
+                        <SymbolIcon.RenderTransform>
+                            <ScaleTransform ScaleY="-1" />
+                        </SymbolIcon.RenderTransform>
+                    </SymbolIcon>
+                </settingsControls:SettingsExpander.HeaderIcon>
+                <settingsControls:SettingsExpander.Content>
+                    <ToggleSwitch
+                        IsOn="{x:Bind IncludeFrame,
+                                      Mode=TwoWay}"
+                        OffContent=""
+                        OnContent="" />
+                </settingsControls:SettingsExpander.Content>
+                <settingsControls:SettingsExpander.Items>
+                    <settingsControls:SettingsCard Header="Style">
+                        <ComboBox
+                            MinWidth="200"
+                            ItemsSource="{x:Bind AllFramePresets,
+                                                 Mode=OneWay}"
+                            SelectedIndex="{x:Bind SelectedFramePresetIndex,
+                                                   Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:QrFramePresetOption">
+                                    <TextBlock Text="{x:Bind Description}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </settingsControls:SettingsCard>
+                    <settingsControls:SettingsCard
+                        Header="{x:Bind FrameTextHeader, Mode=OneWay}"
+                        Visibility="{x:Bind IsFrameTextVisible,
+                                            Mode=OneWay,
+                                            Converter={StaticResource BoolToVisibility}}">
+                        <TextBox
+                            MinWidth="200"
+                            PlaceholderText="{x:Bind FrameTextPlaceholder,
+                                                     Mode=OneWay}"
+                            Text="{x:Bind EditFrameText,
+                                          Mode=TwoWay,
+                                          UpdateSourceTrigger=PropertyChanged}" />
+                    </settingsControls:SettingsCard>
+                </settingsControls:SettingsExpander.Items>
+            </settingsControls:SettingsExpander>
+
             <!--  URL / text  -->
             <settingsControls:SettingsExpander
                 Description="Include default URL or text content"
