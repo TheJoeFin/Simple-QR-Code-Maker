@@ -267,9 +267,7 @@
                                                                 Tag="CornerCallout" />
                                                         </StackPanel>
                                                         <StackPanel Spacing="8">
-                                                            <TextBlock
-                                                                FontWeight="SemiBold"
-                                                                Text="Label source" />
+                                                            <TextBlock FontWeight="SemiBold" Text="Label source" />
                                                             <RadioButton
                                                                 x:Name="ManualFrameTextSourceRadioButton"
                                                                 Checked="FrameTextSourceRadioButton_Checked"
@@ -298,7 +296,7 @@
                                                         <TextBlock
                                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                             Text="{x:Bind ViewModel.FrameTextHelperText,
-                                                                            Mode=OneWay}"
+                                                                          Mode=OneWay}"
                                                             TextWrapping="WrapWholeWords"
                                                             Visibility="{x:Bind ViewModel.IsFrameFallbackInfoVisible,
                                                                                 Mode=OneWay,

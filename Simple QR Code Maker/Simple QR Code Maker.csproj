@@ -46,16 +46,16 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
     <PackageReference Include="Humanizer" Version="3.0.10" />
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.12.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.6" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.13.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.4.0" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1721" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260317003" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260416003" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
-    <PackageReference Include="PDFsharp" Version="6.2.2" />
-    <PackageReference Include="System.Text.Json" Version="10.0.6" />
-    <PackageReference Include="WinUI.TableView" Version="1.4.0" />
+    <PackageReference Include="PDFsharp" Version="6.2.4" />
+    <PackageReference Include="System.Text.Json" Version="10.0.7" />
+    <PackageReference Include="WinUI.TableView" Version="1.4.1" />
     <PackageReference Include="WinUIEx" Version="2.9.0" />
     <PackageReference Include="ZXing.Net" Version="0.16.11" />
     <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.14" />
