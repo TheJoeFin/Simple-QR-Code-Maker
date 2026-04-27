@@ -75,7 +75,8 @@ public static partial class BarcodeHelpers
             logoPaddingPixels,
             qrPaddingModules,
             framePreset,
-            frameText);
+            frameText,
+            out _);
         using MemoryStream ms = new();
         bitmap.Save(ms, ImageFormat.Png);
 
@@ -98,7 +99,26 @@ public static partial class BarcodeHelpers
             logoPaddingPixels,
             qrPaddingModules,
             framePreset,
-            frameText);
+            frameText,
+            out _);
+        bitmap.Save(outputStream, ImageFormat.Png);
+    }
+
+    internal static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out QrImageLayoutMetrics imageLayout)
+    {
+        using Bitmap bitmap = CreateQrCodeBitmap(
+            text,
+            correctionLevel,
+            foreground,
+            background,
+            logoImage,
+            logoSizePercentage,
+            logoPaddingPixels,
+            qrPaddingModules,
+            framePreset,
+            frameText,
+            out int qrRenderSize);
+        imageLayout = GetQrImageLayoutMetrics(qrRenderSize, framePreset);
         bitmap.Save(outputStream, ImageFormat.Png);
     }
 
@@ -194,7 +214,7 @@ public static partial class BarcodeHelpers
         return result;
     }
 
-    private static Bitmap CreateQrCodeBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText)
+    private static Bitmap CreateQrCodeBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out int qrRenderSize)
     {
         // Always pass fully opaque colors to ZXing — if the background color has A=0, ZXing fills
         // nothing (transparent brush = SourceOver no-op) and the bitmap initializes to black, making
@@ -202,7 +222,7 @@ public static partial class BarcodeHelpers
         int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
         QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
         int moduleCount = qrCode.Version.DimensionForVersion;
-        int renderSize = GetQrRenderSize(moduleCount, normalizedQrPaddingModules);
+        qrRenderSize = GetQrRenderSize(moduleCount, normalizedQrPaddingModules);
 
         BitmapRenderer bitmapRenderer = new()
         {
@@ -218,8 +238,8 @@ public static partial class BarcodeHelpers
 
         EncodingOptions encodingOptions = new()
         {
-            Width = renderSize,
-            Height = renderSize,
+            Width = qrRenderSize,
+            Height = qrRenderSize,
             Margin = normalizedQrPaddingModules,
         };
         encodingOptions.Hints.Add(EncodeHintType.ERROR_CORRECTION, correctionLevel);

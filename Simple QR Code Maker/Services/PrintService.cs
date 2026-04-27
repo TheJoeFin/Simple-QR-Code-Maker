@@ -51,11 +51,6 @@ public class PrintService : IPrintService
 
             List<PrintableQrCodeAsset> printableCodes = codes.Select(code =>
             {
-                QrImageLayoutMetrics imageLayout = BarcodeHelpers.GetQrImageLayoutMetrics(
-                    code.CodeAsText,
-                    renderSettings.ErrorCorrectionLevel,
-                    renderSettings.QrPaddingModules,
-                    renderSettings.FramePreset);
                 string? resolvedFrameText = QrFrameTextResolver.Resolve(
                     renderSettings.FramePreset,
                     renderSettings.FrameTextSource,
@@ -75,7 +70,8 @@ public class PrintService : IPrintService
                     renderSettings.LogoPaddingPixels,
                     renderSettings.QrPaddingModules,
                     renderSettings.FramePreset,
-                    resolvedFrameText);
+                    resolvedFrameText,
+                    out QrImageLayoutMetrics imageLayout);
                 return new PrintableQrCodeAsset(code.CodeAsText, ms.ToArray(), imageLayout);
             }).ToList();
 
