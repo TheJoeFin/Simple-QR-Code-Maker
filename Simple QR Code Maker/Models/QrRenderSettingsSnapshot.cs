@@ -12,7 +12,10 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         double logoSizePercentage,
         double logoPaddingPixels,
         string? logoSvgContent,
-        double qrPaddingModules)
+        double qrPaddingModules,
+        QrFramePreset framePreset,
+        QrFrameTextSource frameTextSource,
+        string? frameText)
     {
         ErrorCorrectionLevel = errorCorrectionLevel;
         ForegroundColor = foregroundColor;
@@ -22,6 +25,9 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         LogoPaddingPixels = logoPaddingPixels;
         LogoSvgContent = logoSvgContent;
         QrPaddingModules = qrPaddingModules;
+        FramePreset = framePreset;
+        FrameTextSource = frameTextSource;
+        FrameText = frameText;
     }
 
     public ErrorCorrectionLevel ErrorCorrectionLevel { get; }
@@ -40,6 +46,12 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
 
     public double QrPaddingModules { get; }
 
+    public QrFramePreset FramePreset { get; }
+
+    public QrFrameTextSource FrameTextSource { get; }
+
+    public string? FrameText { get; }
+
     public static QrRenderSettingsSnapshot Create(
         ErrorCorrectionLevel errorCorrectionLevel,
         System.Drawing.Color foregroundColor,
@@ -48,7 +60,10 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         double logoSizePercentage,
         double logoPaddingPixels,
         string? logoSvgContent,
-        double qrPaddingModules)
+        double qrPaddingModules,
+        QrFramePreset framePreset,
+        QrFrameTextSource frameTextSource,
+        string? frameText)
     {
         return new QrRenderSettingsSnapshot(
             errorCorrectionLevel,
@@ -58,7 +73,10 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
             logoSizePercentage,
             logoPaddingPixels,
             logoSvgContent,
-            qrPaddingModules);
+            qrPaddingModules,
+            framePreset,
+            frameTextSource,
+            frameText);
     }
 
     public void Dispose()

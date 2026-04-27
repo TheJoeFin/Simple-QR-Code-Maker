@@ -17,6 +17,11 @@ internal readonly record struct PrintLayoutMetrics(
     double PageWidthPoints,
     double PageHeightPoints);
 
+internal readonly record struct PrintCodePlacement(
+    double ImageWidthPoints,
+    double ImageHeightPoints,
+    double ActualCodeSizePoints);
+
 internal static class PrintLayoutHelper
 {
     internal const double PointsPerInch = 72.0;
@@ -31,13 +36,23 @@ internal static class PrintLayoutHelper
 
     internal static PrintLayoutMetrics CreateMetrics(PrintJobSettings settings)
     {
+        return CreateMetrics(settings, QrImageLayoutMetrics.Square);
+    }
+
+    internal static PrintLayoutMetrics CreateMetrics(PrintJobSettings settings, QrImageLayoutMetrics imageLayoutMetrics)
+    {
         PrintJobSettings normalizedSettings = settings.Normalize();
         PageSize pageSize = GetPageSize(normalizedSettings.PageType);
         (double pageWidthPoints, double pageHeightPoints) = GetPageDimensions(pageSize, normalizedSettings.PageLayout);
-        return CreateMetrics(pageWidthPoints, pageHeightPoints, normalizedSettings);
+        return CreateMetrics(pageWidthPoints, pageHeightPoints, normalizedSettings, imageLayoutMetrics);
     }
 
     internal static PrintLayoutMetrics CreateMetrics(double pageWidthPoints, double pageHeightPoints, PrintJobSettings settings)
+    {
+        return CreateMetrics(pageWidthPoints, pageHeightPoints, settings, QrImageLayoutMetrics.Square);
+    }
+
+    internal static PrintLayoutMetrics CreateMetrics(double pageWidthPoints, double pageHeightPoints, PrintJobSettings settings, QrImageLayoutMetrics imageLayoutMetrics)
     {
         PrintJobSettings normalizedSettings = settings.Normalize();
         double marginPoints = MillimetersToPoints(normalizedSettings.MarginMm);
@@ -46,7 +61,7 @@ internal static class PrintLayoutHelper
         double availableHeight = Math.Max(pageHeightPoints - (marginPoints * 2), 1);
 
         (int rows, int columns) = normalizedSettings.FitAsManyAsPossible
-            ? GetAutoFitGridDimensions(availableWidth, availableHeight, normalizedSettings, spacingPoints)
+            ? GetAutoFitGridDimensions(availableWidth, availableHeight, normalizedSettings, spacingPoints, imageLayoutMetrics)
             : GetGridDimensions(normalizedSettings.CodesPerPage, normalizedSettings.PageLayout);
 
         double usableWidth = Math.Max(availableWidth - (spacingPoints * (columns - 1)), 1);
@@ -54,7 +69,7 @@ internal static class PrintLayoutHelper
         double cellWidth = usableWidth / columns;
         double cellHeight = usableHeight / rows;
         double requestedCodeSizePoints = MillimetersToPoints(normalizedSettings.CodeSizeMm);
-        double actualCodeSizePoints = CalculateActualCodeSizePoints(cellWidth, cellHeight, normalizedSettings);
+        PrintCodePlacement placement = CalculateCodePlacement(cellWidth, cellHeight, normalizedSettings, imageLayoutMetrics);
 
         return new PrintLayoutMetrics(
             rows,
@@ -65,21 +80,39 @@ internal static class PrintLayoutHelper
             cellWidth,
             cellHeight,
             requestedCodeSizePoints,
-            actualCodeSizePoints,
+            placement.ActualCodeSizePoints,
             pageWidthPoints,
             pageHeightPoints);
     }
 
     internal static double CalculateActualCodeSizePoints(double cellWidth, double cellHeight, PrintJobSettings settings)
     {
+        return CalculateActualCodeSizePoints(cellWidth, cellHeight, settings, QrImageLayoutMetrics.Square);
+    }
+
+    internal static double CalculateActualCodeSizePoints(double cellWidth, double cellHeight, PrintJobSettings settings, QrImageLayoutMetrics imageLayoutMetrics)
+    {
+        return CalculateCodePlacement(cellWidth, cellHeight, settings, imageLayoutMetrics).ActualCodeSizePoints;
+    }
+
+    internal static PrintCodePlacement CalculateCodePlacement(double cellWidth, double cellHeight, PrintJobSettings settings, QrImageLayoutMetrics imageLayoutMetrics)
+    {
         PrintJobSettings normalizedSettings = settings.Normalize();
         double reservedLabelHeight = normalizedSettings.ShowLabels ? LabelHeightPoints + LabelSpacingPoints : 0;
         double paddedWidth = Math.Max(cellWidth - (CellPaddingPoints * 2), 1);
         double paddedHeight = Math.Max(cellHeight - (CellPaddingPoints * 2), 1);
         double imageAreaHeight = Math.Max(paddedHeight - reservedLabelHeight, 1);
-        double requestedImageSize = MillimetersToPoints(normalizedSettings.CodeSizeMm);
+        double requestedCodeSizePoints = MillimetersToPoints(normalizedSettings.CodeSizeMm);
+        double requestedImageWidth = requestedCodeSizePoints * imageLayoutMetrics.WidthPerQrSize;
+        double requestedImageHeight = requestedCodeSizePoints * imageLayoutMetrics.HeightPerQrSize;
+        double widthScale = requestedImageWidth <= 0 ? 1 : paddedWidth / requestedImageWidth;
+        double heightScale = requestedImageHeight <= 0 ? 1 : imageAreaHeight / requestedImageHeight;
+        double appliedScale = Math.Max(Math.Min(Math.Min(widthScale, heightScale), 1), 0);
 
-        return Math.Max(Math.Min(Math.Min(paddedWidth, imageAreaHeight), requestedImageSize), 1);
+        return new PrintCodePlacement(
+            Math.Max(requestedImageWidth * appliedScale, 1),
+            Math.Max(requestedImageHeight * appliedScale, 1),
+            Math.Max(requestedCodeSizePoints * appliedScale, 1));
     }
 
     internal static double MillimetersToPoints(double millimeters) => millimeters * PointsPerInch / MillimetersPerInch;
@@ -128,12 +161,15 @@ internal static class PrintLayoutHelper
         double availableWidth,
         double availableHeight,
         PrintJobSettings settings,
-        double spacingPoints)
+        double spacingPoints,
+        QrImageLayoutMetrics imageLayoutMetrics)
     {
         double requestedCodeSizePoints = MillimetersToPoints(settings.CodeSizeMm);
         double reservedLabelHeight = settings.ShowLabels ? LabelHeightPoints + LabelSpacingPoints : 0;
-        double requiredCellWidth = Math.Max(requestedCodeSizePoints + (CellPaddingPoints * 2), 1);
-        double requiredCellHeight = Math.Max(requestedCodeSizePoints + reservedLabelHeight + (CellPaddingPoints * 2), 1);
+        double requestedImageWidth = requestedCodeSizePoints * imageLayoutMetrics.WidthPerQrSize;
+        double requestedImageHeight = requestedCodeSizePoints * imageLayoutMetrics.HeightPerQrSize;
+        double requiredCellWidth = Math.Max(requestedImageWidth + (CellPaddingPoints * 2), 1);
+        double requiredCellHeight = Math.Max(requestedImageHeight + reservedLabelHeight + (CellPaddingPoints * 2), 1);
 
         int columns = Math.Max(1, (int)Math.Floor((availableWidth + spacingPoints) / (requiredCellWidth + spacingPoints)));
         int rows = Math.Max(1, (int)Math.Floor((availableHeight + spacingPoints) / (requiredCellHeight + spacingPoints)));

@@ -25,4 +25,10 @@ public sealed record QrCodeDesignState
     public double LogoSizePercentage { get; init; }
 
     public double LogoPaddingPixels { get; init; }
+
+    public QrFramePreset FramePreset { get; init; } = QrFramePreset.None;
+
+    public QrFrameTextSource FrameTextSource { get; init; } = QrFrameTextSource.Manual;
+
+    public string? FrameText { get; init; }
 }

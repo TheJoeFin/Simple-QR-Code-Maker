@@ -21,6 +21,8 @@ public sealed partial class BrandEditDialog : ContentDialog
         new("H", "High 30%", ErrorCorrectionLevel.H),
     ];
 
+    public List<QrFramePresetOption> AllFramePresets { get; } = [.. QrFramePresetCatalog.All];
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNameValid))]
     public partial string EditName { get; set; } = string.Empty;
@@ -42,6 +44,21 @@ public sealed partial class BrandEditDialog : ContentDialog
 
     [ObservableProperty]
     public partial int SelectedCorrectionIndex { get; set; } = 1;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsFrameTextVisible))]
+    [NotifyPropertyChangedFor(nameof(FrameTextHeader))]
+    [NotifyPropertyChangedFor(nameof(FrameTextPlaceholder))]
+    public partial bool IncludeFrame { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsFrameTextVisible))]
+    [NotifyPropertyChangedFor(nameof(FrameTextHeader))]
+    [NotifyPropertyChangedFor(nameof(FrameTextPlaceholder))]
+    public partial int SelectedFramePresetIndex { get; set; }
+
+    [ObservableProperty]
+    public partial string EditFrameText { get; set; } = string.Empty;
 
     [ObservableProperty]
     public partial bool IncludeUrl { get; set; }
@@ -69,8 +86,24 @@ public sealed partial class BrandEditDialog : ContentDialog
     public bool HasLogoPath => IncludeLogo && LogoPath is not null;
     public string LogoSizeDescription => $"{LogoSize} percent";
     public string LogoPaddingDescription => $"{LogoPadding} px";
+    public bool IsFrameTextVisible => IncludeFrame && SelectedFramePresetOption.Preset != QrFramePreset.None;
+    public string FrameTextHeader => _original.FrameTextSource == QrFrameTextSource.ContentSummary
+        ? "Fallback label text"
+        : SelectedFramePresetOption.Preset switch
+        {
+            QrFramePreset.RoundedFrame => "Banner text",
+            QrFramePreset.CornerCallout => "Callout text",
+            QrFramePreset.BottomLabel => "Label text",
+            _ => string.Empty,
+        };
+    public string FrameTextDescription => _original.FrameTextSource == QrFrameTextSource.ContentSummary
+        ? "Used when no content summary can be derived."
+        : string.Empty;
+    public string FrameTextPlaceholder => SelectedFramePresetOption.DefaultText;
 
     public BrandItem? EditedItem { get; private set; }
+
+    private QrFramePresetOption SelectedFramePresetOption => GetFramePresetOption(SelectedFramePresetIndex);
 
     public BrandEditDialog(BrandItem original)
     {
@@ -86,6 +119,15 @@ public sealed partial class BrandEditDialog : ContentDialog
         IncludeErrorCorrection = original.ErrorCorrectionLevelAsString is not null;
         int correctionIdx = AllCorrectionLevels.FindIndex(x => x.ErrorCorrectionLevel.ToString() == original.ErrorCorrectionLevelAsString);
         SelectedCorrectionIndex = correctionIdx >= 0 ? correctionIdx : 1;
+
+        IncludeFrame = original.FramePreset.HasValue;
+        int framePresetIndex = original.FramePreset.HasValue
+            ? AllFramePresets.FindIndex(option => option.Preset == original.FramePreset.Value)
+            : 0;
+        SelectedFramePresetIndex = framePresetIndex >= 0 ? framePresetIndex : 0;
+        EditFrameText = original.FramePreset.HasValue
+            ? QrFramePresetCatalog.ResolveText(original.FramePreset.Value, original.FrameText) ?? string.Empty
+            : string.Empty;
 
         IncludeUrl = original.UrlContent is not null;
         UrlContent = original.UrlContent ?? string.Empty;
@@ -129,6 +171,8 @@ public sealed partial class BrandEditDialog : ContentDialog
 
     private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
+        QrFramePreset selectedFramePreset = SelectedFramePresetOption.Preset;
+
         EditedItem = new BrandItem
         {
             Name = EditName.Trim(),
@@ -137,6 +181,8 @@ public sealed partial class BrandEditDialog : ContentDialog
             Foreground = IncludeForeground ? ForegroundColor : null,
             Background = IncludeBackground ? BackgroundColor : null,
             UrlContent = IncludeUrl && !string.IsNullOrWhiteSpace(UrlContent) ? UrlContent.Trim() : null,
+            ContentKind = _original.ContentKind,
+            MultiLineCodeModeOverride = _original.MultiLineCodeModeOverride,
             ErrorCorrectionLevelAsString = IncludeErrorCorrection ? AllCorrectionLevels[SelectedCorrectionIndex].ErrorCorrectionLevel.ToString() : null,
             LogoImagePath = IncludeLogo ? LogoPath : null,
             LogoEmoji = IncludeLogo && string.Equals(LogoPath, _original.LogoImagePath, StringComparison.OrdinalIgnoreCase)
@@ -147,6 +193,40 @@ public sealed partial class BrandEditDialog : ContentDialog
                 : null,
             LogoSizePercentage = IncludeLogo ? LogoSize : null,
             LogoPaddingPixels = IncludeLogo ? LogoPadding : null,
+            FramePreset = IncludeFrame ? selectedFramePreset : null,
+            FrameTextSource = _original.FrameTextSource,
+            FrameText = IncludeFrame && selectedFramePreset != QrFramePreset.None
+                ? NormalizeFrameText(EditFrameText)
+                : null,
         };
+    }
+
+    partial void OnSelectedFramePresetIndexChanged(int oldValue, int newValue)
+    {
+        QrFramePresetOption previousOption = GetFramePresetOption(oldValue);
+        QrFramePresetOption currentOption = GetFramePresetOption(newValue);
+        string normalizedFrameText = EditFrameText.Trim();
+        bool shouldReplaceFrameText = string.IsNullOrWhiteSpace(normalizedFrameText)
+            || (previousOption.Preset != QrFramePreset.None
+                && string.Equals(normalizedFrameText, previousOption.DefaultText, StringComparison.Ordinal));
+
+        if (currentOption.Preset != QrFramePreset.None && shouldReplaceFrameText)
+            EditFrameText = currentOption.DefaultText;
+    }
+
+    private QrFramePresetOption GetFramePresetOption(int index)
+    {
+        if (index >= 0 && index < AllFramePresets.Count)
+            return AllFramePresets[index];
+
+        return AllFramePresets[0];
+    }
+
+    private static string? NormalizeFrameText(string value)
+    {
+        string normalizedValue = value.Trim();
+        return string.IsNullOrWhiteSpace(normalizedValue)
+            ? null
+            : normalizedValue;
     }
 }

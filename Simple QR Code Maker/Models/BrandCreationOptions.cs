@@ -11,4 +11,6 @@ public sealed record BrandCreationOptions
     public bool IncludeCenterImage { get; init; } = true;
 
     public bool IncludeErrorCorrection { get; init; } = true;
+
+    public bool IncludeFrame { get; init; } = true;
 }

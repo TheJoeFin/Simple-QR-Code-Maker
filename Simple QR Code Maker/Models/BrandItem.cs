@@ -22,6 +22,11 @@ public class BrandItem : IEquatable<BrandItem>
 
     public string? UrlContent { get; set; }
 
+    [JsonConverter(typeof(JsonStringEnumConverter<QrContentKind>))]
+    public QrContentKind ContentKind { get; set; } = QrContentKind.PlainText;
+
+    public MultiLineCodeMode? MultiLineCodeModeOverride { get; set; }
+
     public string? LogoImagePath { get; set; }
 
     public string? LogoEmoji { get; set; }
@@ -32,6 +37,19 @@ public class BrandItem : IEquatable<BrandItem>
     public double? LogoSizePercentage { get; set; }
 
     public double? LogoPaddingPixels { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter<QrFramePreset>))]
+    public QrFramePreset? FramePreset { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter<QrFrameTextSource>))]
+    public QrFrameTextSource FrameTextSource { get; set; } = QrFrameTextSource.Manual;
+
+    public string? FrameText { get; set; }
+
+    [JsonIgnore]
+    public string? FrameDescription => FramePreset.HasValue
+        ? QrFramePresetCatalog.GetOption(FramePreset.Value).Description
+        : null;
 
     public bool IsDefault { get; set; } = false;
 

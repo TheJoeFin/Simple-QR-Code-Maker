@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Models;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -62,7 +63,7 @@ public static partial class BarcodeHelpers
         return new Bitmap(ms);
     }
 
-    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0)
+    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
     {
         using Bitmap bitmap = CreateQrCodeBitmap(
             text,
@@ -72,7 +73,10 @@ public static partial class BarcodeHelpers
             logoImage,
             logoSizePercentage,
             logoPaddingPixels,
-            qrPaddingModules);
+            qrPaddingModules,
+            framePreset,
+            frameText,
+            out _);
         using MemoryStream ms = new();
         bitmap.Save(ms, ImageFormat.Png);
 
@@ -83,7 +87,7 @@ public static partial class BarcodeHelpers
         return bitmapImage;
     }
 
-    public static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0)
+    public static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
     {
         using Bitmap bitmap = CreateQrCodeBitmap(
             text,
@@ -93,8 +97,78 @@ public static partial class BarcodeHelpers
             logoImage,
             logoSizePercentage,
             logoPaddingPixels,
-            qrPaddingModules);
+            qrPaddingModules,
+            framePreset,
+            frameText,
+            out _);
         bitmap.Save(outputStream, ImageFormat.Png);
+    }
+
+    internal static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out QrImageLayoutMetrics imageLayout)
+    {
+        using Bitmap bitmap = CreateQrCodeBitmap(
+            text,
+            correctionLevel,
+            foreground,
+            background,
+            logoImage,
+            logoSizePercentage,
+            logoPaddingPixels,
+            qrPaddingModules,
+            framePreset,
+            frameText,
+            out int qrRenderSize);
+        imageLayout = GetQrImageLayoutMetrics(qrRenderSize, framePreset);
+        bitmap.Save(outputStream, ImageFormat.Png);
+    }
+
+    internal static QrImageLayoutMetrics GetQrImageLayoutMetrics(
+        string text,
+        ErrorCorrectionLevel correctionLevel,
+        double qrPaddingModules = 2.0,
+        QrFramePreset framePreset = QrFramePreset.None)
+    {
+        int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
+        QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
+        int moduleCount = qrCode.Version.DimensionForVersion;
+        int renderSize = GetQrRenderSize(moduleCount, normalizedQrPaddingModules);
+        return GetQrImageLayoutMetrics(renderSize, framePreset);
+    }
+
+    private static QrImageLayoutMetrics GetQrImageLayoutMetrics(int qrRenderSize, QrFramePreset framePreset)
+    {
+        switch (framePreset)
+        {
+            case QrFramePreset.BottomLabel:
+                {
+                    int outerPadding = ScaleMetric(qrRenderSize, 0.05, 36);
+                    int labelHeight = ScaleMetric(qrRenderSize, 0.16, 84);
+                    int labelSpacing = ScaleMetric(qrRenderSize, 0.035, 20);
+                    int canvasWidth = qrRenderSize + (outerPadding * 2);
+                    int canvasHeight = qrRenderSize + (outerPadding * 2) + labelSpacing + labelHeight;
+                    return new QrImageLayoutMetrics(canvasWidth, canvasHeight, qrRenderSize, qrRenderSize);
+                }
+            case QrFramePreset.RoundedFrame:
+                {
+                    int outerPadding = ScaleMetric(qrRenderSize, 0.1, 56);
+                    int labelHeight = ScaleMetric(qrRenderSize, 0.14, 80);
+                    int labelSpacing = ScaleMetric(qrRenderSize, 0.03, 18);
+                    int canvasWidth = qrRenderSize + (outerPadding * 2);
+                    int canvasHeight = qrRenderSize + (outerPadding * 2) + labelSpacing + labelHeight;
+                    return new QrImageLayoutMetrics(canvasWidth, canvasHeight, qrRenderSize, qrRenderSize);
+                }
+            case QrFramePreset.CornerCallout:
+                {
+                    int outerPadding = ScaleMetric(qrRenderSize, 0.11, 64);
+                    int labelHeight = ScaleMetric(qrRenderSize, 0.13, 72);
+                    int labelSpacing = ScaleMetric(qrRenderSize, 0.04, 24);
+                    int canvasWidth = qrRenderSize + (outerPadding * 2);
+                    int canvasHeight = qrRenderSize + (outerPadding * 2) + labelSpacing + labelHeight;
+                    return new QrImageLayoutMetrics(canvasWidth, canvasHeight, qrRenderSize, qrRenderSize);
+                }
+            default:
+                return new QrImageLayoutMetrics(qrRenderSize, qrRenderSize, qrRenderSize, qrRenderSize);
+        }
     }
 
     /// <summary>
@@ -140,7 +214,7 @@ public static partial class BarcodeHelpers
         return result;
     }
 
-    private static Bitmap CreateQrCodeBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules)
+    private static Bitmap CreateQrCodeBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out int qrRenderSize)
     {
         // Always pass fully opaque colors to ZXing — if the background color has A=0, ZXing fills
         // nothing (transparent brush = SourceOver no-op) and the bitmap initializes to black, making
@@ -148,7 +222,7 @@ public static partial class BarcodeHelpers
         int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
         QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
         int moduleCount = qrCode.Version.DimensionForVersion;
-        int renderSize = GetQrRenderSize(moduleCount, normalizedQrPaddingModules);
+        qrRenderSize = GetQrRenderSize(moduleCount, normalizedQrPaddingModules);
 
         BitmapRenderer bitmapRenderer = new()
         {
@@ -164,8 +238,8 @@ public static partial class BarcodeHelpers
 
         EncodingOptions encodingOptions = new()
         {
-            Width = renderSize,
-            Height = renderSize,
+            Width = qrRenderSize,
+            Height = qrRenderSize,
             Margin = normalizedQrPaddingModules,
         };
         encodingOptions.Hints.Add(EncodeHintType.ERROR_CORRECTION, correctionLevel);
@@ -188,6 +262,13 @@ public static partial class BarcodeHelpers
                 OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
             }
 
+            Bitmap framedBitmap = AddFrameToBitmap(bitmap, foreground, background, framePreset, frameText);
+            if (!ReferenceEquals(framedBitmap, bitmap))
+            {
+                bitmap.Dispose();
+                bitmap = framedBitmap;
+            }
+
             return bitmap;
         }
         catch
@@ -195,6 +276,278 @@ public static partial class BarcodeHelpers
             bitmap.Dispose();
             throw;
         }
+    }
+
+    private static Bitmap AddFrameToBitmap(Bitmap qrBitmap, System.Drawing.Color foreground, System.Drawing.Color background, QrFramePreset framePreset, string? frameText)
+    {
+        string? resolvedFrameText = QrFramePresetCatalog.ResolveText(framePreset, frameText);
+        if (string.IsNullOrWhiteSpace(resolvedFrameText))
+            return qrBitmap;
+
+        return framePreset switch
+        {
+            QrFramePreset.BottomLabel => AddBottomLabelFrameToBitmap(qrBitmap, resolvedFrameText, foreground, background),
+            QrFramePreset.RoundedFrame => AddRoundedFrameToBitmap(qrBitmap, resolvedFrameText, foreground, background),
+            QrFramePreset.CornerCallout => AddCornerCalloutFrameToBitmap(qrBitmap, resolvedFrameText, foreground, background),
+            _ => qrBitmap,
+        };
+    }
+
+    private static Bitmap AddBottomLabelFrameToBitmap(Bitmap qrBitmap, string frameText, System.Drawing.Color foreground, System.Drawing.Color background)
+    {
+        int outerPadding = ScaleMetric(qrBitmap.Width, 0.05, 36);
+        int labelHeight = ScaleMetric(qrBitmap.Width, 0.16, 84);
+        int labelSpacing = ScaleMetric(qrBitmap.Width, 0.035, 20);
+        int labelWidth = qrBitmap.Width + ScaleMetric(qrBitmap.Width, 0.08, 40);
+        int outlineThickness = ScaleMetric(qrBitmap.Width, 0.014, 8);
+        int accentHeight = ScaleMetric(qrBitmap.Width, 0.014, 8);
+        int qrX = outerPadding;
+        int qrY = outerPadding;
+        int canvasWidth = qrBitmap.Width + (outerPadding * 2);
+        int canvasHeight = qrY + qrBitmap.Height + labelSpacing + labelHeight + outerPadding;
+        int labelX = (canvasWidth - labelWidth) / 2;
+        int labelY = qrY + qrBitmap.Height + labelSpacing;
+        int accentWidth = Math.Max(labelWidth / 4, ScaleMetric(qrBitmap.Width, 0.18, 120));
+        int accentX = (canvasWidth - accentWidth) / 2;
+        int accentY = labelY - (labelSpacing / 2);
+        Bitmap canvas = new(canvasWidth, canvasHeight, PixelFormat.Format32bppArgb);
+
+        using Graphics g = Graphics.FromImage(canvas);
+        PrepareGraphics(g);
+        g.Clear(System.Drawing.Color.Transparent);
+        g.DrawImage(qrBitmap, qrX, qrY, qrBitmap.Width, qrBitmap.Height);
+
+        using GraphicsPath labelPath = CreateRoundedRectanglePath(new System.Drawing.RectangleF(labelX, labelY, labelWidth, labelHeight), labelHeight / 2f);
+        using GraphicsPath accentPath = CreateRoundedRectanglePath(new System.Drawing.RectangleF(accentX, accentY, accentWidth, accentHeight), accentHeight / 2f);
+        using SolidBrush backgroundBrush = new(background);
+        using SolidBrush foregroundBrush = new(foreground);
+        using Pen outlinePen = new(foreground, outlineThickness);
+
+        g.FillPath(backgroundBrush, labelPath);
+        g.DrawPath(outlinePen, labelPath);
+        g.FillPath(foregroundBrush, accentPath);
+        DrawFrameText(g, frameText, foreground, new System.Drawing.RectangleF(labelX, labelY, labelWidth, labelHeight), outlineThickness);
+
+        return canvas;
+    }
+
+    private static Bitmap AddRoundedFrameToBitmap(Bitmap qrBitmap, string frameText, System.Drawing.Color foreground, System.Drawing.Color background)
+    {
+        int outerPadding = ScaleMetric(qrBitmap.Width, 0.1, 56);
+        int borderInset = ScaleMetric(qrBitmap.Width, 0.032, 18);
+        int labelHeight = ScaleMetric(qrBitmap.Width, 0.14, 80);
+        int labelSpacing = ScaleMetric(qrBitmap.Width, 0.03, 18);
+        int outlineThickness = ScaleMetric(qrBitmap.Width, 0.022, 14);
+        int qrX = outerPadding;
+        int qrY = outerPadding;
+        int canvasWidth = qrBitmap.Width + (outerPadding * 2);
+        int canvasHeight = qrY + qrBitmap.Height + outerPadding + labelSpacing + labelHeight;
+        float borderRadius = ScaleMetric(qrBitmap.Width, 0.085, 42);
+        System.Drawing.RectangleF borderRect = new(
+            qrX - borderInset,
+            qrY - borderInset,
+            qrBitmap.Width + (borderInset * 2),
+            qrBitmap.Height + (borderInset * 2));
+        int labelWidth = (int)Math.Round(borderRect.Width * 0.72, MidpointRounding.AwayFromZero);
+        int labelX = (canvasWidth - labelWidth) / 2;
+        int labelY = (int)Math.Round(borderRect.Bottom + labelSpacing, MidpointRounding.AwayFromZero);
+        Bitmap canvas = new(canvasWidth, canvasHeight, PixelFormat.Format32bppArgb);
+
+        using Graphics g = Graphics.FromImage(canvas);
+        PrepareGraphics(g);
+        g.Clear(System.Drawing.Color.Transparent);
+
+        using GraphicsPath borderPath = CreateRoundedRectanglePath(borderRect, borderRadius);
+        using SolidBrush backgroundBrush = new(background);
+        using Pen outlinePen = new(foreground, outlineThickness);
+
+        g.FillPath(backgroundBrush, borderPath);
+        g.DrawPath(outlinePen, borderPath);
+        g.DrawImage(qrBitmap, qrX, qrY, qrBitmap.Width, qrBitmap.Height);
+        DrawLabelPill(g, frameText, foreground, background, new System.Drawing.RectangleF(labelX, labelY, labelWidth, labelHeight), outlineThickness);
+
+        return canvas;
+    }
+
+    private static Bitmap AddCornerCalloutFrameToBitmap(Bitmap qrBitmap, string frameText, System.Drawing.Color foreground, System.Drawing.Color background)
+    {
+        int outerPadding = ScaleMetric(qrBitmap.Width, 0.11, 64);
+        int bracketInset = ScaleMetric(qrBitmap.Width, 0.03, 16);
+        int bracketLength = ScaleMetric(qrBitmap.Width, 0.14, 72);
+        int outlineThickness = ScaleMetric(qrBitmap.Width, 0.024, 15);
+        int labelHeight = ScaleMetric(qrBitmap.Width, 0.13, 72);
+        int labelSpacing = ScaleMetric(qrBitmap.Width, 0.04, 24);
+        int labelWidth = ScaleMetric(qrBitmap.Width, 0.72, 520);
+        int canvasWidth = qrBitmap.Width + (outerPadding * 2);
+        int canvasHeight = labelHeight + labelSpacing + qrBitmap.Height + (outerPadding * 2);
+        int labelX = (canvasWidth - labelWidth) / 2;
+        int labelY = outerPadding / 3;
+        int qrX = outerPadding;
+        int qrY = labelY + labelHeight + labelSpacing;
+        System.Drawing.RectangleF bracketRect = new(
+            qrX - bracketInset,
+            qrY - bracketInset,
+            qrBitmap.Width + (bracketInset * 2),
+            qrBitmap.Height + (bracketInset * 2));
+        Bitmap canvas = new(canvasWidth, canvasHeight, PixelFormat.Format32bppArgb);
+
+        using Graphics g = Graphics.FromImage(canvas);
+        PrepareGraphics(g);
+        g.Clear(System.Drawing.Color.Transparent);
+        g.DrawImage(qrBitmap, qrX, qrY, qrBitmap.Width, qrBitmap.Height);
+        DrawLabelPill(g, frameText, foreground, background, new System.Drawing.RectangleF(labelX, labelY, labelWidth, labelHeight), outlineThickness);
+        DrawCornerCalloutBrackets(g, foreground, bracketRect, bracketLength, outlineThickness, labelX + (labelWidth / 2f), labelY + labelHeight);
+
+        return canvas;
+    }
+
+    private static void PrepareGraphics(Graphics g)
+    {
+        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+        g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+        g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+    }
+
+    private static void DrawLabelPill(Graphics g, string frameText, System.Drawing.Color foreground, System.Drawing.Color background, System.Drawing.RectangleF rect, float outlineThickness)
+    {
+        using GraphicsPath labelPath = CreateRoundedRectanglePath(rect, rect.Height / 2f);
+        using SolidBrush backgroundBrush = new(background);
+        using Pen outlinePen = new(foreground, outlineThickness);
+
+        g.FillPath(backgroundBrush, labelPath);
+        g.DrawPath(outlinePen, labelPath);
+        DrawFrameText(g, frameText, foreground, rect, outlineThickness);
+    }
+
+    private static void DrawFrameText(Graphics g, string frameText, System.Drawing.Color foreground, System.Drawing.RectangleF rect, float outlineThickness)
+    {
+        System.Drawing.RectangleF textRect = GetFrameTextRect(rect, outlineThickness);
+        float fontSize = GetFittedFrameFontSize(frameText, textRect.Size);
+        using Font font = new("Segoe UI", fontSize, FontStyle.Bold, GraphicsUnit.Pixel);
+        using SolidBrush textBrush = new(foreground);
+        using StringFormat format = new()
+        {
+            Alignment = StringAlignment.Center,
+            LineAlignment = StringAlignment.Center,
+            Trimming = StringTrimming.EllipsisCharacter,
+            FormatFlags = StringFormatFlags.NoWrap,
+        };
+
+        g.DrawString(frameText, font, textBrush, textRect, format);
+    }
+
+    private static System.Drawing.RectangleF GetFrameTextRect(System.Drawing.RectangleF rect, float outlineThickness)
+    {
+        float horizontalPadding = Math.Max(outlineThickness * 2.5f, rect.Width * 0.08f);
+        float verticalPadding = Math.Max(outlineThickness * 1.5f, rect.Height * 0.14f);
+        float width = Math.Max(1f, rect.Width - (horizontalPadding * 2f));
+        float height = Math.Max(1f, rect.Height - (verticalPadding * 2f));
+
+        return new System.Drawing.RectangleF(
+            rect.X + horizontalPadding,
+            rect.Y + verticalPadding,
+            width,
+            height);
+    }
+
+    private static float GetFittedFrameFontSize(string frameText, System.Drawing.SizeF availableSize)
+    {
+        const float measurementFontSize = 100f;
+
+        using Bitmap measurementBitmap = new(1, 1);
+        using Graphics measurementGraphics = Graphics.FromImage(measurementBitmap);
+        PrepareGraphics(measurementGraphics);
+        using Font measurementFont = new("Segoe UI", measurementFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
+        using StringFormat format = new()
+        {
+            Alignment = StringAlignment.Center,
+            LineAlignment = StringAlignment.Center,
+            Trimming = StringTrimming.EllipsisCharacter,
+            FormatFlags = StringFormatFlags.NoWrap,
+        };
+
+        System.Drawing.SizeF measuredSize = measurementGraphics.MeasureString(frameText, measurementFont, PointF.Empty, format);
+        if (measuredSize.Width <= 0 || measuredSize.Height <= 0)
+            return Math.Max(1f, availableSize.Height);
+
+        float scaleX = availableSize.Width / measuredSize.Width;
+        float scaleY = availableSize.Height / measuredSize.Height;
+        float scale = Math.Min(scaleX, scaleY) * 0.98f;
+
+        return Math.Max(1f, measurementFontSize * scale);
+    }
+
+    private static void DrawCornerCalloutBrackets(Graphics g, System.Drawing.Color foreground, System.Drawing.RectangleF bracketRect, float bracketLength, float outlineThickness, float labelCenterX, float labelBottomY)
+    {
+        using Pen outlinePen = new(foreground, outlineThickness)
+        {
+            LineJoin = System.Drawing.Drawing2D.LineJoin.Round,
+            StartCap = System.Drawing.Drawing2D.LineCap.Round,
+            EndCap = System.Drawing.Drawing2D.LineCap.Round,
+        };
+
+        float left = bracketRect.Left;
+        float top = bracketRect.Top;
+        float right = bracketRect.Right;
+        float bottom = bracketRect.Bottom;
+
+        g.DrawLines(outlinePen,
+        [
+            new System.Drawing.PointF(left + bracketLength, top),
+            new System.Drawing.PointF(left, top),
+            new System.Drawing.PointF(left, top + bracketLength),
+        ]);
+        g.DrawLines(outlinePen,
+        [
+            new System.Drawing.PointF(right - bracketLength, top),
+            new System.Drawing.PointF(right, top),
+            new System.Drawing.PointF(right, top + bracketLength),
+        ]);
+        g.DrawLines(outlinePen,
+        [
+            new System.Drawing.PointF(left + bracketLength, bottom),
+            new System.Drawing.PointF(left, bottom),
+            new System.Drawing.PointF(left, bottom - bracketLength),
+        ]);
+        g.DrawLines(outlinePen,
+        [
+            new System.Drawing.PointF(right - bracketLength, bottom),
+            new System.Drawing.PointF(right, bottom),
+            new System.Drawing.PointF(right, bottom - bracketLength),
+        ]);
+
+        float connectorBottom = top - (outlineThickness * 1.2f);
+        if (connectorBottom > labelBottomY)
+        {
+            g.DrawLine(outlinePen, labelCenterX, labelBottomY, labelCenterX, connectorBottom);
+        }
+    }
+
+    private static GraphicsPath CreateRoundedRectanglePath(System.Drawing.RectangleF rect, float radius)
+    {
+        float diameter = Math.Min(radius * 2f, Math.Min(rect.Width, rect.Height));
+        GraphicsPath path = new();
+
+        if (diameter <= 0)
+        {
+            path.AddRectangle(rect);
+            return path;
+        }
+
+        path.AddArc(rect.X, rect.Y, diameter, diameter, 180, 90);
+        path.AddArc(rect.Right - diameter, rect.Y, diameter, diameter, 270, 90);
+        path.AddArc(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter, 0, 90);
+        path.AddArc(rect.X, rect.Bottom - diameter, diameter, diameter, 90, 90);
+        path.CloseFigure();
+        return path;
+    }
+
+    private static int ScaleMetric(int baseSize, double ratio, int minimum)
+    {
+        int scaledValue = (int)Math.Round(baseSize * ratio, MidpointRounding.AwayFromZero);
+        return Math.Max(scaledValue, minimum);
     }
 
     private static void OverlayLogoOnQrCode(Bitmap qrCodeBitmap, Bitmap logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels, System.Drawing.Color backgroundColor)
@@ -411,7 +764,7 @@ public static partial class BarcodeHelpers
             $"{smallestSideCm:F2} x {smallestSideCm:F2} cm");
     }
 
-    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null, double qrPaddingModules = 2.0)
+    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
     {
         int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
         QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
@@ -447,7 +800,158 @@ public static partial class BarcodeHelpers
             svg = EmbedLogoInSvg(svg, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, renderSize, logoPaddingPixels, background, logoSvgContent);
         }
 
+        svg = ApplyFrameToSvg(svg, renderSize, foreground, background, framePreset, frameText);
+
         return svg;
+    }
+
+    private static SvgImage ApplyFrameToSvg(SvgImage svg, int qrRenderSize, System.Drawing.Color foreground, System.Drawing.Color background, QrFramePreset framePreset, string? frameText)
+    {
+        string? resolvedFrameText = QrFramePresetCatalog.ResolveText(framePreset, frameText);
+        if (string.IsNullOrWhiteSpace(resolvedFrameText))
+            return svg;
+
+        string svgBody = ExtractSvgInnerContent(svg.Content);
+        if (string.IsNullOrWhiteSpace(svgBody))
+            return svg;
+
+        string qrGroup;
+        string frameMarkup;
+        string canvasWidth;
+        string canvasHeight;
+
+        switch (framePreset)
+        {
+            case QrFramePreset.BottomLabel:
+                {
+                    int outerPadding = ScaleMetric(qrRenderSize, 0.05, 36);
+                    int labelHeight = ScaleMetric(qrRenderSize, 0.16, 84);
+                    int labelSpacing = ScaleMetric(qrRenderSize, 0.035, 20);
+                    int labelWidth = qrRenderSize + ScaleMetric(qrRenderSize, 0.08, 40);
+                    int outlineThickness = ScaleMetric(qrRenderSize, 0.014, 8);
+                    int accentHeight = ScaleMetric(qrRenderSize, 0.014, 8);
+                    int qrX = outerPadding;
+                    int qrY = outerPadding;
+                    int totalWidth = qrRenderSize + (outerPadding * 2);
+                    int totalHeight = qrY + qrRenderSize + labelSpacing + labelHeight + outerPadding;
+                    int labelX = (totalWidth - labelWidth) / 2;
+                    int labelY = qrY + qrRenderSize + labelSpacing;
+                    int accentWidth = Math.Max(labelWidth / 4, ScaleMetric(qrRenderSize, 0.18, 120));
+                    int accentX = (totalWidth - accentWidth) / 2;
+                    int accentY = labelY - (labelSpacing / 2);
+
+                    qrGroup = CreateTranslatedSvgGroup(svgBody, qrX, qrY);
+                    frameMarkup = $"""
+  <rect x="{SvgValue(labelX)}" y="{SvgValue(labelY)}" width="{SvgValue(labelWidth)}" height="{SvgValue(labelHeight)}" rx="{SvgValue(labelHeight / 2.0)}" ry="{SvgValue(labelHeight / 2.0)}" fill="{ToSvgColor(background)}" stroke="{ToSvgColor(foreground)}" stroke-width="{SvgValue(outlineThickness)}"/>
+  <rect x="{SvgValue(accentX)}" y="{SvgValue(accentY)}" width="{SvgValue(accentWidth)}" height="{SvgValue(accentHeight)}" rx="{SvgValue(accentHeight / 2.0)}" ry="{SvgValue(accentHeight / 2.0)}" fill="{ToSvgColor(foreground)}"/>
+  {CreateSvgTextElement(resolvedFrameText, new System.Drawing.RectangleF(labelX, labelY, labelWidth, labelHeight), outlineThickness, foreground)}
+""";
+                    canvasWidth = SvgValue(totalWidth);
+                    canvasHeight = SvgValue(totalHeight);
+                    break;
+                }
+            case QrFramePreset.RoundedFrame:
+                {
+                    int outerPadding = ScaleMetric(qrRenderSize, 0.1, 56);
+                    int borderInset = ScaleMetric(qrRenderSize, 0.032, 18);
+                    int labelHeight = ScaleMetric(qrRenderSize, 0.14, 80);
+                    int labelSpacing = ScaleMetric(qrRenderSize, 0.03, 18);
+                    int outlineThickness = ScaleMetric(qrRenderSize, 0.022, 14);
+                    int qrX = outerPadding;
+                    int qrY = outerPadding;
+                    int totalWidth = qrRenderSize + (outerPadding * 2);
+                    int totalHeight = qrY + qrRenderSize + outerPadding + labelSpacing + labelHeight;
+                    int borderX = qrX - borderInset;
+                    int borderY = qrY - borderInset;
+                    int borderWidth = qrRenderSize + (borderInset * 2);
+                    int borderHeight = qrRenderSize + (borderInset * 2);
+                    int borderRadius = ScaleMetric(qrRenderSize, 0.085, 42);
+                    int labelWidth = (int)Math.Round(borderWidth * 0.72, MidpointRounding.AwayFromZero);
+                    int labelX = (totalWidth - labelWidth) / 2;
+                    int labelY = borderY + borderHeight + labelSpacing;
+
+                    qrGroup = CreateTranslatedSvgGroup(svgBody, qrX, qrY);
+                    frameMarkup = $"""
+  <rect x="{SvgValue(borderX)}" y="{SvgValue(borderY)}" width="{SvgValue(borderWidth)}" height="{SvgValue(borderHeight)}" rx="{SvgValue(borderRadius)}" ry="{SvgValue(borderRadius)}" fill="{ToSvgColor(background)}" stroke="{ToSvgColor(foreground)}" stroke-width="{SvgValue(outlineThickness)}"/>
+  <rect x="{SvgValue(labelX)}" y="{SvgValue(labelY)}" width="{SvgValue(labelWidth)}" height="{SvgValue(labelHeight)}" rx="{SvgValue(labelHeight / 2.0)}" ry="{SvgValue(labelHeight / 2.0)}" fill="{ToSvgColor(background)}" stroke="{ToSvgColor(foreground)}" stroke-width="{SvgValue(outlineThickness)}"/>
+  {CreateSvgTextElement(resolvedFrameText, new System.Drawing.RectangleF(labelX, labelY, labelWidth, labelHeight), outlineThickness, foreground)}
+""";
+                    canvasWidth = SvgValue(totalWidth);
+                    canvasHeight = SvgValue(totalHeight);
+                    break;
+                }
+            case QrFramePreset.CornerCallout:
+                {
+                    int outerPadding = ScaleMetric(qrRenderSize, 0.11, 64);
+                    int bracketInset = ScaleMetric(qrRenderSize, 0.03, 16);
+                    int bracketLength = ScaleMetric(qrRenderSize, 0.14, 72);
+                    int outlineThickness = ScaleMetric(qrRenderSize, 0.024, 15);
+                    int labelHeight = ScaleMetric(qrRenderSize, 0.13, 72);
+                    int labelSpacing = ScaleMetric(qrRenderSize, 0.04, 24);
+                    int labelWidth = ScaleMetric(qrRenderSize, 0.72, 520);
+                    int totalWidth = qrRenderSize + (outerPadding * 2);
+                    int totalHeight = labelHeight + labelSpacing + qrRenderSize + (outerPadding * 2);
+                    int labelX = (totalWidth - labelWidth) / 2;
+                    int labelY = outerPadding / 3;
+                    int qrX = outerPadding;
+                    int qrY = labelY + labelHeight + labelSpacing;
+                    int bracketLeft = qrX - bracketInset;
+                    int bracketTop = qrY - bracketInset;
+                    int bracketRight = qrX + qrRenderSize + bracketInset;
+                    int bracketBottom = qrY + qrRenderSize + bracketInset;
+
+                    qrGroup = CreateTranslatedSvgGroup(svgBody, qrX, qrY);
+                    frameMarkup = $"""
+  <rect x="{SvgValue(labelX)}" y="{SvgValue(labelY)}" width="{SvgValue(labelWidth)}" height="{SvgValue(labelHeight)}" rx="{SvgValue(labelHeight / 2.0)}" ry="{SvgValue(labelHeight / 2.0)}" fill="{ToSvgColor(background)}" stroke="{ToSvgColor(foreground)}" stroke-width="{SvgValue(outlineThickness)}"/>
+  {CreateSvgTextElement(resolvedFrameText, new System.Drawing.RectangleF(labelX, labelY, labelWidth, labelHeight), outlineThickness, foreground)}
+  <path d="M {SvgValue(bracketLeft + bracketLength)} {SvgValue(bracketTop)} L {SvgValue(bracketLeft)} {SvgValue(bracketTop)} L {SvgValue(bracketLeft)} {SvgValue(bracketTop + bracketLength)}
+           M {SvgValue(bracketRight - bracketLength)} {SvgValue(bracketTop)} L {SvgValue(bracketRight)} {SvgValue(bracketTop)} L {SvgValue(bracketRight)} {SvgValue(bracketTop + bracketLength)}
+           M {SvgValue(bracketLeft + bracketLength)} {SvgValue(bracketBottom)} L {SvgValue(bracketLeft)} {SvgValue(bracketBottom)} L {SvgValue(bracketLeft)} {SvgValue(bracketBottom - bracketLength)}
+           M {SvgValue(bracketRight - bracketLength)} {SvgValue(bracketBottom)} L {SvgValue(bracketRight)} {SvgValue(bracketBottom)} L {SvgValue(bracketRight)} {SvgValue(bracketBottom - bracketLength)}" fill="none" stroke="{ToSvgColor(foreground)}" stroke-width="{SvgValue(outlineThickness)}" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="{SvgValue(labelX + (labelWidth / 2.0))}" y1="{SvgValue(labelY + labelHeight)}" x2="{SvgValue(labelX + (labelWidth / 2.0))}" y2="{SvgValue(bracketTop - (outlineThickness * 1.2))}" stroke="{ToSvgColor(foreground)}" stroke-width="{SvgValue(outlineThickness)}" stroke-linecap="round"/>
+""";
+                    canvasWidth = SvgValue(totalWidth);
+                    canvasHeight = SvgValue(totalHeight);
+                    break;
+                }
+            default:
+                return svg;
+        }
+
+        string content = $"""
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {canvasWidth} {canvasHeight}" width="{canvasWidth}" height="{canvasHeight}">
+{frameMarkup}
+{qrGroup}
+</svg>
+""";
+        return new SvgImage(content);
+    }
+
+    private static string CreateTranslatedSvgGroup(string svgBody, double offsetX, double offsetY)
+    {
+        return $"  <g transform=\"translate({SvgValue(offsetX)} {SvgValue(offsetY)})\">{Environment.NewLine}{svgBody}{Environment.NewLine}  </g>";
+    }
+
+    private static string CreateSvgTextElement(string value, System.Drawing.RectangleF rect, float outlineThickness, System.Drawing.Color foreground)
+    {
+        System.Drawing.RectangleF textRect = GetFrameTextRect(rect, outlineThickness);
+        float fontSize = GetFittedFrameFontSize(value, textRect.Size);
+        string escapedText = System.Security.SecurityElement.Escape(value) ?? string.Empty;
+        float centerX = textRect.X + (textRect.Width / 2f);
+        float centerY = textRect.Y + (textRect.Height / 2f);
+        return $"<text x=\"{SvgValue(centerX)}\" y=\"{SvgValue(centerY)}\" fill=\"{ToSvgColor(foreground)}\" font-family=\"Segoe UI, Arial, sans-serif\" font-size=\"{SvgValue(fontSize)}\" font-weight=\"700\" text-anchor=\"middle\" dominant-baseline=\"middle\">{escapedText}</text>";
+    }
+
+    private static string ToSvgColor(System.Drawing.Color color)
+    {
+        return color.A < 255
+            ? $"rgba({color.R},{color.G},{color.B},{(color.A / 255.0).ToString("0.###", CultureInfo.InvariantCulture)})"
+            : $"rgb({color.R},{color.G},{color.B})";
+    }
+
+    private static string SvgValue(double value)
+    {
+        return value.ToString("0.###", CultureInfo.InvariantCulture);
     }
 
     private static SvgImage EmbedLogoInSvg(SvgImage svg, Bitmap? logo, double sizePercentage, int moduleCount, int margin, int svgSize, double logoPaddingPixels, System.Drawing.Color backgroundColor, string? logoSvgContent = null)

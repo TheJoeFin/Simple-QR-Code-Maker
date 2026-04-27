@@ -19,6 +19,8 @@ public sealed partial class PrintSettingsDialog : ContentDialog
     private static readonly PrintPageType[] PageTypeOptions = PrintPageTypeHelper.SelectablePageTypes;
     private static readonly PrintPageLayout[] PageLayoutOptions = [PrintPageLayout.Portrait, PrintPageLayout.Landscape];
     private const double MillimetersPerInch = 25.4;
+    private const double MetricDisplayIncrement = 2.5;
+    private const double ImperialDisplayIncrement = 0.25;
     private const double PreviewPageDisplayWidth = 720;
     private const double PreviewPageRenderWidth = 1440;
     private const double PreviewPageInnerPadding = 16;
@@ -34,6 +36,7 @@ public sealed partial class PrintSettingsDialog : ContentDialog
     private readonly List<Border> previewPageBorders = [];
     private readonly bool useMetricUnits;
     private readonly string lengthUnitSuffix;
+    private readonly double lengthDisplayIncrement;
     private CancellationTokenSource? previewRefreshDebounceCts;
     private CancellationTokenSource? previewCts;
     private bool isLoaded;
@@ -54,6 +57,7 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         this.renderSettings = renderSettings;
         useMetricUnits = UsesMetricLengths();
         lengthUnitSuffix = useMetricUnits ? "mm" : "in";
+        lengthDisplayIncrement = useMetricUnits ? MetricDisplayIncrement : ImperialDisplayIncrement;
 
         PrintJobSettings normalizedInitialSettings = initialSettings.Normalize();
         ConfigureLengthInputs(normalizedInitialSettings);
@@ -194,15 +198,17 @@ public sealed partial class PrintSettingsDialog : ContentDialog
 
         previewCts = new CancellationTokenSource();
         CancellationToken token = previewCts.Token;
+        PrintJobSettings resultSettings = ResultSettings;
 
         string? pdfPath = null;
         string? previousPdfPath = currentPdfPath;
 
         ShowPreviewLoading();
+        SynchronizeLengthInputs(resultSettings);
 
         try
         {
-            pdfPath = await printService.GenerateQrPdfAsync(codes, renderSettings, ResultSettings, token);
+            pdfPath = await printService.GenerateQrPdfAsync(codes, renderSettings, resultSettings, token);
             if (token.IsCancellationRequested)
             {
                 TryDeleteFile(pdfPath);
@@ -389,16 +395,16 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         SpacingMmBox.Header = GetLengthHeader("Spacing");
         MarginMmBox.Header = GetLengthHeader("Page margin");
 
-        ConfigureLengthBox(CodeSizeMmBox, settings.CodeSizeMm, PrintJobSettings.MinimumCodeSizeMm, PrintJobSettings.MaximumCodeSizeMm, useMetricUnits ? 1 : 0.05);
-        ConfigureLengthBox(SpacingMmBox, settings.SpacingMm, PrintJobSettings.MinimumSpacingMm, PrintJobSettings.MaximumSpacingMm, useMetricUnits ? 1 : 0.05);
-        ConfigureLengthBox(MarginMmBox, settings.MarginMm, PrintJobSettings.MinimumMarginMm, PrintJobSettings.MaximumMarginMm, useMetricUnits ? 1 : 0.05);
+        ConfigureLengthBox(CodeSizeMmBox, settings.CodeSizeMm, PrintJobSettings.MinimumCodeSizeMm, PrintJobSettings.MaximumCodeSizeMm);
+        ConfigureLengthBox(SpacingMmBox, settings.SpacingMm, PrintJobSettings.MinimumSpacingMm, PrintJobSettings.MaximumSpacingMm);
+        ConfigureLengthBox(MarginMmBox, settings.MarginMm, PrintJobSettings.MinimumMarginMm, PrintJobSettings.MaximumMarginMm);
     }
 
-    private void ConfigureLengthBox(NumberBox box, double valueMm, double minMm, double maxMm, double step)
+    private void ConfigureLengthBox(NumberBox box, double valueMm, double minMm, double maxMm)
     {
         box.Minimum = ToDisplayLength(minMm);
         box.Maximum = ToDisplayLength(maxMm);
-        box.SmallChange = step;
+        box.SmallChange = lengthDisplayIncrement;
         box.Value = ToDisplayLength(valueMm);
     }
 
@@ -406,16 +412,18 @@ public sealed partial class PrintSettingsDialog : ContentDialog
 
     private double ToDisplayLength(double millimeters)
     {
-        return useMetricUnits
+        double displayValue = useMetricUnits
             ? millimeters
-            : Math.Round(millimeters / MillimetersPerInch, 2, MidpointRounding.AwayFromZero);
+            : millimeters / MillimetersPerInch;
+        return SnapDisplayLength(displayValue);
     }
 
     private double ToMillimeters(double displayValue)
     {
+        double snappedDisplayValue = SnapDisplayLength(displayValue);
         return useMetricUnits
-            ? displayValue
-            : displayValue * MillimetersPerInch;
+            ? snappedDisplayValue
+            : snappedDisplayValue * MillimetersPerInch;
     }
 
     private static bool UsesMetricLengths()
@@ -451,9 +459,7 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         PageTypeCombo.SelectedIndex = Math.Max(Array.IndexOf(PageTypeOptions, resolvedPageType), 0);
         PageLayoutCombo.SelectedIndex = Math.Max(Array.IndexOf(PageLayoutOptions, normalizedSettings.PageLayout), 0);
         ShowLabelsSwitch.IsOn = normalizedSettings.ShowLabels;
-        CodeSizeMmBox.Value = ToDisplayLength(normalizedSettings.CodeSizeMm);
-        SpacingMmBox.Value = ToDisplayLength(normalizedSettings.SpacingMm);
-        MarginMmBox.Value = ToDisplayLength(normalizedSettings.MarginMm);
+        ApplyLengthValues(normalizedSettings);
     }
 
     private void ApplyQuickPreset(int presetIndex)
@@ -537,8 +543,8 @@ public sealed partial class PrintSettingsDialog : ContentDialog
 
     private bool MatchesQuickPreset(PrintJobSettings settings, int presetIndex)
     {
-        PrintJobSettings normalizedSettings = settings.Normalize();
-        PrintJobSettings presetSettings = GetQuickPresetSettings(normalizedSettings, presetIndex).Normalize();
+        PrintJobSettings normalizedSettings = NormalizeSettingsForDisplayUnits(settings);
+        PrintJobSettings presetSettings = NormalizeSettingsForDisplayUnits(GetQuickPresetSettings(normalizedSettings, presetIndex));
 
         if (normalizedSettings.FitAsManyAsPossible != presetSettings.FitAsManyAsPossible)
         {
@@ -572,6 +578,51 @@ public sealed partial class PrintSettingsDialog : ContentDialog
     {
         double displayValue = ToDisplayLength(millimeters);
         return $"{displayValue:0.##} {lengthUnitSuffix}";
+    }
+
+    private void SynchronizeLengthInputs(PrintJobSettings settings)
+    {
+        suppressRefresh = true;
+
+        try
+        {
+            ApplyLengthValues(settings);
+        }
+        finally
+        {
+            suppressRefresh = false;
+        }
+    }
+
+    private void ApplyLengthValues(PrintJobSettings settings)
+    {
+        PrintJobSettings normalizedSettings = settings.Normalize();
+        CodeSizeMmBox.Value = ToDisplayLength(normalizedSettings.CodeSizeMm);
+        SpacingMmBox.Value = ToDisplayLength(normalizedSettings.SpacingMm);
+        MarginMmBox.Value = ToDisplayLength(normalizedSettings.MarginMm);
+    }
+
+    private PrintJobSettings NormalizeSettingsForDisplayUnits(PrintJobSettings settings)
+    {
+        PrintJobSettings normalizedSettings = settings.Normalize();
+        return (normalizedSettings with
+        {
+            CodeSizeMm = ToMillimeters(ToDisplayLength(normalizedSettings.CodeSizeMm)),
+            SpacingMm = ToMillimeters(ToDisplayLength(normalizedSettings.SpacingMm)),
+            MarginMm = ToMillimeters(ToDisplayLength(normalizedSettings.MarginMm)),
+        }).Normalize();
+    }
+
+    private double SnapDisplayLength(double displayValue)
+    {
+        if (double.IsNaN(displayValue) || double.IsInfinity(displayValue))
+        {
+            return displayValue;
+        }
+
+        double snappedValue = Math.Round(displayValue / lengthDisplayIncrement, MidpointRounding.AwayFromZero) * lengthDisplayIncrement;
+        int decimalPlaces = useMetricUnits ? 1 : 2;
+        return Math.Round(snappedValue, decimalPlaces, MidpointRounding.AwayFromZero);
     }
 
     private void ApplyZoomStep(float delta)
