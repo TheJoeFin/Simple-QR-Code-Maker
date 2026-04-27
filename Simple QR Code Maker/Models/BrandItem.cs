@@ -33,6 +33,16 @@ public class BrandItem : IEquatable<BrandItem>
 
     public double? LogoPaddingPixels { get; set; }
 
+    [JsonConverter(typeof(JsonStringEnumConverter<QrFramePreset>))]
+    public QrFramePreset? FramePreset { get; set; }
+
+    public string? FrameText { get; set; }
+
+    [JsonIgnore]
+    public string? FrameDescription => FramePreset.HasValue
+        ? QrFramePresetCatalog.GetOption(FramePreset.Value).Description
+        : null;
+
     public bool IsDefault { get; set; } = false;
 
     public BrandItem()
