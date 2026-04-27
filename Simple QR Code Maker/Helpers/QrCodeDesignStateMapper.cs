@@ -58,6 +58,10 @@ public static class QrCodeDesignStateMapper
             LogoEmojiStyle = options.IncludeCenterImage ? state.LogoEmojiStyle : null,
             LogoSizePercentage = options.IncludeCenterImage ? state.LogoSizePercentage : null,
             LogoPaddingPixels = options.IncludeCenterImage ? state.LogoPaddingPixels : null,
+            FramePreset = options.IncludeFrame ? state.FramePreset : null,
+            FrameText = options.IncludeFrame && state.FramePreset != QrFramePreset.None
+                ? state.FrameText?.Trim()
+                : null,
         };
     }
 }
