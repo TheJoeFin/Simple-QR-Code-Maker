@@ -205,15 +205,29 @@ public static class ImageProcessingHelper
     public static async Task<MagickImage> LoadImageFromStorageFile(StorageFile file)
     {
         using var stream = await file.OpenStreamForReadAsync();
-        var image = new MagickImage(stream);
 
-        // Apply EXIF orientation and strip the metadata to prevent double-rotation
-        // This ensures the image is in the correct orientation before any processing
-        image.AutoOrient();
+        bool isSvg = string.Equals(file.FileType, ".svg", StringComparison.OrdinalIgnoreCase);
+        MagickImage image;
+
+        if (isSvg)
+        {
+            var settings = new MagickReadSettings
+            {
+                Format = MagickFormat.Svg,
+                Density = new Density(300, DensityUnit.PixelsPerInch),
+                BackgroundColor = MagickColors.White,
+            };
+            image = new MagickImage(stream, settings);
+            image.Format = MagickFormat.Png;
+        }
+        else
+        {
+            image = new MagickImage(stream);
+            image.AutoOrient();
+        }
 
         System.Diagnostics.Debug.WriteLine($"Loaded image from {file.Name}:");
         System.Diagnostics.Debug.WriteLine($"  Final dimensions: {image.Width}x{image.Height}");
-        System.Diagnostics.Debug.WriteLine($"  Orientation applied: AutoOrient() called");
 
         return image;
     }

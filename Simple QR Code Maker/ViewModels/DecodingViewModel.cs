@@ -102,6 +102,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         ".jpg",
         ".jpeg",
         ".bmp",
+        ".svg",
     ];
 
     public DecodingViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService)
