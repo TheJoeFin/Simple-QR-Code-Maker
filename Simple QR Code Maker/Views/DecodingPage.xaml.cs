@@ -79,6 +79,14 @@ public sealed partial class DecodingPage : Page
 
     private async void PasteImageButton_Click(object sender, RoutedEventArgs e) => await ViewModel.OpenFileFromClipboardCommand.ExecuteAsync(null);
 
+    private async void PasteKeyboardAccelerator_Invoked(KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
+    {
+        if (!ViewModel.CanPasteImage)
+            return;
+        args.Handled = true;
+        await ViewModel.OpenFileFromClipboardCommand.ExecuteAsync(null);
+    }
+
     private async void AdvancedToolsViewModel_ImageProcessed(object? sender, ImageMagick.MagickImage e)
     {
         if (ViewModel.CurrentDecodingItem != null)

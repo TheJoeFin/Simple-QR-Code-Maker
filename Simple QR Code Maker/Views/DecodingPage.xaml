@@ -10,6 +10,10 @@
     x:Name="DecodingPageRoot"
     mc:Ignorable="d">
 
+    <Page.KeyboardAccelerators>
+        <KeyboardAccelerator Key="V" Modifiers="Control" Invoked="PasteKeyboardAccelerator_Invoked" />
+    </Page.KeyboardAccelerators>
+
     <Page.Resources>
         <converters:TextHasURLConverter x:Key="HasURL" />
         <converters:NoCodesWarningVisibilityConverter x:Key="NoCodesWarningVisibilityConverter" />
@@ -227,7 +231,7 @@
                                 <InfoBar
                                     x:Name="NoCodesInfoBar"
                                     Title="No codes found"
-                                    Grid.Row="2"
+                                    Grid.Row="1"
                                     MaxWidth="400"
                                     Margin="20,0"
                                     HorizontalAlignment="Center"
@@ -302,6 +306,17 @@
                                     ToolTipService.ToolTip="Open the Windows camera to capture a photo for decoding">
                                     <controls:IconAndTextButton.Icon>
                                         <SymbolIcon Symbol="Camera" />
+                                    </controls:IconAndTextButton.Icon>
+                                </controls:IconAndTextButton>
+                                <controls:IconAndTextButton
+                                    Command="{x:Bind ViewModel.LaunchSnippingToolCommand}"
+                                    IsEnabled="{x:Bind ViewModel.LaunchSnippingToolCommand.IsRunning,
+                                                       Mode=OneWay,
+                                                       Converter={StaticResource BoolNegationConverter}}"
+                                    Text="Snip"
+                                    ToolTipService.ToolTip="Open the Snipping Tool to capture a screenshot for decoding">
+                                    <controls:IconAndTextButton.Icon>
+                                        <SymbolIcon Symbol="Trim" />
                                     </controls:IconAndTextButton.Icon>
                                 </controls:IconAndTextButton>
                                 <!--<controls:IconAndTextButton

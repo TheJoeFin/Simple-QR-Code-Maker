@@ -142,7 +142,18 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         PreviewStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    private void Clipboard_ContentChanged(object? sender, object e) => CheckIfCanPaste();
+    private bool isWaitingForSnippingTool = false;
+
+    private async void Clipboard_ContentChanged(object? sender, object e)
+    {
+        CheckIfCanPaste();
+
+        if (isWaitingForSnippingTool && CanPasteImage)
+        {
+            isWaitingForSnippingTool = false;
+            await OpenFileFromClipboardCommand.ExecuteAsync(null);
+        }
+    }
 
     private void CheckIfCanPaste()
     {
@@ -168,6 +179,20 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
         Clipboard.ContentChanged += Clipboard_ContentChanged;
         CheckIfCanPaste();
+
+        App.MainWindow.Activated -= MainWindow_Activated;
+        App.MainWindow.Activated += MainWindow_Activated;
+    }
+
+    private async void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+    {
+        if (args.WindowActivationState == WindowActivationState.Deactivated || !isWaitingForSnippingTool)
+            return;
+
+        isWaitingForSnippingTool = false;
+        CheckIfCanPaste();
+        if (CanPasteImage)
+            await OpenFileFromClipboardCommand.ExecuteAsync(null);
     }
 
     private void ResetViewState()
@@ -312,6 +337,13 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     [RelayCommand]
     private void ToggleCameraPane() => IsCameraPaneOpen = !IsCameraPaneOpen;
+
+    [RelayCommand]
+    private async Task LaunchSnippingTool()
+    {
+        isWaitingForSnippingTool = true;
+        await Launcher.LaunchUriAsync(new Uri("ms-screenclip:"));
+    }
 
     [RelayCommand]
     private void ToggleFaqPaneOpen() => IsFaqPaneOpen = !IsFaqPaneOpen;
@@ -634,6 +666,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     public void OnNavigatedFrom()
     {
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
+        App.MainWindow.Activated -= MainWindow_Activated;
         ResetViewState();
     }
 }
