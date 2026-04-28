@@ -45,52 +45,6 @@
                             <Border Visibility="{x:Bind ViewModel.IsAdvancedToolsVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <controls:AdvancedToolsUserControl x:Name="AdvancedToolsPanel" />
                             </Border>
-
-                            <Border Visibility="{x:Bind ViewModel.IsCameraPaneOpen, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                <Grid RowSpacing="16">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-
-                                    <StackPanel Padding="16,16,16,0" Spacing="12">
-                                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Camera" />
-                                        <ComboBox
-                                            x:Name="CameraDeviceComboBox"
-                                            DisplayMemberPath="Name"
-                                            PlaceholderText="No cameras found"
-                                            SelectionChanged="CameraDeviceComboBox_SelectionChanged" />
-                                        <TextBlock
-                                            x:Name="CameraStatusTextBlock"
-                                            TextWrapping="Wrap"
-                                            Visibility="Collapsed" />
-                                    </StackPanel>
-
-                                    <StackPanel
-                                        Grid.Row="1"
-                                        Padding="16,0,16,16"
-                                        HorizontalAlignment="Center"
-                                        Orientation="Horizontal"
-                                        Spacing="12">
-                                        <controls:IconAndTextButton
-                                            x:Name="CapturePhotoButton"
-                                            Click="CapturePhotoButton_Click"
-                                            Text="Capture">
-                                            <controls:IconAndTextButton.Icon>
-                                                <SymbolIcon Symbol="Camera" />
-                                            </controls:IconAndTextButton.Icon>
-                                        </controls:IconAndTextButton>
-                                        <controls:IconAndTextButton
-                                            x:Name="RetakePhotoButton"
-                                            Click="RetakePhotoButton_Click"
-                                            Text="Retake">
-                                            <controls:IconAndTextButton.Icon>
-                                                <SymbolIcon Symbol="Refresh" />
-                                            </controls:IconAndTextButton.Icon>
-                                        </controls:IconAndTextButton>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
                         </Grid>
                     </Border>
                 </SplitView.Pane>
@@ -204,28 +158,6 @@
                                         Visibility="{x:Bind ViewModel.HasActivePreviewSurface,
                                                             Mode=OneWay,
                                                             Converter={StaticResource BoolToVisibilityConverter}}">
-                                        <Grid Visibility="{x:Bind ViewModel.IsCameraPaneOpen, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                            <MediaPlayerElement
-                                                x:Name="CameraPreviewElement"
-                                                AreTransportControlsEnabled="False"
-                                                Stretch="UniformToFill" />
-                                            <Image
-                                                x:Name="CapturedCameraImageControl"
-                                                Stretch="Uniform"
-                                                Visibility="Collapsed" />
-                                            <StackPanel
-                                                x:Name="CameraPlaceholderPanel"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Spacing="8">
-                                                <SymbolIcon HorizontalAlignment="Center" Symbol="Camera" />
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    Text="Open the camera pane to preview and capture a photo."
-                                                    TextAlignment="Center"
-                                                    TextWrapping="WrapWholeWords" />
-                                            </StackPanel>
-                                        </Grid>
                                         <ScrollView
                                             x:Name="ImageScrollView"
                                             ContentOrientation="None"
@@ -233,9 +165,6 @@
                                             MaxZoomFactor="10"
                                             MinZoomFactor="0.9"
                                             VerticalScrollBarVisibility="Auto"
-                                            Visibility="{x:Bind ViewModel.IsCameraPaneOpen,
-                                                                Mode=OneWay,
-                                                                Converter={StaticResource InvertedBoolToVisibilityConverter}}"
                                             ZoomMode="Enabled">
                                             <Viewbox Stretch="Uniform">
 
@@ -364,16 +293,17 @@
                                         <SymbolIcon Symbol="Paste" />
                                     </controls:IconAndTextButton.Icon>
                                 </controls:IconAndTextButton>
-                                <controls:IconAndTextToggleButton
-                                    Command="{x:Bind ViewModel.ToggleCameraPaneCommand}"
-                                    IsChecked="{x:Bind ViewModel.IsCameraPaneOpen,
-                                                       Mode=OneWay}"
+                                <controls:IconAndTextButton
+                                    Command="{x:Bind ViewModel.CapturePhotoCommand}"
+                                    IsEnabled="{x:Bind ViewModel.CapturePhotoCommand.IsRunning,
+                                                       Mode=OneWay,
+                                                       Converter={StaticResource BoolNegationConverter}}"
                                     Text="Camera"
-                                    ToolTipService.ToolTip="Open the camera pane to capture a photo for decoding">
-                                    <controls:IconAndTextToggleButton.Icon>
+                                    ToolTipService.ToolTip="Open the Windows camera to capture a photo for decoding">
+                                    <controls:IconAndTextButton.Icon>
                                         <SymbolIcon Symbol="Camera" />
-                                    </controls:IconAndTextToggleButton.Icon>
-                                </controls:IconAndTextToggleButton>
+                                    </controls:IconAndTextButton.Icon>
+                                </controls:IconAndTextButton>
                                 <!--<controls:IconAndTextButton
                                     Command="{x:Bind ViewModel.ClearImagesCommand}"
                                     IsEnabled="{x:Bind ViewModel.OpenFileFromClipboardCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"

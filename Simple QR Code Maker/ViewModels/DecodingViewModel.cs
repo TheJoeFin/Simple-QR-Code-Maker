@@ -13,6 +13,7 @@ using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using Windows.ApplicationModel.DataTransfer;
+using Microsoft.Windows.Media.Capture;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -268,6 +269,45 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             return;
 
         IsAdvancedToolsVisible = !IsAdvancedToolsVisible;
+    }
+
+    [RelayCommand]
+    private async Task CapturePhoto()
+    {
+        IsLoading = true;
+        LoadingMessage = "Opening camera…";
+
+        try
+        {
+            CameraCaptureUI dialog = new CameraCaptureUI(App.MainWindow.AppWindow.Id);
+            dialog.PhotoSettings.AllowCropping = false;
+
+            // Start the async operation then yield so the dispatcher renders
+            // "Opening camera…" before we synchronously overwrite the message.
+            var captureOperation = dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
+            await Task.Yield();
+            LoadingMessage = "Taking picture…";
+
+            StorageFile? file = await captureOperation;
+            if (file is not null)
+            {
+                LoadingMessage = "Processing image…";
+                await OpenAndDecodeStorageFile(file);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Camera capture failed: {ex}");
+            DecodedContentInfoBarTitle = "Camera unavailable";
+            InfoBarMessage = ex.Message;
+            DecodedContentInfoBarSeverity = InfoBarSeverity.Error;
+            IsInfoBarShowing = true;
+        }
+        finally
+        {
+            IsLoading = false;
+            LoadingMessage = string.Empty;
+        }
     }
 
     [RelayCommand]
