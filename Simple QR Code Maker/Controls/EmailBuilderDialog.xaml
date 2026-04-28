@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="Simple_QR_Code_Maker.Controls.EmailBuilderDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Build Email"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonText="Apply"
+    mc:Ignorable="d">
+
+    <ScrollViewer
+        x:Name="DialogScrollViewer"
+        MaxHeight="640"
+        HorizontalScrollBarVisibility="Disabled"
+        HorizontalScrollMode="Disabled"
+        VerticalScrollBarVisibility="Auto">
+        <Border
+            Width="{Binding ElementName=DialogScrollViewer, Path=ActualWidth}"
+            MinWidth="420"
+            Padding="0,0,12,0">
+            <StackPanel HorizontalAlignment="Stretch" Spacing="12">
+                <TextBlock
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Create a QR Code that opens the default mail app with prefilled recipient, subject, and body fields." />
+
+                <TextBox
+                    x:Name="ToTextBox"
+                    Header="To (required)"
+                    InputScope="EmailSmtpAddress"
+                    PlaceholderText="recipient@example.com"
+                    Text="{x:Bind To, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox
+                    Header="CC"
+                    InputScope="EmailSmtpAddress"
+                    PlaceholderText="cc@example.com"
+                    Text="{x:Bind Cc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox
+                    Header="BCC"
+                    InputScope="EmailSmtpAddress"
+                    PlaceholderText="bcc@example.com"
+                    Text="{x:Bind Bcc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox
+                    Header="Subject"
+                    PlaceholderText="Enter the email subject"
+                    Text="{x:Bind Subject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox
+                    MinHeight="96"
+                    AcceptsReturn="True"
+                    Header="Body"
+                    PlaceholderText="Enter the email body"
+                    Text="{x:Bind Body, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap" />
+
+                <InfoBar
+                    IsOpen="True"
+                    IsClosable="False"
+                    Message="Scanning this QR Code opens the default mail app with these fields pre-filled. The recipient can review and edit the message before sending."
+                    Severity="Informational"
+                    Title="How it works" />
+
+                <TextBox
+                    MinHeight="72"
+                    AcceptsReturn="True"
+                    Header="Preview"
+                    IsReadOnly="True"
+                    Text="{x:Bind PreviewEmailUri, Mode=OneWay}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</ContentDialog>

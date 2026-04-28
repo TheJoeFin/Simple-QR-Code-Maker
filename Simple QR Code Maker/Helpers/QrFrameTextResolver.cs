@@ -25,6 +25,7 @@ public static partial class QrFrameTextResolver
         {
             QrContentKind.VCard => TryResolveVCardSummary(rawCodeText),
             QrContentKind.WiFi => TryResolveWifiSummary(rawCodeText),
+            QrContentKind.Email => TryResolveEmailSummary(rawCodeText),
             _ => TryResolvePlainTextOrUriSummary(rawCodeText, multiLineCodeModeOverride),
         };
 
@@ -47,6 +48,14 @@ public static partial class QrFrameTextResolver
             return null;
 
         return NormalizeSummary(WifiBuilderHelper.GetDisplayName(state));
+    }
+
+    private static string? TryResolveEmailSummary(string? rawCodeText)
+    {
+        if (!EmailBuilderHelper.TryParse(rawCodeText, out EmailBuilderState state))
+            return null;
+
+        return NormalizeSummary(EmailBuilderHelper.GetDisplayName(state));
     }
 
     private static string? TryResolvePlainTextOrUriSummary(string? rawCodeText, MultiLineCodeMode? multiLineCodeModeOverride)

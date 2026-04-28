@@ -508,11 +508,14 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         bool isVCard = VCardBuilderHelper.IsVCard(InfoBarMessage);
         bool isWifi = WifiBuilderHelper.IsWifi(InfoBarMessage);
+        bool isEmail = EmailBuilderHelper.IsEmail(InfoBarMessage);
         QrContentKind contentKind = isVCard
             ? QrContentKind.VCard
             : isWifi
                 ? QrContentKind.WiFi
-                : QrContentKind.PlainText;
+                : isEmail
+                    ? QrContentKind.Email
+                    : QrContentKind.PlainText;
         MultiLineCodeMode? overrideMode = contentKind == QrContentKind.PlainText
             ? null
             : MultiLineCodeMode.MultilineOneCode;

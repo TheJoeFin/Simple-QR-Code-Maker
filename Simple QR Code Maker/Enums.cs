@@ -18,4 +18,5 @@ public enum QrContentKind
     PlainText = 0,
     VCard = 1,
     WiFi = 2,
+    Email = 3,
 }

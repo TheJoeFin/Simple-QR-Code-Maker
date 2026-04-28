@@ -74,6 +74,7 @@ public class HistoryItem : IEquatable<HistoryItem>
     {
         QrContentKind.VCard => VCardBuilderHelper.GetDisplayName(CodesContent),
         QrContentKind.WiFi => WifiBuilderHelper.GetDisplayName(CodesContent),
+        QrContentKind.Email => EmailBuilderHelper.GetDisplayName(CodesContent),
         _ => CodesContent,
     };
 
@@ -82,6 +83,7 @@ public class HistoryItem : IEquatable<HistoryItem>
     {
         QrContentKind.VCard => "vCard",
         QrContentKind.WiFi => "WiFi",
+        QrContentKind.Email => "Email",
         _ => string.Empty,
     };
 

@@ -125,6 +125,14 @@
                                                             <FontIcon Glyph="&#xE701;" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
+                                                    <MenuFlyoutItem
+                                                        Command="{x:Bind ViewModel.OpenEmailBuilderCommand}"
+                                                        Text="Build Email"
+                                                        ToolTipService.ToolTip="Build an email QR Code with prefilled recipient, subject, and body">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <SymbolIcon Symbol="Mail" />
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
                                                     <MenuFlyoutItem Command="{x:Bind ViewModel.OpenGenerateIdsDialogCommand}" Text="Generate IDs">
                                                         <MenuFlyoutItem.Icon>
                                                             <SymbolIcon Symbol="Bullets" />

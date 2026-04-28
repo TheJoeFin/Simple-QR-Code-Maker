@@ -1275,6 +1275,19 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
+    private async Task OpenEmailBuilder()
+    {
+        EmailBuilderDialog dialog = new(UrlText)
+        {
+            XamlRoot = App.MainWindow.Content.XamlRoot
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary && dialog.ResultText is not null)
+            ApplyDocumentText(dialog.ResultText, QrContentKind.Email);
+    }
+
+    [RelayCommand]
     private async Task OpenGenerateIdsDialog()
     {
         GenerateIdsDialog dialog = new()
