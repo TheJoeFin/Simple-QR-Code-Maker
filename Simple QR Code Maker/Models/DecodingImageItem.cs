@@ -12,6 +12,9 @@ public partial class DecodingImageItem : ObservableObject
 {
     public string ImagePath { get; set; } = string.Empty;
 
+    // Always the oriented PNG in the temp folder, used for history thumbnail saving
+    public string CachedBitmapPath { get; set; } = string.Empty;
+
     public string FileName => System.IO.Path.GetFileName(ImagePath);
 
     [ObservableProperty]
