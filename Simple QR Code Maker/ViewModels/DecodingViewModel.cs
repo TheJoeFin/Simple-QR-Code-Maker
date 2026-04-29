@@ -12,7 +12,9 @@ using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Graphics.Imaging;
 using Microsoft.Windows.Media.Capture;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -20,6 +22,7 @@ using Windows.Storage.Streams;
 using Windows.System;
 using WinRT.Interop;
 using ZXing;
+using System.Linq;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
@@ -80,11 +83,41 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     public partial string LoadingMessage { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    public partial bool IsDecodingHistoryPaneOpen { get; set; } = false;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasDecodingHistory))]
+    public partial ObservableCollection<DecodingHistoryItem> DecodingHistoryItems { get; set; } = [];
+
+    public bool HasDecodingHistory => DecodingHistoryItems.Count > 0;
+
     public AdvancedToolsViewModel AdvancedTools { get; } = new();
 
     public bool HasImage => CurrentDecodingItem is not null;
 
     public bool HasActivePreviewSurface => HasImage || IsCameraPaneOpen;
+
+    public bool CanOpenCurrentSourceFile => HasImage
+        && currentSourceKind == DecodingSourceKind.File
+        && !string.IsNullOrEmpty(currentSourceFilePath)
+        && File.Exists(currentSourceFilePath);
+
+    public bool CanSaveCurrentDecodedImage => HasImage
+        && !string.IsNullOrEmpty(currentCachedImagePath)
+        && File.Exists(currentCachedImagePath);
+
+    public bool CanOpenCurrentContainingFolder => CanOpenCurrentSourceFile;
+
+    public string CurrentImageTitle => currentSourceKind switch
+    {
+        DecodingSourceKind.File when !string.IsNullOrEmpty(currentSourceFilePath)
+            => Path.GetFileName(currentSourceFilePath),
+        DecodingSourceKind.Clipboard => "Clipboard image",
+        DecodingSourceKind.Camera => "Camera capture",
+        DecodingSourceKind.SnippingTool => "Snipping Tool capture",
+        _ => CurrentDecodingItem?.FileName ?? string.Empty,
+    };
 
     public event EventHandler? CameraPaneOpenChanged;
     public event EventHandler? PreviewStateChanged;
@@ -92,6 +125,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     private HistoryItem? navigationHistoryItem = null;
     private bool warnWhenLikelyRedirector = RedirectorWarningSettingsHelper.DefaultWarnWhenLikelyRedirector;
     private IReadOnlyList<string> safeRedirectorDomains = [];
+    private DecodingSourceKind nextSourceKind = DecodingSourceKind.File;
+    private bool suppressHistorySave = false;
+    private string? nextSourceFilePathOverride = null;
+    private DecodingSourceKind currentSourceKind = DecodingSourceKind.File;
+    private string? currentSourceFilePath = null;
+    private string? currentCachedImagePath = null;
 
     private INavigationService NavigationService { get; }
     public ILocalSettingsService LocalSettingsService { get; }
@@ -140,10 +179,41 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         if (value?.OriginalMagickImage is not null)
             AdvancedTools.SetOriginalImage(value.OriginalMagickImage);
 
+        if (value is not null)
+        {
+            currentSourceKind = nextSourceKind;
+            currentSourceFilePath = nextSourceKind == DecodingSourceKind.File
+                ? (nextSourceFilePathOverride ?? value.ImagePath)
+                : null;
+            currentCachedImagePath = !string.IsNullOrEmpty(value.CachedBitmapPath)
+                ? value.CachedBitmapPath
+                : value.ImagePath;
+            nextSourceFilePathOverride = null;
+
+            if (!suppressHistorySave)
+                _ = SaveToDecodingHistoryAsync(value);
+            suppressHistorySave = false;
+        }
+        else
+        {
+            currentSourceFilePath = null;
+            currentCachedImagePath = null;
+            nextSourceFilePathOverride = null;
+        }
+
+        OnPropertyChanged(nameof(CanOpenCurrentSourceFile));
+        OnPropertyChanged(nameof(CanSaveCurrentDecodedImage));
+        OnPropertyChanged(nameof(CanOpenCurrentContainingFolder));
+        OnPropertyChanged(nameof(CurrentImageTitle));
+
         PreviewStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    [DllImport("user32.dll")]
+    private static extern uint GetClipboardSequenceNumber();
+
     private bool isWaitingForSnippingTool = false;
+    private uint clipboardSequenceOnSnipLaunch = 0;
 
     private async void Clipboard_ContentChanged(object? sender, object e)
     {
@@ -151,6 +221,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         if (isWaitingForSnippingTool && CanPasteImage)
         {
+            nextSourceKind = DecodingSourceKind.SnippingTool;
             isWaitingForSnippingTool = false;
             await OpenFileFromClipboardCommand.ExecuteAsync(null);
         }
@@ -190,6 +261,22 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         if (args.WindowActivationState == WindowActivationState.Deactivated || !isWaitingForSnippingTool)
             return;
 
+        // Yield briefly so Clipboard_ContentChanged can fire first if the clipboard
+        // was already updated by the snipping tool before the window re-activated.
+        await Task.Delay(150);
+
+        if (!isWaitingForSnippingTool)
+            return; // Clipboard_ContentChanged already handled it
+
+        // If the clipboard sequence number hasn't changed the user canceled the snip —
+        // don't fall back to pasting whatever was in the clipboard before.
+        if (GetClipboardSequenceNumber() == clipboardSequenceOnSnipLaunch)
+        {
+            isWaitingForSnippingTool = false;
+            return;
+        }
+
+        nextSourceKind = DecodingSourceKind.SnippingTool;
         isWaitingForSnippingTool = false;
         CheckIfCanPaste();
         if (CanPasteImage)
@@ -265,6 +352,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         warnWhenLikelyRedirector = await RedirectorWarningSettingsHelper.ReadWarningEnabledAsync(LocalSettingsService);
         safeRedirectorDomains = await RedirectorWarningSettingsHelper.ReadSafeDomainsAsync(LocalSettingsService);
 
+        DecodingHistoryItems = await DecodingHistoryStorageHelper.LoadHistoryAsync();
+
         // Store the HistoryItem to pass back when returning to main page
         if (parameter is HistoryItem historyItem)
         {
@@ -278,6 +367,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         // Handle a shared or opened image file
         else if (parameter is StorageFile storageFile)
         {
+            nextSourceKind = DecodingSourceKind.File;
             await OpenAndDecodeStorageFile(storageFile);
         }
     }
@@ -300,6 +390,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private async Task CapturePhoto()
     {
+        nextSourceKind = DecodingSourceKind.Camera;
         IsLoading = true;
         LoadingMessage = "Opening camera…";
 
@@ -342,6 +433,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private async Task LaunchSnippingTool()
     {
+        clipboardSequenceOnSnipLaunch = GetClipboardSequenceNumber();
         isWaitingForSnippingTool = true;
         await Launcher.LaunchUriAsync(new Uri("ms-screenclip:"));
     }
@@ -388,11 +480,16 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
                 codeBorders.Add(textBorder);
             }
 
+            item.CachedBitmapPath = cachePath;
             item.ProcessedBitmapImage = processedBitmapImage;
             item.CodeBorders = codeBorders;
             item.ImagePixelWidth = (int)item.ProcessedMagickImage.Width;
             item.ImagePixelHeight = (int)item.ProcessedMagickImage.Height;
             item.BitmapImage = processedBitmapImage;
+
+            List<string> decodedTexts = codeBorders.Select(b => b.BorderInfo.Text).ToList();
+            await DecodingHistoryStorageHelper.UpdateLatestAndSaveAsync(DecodingHistoryItems, cachePath, decodedTexts);
+            OnPropertyChanged(nameof(HasDecodingHistory));
         }
         finally
         {
@@ -418,16 +515,20 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
                 if (clipboardItems.Count == 0)
                     return;
 
+                nextSourceKind = DecodingSourceKind.File;
                 OpenAndDecodeStorageFiles(clipboardItems);
             }
             else if (clipboardData.Contains(StandardDataFormats.Bitmap))
             {
+                if (nextSourceKind != DecodingSourceKind.SnippingTool)
+                    nextSourceKind = DecodingSourceKind.Clipboard;
+
                 RandomAccessStreamReference bitmapStreamRef = await clipboardData.GetBitmapAsync();
 
                 IRandomAccessStreamWithContentType stream = await bitmapStreamRef.OpenReadAsync();
 
                 if (stream is not null)
-                    OpenAndDecodeBitmap(stream);
+                    await OpenAndDecodeBitmapAsync(stream);
             }
         }
         finally
@@ -466,6 +567,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private async Task OpenNewFile()
     {
+        nextSourceKind = DecodingSourceKind.File;
         PickedImage = null;
         CurrentDecodingItem = null;
         IsInfoBarShowing = false;
@@ -547,12 +649,23 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         NavigationService.NavigateTo(typeof(MainViewModel).FullName!, editHistoryItem);
     }
 
-    private void OpenAndDecodeBitmap(IRandomAccessStreamWithContentType streamWithContentType)
+    private async Task OpenAndDecodeBitmapAsync(IRandomAccessStreamWithContentType streamWithContentType)
     {
-        Bitmap rawBitmap = new(streamWithContentType.AsStreamForRead());
+        // System.Drawing.Bitmap cannot read clipboard DIB streams (which lack the BMP file
+        // header). Use WinRT BitmapDecoder (WIC) which handles all clipboard bitmap formats,
+        // then re-encode to PNG so MagickImage has a clean, fully-headered stream to read.
+        BitmapDecoder decoder = await BitmapDecoder.CreateAsync(streamWithContentType);
+        SoftwareBitmap softwareBitmap = await decoder.GetSoftwareBitmapAsync(
+            BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
 
-        // Load as MagickImage and apply EXIF orientation
-        MagickImage magickImage = ImageProcessingHelper.LoadImageFromBitmap(rawBitmap);
+        using InMemoryRandomAccessStream pngStream = new();
+        BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, pngStream);
+        encoder.SetSoftwareBitmap(softwareBitmap);
+        await encoder.FlushAsync();
+        pngStream.Seek(0);
+
+        MagickImage magickImage = new(pngStream.AsStreamForRead());
+        magickImage.AutoOrient();
 
         // Convert the oriented MagickImage to a Bitmap for ZXing decoding
         // so that ResultPoints are in the same coordinate space as the displayed image
@@ -580,6 +693,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         DecodingImageItem decodingImage = new()
         {
             ImagePath = cachePath,
+            CachedBitmapPath = cachePath,
             BitmapImage = thisPickedImage,
             ImagePixelWidth = (int)magickImage.Width,
             ImagePixelHeight = (int)magickImage.Height,
@@ -592,6 +706,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
     public async void OpenAndDecodeStorageFiles(IReadOnlyList<IStorageItem> pickedFiles)
     {
+        nextSourceKind = DecodingSourceKind.File;
         IStorageItem? first = pickedFiles.Count > 0 ? pickedFiles[0] : null;
         if (first is StorageFile storageFile)
             await OpenAndDecodeStorageFile(storageFile);
@@ -649,6 +764,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         DecodingImageItem decodingImage = new()
         {
             ImagePath = storageFile.Path,
+            CachedBitmapPath = cachePath,
             BitmapImage = thisPickedImage,
             ImagePixelWidth = (int)magickImage.Width,
             ImagePixelHeight = (int)magickImage.Height,
@@ -665,6 +781,141 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             return;
 
         UpdateDecodedContentInfoBar(textBorder.BorderInfo.Text);
+    }
+
+    [RelayCommand]
+    private void ToggleDecodingHistoryPaneOpen() => IsDecodingHistoryPaneOpen = !IsDecodingHistoryPaneOpen;
+
+    [RelayCommand]
+    private async Task ClearDecodingHistory()
+    {
+        DecodingHistoryItems.Clear();
+        await DecodingHistoryStorageHelper.SaveHistoryAsync(DecodingHistoryItems);
+        OnPropertyChanged(nameof(HasDecodingHistory));
+    }
+
+    [RelayCommand]
+    private async Task OpenCurrentSourceFile()
+    {
+        if (!CanOpenCurrentSourceFile || string.IsNullOrEmpty(currentSourceFilePath))
+            return;
+
+        try
+        {
+            StorageFile file = await StorageFile.GetFileFromPathAsync(currentSourceFilePath);
+            await Launcher.LaunchFileAsync(file);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to open source file: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task SaveCurrentDecodedImage()
+    {
+        if (!CanSaveCurrentDecodedImage || string.IsNullOrEmpty(currentCachedImagePath))
+            return;
+
+        string suggestedFileName = !string.IsNullOrEmpty(currentSourceFilePath)
+            ? Path.GetFileNameWithoutExtension(currentSourceFilePath)
+            : Path.GetFileNameWithoutExtension(currentCachedImagePath);
+
+        FileSavePicker picker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+            SuggestedFileName = suggestedFileName,
+        };
+        picker.FileTypeChoices.Add("PNG Image", [".png"]);
+
+        Window saveWindow = new();
+        IntPtr hwnd = WindowNative.GetWindowHandle(saveWindow);
+        InitializeWithWindow.Initialize(picker, hwnd);
+
+        StorageFile? destFile = await picker.PickSaveFileAsync();
+        if (destFile is null)
+            return;
+
+        try
+        {
+            await Task.Run(() => File.Copy(currentCachedImagePath, destFile.Path, overwrite: true));
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to save image: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task OpenCurrentContainingFolder()
+    {
+        if (!CanOpenCurrentContainingFolder || string.IsNullOrEmpty(currentSourceFilePath))
+            return;
+
+        string? folderPath = Path.GetDirectoryName(currentSourceFilePath);
+        if (folderPath is null)
+            return;
+
+        try
+        {
+            StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(folderPath);
+            FolderLauncherOptions options = new();
+            StorageFile sourceFile = await StorageFile.GetFileFromPathAsync(currentSourceFilePath);
+            options.ItemsToSelect.Add(sourceFile);
+            await Launcher.LaunchFolderAsync(folder, options);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to open containing folder: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task OpenDecodingHistoryItem(DecodingHistoryItem item)
+    {
+        if (!item.HasSavedImage)
+            return;
+
+        suppressHistorySave = true;
+        nextSourceKind = item.SourceKind;
+        nextSourceFilePathOverride = item.SourceFilePath;
+
+        try
+        {
+            StorageFile savedFile = await StorageFile.GetFileFromPathAsync(item.SavedImagePath);
+            await OpenAndDecodeStorageFile(savedFile);
+            IsDecodingHistoryPaneOpen = false;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to open history item: {ex.Message}");
+            suppressHistorySave = false;
+            nextSourceFilePathOverride = null;
+        }
+    }
+
+    private async Task SaveToDecodingHistoryAsync(DecodingImageItem item)
+    {
+        // Capture UI-bound data synchronously before any awaits
+        string pathToSave = !string.IsNullOrEmpty(item.CachedBitmapPath)
+            ? item.CachedBitmapPath
+            : item.ImagePath;
+        List<string> texts = item.CodeBorders.Select(b => b.BorderInfo.Text).ToList();
+        string? sourceFilePath = nextSourceKind == DecodingSourceKind.File ? item.ImagePath : null;
+        DecodingSourceKind sourceKind = nextSourceKind;
+
+        string? savedImagePath = await DecodingHistoryStorageHelper.SaveImageCopyAsync(pathToSave);
+
+        DecodingHistoryItem historyItem = new()
+        {
+            SavedImagePath = savedImagePath ?? string.Empty,
+            SourceKind = sourceKind,
+            SourceFilePath = sourceFilePath,
+            DecodedTexts = texts,
+        };
+
+        await DecodingHistoryStorageHelper.AddAndSaveAsync(DecodingHistoryItems, historyItem);
+        OnPropertyChanged(nameof(HasDecodingHistory));
     }
 
     public void OnNavigatedFrom()

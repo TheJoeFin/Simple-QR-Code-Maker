@@ -11,9 +11,27 @@ public partial class AdvancedToolsViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial bool IsGrayscaleEnabled { get; set; } = false;
 
+    partial void OnIsGrayscaleEnabledChanged(bool value)
+    {
+        if (value && !IsProcessing)
+            _ = ApplyProcessingAsync();
+    }
+
+    [RelayCommand]
+    private void ApplyGrayscale() => IsGrayscaleEnabled = true;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial bool IsInvertEnabled { get; set; } = false;
+
+    partial void OnIsInvertEnabledChanged(bool value)
+    {
+        if (value && !IsProcessing)
+            _ = ApplyProcessingAsync();
+    }
+
+    [RelayCommand]
+    private void ApplyInvert() => IsInvertEnabled = true;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
@@ -184,6 +202,19 @@ public partial class AdvancedToolsViewModel : ObservableObject
 
     private MagickImage? processedImage = null;
 
+    private readonly Stack<MagickImage> _undoStack = new();
+    private readonly Stack<MagickImage> _redoStack = new();
+
+    public bool CanUndo => _undoStack.Count > 0 || HasPendingChanges;
+    public bool CanRedo => _redoStack.Count > 0;
+
+    protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+        if (e.PropertyName == nameof(HasPendingChanges))
+            UndoCommand.NotifyCanExecuteChanged();
+    }
+
     public event EventHandler<MagickImage>? ImageProcessed;
     public event EventHandler? PerspectiveCornersClearedRequested;
 
@@ -241,6 +272,12 @@ public partial class AdvancedToolsViewModel : ObservableObject
                 // Reset All reverts the baseline back to the true original
                 baselineImage = (MagickImage)trueOriginalImage.Clone();
                 processedImage = (MagickImage)trueOriginalImage.Clone();
+
+                _undoStack.Clear();
+                _redoStack.Clear();
+                UndoCommand.NotifyCanExecuteChanged();
+                RedoCommand.NotifyCanExecuteChanged();
+
                 ImageProcessed?.Invoke(this, processedImage);
             }
             catch (Exception ex)
@@ -338,8 +375,15 @@ public partial class AdvancedToolsViewModel : ObservableObject
                 processedImage = tempProcessedImage;
             });
 
+            // Snapshot the pre-apply baseline so the user can undo this step
+            _undoStack.Push((MagickImage)baselineImage.Clone());
+            _redoStack.Clear();
+
             // Advance the baseline so the next Apply builds on this result
             baselineImage = (MagickImage)processedImage!.Clone();
+
+            UndoCommand.NotifyCanExecuteChanged();
+            RedoCommand.NotifyCanExecuteChanged();
 
             // Reset the settings that were just applied so they don't stack
             ResetPendingSettings();
@@ -374,6 +418,45 @@ public partial class AdvancedToolsViewModel : ObservableObject
 
     [RelayCommand]
     private void ClearPerspectiveCorners() => ClearPerspectiveSelection();
+
+    [RelayCommand(CanExecute = nameof(CanUndo))]
+    private void Undo()
+    {
+        if (HasPendingChanges)
+        {
+            ResetPendingSettings();
+            if (IsPerspectiveCorrectionMode)
+                IsPerspectiveCorrectionMode = false;
+            IsEyedropperBlackMode = false;
+            IsEyedropperWhiteMode = false;
+            return;
+        }
+
+        if (!_undoStack.TryPop(out MagickImage? previous)) return;
+        IsProcessing = true;
+        _redoStack.Push((MagickImage)baselineImage!.Clone());
+        baselineImage = previous;
+        processedImage = (MagickImage)previous.Clone();
+        ImageProcessed?.Invoke(this, processedImage);
+        UndoCommand.NotifyCanExecuteChanged();
+        RedoCommand.NotifyCanExecuteChanged();
+        IsProcessing = false;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanRedo))]
+    private void Redo()
+    {
+        if (!_redoStack.TryPop(out MagickImage? next)) return;
+
+        IsProcessing = true;
+        _undoStack.Push((MagickImage)baselineImage!.Clone());
+        baselineImage = next;
+        processedImage = (MagickImage)next.Clone();
+        ImageProcessed?.Invoke(this, processedImage);
+        UndoCommand.NotifyCanExecuteChanged();
+        RedoCommand.NotifyCanExecuteChanged();
+        IsProcessing = false;
+    }
 
     public void SetCornerPoint(Point point, int cornerIndex)
     {
@@ -459,6 +542,11 @@ public partial class AdvancedToolsViewModel : ObservableObject
         trueOriginalImage = null;
         baselineImage = null;
         processedImage = null;
+
+        _undoStack.Clear();
+        _redoStack.Clear();
+        UndoCommand.NotifyCanExecuteChanged();
+        RedoCommand.NotifyCanExecuteChanged();
 
         OnPropertyChanged(nameof(CurrentCornerInstruction));
         OnPropertyChanged(nameof(CurrentCornerNumber));
