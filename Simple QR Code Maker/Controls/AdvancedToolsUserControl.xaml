@@ -54,17 +54,25 @@
                         Text="Apply grayscale, invert, and contrast adjustments for better QR code detection"
                         TextWrapping="Wrap" />
 
-                    <CheckBox
-                        x:Name="GrayscaleCheckBox"
-                        Content="Convert to Grayscale"
-                        IsChecked="{x:Bind ViewModel.IsGrayscaleEnabled, Mode=TwoWay}"
-                        ToolTipService.ToolTip="Convert the image to grayscale for better QR code detection" />
+                    <Button
+                        Command="{x:Bind ViewModel.ApplyGrayscaleCommand}"
+                        IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                        ToolTipService.ToolTip="Convert the image to grayscale for better QR code detection">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                            <TextBlock Text="Convert to Grayscale" />
+                        </StackPanel>
+                    </Button>
 
-                    <CheckBox
-                        x:Name="InvertCheckBox"
-                        Content="Invert Colors"
-                        IsChecked="{x:Bind ViewModel.IsInvertEnabled, Mode=TwoWay}"
-                        ToolTipService.ToolTip="Invert image colors, useful for light QR codes on dark backgrounds" />
+                    <Button
+                        Command="{x:Bind ViewModel.ApplyInvertCommand}"
+                        IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                        ToolTipService.ToolTip="Invert image colors, useful for light QR codes on dark backgrounds">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
+                            <TextBlock Text="Invert Colors" />
+                        </StackPanel>
+                    </Button>
 
                     <StackPanel Spacing="4">
                         <TextBlock Text="Contrast" />
@@ -80,12 +88,14 @@
                                 Minimum="-100"
                                 StepFrequency="1"
                                 ToolTipService.ToolTip="Adjust image contrast"
-                                Value="{x:Bind ViewModel.ContrastValue, Mode=TwoWay}" />
+                                Value="{x:Bind ViewModel.ContrastValue,
+                                               Mode=TwoWay}" />
                             <TextBlock
                                 Grid.Column="1"
                                 MinWidth="40"
                                 VerticalAlignment="Center"
-                                Text="{x:Bind ViewModel.ContrastValue, Mode=OneWay}" />
+                                Text="{x:Bind ViewModel.ContrastValue,
+                                              Mode=OneWay}" />
                         </Grid>
                     </StackPanel>
                 </StackPanel>
@@ -115,12 +125,14 @@
                                 Minimum="0"
                                 StepFrequency="1"
                                 ToolTipService.ToolTip="Adjust the black point level"
-                                Value="{x:Bind ViewModel.BlackPointLevel, Mode=TwoWay}" />
+                                Value="{x:Bind ViewModel.BlackPointLevel,
+                                               Mode=TwoWay}" />
                             <TextBlock
                                 Grid.Column="1"
                                 MinWidth="40"
                                 VerticalAlignment="Center"
-                                Text="{x:Bind ViewModel.BlackPointLevel, Mode=OneWay}" />
+                                Text="{x:Bind ViewModel.BlackPointLevel,
+                                              Mode=OneWay}" />
                         </Grid>
                     </StackPanel>
 
@@ -138,12 +150,14 @@
                                 Minimum="0"
                                 StepFrequency="1"
                                 ToolTipService.ToolTip="Adjust the white point level"
-                                Value="{x:Bind ViewModel.WhitePointLevel, Mode=TwoWay}" />
+                                Value="{x:Bind ViewModel.WhitePointLevel,
+                                               Mode=TwoWay}" />
                             <TextBlock
                                 Grid.Column="1"
                                 MinWidth="40"
                                 VerticalAlignment="Center"
-                                Text="{x:Bind ViewModel.WhitePointLevel, Mode=OneWay}" />
+                                Text="{x:Bind ViewModel.WhitePointLevel,
+                                              Mode=OneWay}" />
                         </Grid>
                     </StackPanel>
                 </StackPanel>
@@ -174,7 +188,8 @@
                             Grid.Row="0"
                             Grid.Column="0"
                             HorizontalAlignment="Center"
-                            IsChecked="{x:Bind ViewModel.IsEyedropperBlackMode, Mode=TwoWay}"
+                            IsChecked="{x:Bind ViewModel.IsEyedropperBlackMode,
+                                               Mode=TwoWay}"
                             Style="{StaticResource ToolToggleButtonStyle}"
                             ToolTipService.ToolTip="Click to enable eyedropper, then click on the image to select the black point">
                             <StackPanel Orientation="Horizontal" Spacing="8">
@@ -187,7 +202,8 @@
                             Grid.Row="0"
                             Grid.Column="1"
                             HorizontalAlignment="Center"
-                            IsChecked="{x:Bind ViewModel.IsEyedropperWhiteMode, Mode=TwoWay}"
+                            IsChecked="{x:Bind ViewModel.IsEyedropperWhiteMode,
+                                               Mode=TwoWay}"
                             Style="{StaticResource ToolToggleButtonStyle}"
                             ToolTipService.ToolTip="Click to enable eyedropper, then click on the image to select the white point">
                             <StackPanel Orientation="Horizontal" Spacing="8">
@@ -201,12 +217,16 @@
                             Grid.Column="0"
                             HorizontalAlignment="Center"
                             Spacing="4"
-                            Visibility="{x:Bind ViewModel.SelectedBlackPointColor, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.SelectedBlackPointColor,
+                                                Mode=OneWay,
+                                                Converter={StaticResource NullToVisibilityConverter}}">
                             <TextBlock FontSize="12" Text="Black Point Color" />
                             <Rectangle
                                 Width="60"
                                 Height="30"
-                                Fill="{x:Bind ViewModel.SelectedBlackPointColor, Mode=OneWay, Converter={StaticResource MagickColorToBrushConverter}}"
+                                Fill="{x:Bind ViewModel.SelectedBlackPointColor,
+                                              Mode=OneWay,
+                                              Converter={StaticResource MagickColorToBrushConverter}}"
                                 RadiusX="4"
                                 RadiusY="4"
                                 Stroke="{ThemeResource SystemControlForegroundBaseMediumBrush}"
@@ -219,12 +239,16 @@
                             Grid.Column="1"
                             HorizontalAlignment="Center"
                             Spacing="4"
-                            Visibility="{x:Bind ViewModel.SelectedWhitePointColor, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.SelectedWhitePointColor,
+                                                Mode=OneWay,
+                                                Converter={StaticResource NullToVisibilityConverter}}">
                             <TextBlock FontSize="12" Text="White Point Color" />
                             <Rectangle
                                 Width="60"
                                 Height="30"
-                                Fill="{x:Bind ViewModel.SelectedWhitePointColor, Mode=OneWay, Converter={StaticResource MagickColorToBrushConverter}}"
+                                Fill="{x:Bind ViewModel.SelectedWhitePointColor,
+                                              Mode=OneWay,
+                                              Converter={StaticResource MagickColorToBrushConverter}}"
                                 RadiusX="4"
                                 RadiusY="4"
                                 Stroke="{ThemeResource SystemControlForegroundBaseMediumBrush}"
@@ -235,7 +259,8 @@
                             Grid.Row="2"
                             Grid.ColumnSpan="2"
                             IsClosable="False"
-                            IsOpen="{x:Bind ViewModel.IsEyedropperBlackMode, Mode=OneWay}"
+                            IsOpen="{x:Bind ViewModel.IsEyedropperBlackMode,
+                                            Mode=OneWay}"
                             Message="Click on the image to select the black point"
                             Severity="Informational" />
 
@@ -243,7 +268,8 @@
                             Grid.Row="2"
                             Grid.ColumnSpan="2"
                             IsClosable="False"
-                            IsOpen="{x:Bind ViewModel.IsEyedropperWhiteMode, Mode=OneWay}"
+                            IsOpen="{x:Bind ViewModel.IsEyedropperWhiteMode,
+                                            Mode=OneWay}"
                             Message="Click on the image to select the white point"
                             Severity="Informational" />
                     </Grid>
@@ -261,7 +287,8 @@
                         TextWrapping="Wrap" />
 
                     <ToggleButton
-                        IsChecked="{x:Bind ViewModel.IsPerspectiveCorrectionMode, Mode=TwoWay}"
+                        IsChecked="{x:Bind ViewModel.IsPerspectiveCorrectionMode,
+                                           Mode=TwoWay}"
                         Style="{StaticResource ToolToggleButtonStyle}"
                         ToolTipService.ToolTip="Enable to select the 4 corners of the QR code for perspective correction">
                         <StackPanel Orientation="Horizontal" Spacing="8">
@@ -272,7 +299,8 @@
 
                     <InfoBar
                         IsClosable="False"
-                        IsOpen="{x:Bind ViewModel.IsPerspectiveCorrectionMode, Mode=OneWay}"
+                        IsOpen="{x:Bind ViewModel.IsPerspectiveCorrectionMode,
+                                        Mode=OneWay}"
                         Message="Click on the image to mark each corner in sequence"
                         Severity="Informational" />
 
@@ -281,7 +309,8 @@
                         Margin="0,8,0,0"
                         Orientation="Horizontal"
                         Spacing="8"
-                        Visibility="{x:Bind ViewModel.IsPerspectiveCorrectionMode, Mode=OneWay}">
+                        Visibility="{x:Bind ViewModel.IsPerspectiveCorrectionMode,
+                                            Mode=OneWay}">
 
                         <!--  Number badge  -->
                         <Border
@@ -289,14 +318,18 @@
                             Height="28"
                             Background="{ThemeResource SystemAccentColor}"
                             CornerRadius="14"
-                            Visibility="{x:Bind ViewModel.IsCornerSelectionComplete, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=inverse}">
+                            Visibility="{x:Bind ViewModel.IsCornerSelectionComplete,
+                                                Mode=OneWay,
+                                                Converter={StaticResource BoolToVisibilityConverter},
+                                                ConverterParameter=inverse}">
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="14"
                                 FontWeight="Bold"
                                 Foreground="White"
-                                Text="{x:Bind ViewModel.CurrentCornerNumber, Mode=OneWay}" />
+                                Text="{x:Bind ViewModel.CurrentCornerNumber,
+                                              Mode=OneWay}" />
                         </Border>
 
                         <!--  Success checkmark  -->
@@ -305,7 +338,9 @@
                             Height="28"
                             Background="{ThemeResource SystemFillColorSuccessBrush}"
                             CornerRadius="14"
-                            Visibility="{x:Bind ViewModel.IsCornerSelectionComplete, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.IsCornerSelectionComplete,
+                                                Mode=OneWay,
+                                                Converter={StaticResource BoolToVisibilityConverter}}">
                             <FontIcon
                                 FontSize="14"
                                 Foreground="White"
@@ -317,15 +352,22 @@
                             VerticalAlignment="Center"
                             FontWeight="SemiBold"
                             Foreground="{ThemeResource SystemAccentColor}"
-                            Text="{x:Bind ViewModel.CurrentCornerInstruction, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsCornerSelectionComplete, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=inverse}" />
+                            Text="{x:Bind ViewModel.CurrentCornerInstruction,
+                                          Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsCornerSelectionComplete,
+                                                Mode=OneWay,
+                                                Converter={StaticResource BoolToVisibilityConverter},
+                                                ConverterParameter=inverse}" />
 
                         <TextBlock
                             VerticalAlignment="Center"
                             FontWeight="SemiBold"
                             Foreground="{ThemeResource SystemFillColorSuccessBrush}"
-                            Text="{x:Bind ViewModel.CurrentCornerInstruction, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsCornerSelectionComplete, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            Text="{x:Bind ViewModel.CurrentCornerInstruction,
+                                          Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsCornerSelectionComplete,
+                                                Mode=OneWay,
+                                                Converter={StaticResource BoolToVisibilityConverter}}" />
                     </StackPanel>
 
                     <StackPanel Spacing="4" Visibility="{x:Bind ViewModel.IsPerspectiveCorrectionMode, Mode=OneWay}">
@@ -342,12 +384,14 @@
                                 Minimum="0"
                                 StepFrequency="1"
                                 ToolTipService.ToolTip="Add a white border around the corrected image for better detection"
-                                Value="{x:Bind ViewModel.BorderPixels, Mode=TwoWay}" />
+                                Value="{x:Bind ViewModel.BorderPixels,
+                                               Mode=TwoWay}" />
                             <TextBlock
                                 Grid.Column="1"
                                 MinWidth="40"
                                 VerticalAlignment="Center"
-                                Text="{x:Bind ViewModel.BorderPixels, Mode=OneWay}" />
+                                Text="{x:Bind ViewModel.BorderPixels,
+                                              Mode=OneWay}" />
                         </Grid>
                     </StackPanel>
 
@@ -370,38 +414,78 @@
             Spacing="12">
             <Button
                 Command="{x:Bind ViewModel.ApplyProcessingCommand}"
-                IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                   Mode=OneWay,
+                                   Converter={StaticResource BoolNegationConverter}}"
                 Style="{StaticResource AccentButtonStyle}"
                 ToolTipService.ToolTip="Apply all selected adjustments to the image">
-                <StackPanel Orientation="Horizontal" Spacing="8">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                            Glyph="&#xE73E;"
+                            Visibility="{x:Bind ViewModel.IsProcessing,
+                                                Mode=OneWay,
+                                                Converter={StaticResource BoolToVisibilityConverter},
+                                                ConverterParameter=inverse}" />
+                        <TextBlock Text="Apply Changes" />
+                        <TextBlock
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            Text="●"
+                            Visibility="{x:Bind ViewModel.HasPendingChanges,
+                                                Mode=OneWay,
+                                                Converter={StaticResource BoolToVisibilityConverter}}" />
+                    </StackPanel>
                     <ProgressRing
                         Width="16"
                         Height="16"
-                        IsActive="{x:Bind ViewModel.IsProcessing, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <FontIcon
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        Glyph="&#xE73E;"
-                        Visibility="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=inverse}" />
-                    <TextBlock Text="Apply Changes" />
-                    <TextBlock
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Foreground="White"
-                        Text="●"
-                        Visibility="{x:Bind ViewModel.HasPendingChanges, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                </StackPanel>
+                        IsActive="{x:Bind ViewModel.IsProcessing,
+                                          Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsProcessing,
+                                            Mode=OneWay,
+                                            Converter={StaticResource BoolToVisibilityConverter}}" />
+                </Grid>
             </Button>
 
             <Button
                 Command="{x:Bind ViewModel.ResetAllSettingsCommand}"
-                IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                   Mode=OneWay,
+                                   Converter={StaticResource BoolNegationConverter}}"
                 ToolTipService.ToolTip="Reset all settings to default values">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <SymbolIcon Symbol="Refresh" />
                     <TextBlock Text="Reset All" />
                 </StackPanel>
             </Button>
+
+            <local:IconAndTextHyperlinkButton Command="{x:Bind ViewModel.UndoCommand}" ToolTipService.ToolTip="Undo the last applied change (Ctrl+Z)">
+                <local:IconAndTextHyperlinkButton.Icon>
+                    <SymbolIcon Symbol="Undo" />
+                </local:IconAndTextHyperlinkButton.Icon>
+            </local:IconAndTextHyperlinkButton>
+
+            <local:IconAndTextHyperlinkButton
+                Command="{x:Bind ViewModel.RedoCommand}"
+                ToolTipService.ToolTip="Redo the last undone change (Ctrl+Y)"
+                Visibility="Collapsed">
+                <local:IconAndTextHyperlinkButton.Icon>
+                    <SymbolIcon Symbol="Redo" />
+                </local:IconAndTextHyperlinkButton.Icon>
+            </local:IconAndTextHyperlinkButton>
         </StackPanel>
     </Grid>
+
+    <UserControl.KeyboardAccelerators>
+        <KeyboardAccelerator
+            Key="Z"
+            Invoked="UndoAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="Y"
+            Invoked="RedoAccelerator_Invoked"
+            Modifiers="Control" />
+    </UserControl.KeyboardAccelerators>
 </UserControl>
