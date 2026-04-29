@@ -16,7 +16,7 @@ public static class ImageProcessingHelper
     public static MagickImage InvertColors(MagickImage image)
     {
         var result = (MagickImage)image.Clone();
-        result.Negate();
+        result.Negate(Channels.RGB);
         return result;
     }
 
