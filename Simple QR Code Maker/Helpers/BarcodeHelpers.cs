@@ -1107,9 +1107,16 @@ public static partial class BarcodeHelpers
 
     public static IEnumerable<(string, Result)> GetStringsFromImageFile(StorageFile storageFile)
     {
-        Bitmap bitmap = new(storageFile.Path);
-
-        return GetStringsFromBitmap(bitmap);
+        try
+        {
+            Bitmap bitmap = new(storageFile.Path);
+            return GetStringsFromBitmap(bitmap);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Could not load image file '{storageFile.Name}': {ex.Message}");
+            return [];
+        }
     }
 
     public static IEnumerable<(string, Result)> GetStringsFromBitmap(Bitmap bitmap)

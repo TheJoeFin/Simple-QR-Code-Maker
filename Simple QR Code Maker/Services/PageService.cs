@@ -20,6 +20,7 @@ public class PageService : IPageService
         Configure<DecodingViewModel, DecodingPage>();
         Configure<AboutQrCodesWebViewModel, AboutQrCodesWebPage>();
         Configure<SpreadsheetImportViewModel, SpreadsheetImportPage>();
+        Configure<FolderSummaryViewModel, FolderSummaryPage>();
     }
 
     public Type GetPageType(string key)
