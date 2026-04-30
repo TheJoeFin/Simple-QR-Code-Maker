@@ -5,7 +5,7 @@ using Simple_QR_Code_Maker.ViewModels;
 
 namespace Simple_QR_Code_Maker.Controls;
 
-public sealed partial class DecodingHistoryPaneContentControl : UserControl
+public sealed partial class CutOutImagesPaneContentControl : UserControl
 {
     public DecodingViewModel? ViewModel
     {
@@ -17,26 +17,26 @@ public sealed partial class DecodingHistoryPaneContentControl : UserControl
         DependencyProperty.Register(
             nameof(ViewModel),
             typeof(DecodingViewModel),
-            typeof(DecodingHistoryPaneContentControl),
+            typeof(CutOutImagesPaneContentControl),
             new PropertyMetadata(null, OnViewModelChanged));
 
-    public DecodingHistoryPaneContentControl()
+    public CutOutImagesPaneContentControl()
     {
         InitializeComponent();
     }
 
     private static void OnViewModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        var control = (DecodingHistoryPaneContentControl)d;
+        var control = (CutOutImagesPaneContentControl)d;
         control.Bindings.Update();
 
         if (e.NewValue is DecodingViewModel vm)
-            control.HistoryListView.DataContext = vm;
+            control.CutOutImagesListView.DataContext = vm;
     }
 
-    private async void HistoryListView_ItemClick(object sender, ItemClickEventArgs e)
+    private void CutOutImagesListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is DecodingHistoryItem item && ViewModel is not null)
-            await ViewModel.OpenDecodingHistoryItemCommand.ExecuteAsync(item);
+        if (e.ClickedItem is DecodingImageItem item)
+            ViewModel?.SelectDecodingImageItem(item);
     }
 }

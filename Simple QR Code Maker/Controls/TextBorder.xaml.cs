@@ -17,6 +17,13 @@ public sealed partial class TextBorder : UserControl
         BorderInfo = new(result);
     }
 
+    public TextBorder(TextBorderInfo borderInfo)
+    {
+        InitializeComponent();
+
+        BorderInfo = borderInfo;
+    }
+
     private void Button_Click(object sender, RoutedEventArgs e)
     {
         TextBorder_Click?.Invoke(this, e);

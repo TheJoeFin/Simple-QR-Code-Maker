@@ -74,45 +74,102 @@
             x:Name="FolderFilesListView"
             Grid.Row="1"
             IsItemClickEnabled="True"
-            ItemClick="FolderFilesListView_ItemClick"
             ItemsSource="{x:Bind ViewModel.FolderFiles, Mode=OneWay}"
             SelectionMode="None"
+            Tapped="FolderFilesListView_Tapped"
             Visibility="{x:Bind ViewModel.FolderFiles.Count,
                                 Converter={StaticResource EmptyCollectionToVisibility},
                                 ConverterParameter=true,
                                 Mode=OneWay}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:FolderFileItem">
-                    <Grid
-                        Margin="0,4"
-                        ColumnSpacing="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="56" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <!--  File row  -->
+                        <Grid
+                            Margin="0,4"
+                            ColumnSpacing="8"
+                            Tag="{x:Bind}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="56" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                        <!--  Thumbnail  -->
-                        <Border
-                            Width="56"
-                            Height="56"
-                            VerticalAlignment="Center"
-                            Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
-                            CornerRadius="4">
-                            <Image
-                                Source="{x:Bind Thumbnail, Mode=OneWay}"
-                                Stretch="Uniform" />
-                        </Border>
+                            <!--  Thumbnail  -->
+                            <Border
+                                Width="56"
+                                Height="56"
+                                VerticalAlignment="Center"
+                                Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
+                                CornerRadius="4">
+                                <Image
+                                    Source="{x:Bind Thumbnail, Mode=OneWay}"
+                                    Stretch="Uniform" />
+                            </Border>
 
-                        <!--  File name  -->
-                        <TextBlock
-                            Grid.Column="1"
-                            VerticalAlignment="Center"
-                            FontWeight="SemiBold"
-                            MaxLines="2"
-                            Text="{x:Bind FileName}"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap" />
-                    </Grid>
+                            <!--  File name  -->
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                MaxLines="2"
+                                Text="{x:Bind FileName}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="Wrap" />
+                        </Grid>
+
+                        <!--  Cut-outs (indented below parent)  -->
+                        <ItemsControl
+                            Margin="12,0,0,4"
+                            ItemsSource="{x:Bind CutOuts, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:DecodingImageItem">
+                                    <Grid
+                                        Margin="0,2"
+                                        ColumnSpacing="8"
+                                        PointerEntered="CutOutItem_PointerEntered"
+                                        PointerExited="CutOutItem_PointerExited"
+                                        Tag="{x:Bind}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border
+                                            Width="40"
+                                            Height="40"
+                                            VerticalAlignment="Center"
+                                            Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
+                                            CornerRadius="4">
+                                            <Image
+                                                Source="{x:Bind BitmapImage, Mode=OneWay}"
+                                                Stretch="Uniform" />
+                                        </Border>
+                                        <Grid Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock
+                                                Margin="0,0,32,0"
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                MaxLines="2"
+                                                Text="{x:Bind Label, Mode=OneWay}"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="Wrap" />
+                                            <Button
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Click="SaveCutOutButton_Click"
+                                                Opacity="0"
+                                                Padding="4"
+                                                Style="{StaticResource SubtleButtonStyle}"
+                                                Tag="{x:Bind}"
+                                                ToolTipService.ToolTip="Save cut-out image">
+                                                <FontIcon FontSize="12" Glyph="&#xE74E;" />
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

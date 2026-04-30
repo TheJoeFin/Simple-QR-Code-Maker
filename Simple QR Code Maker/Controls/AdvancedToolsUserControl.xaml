@@ -56,7 +56,9 @@
 
                     <Button
                         Command="{x:Bind ViewModel.ApplyGrayscaleCommand}"
-                        IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                        IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                           Mode=OneWay,
+                                           Converter={StaticResource BoolNegationConverter}}"
                         ToolTipService.ToolTip="Convert the image to grayscale for better QR code detection">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
@@ -66,7 +68,9 @@
 
                     <Button
                         Command="{x:Bind ViewModel.ApplyInvertCommand}"
-                        IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                        IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                           Mode=OneWay,
+                                           Converter={StaticResource BoolNegationConverter}}"
                         ToolTipService.ToolTip="Invert image colors, useful for light QR codes on dark backgrounds">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
@@ -399,6 +403,74 @@
                         Command="{x:Bind ViewModel.ClearPerspectiveCornersCommand}"
                         Content="Clear Corner Selection"
                         ToolTipService.ToolTip="Clear all selected corners to start over" />
+                </StackPanel>
+
+                <StackPanel
+                    Padding="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8"
+                    Spacing="8">
+                    <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Cut Out Region" />
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="Select a rectangular region to extract as a separate image for independent processing"
+                        TextWrapping="Wrap" />
+
+                    <ToggleButton
+                        IsChecked="{x:Bind ViewModel.IsCutOutRegionMode,
+                                           Mode=TwoWay}"
+                        Style="{StaticResource ToolToggleButtonStyle}"
+                        ToolTipService.ToolTip="Enable to click and drag a rectangle on the image to select a region">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon Glyph="&#xE8A3;" />
+                            <TextBlock Text="Enable Cut Out Region" />
+                        </StackPanel>
+                    </ToggleButton>
+
+                    <StackPanel
+                        Orientation="Horizontal"
+                        Spacing="8"
+                        Visibility="{x:Bind ViewModel.HasCutOutSelection,
+                                            Mode=OneWay,
+                                            Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Border
+                            Width="28"
+                            Height="28"
+                            Background="{ThemeResource SystemFillColorSuccessBrush}"
+                            CornerRadius="14">
+                            <FontIcon
+                                FontSize="14"
+                                Foreground="White"
+                                Glyph="&#xE73E;" />
+                        </Border>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                            Text="Region selected — click Cut Out to extract" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button
+                            Command="{x:Bind ViewModel.PerformCutOutCommand}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            ToolTipService.ToolTip="Extract the selected region as a new image in the panel below">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE8A3;" />
+                                <TextBlock Text="Cut Out Region" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{x:Bind ViewModel.ClearCutOutSelectionCommand}" ToolTipService.ToolTip="Clear the current selection">
+                            <TextBlock Text="Clear Selection" />
+                        </Button>
+                    </StackPanel>
+
+                    <InfoBar
+                        IsClosable="False"
+                        IsOpen="{x:Bind ViewModel.IsCutOutRegionMode,
+                                        Mode=OneWay}"
+                        Message="Click and drag on the image to select a rectangular region"
+                        Severity="Informational" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
