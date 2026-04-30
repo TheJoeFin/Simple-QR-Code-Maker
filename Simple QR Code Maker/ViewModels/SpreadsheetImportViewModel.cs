@@ -23,6 +23,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     private List<SpreadsheetSourceRow> _dataRows = [];
     private List<IReadOnlyList<string>> _displayRows = [];
     private HistoryItem? _returnState;
+    private NavigationRestoreState? _backNavigationState;
     private string _sourceFilePath = string.Empty;
     private int _importableValueCount;
     private int _idColumnIndex = -1;
@@ -168,6 +169,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         _dataRows = [];
         _displayRows = [];
         _generatedIds.Clear();
+        _backNavigationState = null;
         ColumnNames.Clear();
         SelectedColumnIndex = -1;
         SourceFileName = string.Empty;
@@ -187,6 +189,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
             return;
 
         _returnState = CloneHistoryItem(data.ReturnState);
+        _backNavigationState = data.BackNavigationState;
         SourceFileName = data.SourceFileName;
         _sourceFilePath = data.SourceFilePath;
         _allRows.AddRange(data.Rows);
@@ -201,6 +204,12 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     [RelayCommand]
     private void GoBack()
     {
+        if (_backNavigationState is not null)
+        {
+            _navigationService.NavigateTo(_backNavigationState.PageKey, _backNavigationState.Parameter);
+            return;
+        }
+
         _navigationService.NavigateTo(typeof(MainViewModel).FullName!, _returnState);
     }
 

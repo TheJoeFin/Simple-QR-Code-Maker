@@ -54,9 +54,9 @@ public partial class AdvancedToolsViewModel : ObservableObject
     {
         if (value)
         {
-            // Deactivate other tools when perspective correction is enabled
             IsEyedropperBlackMode = false;
             IsEyedropperWhiteMode = false;
+            IsCutOutRegionMode = false;
             System.Diagnostics.Debug.WriteLine("Perspective Correction Mode activated - other tools deactivated");
         }
         else
@@ -65,6 +65,28 @@ public partial class AdvancedToolsViewModel : ObservableObject
             System.Diagnostics.Debug.WriteLine("Perspective Correction Mode deactivated");
         }
     }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsAnyToolActive))]
+    public partial bool IsCutOutRegionMode { get; set; } = false;
+
+    partial void OnIsCutOutRegionModeChanged(bool value)
+    {
+        if (value)
+        {
+            IsEyedropperBlackMode = false;
+            IsEyedropperWhiteMode = false;
+            IsPerspectiveCorrectionMode = false;
+        }
+        else
+        {
+            ClearCutOutSelectionInternal();
+        }
+    }
+
+    public System.Drawing.Point? CutOutStartPoint { get; private set; }
+    public System.Drawing.Point? CutOutEndPoint { get; private set; }
+    public bool HasCutOutSelection => CutOutStartPoint.HasValue && CutOutEndPoint.HasValue;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CurrentCornerInstruction))]
@@ -140,13 +162,9 @@ public partial class AdvancedToolsViewModel : ObservableObject
     {
         if (value)
         {
-            // Deactivate other tools
             IsEyedropperWhiteMode = false;
-            if (IsPerspectiveCorrectionMode)
-            {
-                IsPerspectiveCorrectionMode = false;
-                System.Diagnostics.Debug.WriteLine("Black Point Eyedropper activated - other tools deactivated");
-            }
+            IsPerspectiveCorrectionMode = false;
+            IsCutOutRegionMode = false;
         }
     }
 
@@ -158,13 +176,9 @@ public partial class AdvancedToolsViewModel : ObservableObject
     {
         if (value)
         {
-            // Deactivate other tools
             IsEyedropperBlackMode = false;
-            if (IsPerspectiveCorrectionMode)
-            {
-                IsPerspectiveCorrectionMode = false;
-                System.Diagnostics.Debug.WriteLine("White Point Eyedropper activated - other tools deactivated");
-            }
+            IsPerspectiveCorrectionMode = false;
+            IsCutOutRegionMode = false;
         }
     }
 
@@ -187,7 +201,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     }
 
     // Track if any interactive tool is currently active
-    public bool IsAnyToolActive => IsEyedropperBlackMode || IsEyedropperWhiteMode || IsPerspectiveCorrectionMode;
+    public bool IsAnyToolActive => IsEyedropperBlackMode || IsEyedropperWhiteMode || IsPerspectiveCorrectionMode || IsCutOutRegionMode;
 
     /// <summary>
     /// The unmodified original image. Only used by "Reset All" to restore the baseline.
@@ -217,6 +231,8 @@ public partial class AdvancedToolsViewModel : ObservableObject
 
     public event EventHandler<MagickImage>? ImageProcessed;
     public event EventHandler? PerspectiveCornersClearedRequested;
+    public event EventHandler<MagickImage>? RegionCutOut;
+    public event EventHandler? CutOutSelectionClearedRequested;
 
     private void ClearPerspectiveSelection()
     {
@@ -226,6 +242,50 @@ public partial class AdvancedToolsViewModel : ObservableObject
         BottomLeftCorner = null;
 
         PerspectiveCornersClearedRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void SetCutOutRegion(System.Drawing.Point start, System.Drawing.Point end)
+    {
+        CutOutStartPoint = start;
+        CutOutEndPoint = end;
+        OnPropertyChanged(nameof(HasCutOutSelection));
+        PerformCutOutCommand.NotifyCanExecuteChanged();
+    }
+
+    private void ClearCutOutSelectionInternal()
+    {
+        CutOutStartPoint = null;
+        CutOutEndPoint = null;
+        OnPropertyChanged(nameof(HasCutOutSelection));
+        PerformCutOutCommand.NotifyCanExecuteChanged();
+        CutOutSelectionClearedRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    [RelayCommand]
+    private void ClearCutOutSelection() => ClearCutOutSelectionInternal();
+
+    [RelayCommand(CanExecute = nameof(HasCutOutSelection))]
+    private void PerformCutOut()
+    {
+        if (baselineImage == null || CutOutStartPoint == null || CutOutEndPoint == null)
+            return;
+
+        int x = Math.Min(CutOutStartPoint.Value.X, CutOutEndPoint.Value.X);
+        int y = Math.Min(CutOutStartPoint.Value.Y, CutOutEndPoint.Value.Y);
+        int width = Math.Abs(CutOutEndPoint.Value.X - CutOutStartPoint.Value.X);
+        int height = Math.Abs(CutOutEndPoint.Value.Y - CutOutStartPoint.Value.Y);
+
+        if (width < 5 || height < 5)
+            return;
+
+        x = Math.Clamp(x, 0, (int)baselineImage.Width - 1);
+        y = Math.Clamp(y, 0, (int)baselineImage.Height - 1);
+        width = Math.Clamp(width, 1, (int)baselineImage.Width - x);
+        height = Math.Clamp(height, 1, (int)baselineImage.Height - y);
+
+        MagickImage cropped = Helpers.ImageProcessingHelper.CropRegion(baselineImage, x, y, width, height);
+        ClearCutOutSelectionInternal();
+        RegionCutOut?.Invoke(this, cropped);
     }
 
     public void SetOriginalImage(MagickImage image)
@@ -252,6 +312,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
         BlackPointLevel = 0.0;
         WhitePointLevel = 100.0;
         IsPerspectiveCorrectionMode = false;
+        IsCutOutRegionMode = false;
         BorderPixels = 20;
         SelectedBlackPointColor = null;
         SelectedWhitePointColor = null;
@@ -532,6 +593,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
         BlackPointLevel = 0.0;
         WhitePointLevel = 100.0;
         IsPerspectiveCorrectionMode = false;
+        IsCutOutRegionMode = false;
         BorderPixels = 20;
         SelectedBlackPointColor = null;
         SelectedWhitePointColor = null;
