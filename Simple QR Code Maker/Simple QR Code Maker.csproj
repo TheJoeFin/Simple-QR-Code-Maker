@@ -25,6 +25,7 @@
     <None Remove="Controls\FaqsContent.xaml" />
     <None Remove="Controls\HistoryRowItem.xaml" />
     <None Remove="Controls\DecodingHistoryPaneContentControl.xaml" />
+    <None Remove="Controls\FolderPaneContentControl.xaml" />
     <None Remove="Controls\IconAndTextButton.xaml" />
     <None Remove="Controls\IconAndTextToggleButton.xaml" />
     <None Remove="Controls\IconAndTextContent.xaml" />
@@ -91,6 +92,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Controls\DecodingHistoryPaneContentControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Controls\FolderPaneContentControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Controls\IconAndTextButton.xaml">
