@@ -1,8 +1,10 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Helpers;
+using Simple_QR_Code_Maker.Models;
+using Simple_QR_Code_Maker.ViewModels;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Simple_QR_Code_Maker.Services;
@@ -81,6 +83,17 @@ public class NavigationService : INavigationService
         {
             _frame.Tag = clearNavigation;
             object? vmBeforeNavigation = _frame.GetPageViewModel();
+            if (pageKey == typeof(SpreadsheetImportViewModel).FullName!
+                && parameter is SpreadsheetImportNavigationData spreadsheetImportNavigationData
+                && vmBeforeNavigation is INavigationStateProvider navigationStateProvider)
+            {
+                spreadsheetImportNavigationData.BackNavigationState = new NavigationRestoreState
+                {
+                    PageKey = vmBeforeNavigation.GetType().FullName!,
+                    Parameter = navigationStateProvider.CreateNavigationState(),
+                };
+            }
+
             bool navigated = _frame.Navigate(pageType, parameter);
             if (navigated)
             {

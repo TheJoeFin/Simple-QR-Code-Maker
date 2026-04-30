@@ -36,6 +36,14 @@ public static class ImageProcessingHelper
         return result;
     }
 
+    public static MagickImage CropRegion(MagickImage image, int x, int y, int width, int height)
+    {
+        var result = (MagickImage)image.Clone();
+        result.Crop(new MagickGeometry(x, y, (uint)width, (uint)height));
+        result.ResetPage();
+        return result;
+    }
+
     public static MagickImage SetBlackPoint(MagickImage image, MagickColor blackPointColor)
     {
         var result = (MagickImage)image.Clone();
