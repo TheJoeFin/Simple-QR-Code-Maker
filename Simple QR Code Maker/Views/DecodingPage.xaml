@@ -52,16 +52,26 @@
                 </SplitView.Pane>
                 <SplitView.Content>
 
-                    <!--  Folder pane (left inline, 280px)  -->
+                    <!--  Folder / Cut-Out Images pane (left inline, 280px)  -->
                     <SplitView
                         DisplayMode="Inline"
-                        IsPaneOpen="{x:Bind ViewModel.IsFolderPaneOpen,
-                                            Mode=TwoWay,
-                                            UpdateSourceTrigger=PropertyChanged}"
+                        IsPaneOpen="{x:Bind ViewModel.IsLeftPaneOpen,
+                                            Mode=OneWay}"
                         OpenPaneLength="280"
                         PanePlacement="Left">
                         <SplitView.Pane>
-                            <controls:FolderPaneContentControl ViewModel="{x:Bind ViewModel}" />
+                            <Grid>
+                                <controls:FolderPaneContentControl
+                                    ViewModel="{x:Bind ViewModel}"
+                                    Visibility="{x:Bind ViewModel.IsFolderPaneOpen,
+                                                        Mode=OneWay,
+                                                        Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <controls:CutOutImagesPaneContentControl
+                                    ViewModel="{x:Bind ViewModel}"
+                                    Visibility="{x:Bind ViewModel.IsCutOutImagesPaneOpen,
+                                                        Mode=OneWay,
+                                                        Converter={StaticResource BoolToVisibilityConverter}}" />
+                            </Grid>
                         </SplitView.Pane>
                         <SplitView.Content>
 
@@ -99,39 +109,30 @@
                                     Visibility="{x:Bind ViewModel.IsLoading,
                                                         Mode=OneWay,
                                                         Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <Border
+                                    <StackPanel
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="32,24">
-                                        <StackPanel
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Spacing="16">
-                                            <ProgressRing
-                                                x:Name="LoadingProgressRing"
-                                                Width="100"
-                                                Height="100"
-                                                IsActive="{x:Bind ViewModel.IsLoading,
-                                                                  Mode=OneWay}" />
-                                            <TextBlock
-                                                x:Name="LoadingMessageTextBlock"
-                                                HorizontalAlignment="Center"
-                                                Style="{StaticResource BodyStrongTextBlockStyle}"
-                                                Text="{x:Bind ViewModel.LoadingMessage,
+                                        Spacing="16">
+                                        <ProgressRing
+                                            x:Name="LoadingProgressRing"
+                                            Width="100"
+                                            Height="100"
+                                            IsActive="{x:Bind ViewModel.IsLoading,
                                                               Mode=OneWay}" />
-                                            <Button
-                                                HorizontalAlignment="Center"
-                                                Command="{x:Bind ViewModel.CancelBatchOperationCommand, Mode=OneWay}"
-                                                Content="Cancel"
-                                                Visibility="{x:Bind ViewModel.IsCancellableOperationRunning,
-                                                                    Mode=OneWay,
-                                                                    Converter={StaticResource BoolToVisibilityConverter}}" />
-                                        </StackPanel>
-                                    </Border>
+                                        <TextBlock
+                                            x:Name="LoadingMessageTextBlock"
+                                            HorizontalAlignment="Center"
+                                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                                            Text="{x:Bind ViewModel.LoadingMessage,
+                                                          Mode=OneWay}" />
+                                        <Button
+                                            HorizontalAlignment="Center"
+                                            Command="{x:Bind ViewModel.CancelBatchOperationCommand, Mode=OneWay}"
+                                            Content="Cancel"
+                                            Visibility="{x:Bind ViewModel.IsCancellableOperationRunning,
+                                                                Mode=OneWay,
+                                                                Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    </StackPanel>
                                 </Grid>
 
                                 <Grid
@@ -274,7 +275,9 @@
                                                             x:Name="ImageContainer"
                                                             PointerEntered="ImageContainer_PointerEntered"
                                                             PointerExited="ImageContainer_PointerExited"
-                                                            PointerPressed="ImageContainer_PointerPressed">
+                                                            PointerPressed="ImageContainer_PointerPressed"
+                                                            PointerMoved="ImageContainer_PointerMoved"
+                                                            PointerReleased="ImageContainer_PointerReleased">
                                                             <Image
                                                                 x:Name="ImageWithBarcodes"
                                                                 Width="{x:Bind ViewModel.CurrentDecodingItem.ImagePixelWidth,
@@ -320,6 +323,22 @@
                                                                     </DataTemplate>
                                                                 </ItemsControl.ItemTemplate>
                                                             </ItemsControl>
+                                                            <!--  Selection rectangle for Cut Out Region tool  -->
+                                                            <Canvas
+                                                                x:Name="SelectionCanvas"
+                                                                Width="{x:Bind ViewModel.CurrentDecodingItem.ImagePixelWidth,
+                                                                               Mode=OneWay}"
+                                                                Height="{x:Bind ViewModel.CurrentDecodingItem.ImagePixelHeight,
+                                                                                Mode=OneWay}"
+                                                                IsHitTestVisible="False">
+                                                                <Rectangle
+                                                                    x:Name="SelectionRectangle"
+                                                                    Fill="#220078D4"
+                                                                    Stroke="#FF0078D4"
+                                                                    StrokeDashArray="6,3"
+                                                                    StrokeThickness="3"
+                                                                    Visibility="Collapsed" />
+                                                            </Canvas>
                                                         </Grid>
                                                     </Viewbox>
                                                 </ScrollView>
@@ -358,6 +377,7 @@
                                                 </StackPanel>
                                             </StackPanel>
                                         </InfoBar>
+
 
                                     </Grid>
 
@@ -517,6 +537,15 @@
                                         IsCompact="True"
                                         ToolTipService.ToolTip="Frequently Asked Questions about QR Codes">
                                         <SymbolIcon Symbol="Library" />
+                                    </AppBarButton>
+                                    <AppBarButton
+                                        Command="{x:Bind ViewModel.ToggleLeftPaneCommand}"
+                                        IsCompact="True"
+                                        ToolTipService.ToolTip="Show/hide images panel"
+                                        Visibility="{x:Bind ViewModel.HasLeftPaneContent,
+                                                             Mode=OneWay,
+                                                             Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <SymbolIcon Symbol="Pictures" />
                                     </AppBarButton>
                                 </StackPanel>
 

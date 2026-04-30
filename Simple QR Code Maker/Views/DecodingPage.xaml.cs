@@ -19,6 +19,9 @@ public sealed partial class DecodingPage : Page
     }
 
     private bool isPointerOverImage;
+    private bool _isDraggingCutOut;
+    private Windows.Foundation.Point _cutOutCanvasStart;
+    private Windows.Foundation.Point _cutOutCanvasEnd;
 
     public DecodingPage()
     {
@@ -29,6 +32,7 @@ public sealed partial class DecodingPage : Page
         ViewModel.AdvancedTools.ImageProcessed += AdvancedToolsViewModel_ImageProcessed;
         ViewModel.AdvancedTools.PropertyChanged += AdvancedToolsViewModel_PropertyChanged;
         ViewModel.AdvancedTools.PerspectiveCornersClearedRequested += AdvancedToolsViewModel_PerspectiveCornersClearedRequested;
+        ViewModel.AdvancedTools.CutOutSelectionClearedRequested += AdvancedToolsViewModel_CutOutSelectionClearedRequested;
         ViewModel.PreviewStateChanged += ViewModel_PreviewStateChanged;
         Loaded += DecodingPage_Loaded;
     }
@@ -45,6 +49,12 @@ public sealed partial class DecodingPage : Page
             ViewModel.CurrentDecodingItem.PerspectiveCornerMarkers.Clear();
             ViewModel.CurrentDecodingItem.CurrentCornerIndex = 0;
         }
+    }
+
+    private void AdvancedToolsViewModel_CutOutSelectionClearedRequested(object? sender, EventArgs e)
+    {
+        _isDraggingCutOut = false;
+        SelectionRectangle.Visibility = Visibility.Collapsed;
     }
 
     private void AdvancedToolsViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -123,7 +133,7 @@ public sealed partial class DecodingPage : Page
         if (e.DataView.Contains(StandardDataFormats.StorageItems))
         {
             IReadOnlyList<IStorageItem> storageItems = await e.DataView.GetStorageItemsAsync();
-            ViewModel.OpenAndDecodeStorageFiles(storageItems);
+            await ViewModel.OpenAndDecodeStorageFiles(storageItems);
         }
     }
 
@@ -154,6 +164,15 @@ public sealed partial class DecodingPage : Page
 
         Point imagePoint = new(pixelX, pixelY);
 
+        if (ViewModel.AdvancedTools.IsCutOutRegionMode)
+        {
+            _isDraggingCutOut = true;
+            _cutOutCanvasStart = clickPoint;
+            _cutOutCanvasEnd = clickPoint;
+            imageContainer.CapturePointer(e.Pointer);
+            return;
+        }
+
         if (ViewModel.AdvancedTools.IsPerspectiveCorrectionMode)
         {
             HandlePerspectiveCorrectionClick(imagePoint, clickPoint);
@@ -164,6 +183,59 @@ public sealed partial class DecodingPage : Page
             ViewModel.AdvancedTools.IsEyedropperWhiteMode)
             ViewModel.AdvancedTools.SetColorFromPoint(imagePoint);
     }
+
+    private void ImageContainer_PointerMoved(object sender, PointerRoutedEventArgs e)
+    {
+        if (!_isDraggingCutOut || sender is not Grid imageContainer)
+            return;
+
+        _cutOutCanvasEnd = e.GetCurrentPoint(imageContainer).Position;
+        UpdateSelectionRectangleVisual();
+    }
+
+    private void ImageContainer_PointerReleased(object sender, PointerRoutedEventArgs e)
+    {
+        if (!_isDraggingCutOut || sender is not Grid imageContainer || ViewModel.CurrentDecodingItem is null)
+            return;
+
+        imageContainer.ReleasePointerCapture(e.Pointer);
+        _isDraggingCutOut = false;
+
+        _cutOutCanvasEnd = e.GetCurrentPoint(imageContainer).Position;
+        UpdateSelectionRectangleVisual();
+
+        double displayedW = ImageWithBarcodes.ActualWidth;
+        double displayedH = ImageWithBarcodes.ActualHeight;
+        if (displayedW <= 0 || displayedH <= 0)
+            return;
+
+        double scaleX = ViewModel.CurrentDecodingItem.ImagePixelWidth / displayedW;
+        double scaleY = ViewModel.CurrentDecodingItem.ImagePixelHeight / displayedH;
+
+        System.Drawing.Point imgStart = new(
+            Math.Clamp((int)(_cutOutCanvasStart.X * scaleX), 0, ViewModel.CurrentDecodingItem.ImagePixelWidth - 1),
+            Math.Clamp((int)(_cutOutCanvasStart.Y * scaleY), 0, ViewModel.CurrentDecodingItem.ImagePixelHeight - 1));
+        System.Drawing.Point imgEnd = new(
+            Math.Clamp((int)(_cutOutCanvasEnd.X * scaleX), 0, ViewModel.CurrentDecodingItem.ImagePixelWidth - 1),
+            Math.Clamp((int)(_cutOutCanvasEnd.Y * scaleY), 0, ViewModel.CurrentDecodingItem.ImagePixelHeight - 1));
+
+        ViewModel.AdvancedTools.SetCutOutRegion(imgStart, imgEnd);
+    }
+
+    private void UpdateSelectionRectangleVisual()
+    {
+        double minX = Math.Min(_cutOutCanvasStart.X, _cutOutCanvasEnd.X);
+        double minY = Math.Min(_cutOutCanvasStart.Y, _cutOutCanvasEnd.Y);
+        double w = Math.Abs(_cutOutCanvasEnd.X - _cutOutCanvasStart.X);
+        double h = Math.Abs(_cutOutCanvasEnd.Y - _cutOutCanvasStart.Y);
+
+        Canvas.SetLeft(SelectionRectangle, minX);
+        Canvas.SetTop(SelectionRectangle, minY);
+        SelectionRectangle.Width = w;
+        SelectionRectangle.Height = h;
+        SelectionRectangle.Visibility = w > 2 && h > 2 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
 
     private void HandlePerspectiveCorrectionClick(
         Point imagePoint,

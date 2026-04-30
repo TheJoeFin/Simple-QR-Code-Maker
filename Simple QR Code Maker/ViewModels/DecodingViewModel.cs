@@ -26,7 +26,7 @@ using System.Linq;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-public partial class DecodingViewModel : ObservableRecipient, INavigationAware
+public partial class DecodingViewModel : ObservableRecipient, INavigationAware, INavigationStateProvider
 {
     [ObservableProperty]
     public partial string InfoBarMessage { get; set; } = string.Empty;
@@ -96,7 +96,14 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     public bool HasDecodingHistory => DecodingHistoryItems.Count > 0;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsLeftPaneOpen))]
     public partial bool IsFolderPaneOpen { get; set; } = false;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsLeftPaneOpen))]
+    public partial bool IsCutOutImagesPaneOpen { get; set; } = false;
+
+    public bool IsLeftPaneOpen => IsFolderPaneOpen || IsCutOutImagesPaneOpen;
 
     [ObservableProperty]
     public partial string FolderPaneFolderName { get; set; } = string.Empty;
@@ -108,6 +115,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     public bool HasFolderFiles => FolderFiles.Count > 0;
 
     public AdvancedToolsViewModel AdvancedTools { get; } = new();
+
+    public ObservableCollection<DecodingImageItem> DecodingImageItems { get; } = [];
+
+    public bool IsMultiImagePanelVisible => DecodingImageItems.Count > 1;
+
+    public bool HasLeftPaneContent => HasFolderFiles || IsMultiImagePanelVisible;
 
     public bool HasImage => CurrentDecodingItem is not null;
 
@@ -147,6 +160,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     private string? currentSourceFilePath = null;
     private string? currentCachedImagePath = null;
     private StorageFolder? currentFolderPaneFolder = null;
+    private FolderFileItem? currentFolderFileItem = null;
 
     private const int LargeFolderThreshold = 50;
 
@@ -170,6 +184,174 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         LocalSettingsService = localSettingsService;
 
         AttachClipboardHandler();
+        AdvancedTools.RegionCutOut += AdvancedTools_RegionCutOut;
+    }
+
+    private async void AdvancedTools_RegionCutOut(object? sender, ImageMagick.MagickImage croppedImage)
+    {
+        await AddCutOutImageAsync(croppedImage);
+    }
+
+    private async Task AddCutOutImageAsync(ImageMagick.MagickImage croppedImage)
+    {
+        IsLoading = true;
+        LoadingMessage = "Extracting region…";
+
+        try
+        {
+            System.Drawing.Bitmap bitmap = ImageProcessingHelper.ConvertToBitmap(croppedImage);
+
+            string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}_cutout.png");
+            bitmap.Save(cachePath);
+
+            Uri uri = new($"{cachePath}?tick={DateTimeOffset.Now.Ticks}");
+            BitmapImage bitmapImage = new(uri) { CreateOptions = BitmapCreateOptions.IgnoreImageCache };
+
+            IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(bitmap);
+            ObservableCollection<TextBorder> codeBorders = [];
+            foreach ((string, Result) resultItem in strings)
+            {
+                TextBorder textBorder = new(resultItem.Item2);
+                textBorder.TextBorder_Click += TextBorder_TextBorder_Click;
+                codeBorders.Add(textBorder);
+            }
+
+            if (HasFolderFiles && currentFolderFileItem != null)
+            {
+                int cutOutNumber = currentFolderFileItem.CutOuts.Count + 1;
+                DecodingImageItem cutOutItem = new()
+                {
+                    ImagePath = cachePath,
+                    CachedBitmapPath = cachePath,
+                    BitmapImage = bitmapImage,
+                    ImagePixelWidth = (int)croppedImage.Width,
+                    ImagePixelHeight = (int)croppedImage.Height,
+                    CodeBorders = codeBorders,
+                    OriginalMagickImage = croppedImage,
+                    Label = $"Cut-out {cutOutNumber}",
+                    ParentFileName = currentFolderFileItem.FileName,
+                };
+                currentFolderFileItem.CutOuts.Add(cutOutItem);
+                IsFolderPaneOpen = true;
+                SelectDecodingImageItem(cutOutItem);
+            }
+            else
+            {
+                if (DecodingImageItems.Count == 1 && string.IsNullOrEmpty(DecodingImageItems[0].Label))
+                    DecodingImageItems[0].Label = "Original";
+
+                int regionNumber = DecodingImageItems.Count;
+                DecodingImageItem cutOutItem = new()
+                {
+                    ImagePath = cachePath,
+                    CachedBitmapPath = cachePath,
+                    BitmapImage = bitmapImage,
+                    ImagePixelWidth = (int)croppedImage.Width,
+                    ImagePixelHeight = (int)croppedImage.Height,
+                    CodeBorders = codeBorders,
+                    OriginalMagickImage = croppedImage,
+                    Label = $"Region {regionNumber}",
+                };
+                DecodingImageItems.Add(cutOutItem);
+                OnPropertyChanged(nameof(IsMultiImagePanelVisible));
+                OnPropertyChanged(nameof(HasLeftPaneContent));
+                IsCutOutImagesPaneOpen = true;
+                SelectDecodingImageItem(cutOutItem);
+            }
+        }
+        finally
+        {
+            IsLoading = false;
+            LoadingMessage = string.Empty;
+        }
+    }
+
+    public void SelectDecodingImageItem(DecodingImageItem item)
+    {
+        if (item == CurrentDecodingItem)
+            return;
+
+        suppressHistorySave = true;
+        CurrentDecodingItem = item;
+    }
+
+    [RelayCommand]
+    private async Task SaveCutOut(DecodingImageItem item)
+    {
+        if (string.IsNullOrEmpty(item.ImagePath) || !File.Exists(item.ImagePath))
+            return;
+
+        // Auto-save to the open folder and promote to a regular folder item.
+        if (currentFolderPaneFolder is not null && !string.IsNullOrEmpty(item.ParentFileName))
+        {
+            await SaveCutOutToFolderAsync(item);
+            return;
+        }
+
+        // Fallback: show a save picker for cut-outs made outside of a folder session.
+        string nameWithoutExt = string.IsNullOrEmpty(item.ParentFileName)
+            ? "image"
+            : Path.GetFileNameWithoutExtension(item.ParentFileName);
+
+        string labelPart = item.Label.Replace("-", "").Replace(" ", "").ToLowerInvariant();
+        string suggestedName = $"{nameWithoutExt}-{labelPart}";
+
+        FileSavePicker picker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+            SuggestedFileName = suggestedName,
+        };
+        picker.FileTypeChoices.Add("PNG Image", [".png"]);
+
+        Window saveWindow = new();
+        IntPtr hwnd = WindowNative.GetWindowHandle(saveWindow);
+        InitializeWithWindow.Initialize(picker, hwnd);
+
+        StorageFile? destFile = await picker.PickSaveFileAsync();
+        if (destFile is null)
+            return;
+
+        await Task.Run(() => File.Copy(item.ImagePath, destFile.Path, overwrite: true));
+    }
+
+    private async Task SaveCutOutToFolderAsync(DecodingImageItem item)
+    {
+        string nameWithoutExt = Path.GetFileNameWithoutExtension(item.ParentFileName);
+        string labelPart = item.Label.Replace("-", "").Replace(" ", "").ToLowerInvariant();
+        string fileName = $"{nameWithoutExt}-{labelPart}.png";
+
+        StorageFile savedFile = await currentFolderPaneFolder!.CreateFileAsync(
+            fileName, CreationCollisionOption.GenerateUniqueName);
+        await Task.Run(() => File.Copy(item.ImagePath, savedFile.Path, overwrite: true));
+
+        // Remove the cut-out from its parent's child list.
+        FolderFileItem? parentItem = FolderFiles.FirstOrDefault(
+            f => string.Equals(f.FileName, item.ParentFileName, StringComparison.OrdinalIgnoreCase));
+        parentItem?.CutOuts.Remove(item);
+
+        // Insert a new regular folder item right after the parent (or at the end).
+        FolderFileItem newFolderItem = new(savedFile);
+        await newFolderItem.LoadThumbnailAsync();
+
+        int insertIndex = parentItem is not null
+            ? FolderFiles.IndexOf(parentItem) + 1
+            : FolderFiles.Count;
+        FolderFiles.Insert(insertIndex, newFolderItem);
+
+        OnPropertyChanged(nameof(HasFolderFiles));
+        OnPropertyChanged(nameof(HasLeftPaneContent));
+
+        // If this cut-out was being viewed, update tracking so subsequent actions
+        // treat the saved file as the current folder item.
+        if (CurrentDecodingItem == item)
+        {
+            currentFolderFileItem = newFolderItem;
+            currentSourceFilePath = savedFile.Path;
+            item.ImagePath = savedFile.Path;
+            OnPropertyChanged(nameof(CanOpenCurrentSourceFile));
+            OnPropertyChanged(nameof(CanOpenCurrentContainingFolder));
+            OnPropertyChanged(nameof(CurrentImageTitle));
+        }
     }
 
     partial void OnIsAdvancedToolsVisibleChanged(bool value)
@@ -194,6 +376,28 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     {
         if (value && IsDecodingHistoryPaneOpen)
             IsDecodingHistoryPaneOpen = false;
+        if (value && IsCutOutImagesPaneOpen)
+            IsCutOutImagesPaneOpen = false;
+    }
+
+    partial void OnIsCutOutImagesPaneOpenChanged(bool value)
+    {
+        if (value && IsDecodingHistoryPaneOpen)
+            IsDecodingHistoryPaneOpen = false;
+        if (value && IsFolderPaneOpen)
+            IsFolderPaneOpen = false;
+    }
+
+    [RelayCommand]
+    private void CloseCutOutImagesPane() => IsCutOutImagesPaneOpen = false;
+
+    [RelayCommand]
+    private void ToggleLeftPane()
+    {
+        if (IsMultiImagePanelVisible)
+            IsCutOutImagesPaneOpen = !IsCutOutImagesPaneOpen;
+        else if (HasFolderFiles)
+            IsFolderPaneOpen = !IsFolderPaneOpen;
     }
 
     partial void OnCurrentDecodingItemChanged(DecodingImageItem? value)
@@ -323,6 +527,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         }
 
         CurrentDecodingItem = null;
+        DecodingImageItems.Clear();
+        OnPropertyChanged(nameof(IsMultiImagePanelVisible));
         PickedImage = null;
         ResetDecodedContentInfoBar();
         IsAdvancedToolsVisible = false;
@@ -330,9 +536,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         IsSidePaneOpen = false;
         IsFaqPaneOpen = false;
         IsFolderPaneOpen = false;
+        IsCutOutImagesPaneOpen = false;
         FolderFiles.Clear();
         FolderPaneFolderName = string.Empty;
         currentFolderPaneFolder = null;
+        currentFolderFileItem = null;
         IsLoading = false;
         LoadingMessage = string.Empty;
     }
@@ -375,14 +583,54 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         IsInfoBarShowing = true;
     }
 
+    public object? CreateNavigationState()
+    {
+        return new DecodingNavigationState
+        {
+            NavigationHistoryItem = CloneHistoryItem(navigationHistoryItem),
+            CurrentSourceKind = currentSourceKind,
+            CurrentSourceFilePath = currentSourceFilePath,
+            CurrentCachedImagePath = currentCachedImagePath,
+            CurrentFolderPath = currentFolderPaneFolder?.Path,
+            CurrentFolderFilePath = currentFolderFileItem?.File.Path,
+            InfoBarMessage = InfoBarMessage,
+            IsInfoBarShowing = IsInfoBarShowing,
+            DecodedContentInfoBarTitle = DecodedContentInfoBarTitle,
+            DecodedContentInfoBarSeverity = DecodedContentInfoBarSeverity,
+            IsDecodedContentUrl = IsDecodedContentUrl,
+            IsLikelyRedirector = IsLikelyRedirector,
+            RedirectorWarningMessage = RedirectorWarningMessage,
+            IsRedirectorWarningVisible = IsRedirectorWarningVisible,
+            IsAdvancedToolsVisible = IsAdvancedToolsVisible,
+            IsCameraPaneOpen = IsCameraPaneOpen,
+            IsFaqPaneOpen = IsFaqPaneOpen,
+            IsDecodingHistoryPaneOpen = IsDecodingHistoryPaneOpen,
+            IsFolderPaneOpen = IsFolderPaneOpen,
+            IsCutOutImagesPaneOpen = IsCutOutImagesPaneOpen,
+            FolderPaneFolderName = FolderPaneFolderName,
+            DecodingImageItems = [.. DecodingImageItems.Select(CreateDecodingImageNavigationState)],
+            FolderFiles = [.. FolderFiles.Select(CreateFolderFileNavigationState)],
+            CurrentDecodingItem = CurrentDecodingItem is not null
+                ? CreateDecodingImageNavigationState(CurrentDecodingItem)
+                : null,
+        };
+    }
+
     public async void OnNavigatedTo(object parameter)
     {
         AttachClipboardHandler();
-        ResetViewState();
         warnWhenLikelyRedirector = await RedirectorWarningSettingsHelper.ReadWarningEnabledAsync(LocalSettingsService);
         safeRedirectorDomains = await RedirectorWarningSettingsHelper.ReadSafeDomainsAsync(LocalSettingsService);
 
         DecodingHistoryItems = await DecodingHistoryStorageHelper.LoadHistoryAsync();
+
+        if (parameter is DecodingNavigationState navigationState)
+        {
+            await RestoreNavigationStateAsync(navigationState);
+            return;
+        }
+
+        ResetViewState();
 
         // Store the HistoryItem to pass back when returning to main page
         if (parameter is HistoryItem historyItem)
@@ -400,6 +648,239 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             nextSourceKind = DecodingSourceKind.File;
             await OpenAndDecodeStorageFile(storageFile);
         }
+    }
+
+    private async Task RestoreNavigationStateAsync(DecodingNavigationState state)
+    {
+        ResetViewState();
+        navigationHistoryItem = CloneHistoryItem(state.NavigationHistoryItem);
+        nextSourceKind = state.CurrentSourceKind;
+
+        Dictionary<string, DecodingImageItem> restoredImages = new(StringComparer.OrdinalIgnoreCase);
+
+        foreach (DecodingImageNavigationState imageState in state.DecodingImageItems)
+        {
+            DecodingImageItem? restoredItem = await RestoreDecodingImageItemAsync(imageState);
+            if (restoredItem is null)
+                continue;
+
+            DecodingImageItems.Add(restoredItem);
+            restoredImages[GetNavigationKey(imageState)] = restoredItem;
+        }
+
+        OnPropertyChanged(nameof(IsMultiImagePanelVisible));
+
+        FolderPaneFolderName = state.FolderPaneFolderName;
+        currentFolderPaneFolder = await GetStorageFolderIfExistsAsync(state.CurrentFolderPath);
+
+        foreach (FolderFileNavigationState folderFileState in state.FolderFiles)
+        {
+            FolderFileItem? restoredFolderFile = await RestoreFolderFileItemAsync(folderFileState, restoredImages);
+            if (restoredFolderFile is not null)
+                FolderFiles.Add(restoredFolderFile);
+        }
+
+        currentFolderFileItem = FolderFiles.FirstOrDefault(item =>
+            string.Equals(item.File.Path, state.CurrentFolderFilePath, StringComparison.OrdinalIgnoreCase));
+
+        OnPropertyChanged(nameof(HasFolderFiles));
+        OnPropertyChanged(nameof(HasLeftPaneContent));
+
+        DecodingImageItem? currentItem = null;
+        if (state.CurrentDecodingItem is not null)
+        {
+            string currentItemKey = GetNavigationKey(state.CurrentDecodingItem);
+            if (!restoredImages.TryGetValue(currentItemKey, out currentItem))
+            {
+                currentItem = await RestoreDecodingImageItemAsync(state.CurrentDecodingItem);
+                if (currentItem is not null)
+                    restoredImages[currentItemKey] = currentItem;
+            }
+        }
+
+        suppressHistorySave = true;
+        CurrentDecodingItem = currentItem;
+        suppressHistorySave = false;
+
+        currentSourceKind = state.CurrentSourceKind;
+        currentSourceFilePath = state.CurrentSourceFilePath;
+        currentCachedImagePath = state.CurrentCachedImagePath;
+        nextSourceFilePathOverride = null;
+
+        OnPropertyChanged(nameof(CanOpenCurrentSourceFile));
+        OnPropertyChanged(nameof(CanSaveCurrentDecodedImage));
+        OnPropertyChanged(nameof(CanOpenCurrentContainingFolder));
+        OnPropertyChanged(nameof(CurrentImageTitle));
+
+        InfoBarMessage = state.InfoBarMessage;
+        IsInfoBarShowing = state.IsInfoBarShowing;
+        DecodedContentInfoBarTitle = state.DecodedContentInfoBarTitle;
+        DecodedContentInfoBarSeverity = state.DecodedContentInfoBarSeverity;
+        IsDecodedContentUrl = state.IsDecodedContentUrl;
+        IsLikelyRedirector = state.IsLikelyRedirector;
+        RedirectorWarningMessage = state.RedirectorWarningMessage;
+        IsRedirectorWarningVisible = state.IsRedirectorWarningVisible;
+
+        IsCameraPaneOpen = state.IsCameraPaneOpen;
+        IsAdvancedToolsVisible = state.IsAdvancedToolsVisible && CurrentDecodingItem is not null;
+        IsFaqPaneOpen = state.IsFaqPaneOpen;
+        IsDecodingHistoryPaneOpen = state.IsDecodingHistoryPaneOpen;
+        IsFolderPaneOpen = state.IsFolderPaneOpen && FolderFiles.Count > 0;
+        IsCutOutImagesPaneOpen = state.IsCutOutImagesPaneOpen && DecodingImageItems.Count > 1;
+        IsLoading = false;
+        LoadingMessage = string.Empty;
+    }
+
+    private static DecodingImageNavigationState CreateDecodingImageNavigationState(DecodingImageItem item)
+    {
+        return new DecodingImageNavigationState
+        {
+            ImagePath = item.ImagePath,
+            CachedBitmapPath = item.CachedBitmapPath,
+            ImagePixelWidth = item.ImagePixelWidth,
+            ImagePixelHeight = item.ImagePixelHeight,
+            IsNoCodesWarningDismissed = item.IsNoCodesWarningDismissed,
+            Label = item.Label,
+            ParentFileName = item.ParentFileName,
+            CodeBorders =
+            [
+                .. item.CodeBorders.Select(border => new TextBorderNavigationState
+                {
+                    Text = border.BorderInfo.Text,
+                    BorderRect = border.BorderInfo.BorderRect,
+                })
+            ],
+        };
+    }
+
+    private static FolderFileNavigationState CreateFolderFileNavigationState(FolderFileItem item)
+    {
+        return new FolderFileNavigationState
+        {
+            FilePath = item.File.Path,
+            CutOuts = [.. item.CutOuts.Select(CreateDecodingImageNavigationState)],
+        };
+    }
+
+    private async Task<FolderFileItem?> RestoreFolderFileItemAsync(
+        FolderFileNavigationState state,
+        IDictionary<string, DecodingImageItem> restoredImages)
+    {
+        if (string.IsNullOrWhiteSpace(state.FilePath) || !File.Exists(state.FilePath))
+            return null;
+
+        StorageFile file = await StorageFile.GetFileFromPathAsync(state.FilePath);
+        FolderFileItem folderFileItem = new(file);
+        _ = folderFileItem.LoadThumbnailAsync();
+
+        foreach (DecodingImageNavigationState cutOutState in state.CutOuts)
+        {
+            DecodingImageItem? cutOutItem = await RestoreDecodingImageItemAsync(cutOutState);
+            if (cutOutItem is null)
+                continue;
+
+            folderFileItem.CutOuts.Add(cutOutItem);
+            restoredImages[GetNavigationKey(cutOutState)] = cutOutItem;
+        }
+
+        return folderFileItem;
+    }
+
+    private async Task<DecodingImageItem?> RestoreDecodingImageItemAsync(DecodingImageNavigationState state)
+    {
+        string? imagePath = GetExistingImagePath(state);
+        if (string.IsNullOrWhiteSpace(imagePath))
+            return null;
+
+        MagickImage magickImage = await Task.Run(() =>
+        {
+            MagickImage restoredImage = new(imagePath);
+            restoredImage.AutoOrient();
+            return restoredImage;
+        });
+
+        Uri uri = new($"{imagePath}?tick={DateTimeOffset.Now.Ticks}");
+        BitmapImage bitmapImage = new(uri)
+        {
+            CreateOptions = BitmapCreateOptions.IgnoreImageCache,
+        };
+
+        ObservableCollection<TextBorder> codeBorders = [];
+        foreach (TextBorderNavigationState borderState in state.CodeBorders)
+        {
+            TextBorder textBorder = new(new TextBorderInfo(borderState.Text, borderState.BorderRect));
+            textBorder.TextBorder_Click += TextBorder_TextBorder_Click;
+            codeBorders.Add(textBorder);
+        }
+
+        return new DecodingImageItem
+        {
+            ImagePath = state.ImagePath,
+            CachedBitmapPath = !string.IsNullOrWhiteSpace(state.CachedBitmapPath) ? state.CachedBitmapPath : imagePath,
+            BitmapImage = bitmapImage,
+            ImagePixelWidth = state.ImagePixelWidth > 0 ? state.ImagePixelWidth : (int)magickImage.Width,
+            ImagePixelHeight = state.ImagePixelHeight > 0 ? state.ImagePixelHeight : (int)magickImage.Height,
+            CodeBorders = codeBorders,
+            IsNoCodesWarningDismissed = state.IsNoCodesWarningDismissed,
+            OriginalMagickImage = magickImage,
+            ProcessedMagickImage = (MagickImage)magickImage.Clone(),
+            Label = state.Label,
+            ParentFileName = state.ParentFileName,
+        };
+    }
+
+    private static string? GetExistingImagePath(DecodingImageNavigationState state)
+    {
+        if (!string.IsNullOrWhiteSpace(state.CachedBitmapPath) && File.Exists(state.CachedBitmapPath))
+            return state.CachedBitmapPath;
+
+        if (!string.IsNullOrWhiteSpace(state.ImagePath) && File.Exists(state.ImagePath))
+            return state.ImagePath;
+
+        return null;
+    }
+
+    private static string GetNavigationKey(DecodingImageItem item)
+    {
+        return !string.IsNullOrWhiteSpace(item.CachedBitmapPath)
+            ? item.CachedBitmapPath
+            : item.ImagePath;
+    }
+
+    private static string GetNavigationKey(DecodingImageNavigationState state)
+    {
+        return !string.IsNullOrWhiteSpace(state.CachedBitmapPath)
+            ? state.CachedBitmapPath
+            : state.ImagePath;
+    }
+
+    private static HistoryItem? CloneHistoryItem(HistoryItem? source)
+    {
+        if (source is null)
+            return null;
+
+        return new HistoryItem
+        {
+            CodesContent = source.CodesContent,
+            ContentKind = source.ContentKind,
+            MultiLineCodeModeOverride = source.MultiLineCodeModeOverride,
+            Foreground = source.Foreground,
+            Background = source.Background,
+            ErrorCorrection = source.ErrorCorrection,
+            LogoImagePath = source.LogoImagePath,
+            LogoEmoji = source.LogoEmoji,
+            LogoEmojiStyle = source.LogoEmojiStyle,
+            LogoSizePercentage = source.LogoSizePercentage,
+            LogoPaddingPixels = source.LogoPaddingPixels,
+        };
+    }
+
+    private static async Task<StorageFolder?> GetStorageFolderIfExistsAsync(string? folderPath)
+    {
+        if (string.IsNullOrWhiteSpace(folderPath) || !Directory.Exists(folderPath))
+            return null;
+
+        return await StorageFolder.GetFolderFromPathAsync(folderPath);
     }
 
     [RelayCommand]
@@ -553,7 +1034,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
                     return;
 
                 nextSourceKind = DecodingSourceKind.File;
-                OpenAndDecodeStorageFiles(clipboardItems);
+                await OpenAndDecodeStorageFiles(clipboardItems);
             }
             else if (clipboardData.Contains(StandardDataFormats.Bitmap))
             {
@@ -691,21 +1172,19 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
 
         IsFolderPaneOpen = true;
         OnPropertyChanged(nameof(HasFolderFiles));
+        OnPropertyChanged(nameof(HasLeftPaneContent));
     }
 
     [RelayCommand]
     private void CloseFolderPane()
     {
         IsFolderPaneOpen = false;
-        FolderFiles.Clear();
-        FolderPaneFolderName = string.Empty;
-        currentFolderPaneFolder = null;
-        OnPropertyChanged(nameof(HasFolderFiles));
     }
 
     [RelayCommand]
     private async Task OpenFolderFileItem(FolderFileItem item)
     {
+        currentFolderFileItem = item;
         nextSourceKind = DecodingSourceKind.File;
         await OpenAndDecodeStorageFile(item.File);
     }
@@ -826,6 +1305,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
                 summaryItems.Add(new FolderSummaryItem
                 {
                     FileName = fileItem.FileName,
+                    FilePath = fileItem.File.Path,
                     QrCodeCount = codes.Count,
                     QrCodeContents = string.Join(", ", codes),
                 });
@@ -845,6 +1325,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             {
                 FolderName = FolderPaneFolderName,
                 Items = summaryItems,
+                BackNavigationState = new NavigationRestoreState
+                {
+                    PageKey = typeof(DecodingViewModel).FullName!,
+                    Parameter = CreateNavigationState(),
+                },
             });
         }
     }
@@ -947,10 +1432,13 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             OriginalMagickImage = magickImage,
         };
 
+        DecodingImageItems.Clear();
+        DecodingImageItems.Add(decodingImage);
+        OnPropertyChanged(nameof(IsMultiImagePanelVisible));
         CurrentDecodingItem = decodingImage;
     }
 
-    public async void OpenAndDecodeStorageFiles(IReadOnlyList<IStorageItem> pickedFiles)
+    public async Task OpenAndDecodeStorageFiles(IReadOnlyList<IStorageItem> pickedFiles)
     {
         nextSourceKind = DecodingSourceKind.File;
         IStorageItem? first = pickedFiles.Count > 0 ? pickedFiles[0] : null;
@@ -962,12 +1450,19 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     {
         IsLoading = true;
         LoadingMessage = "Opening image\u2026";
+        await Task.Yield();
 
         try
         {
             DecodingImageItem? decodedItem = await GetDecodingImageItemFromStorageFileAsync(storageFile);
             if (decodedItem is not null)
+            {
+                DecodingImageItems.Clear();
+                DecodingImageItems.Add(decodedItem);
+                OnPropertyChanged(nameof(IsMultiImagePanelVisible));
+            OnPropertyChanged(nameof(HasLeftPaneContent));
                 CurrentDecodingItem = decodedItem;
+            }
         }
         finally
         {
@@ -981,26 +1476,30 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         if (!imageExtensions.Contains(Path.GetExtension(storageFile.Path).ToLowerInvariant()))
             return null;
 
-        // Load image using ImageProcessingHelper which handles EXIF orientation properly
-        MagickImage magickImage = await ImageProcessingHelper.LoadImageFromStorageFile(storageFile);
+        (MagickImage MagickImage, string CachePath, List<(string, Result)> Strings) decodeResult =
+            await Task.Run(async () =>
+            {
+                MagickImage magickImage = await ImageProcessingHelper.LoadImageFromStorageFile(storageFile);
 
-        // Convert the oriented MagickImage to a Bitmap for ZXing decoding
-        // so that ResultPoints are in the same coordinate space as the displayed image
-        Bitmap orientedBitmap = ImageProcessingHelper.ConvertToBitmap(magickImage);
+                // Convert the oriented MagickImage to a Bitmap for ZXing decoding
+                // so that ResultPoints are in the same coordinate space as the displayed image.
+                using Bitmap orientedBitmap = ImageProcessingHelper.ConvertToBitmap(magickImage);
 
-        string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}.png");
-        orientedBitmap.Save(cachePath);
+                string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}.png");
+                orientedBitmap.Save(cachePath);
 
-        Uri uri = new($"{cachePath}?tick={DateTimeOffset.Now.Ticks}");
+                List<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(orientedBitmap).ToList();
+                return (magickImage, cachePath, strings);
+            });
+
+        Uri uri = new($"{decodeResult.CachePath}?tick={DateTimeOffset.Now.Ticks}");
         BitmapImage thisPickedImage = new(uri)
         {
             CreateOptions = BitmapCreateOptions.IgnoreImageCache
         };
 
-        IEnumerable<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(orientedBitmap);
-
         ObservableCollection<TextBorder> codeBorders = [];
-        foreach ((string, Result) item in strings)
+        foreach ((string, Result) item in decodeResult.Strings)
         {
             TextBorder textBorder = new(item.Item2);
             textBorder.TextBorder_Click += TextBorder_TextBorder_Click;
@@ -1010,12 +1509,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         DecodingImageItem decodingImage = new()
         {
             ImagePath = storageFile.Path,
-            CachedBitmapPath = cachePath,
+            CachedBitmapPath = decodeResult.CachePath,
             BitmapImage = thisPickedImage,
-            ImagePixelWidth = (int)magickImage.Width,
-            ImagePixelHeight = (int)magickImage.Height,
+            ImagePixelWidth = (int)decodeResult.MagickImage.Width,
+            ImagePixelHeight = (int)decodeResult.MagickImage.Height,
             CodeBorders = codeBorders,
-            OriginalMagickImage = magickImage,
+            OriginalMagickImage = decodeResult.MagickImage,
         };
 
         return decodingImage;
