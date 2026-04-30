@@ -4,8 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Simple_QR_Code_Maker.Models"
     xmlns:tableView="using:WinUI.TableView"
+    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
+    x:Name="FolderSummaryPageRoot"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Page.Resources>
 
     <Grid Padding="40,0,0,0">
         <Grid.RowDefinitions>
@@ -45,11 +52,67 @@
             <tableView:TableView
                 x:Name="SummaryTableView"
                 AutoGenerateColumns="False"
+                ItemsSource="{x:Bind ViewModel.SummaryItems, Mode=OneWay}"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 ScrollViewer.HorizontalScrollMode="Enabled"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                 ScrollViewer.VerticalScrollMode="Enabled"
-                SelectionMode="None" />
+                SelectionMode="None">
+                <tableView:TableView.Columns>
+                    <tableView:TableViewTemplateColumn Header="File Name" MinWidth="260">
+                        <tableView:TableViewTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="models:FolderSummaryItem">
+                                <Grid
+                                    x:Name="FileNameCellRoot"
+                                    ColumnSpacing="8"
+                                    Loaded="FileNameCellRoot_Loaded"
+                                    Padding="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        VerticalAlignment="Center"
+                                        FontWeight="SemiBold"
+                                        MaxLines="2"
+                                        Text="{x:Bind FileName, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="Wrap" />
+
+                                    <HyperlinkButton
+                                        x:Name="OpenFileLinkButton"
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding ViewModel.OpenFileCommand, ElementName=FolderSummaryPageRoot}"
+                                        CommandParameter="{x:Bind}"
+                                        ToolTipService.ToolTip="Open this image in its default app"
+                                        Visibility="Collapsed">
+                                        <TextBlock Text="Open file ↗" />
+                                    </HyperlinkButton>
+                                </Grid>
+                            </DataTemplate>
+                        </tableView:TableViewTemplateColumn.CellTemplate>
+                    </tableView:TableViewTemplateColumn>
+
+                    <tableView:TableViewTextColumn
+                        Header="QR Codes"
+                        Binding="{Binding QrCodeCount}"
+                        CanFilter="False"
+                        CanSort="True"
+                        IsReadOnly="True"
+                        MinWidth="80" />
+
+                    <tableView:TableViewTextColumn
+                        Header="Contents"
+                        Binding="{Binding QrCodeContents}"
+                        CanFilter="False"
+                        CanSort="False"
+                        IsReadOnly="True"
+                        MinWidth="300" />
+                </tableView:TableView.Columns>
+            </tableView:TableView>
         </Border>
     </Grid>
 </Page>

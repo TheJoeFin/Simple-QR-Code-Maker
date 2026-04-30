@@ -4,15 +4,19 @@ using Microsoft.UI.Xaml;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Models;
+using System.Diagnostics;
 using System.Text;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.System;
 using WinRT.Interop;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
 public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAware
 {
+    private NavigationRestoreState? _backNavigationState;
+
     [ObservableProperty]
     public partial List<FolderSummaryItem> SummaryItems { get; set; } = [];
 
@@ -28,10 +32,13 @@ public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAw
 
     public void OnNavigatedTo(object parameter)
     {
+        _backNavigationState = null;
+
         if (parameter is FolderSummaryNavigationParameter navParam)
         {
             FolderName = navParam.FolderName;
             SummaryItems = navParam.Items;
+            _backNavigationState = navParam.BackNavigationState;
         }
     }
 
@@ -40,6 +47,12 @@ public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAw
     [RelayCommand]
     private void GoBack()
     {
+        if (_backNavigationState is not null)
+        {
+            NavigationService.NavigateTo(_backNavigationState.PageKey, _backNavigationState.Parameter);
+            return;
+        }
+
         NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!);
     }
 
@@ -71,6 +84,23 @@ public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAw
             sb.AppendLine($"{CsvEscape(item.FileName)},{item.QrCodeCount},{CsvEscape(item.QrCodeContents)}");
 
         await FileIO.WriteTextAsync(file, sb.ToString());
+    }
+
+    [RelayCommand]
+    private async Task OpenFile(FolderSummaryItem? item)
+    {
+        if (item is null || string.IsNullOrWhiteSpace(item.FilePath))
+            return;
+
+        try
+        {
+            StorageFile file = await StorageFile.GetFileFromPathAsync(item.FilePath);
+            _ = await Launcher.LaunchFileAsync(file);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to open summary file: {ex.Message}");
+        }
     }
 
     private static string CsvEscape(string value)

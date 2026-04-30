@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Media;
 using Simple_QR_Code_Maker.ViewModels;
 using WinUI.TableView;
 
@@ -14,57 +15,43 @@ public sealed partial class FolderSummaryPage : Page
     {
         ViewModel = App.GetService<FolderSummaryViewModel>();
         InitializeComponent();
-        SetupTableColumns();
-        Loaded += FolderSummaryPage_Loaded;
     }
 
-    private void FolderSummaryPage_Loaded(object sender, RoutedEventArgs e)
+    private void FileNameCellRoot_Loaded(object sender, RoutedEventArgs e)
     {
-        SummaryTableView.ItemsSource = ViewModel.SummaryItems;
+        if (sender is not FrameworkElement cellRoot)
+            return;
+
+        if (cellRoot.FindName("OpenFileLinkButton") is not HyperlinkButton openFileLinkButton)
+            return;
+
+        TableViewRow? row = FindAncestor<TableViewRow>(cellRoot);
+        if (row is null)
+            return;
+
+        BindingOperations.SetBinding(
+            openFileLinkButton,
+            VisibilityProperty,
+            new Binding
+            {
+                Source = row,
+                Path = new PropertyPath("IsPointerOver"),
+                Converter = Resources["BoolToVisibilityConverter"] as IValueConverter,
+            });
     }
 
-    private void SetupTableColumns()
+    private static T? FindAncestor<T>(DependencyObject? dependencyObject)
+        where T : DependencyObject
     {
-        SummaryTableView.Columns.Add(new TableViewTextColumn
+        DependencyObject? current = dependencyObject;
+        while (current is not null)
         {
-            Header = "File Name",
-            IsReadOnly = true,
-            CanFilter = false,
-            CanSort = true,
-            MinWidth = 200,
-            Binding = new Binding
-            {
-                Mode = BindingMode.OneWay,
-                Path = new Microsoft.UI.Xaml.PropertyPath(nameof(Models.FolderSummaryItem.FileName)),
-            },
-        });
+            if (current is T target)
+                return target;
 
-        SummaryTableView.Columns.Add(new TableViewTextColumn
-        {
-            Header = "QR Codes",
-            IsReadOnly = true,
-            CanFilter = false,
-            CanSort = true,
-            MinWidth = 80,
-            Binding = new Binding
-            {
-                Mode = BindingMode.OneWay,
-                Path = new Microsoft.UI.Xaml.PropertyPath(nameof(Models.FolderSummaryItem.QrCodeCount)),
-            },
-        });
+            current = VisualTreeHelper.GetParent(current);
+        }
 
-        SummaryTableView.Columns.Add(new TableViewTextColumn
-        {
-            Header = "Contents",
-            IsReadOnly = true,
-            CanFilter = false,
-            CanSort = false,
-            MinWidth = 300,
-            Binding = new Binding
-            {
-                Mode = BindingMode.OneWay,
-                Path = new Microsoft.UI.Xaml.PropertyPath(nameof(Models.FolderSummaryItem.QrCodeContents)),
-            },
-        });
+        return null;
     }
 }
