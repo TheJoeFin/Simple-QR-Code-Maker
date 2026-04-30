@@ -24,7 +24,7 @@ using ZXing.QrCode.Internal;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-public partial class MainViewModel : ObservableRecipient, INavigationAware
+public partial class MainViewModel : ObservableRecipient, INavigationAware, INavigationStateProvider
 {
     private const int LargeBatchThreshold = 24;
     private const int PreviewBatchSize = LargeBatchThreshold;
@@ -1925,6 +1925,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
     {
         return QrCodeDesignStateMapper.ToHistoryItem(CreateCurrentDesignState(LogoImage != null ? GetCurrentLogoPath() : null));
     }
+
+    public object? CreateNavigationState() => CreateCurrentStateHistoryItem();
 
     private string? GetCurrentLogoPath() => CurrentLogoPath;
 
