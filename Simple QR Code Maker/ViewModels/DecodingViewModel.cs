@@ -84,6 +84,9 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     public partial string LoadingMessage { get; set; } = string.Empty;
 
     [ObservableProperty]
+    public partial bool IsCancellableOperationRunning { get; set; } = false;
+
+    [ObservableProperty]
     public partial bool IsDecodingHistoryPaneOpen { get; set; } = false;
 
     [ObservableProperty]
@@ -91,6 +94,18 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     public partial ObservableCollection<DecodingHistoryItem> DecodingHistoryItems { get; set; } = [];
 
     public bool HasDecodingHistory => DecodingHistoryItems.Count > 0;
+
+    [ObservableProperty]
+    public partial bool IsFolderPaneOpen { get; set; } = false;
+
+    [ObservableProperty]
+    public partial string FolderPaneFolderName { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasFolderFiles))]
+    public partial ObservableCollection<FolderFileItem> FolderFiles { get; set; } = [];
+
+    public bool HasFolderFiles => FolderFiles.Count > 0;
 
     public AdvancedToolsViewModel AdvancedTools { get; } = new();
 
@@ -131,6 +146,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
     private DecodingSourceKind currentSourceKind = DecodingSourceKind.File;
     private string? currentSourceFilePath = null;
     private string? currentCachedImagePath = null;
+    private StorageFolder? currentFolderPaneFolder = null;
+
+    private const int LargeFolderThreshold = 50;
+
+    private CancellationTokenSource? _batchCts;
 
     private INavigationService NavigationService { get; }
     public ILocalSettingsService LocalSettingsService { get; }
@@ -168,6 +188,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         IsSidePaneOpen = value || IsAdvancedToolsVisible;
         CameraPaneOpenChanged?.Invoke(this, EventArgs.Empty);
         PreviewStateChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    partial void OnIsFolderPaneOpenChanged(bool value)
+    {
+        if (value && IsDecodingHistoryPaneOpen)
+            IsDecodingHistoryPaneOpen = false;
     }
 
     partial void OnCurrentDecodingItemChanged(DecodingImageItem? value)
@@ -303,6 +329,10 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         IsCameraPaneOpen = false;
         IsSidePaneOpen = false;
         IsFaqPaneOpen = false;
+        IsFolderPaneOpen = false;
+        FolderFiles.Clear();
+        FolderPaneFolderName = string.Empty;
+        currentFolderPaneFolder = null;
         IsLoading = false;
         LoadingMessage = string.Empty;
     }
@@ -370,6 +400,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             nextSourceKind = DecodingSourceKind.File;
             await OpenAndDecodeStorageFile(storageFile);
         }
+    }
+
+    [RelayCommand]
+    private void CancelBatchOperation()
+    {
+        _batchCts?.Cancel();
     }
 
     [RelayCommand]
@@ -481,6 +517,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
             }
 
             item.CachedBitmapPath = cachePath;
+            currentCachedImagePath = cachePath;
             item.ProcessedBitmapImage = processedBitmapImage;
             item.CodeBorders = codeBorders;
             item.ImagePixelWidth = (int)item.ProcessedMagickImage.Width;
@@ -600,6 +637,215 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware
         {
             IsLoading = false;
             LoadingMessage = string.Empty;
+        }
+    }
+
+    [RelayCommand]
+    private async Task OpenFolder()
+    {
+        FolderPicker folderPicker = new()
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+        };
+
+        Window window = new();
+        IntPtr windowHandle = WindowNative.GetWindowHandle(window);
+        InitializeWithWindow.Initialize(folderPicker, windowHandle);
+
+        StorageFolder? folder = await folderPicker.PickSingleFolderAsync();
+
+        if (folder is null)
+            return;
+
+        IReadOnlyList<StorageFile> allFiles = await folder.GetFilesAsync();
+        List<StorageFile> imageFiles = allFiles
+            .Where(f => imageExtensions.Contains(Path.GetExtension(f.Path).ToLowerInvariant()))
+            .ToList();
+
+        if (imageFiles.Count > LargeFolderThreshold)
+        {
+            ContentDialog confirmDialog = new()
+            {
+                Title = "Large folder",
+                Content = $"This folder contains {imageFiles.Count} image files. Batch operations like \"Decode All\" or \"Summary View\" may take a while. Continue?",
+                PrimaryButtonText = "Continue",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = App.MainWindow.Content.XamlRoot,
+            };
+            ContentDialogResult result = await confirmDialog.ShowAsync();
+            if (result != ContentDialogResult.Primary)
+                return;
+        }
+
+        currentFolderPaneFolder = folder;
+        FolderPaneFolderName = folder.Name;
+        FolderFiles.Clear();
+
+        foreach (StorageFile file in imageFiles)
+        {
+            FolderFileItem item = new(file);
+            FolderFiles.Add(item);
+            _ = item.LoadThumbnailAsync();
+        }
+
+        IsFolderPaneOpen = true;
+        OnPropertyChanged(nameof(HasFolderFiles));
+    }
+
+    [RelayCommand]
+    private void CloseFolderPane()
+    {
+        IsFolderPaneOpen = false;
+        FolderFiles.Clear();
+        FolderPaneFolderName = string.Empty;
+        currentFolderPaneFolder = null;
+        OnPropertyChanged(nameof(HasFolderFiles));
+    }
+
+    [RelayCommand]
+    private async Task OpenFolderFileItem(FolderFileItem item)
+    {
+        nextSourceKind = DecodingSourceKind.File;
+        await OpenAndDecodeStorageFile(item.File);
+    }
+
+    [RelayCommand]
+    private async Task DecodeAllAndExport()
+    {
+        if (currentFolderPaneFolder is null || FolderFiles.Count == 0)
+            return;
+
+        using CancellationTokenSource cts = new();
+        _batchCts = cts;
+        IsCancellableOperationRunning = true;
+        IsLoading = true;
+
+        try
+        {
+            List<FolderFileItem> snapshot = FolderFiles.ToList();
+            int total = snapshot.Count;
+            int current = 0;
+
+            foreach (FolderFileItem fileItem in snapshot)
+            {
+                if (cts.Token.IsCancellationRequested)
+                    break;
+
+                current++;
+                LoadingMessage = $"Processing {current} of {total}: {fileItem.FileName}";
+
+                string outputText;
+                try
+                {
+                    IEnumerable<(string, Result)> results =
+                        await Task.Run(() => BarcodeHelpers.GetStringsFromImageFile(fileItem.File), cts.Token);
+
+                    List<string> lines = results.Select(r => r.Item1).ToList();
+                    outputText = lines.Count > 0
+                        ? string.Join(Environment.NewLine, lines)
+                        : "<no qr codes found>";
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to decode {fileItem.FileName}: {ex.Message}");
+                    outputText = "<no qr codes found>";
+                }
+
+                try
+                {
+                    string txtFileName = Path.GetFileNameWithoutExtension(fileItem.FileName) + ".txt";
+                    StorageFile txtFile = await currentFolderPaneFolder.CreateFileAsync(
+                        txtFileName,
+                        CreationCollisionOption.ReplaceExisting);
+                    await FileIO.WriteTextAsync(txtFile, outputText);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to write txt for {fileItem.FileName}: {ex.Message}");
+                }
+            }
+        }
+        finally
+        {
+            _batchCts = null;
+            IsCancellableOperationRunning = false;
+            IsLoading = false;
+            LoadingMessage = string.Empty;
+        }
+    }
+
+    [RelayCommand]
+    private async Task ShowFolderSummary()
+    {
+        if (FolderFiles.Count == 0)
+            return;
+
+        using CancellationTokenSource cts = new();
+        _batchCts = cts;
+        IsCancellableOperationRunning = true;
+        IsLoading = true;
+
+        List<FolderSummaryItem> summaryItems = [];
+
+        try
+        {
+            List<FolderFileItem> snapshot = FolderFiles.ToList();
+            int total = snapshot.Count;
+            int current = 0;
+
+            foreach (FolderFileItem fileItem in snapshot)
+            {
+                if (cts.Token.IsCancellationRequested)
+                    break;
+
+                current++;
+                LoadingMessage = $"Processing {current} of {total}: {fileItem.FileName}";
+
+                List<string> codes;
+                try
+                {
+                    IEnumerable<(string, Result)> results =
+                        await Task.Run(() => BarcodeHelpers.GetStringsFromImageFile(fileItem.File), cts.Token);
+                    codes = results.Select(r => r.Item1).ToList();
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to decode {fileItem.FileName}: {ex.Message}");
+                    codes = [];
+                }
+
+                summaryItems.Add(new FolderSummaryItem
+                {
+                    FileName = fileItem.FileName,
+                    QrCodeCount = codes.Count,
+                    QrCodeContents = string.Join(", ", codes),
+                });
+            }
+        }
+        finally
+        {
+            _batchCts = null;
+            IsCancellableOperationRunning = false;
+            IsLoading = false;
+            LoadingMessage = string.Empty;
+        }
+
+        if (summaryItems.Count > 0)
+        {
+            NavigationService.NavigateTo(typeof(FolderSummaryViewModel).FullName!, new FolderSummaryNavigationParameter
+            {
+                FolderName = FolderPaneFolderName,
+                Items = summaryItems,
+            });
         }
     }
 

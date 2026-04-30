@@ -189,9 +189,7 @@
                             Click="EditMenuItem_Click"
                             Icon="Edit"
                             Text="Edit" />
-                        <MenuFlyoutItem
-                            Click="SetDefaultMenuItem_Click"
-                            Text="Set as default" />
+                        <MenuFlyoutItem Click="SetDefaultMenuItem_Click" Text="Set as default" />
                         <MenuFlyoutSeparator />
                         <MenuFlyoutItem
                             Click="DeleteMenuItem_Click"
@@ -199,9 +197,7 @@
                             Text="Delete" />
                     </MenuFlyout>
                 </Button.Flyout>
-                <FontIcon
-                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                    Glyph="&#xE712;" />
+                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE712;" />
             </Button>
         </StackPanel>
     </Grid>

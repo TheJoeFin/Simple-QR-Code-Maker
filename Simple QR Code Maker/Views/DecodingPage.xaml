@@ -52,6 +52,19 @@
                 </SplitView.Pane>
                 <SplitView.Content>
 
+                    <!--  Folder pane (left inline, 280px)  -->
+                    <SplitView
+                        DisplayMode="Inline"
+                        IsPaneOpen="{x:Bind ViewModel.IsFolderPaneOpen,
+                                            Mode=TwoWay,
+                                            UpdateSourceTrigger=PropertyChanged}"
+                        OpenPaneLength="280"
+                        PanePlacement="Left">
+                        <SplitView.Pane>
+                            <controls:FolderPaneContentControl ViewModel="{x:Bind ViewModel}" />
+                        </SplitView.Pane>
+                        <SplitView.Content>
+
                     <!--  Advanced Tools pane (right inline)  -->
                     <SplitView
                         DisplayMode="Inline"
@@ -86,23 +99,39 @@
                                     Visibility="{x:Bind ViewModel.IsLoading,
                                                         Mode=OneWay,
                                                         Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <StackPanel
+                                    <Border
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Spacing="16">
-                                        <ProgressRing
-                                            x:Name="LoadingProgressRing"
-                                            Width="100"
-                                            Height="100"
-                                            IsActive="{x:Bind ViewModel.IsLoading,
-                                                              Mode=OneWay}" />
-                                        <TextBlock
-                                            x:Name="LoadingMessageTextBlock"
+                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="32,24">
+                                        <StackPanel
                                             HorizontalAlignment="Center"
-                                            Style="{StaticResource BodyStrongTextBlockStyle}"
-                                            Text="{x:Bind ViewModel.LoadingMessage,
-                                                          Mode=OneWay}" />
-                                    </StackPanel>
+                                            VerticalAlignment="Center"
+                                            Spacing="16">
+                                            <ProgressRing
+                                                x:Name="LoadingProgressRing"
+                                                Width="100"
+                                                Height="100"
+                                                IsActive="{x:Bind ViewModel.IsLoading,
+                                                                  Mode=OneWay}" />
+                                            <TextBlock
+                                                x:Name="LoadingMessageTextBlock"
+                                                HorizontalAlignment="Center"
+                                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                                Text="{x:Bind ViewModel.LoadingMessage,
+                                                              Mode=OneWay}" />
+                                            <Button
+                                                HorizontalAlignment="Center"
+                                                Command="{x:Bind ViewModel.CancelBatchOperationCommand, Mode=OneWay}"
+                                                Content="Cancel"
+                                                Visibility="{x:Bind ViewModel.IsCancellableOperationRunning,
+                                                                    Mode=OneWay,
+                                                                    Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        </StackPanel>
+                                    </Border>
                                 </Grid>
 
                                 <Grid
@@ -357,6 +386,17 @@
                                             </controls:IconAndTextButton.Icon>
                                         </controls:IconAndTextButton>
                                         <controls:IconAndTextButton
+                                            Command="{x:Bind ViewModel.OpenFolderCommand}"
+                                            IsEnabled="{x:Bind ViewModel.OpenFolderCommand.IsRunning,
+                                                               Mode=OneWay,
+                                                               Converter={StaticResource BoolNegationConverter}}"
+                                            Text="Open Folder"
+                                            ToolTipService.ToolTip="Open a folder to browse and batch-decode all image files in it">
+                                            <controls:IconAndTextButton.Icon>
+                                                <SymbolIcon Symbol="Folder" />
+                                            </controls:IconAndTextButton.Icon>
+                                        </controls:IconAndTextButton>
+                                        <controls:IconAndTextButton
                                             Click="PasteImageButton_Click"
                                             IsEnabled="{x:Bind ViewModel.CanPasteImage,
                                                                Mode=OneWay}"
@@ -494,6 +534,9 @@
                                     </AppBarButton>
                                 </StackPanel>
                             </Grid>
+                        </SplitView.Content>
+                    </SplitView>
+
                         </SplitView.Content>
                     </SplitView>
 

@@ -82,6 +82,8 @@ public partial class App : Application
             services.AddTransient<MainPage>();
             services.AddTransient<SpreadsheetImportViewModel>();
             services.AddTransient<SpreadsheetImportPage>();
+            services.AddTransient<FolderSummaryViewModel>();
+            services.AddTransient<FolderSummaryPage>();
             services.AddTransient<ShellViewModel>();
             services.AddTransient<ShellPage>();
 

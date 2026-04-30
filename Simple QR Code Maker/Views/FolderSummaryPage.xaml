@@ -1,0 +1,55 @@
+<Page
+    x:Class="Simple_QR_Code_Maker.Views.FolderSummaryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tableView="using:WinUI.TableView"
+    mc:Ignorable="d">
+
+    <Grid Padding="40,0,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <AppBarButton Command="{x:Bind ViewModel.GoBackCommand}" Icon="Back" />
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource PageTitleStyle}" Text="Folder Summary" />
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="{x:Bind ViewModel.FolderName, Mode=OneWay}" />
+                </StackPanel>
+            </StackPanel>
+            <Button
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Command="{x:Bind ViewModel.SaveAsCsvCommand}"
+                ToolTipService.ToolTip="Save results as a CSV spreadsheet">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <SymbolIcon Symbol="Save" />
+                    <TextBlock Text="Save Spreadsheet" />
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <Border
+            Grid.Row="1"
+            Margin="80,24,80,40"
+            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="4">
+            <tableView:TableView
+                x:Name="SummaryTableView"
+                AutoGenerateColumns="False"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                ScrollViewer.HorizontalScrollMode="Enabled"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                ScrollViewer.VerticalScrollMode="Enabled"
+                SelectionMode="None" />
+        </Border>
+    </Grid>
+</Page>
