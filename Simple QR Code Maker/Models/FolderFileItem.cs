@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Media.Imaging;
+using System.Collections.ObjectModel;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 
@@ -10,6 +11,8 @@ public partial class FolderFileItem : ObservableObject
     public StorageFile File { get; }
 
     public string FileName => File.Name;
+
+    public ObservableCollection<DecodingImageItem> CutOuts { get; } = [];
 
     [ObservableProperty]
     public partial BitmapImage? Thumbnail { get; set; }

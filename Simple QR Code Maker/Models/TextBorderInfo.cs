@@ -29,4 +29,10 @@ public partial class TextBorderInfo : ObservableRecipient
                 Math.Max(1, bottom - top));
         }
     }
+
+    public TextBorderInfo(string text, Rect borderRect)
+    {
+        Text = text;
+        BorderRect = borderRect;
+    }
 }

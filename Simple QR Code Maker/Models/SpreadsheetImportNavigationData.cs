@@ -4,6 +4,8 @@ public class SpreadsheetImportNavigationData
 {
     public required HistoryItem ReturnState { get; init; }
 
+    public NavigationRestoreState? BackNavigationState { get; set; }
+
     public required IReadOnlyList<SpreadsheetSourceRow> Rows { get; init; }
 
     public string SourceFileName { get; init; } = string.Empty;

@@ -47,4 +47,9 @@ public partial class DecodingImageItem : ObservableObject
 
     [ObservableProperty]
     public partial int CurrentCornerIndex { get; set; } = 0;
-    }
+
+    [ObservableProperty]
+    public partial string Label { get; set; } = string.Empty;
+
+    public string ParentFileName { get; set; } = string.Empty;
+}
