@@ -47,20 +47,20 @@ public static class ImageProcessingHelper
     public static MagickImage SetBlackPoint(MagickImage image, MagickColor blackPointColor)
     {
         var result = (MagickImage)image.Clone();
-        
+
         double threshold = (blackPointColor.R + blackPointColor.G + blackPointColor.B) / (3.0 * 255.0);
         result.Level(new Percentage(threshold * 100), new Percentage(100), 1.0);
-        
+
         return result;
     }
 
     public static MagickImage SetWhitePoint(MagickImage image, MagickColor whitePointColor)
     {
         var result = (MagickImage)image.Clone();
-        
+
         double threshold = (whitePointColor.R + whitePointColor.G + whitePointColor.B) / (3.0 * 255.0);
         result.Level(new Percentage(0), new Percentage(threshold * 100), 1.0);
-        
+
         return result;
     }
 
@@ -92,7 +92,7 @@ public static class ImageProcessingHelper
             !IsPointInBounds(bottomRight, result.Width, result.Height) ||
             !IsPointInBounds(bottomLeft, result.Width, result.Height))
         {
-            System.Diagnostics.Debug.WriteLine($"ERROR: One or more corners are outside image bounds (0,0) to ({result.Width-1},{result.Height-1})");
+            System.Diagnostics.Debug.WriteLine($"ERROR: One or more corners are outside image bounds (0,0) to ({result.Width - 1},{result.Height - 1})");
             throw new ArgumentException($"One or more corners are outside the image boundaries. Image size: {result.Width}x{result.Height}. Please ensure all corners are within the image.");
         }
 
@@ -176,14 +176,14 @@ public static class ImageProcessingHelper
     private static bool IsValidQuadrilateral(Point p1, Point p2, Point p3, Point p4)
     {
         // Check if any three points are collinear (which would make this degenerate)
-        if (AreCollinear(p1, p2, p3) || AreCollinear(p2, p3, p4) || 
+        if (AreCollinear(p1, p2, p3) || AreCollinear(p2, p3, p4) ||
             AreCollinear(p3, p4, p1) || AreCollinear(p4, p1, p2))
         {
             return false;
         }
 
         // Check if points are too close together (minimum 5 pixel separation)
-        if (Distance(p1, p2) < 5 || Distance(p2, p3) < 5 || 
+        if (Distance(p1, p2) < 5 || Distance(p2, p3) < 5 ||
             Distance(p3, p4) < 5 || Distance(p4, p1) < 5)
         {
             return false;
@@ -203,7 +203,7 @@ public static class ImageProcessingHelper
     {
         // Calculate the cross product to check collinearity
         // If cross product is close to 0, points are collinear
-        long crossProduct = (long)(p2.X - p1.X) * (p3.Y - p1.Y) - 
+        long crossProduct = (long)(p2.X - p1.X) * (p3.Y - p1.Y) -
                            (long)(p2.Y - p1.Y) * (p3.X - p1.X);
 
         // Allow small tolerance for floating point errors (within 1 pixel area)

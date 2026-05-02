@@ -2,7 +2,6 @@ using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.IO.Compression;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;

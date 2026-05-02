@@ -1,12 +1,12 @@
-using PdfSharp;
-using PdfSharp.Drawing;
-using PdfSharp.Fonts;
-using PdfSharp.Pdf;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Printing;
+using PdfSharp;
+using PdfSharp.Drawing;
+using PdfSharp.Fonts;
+using PdfSharp.Pdf;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;

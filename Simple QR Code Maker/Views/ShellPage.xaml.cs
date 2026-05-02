@@ -1,13 +1,13 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Windowing;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
 using System.Diagnostics;
-using Microsoft.UI.Xaml.Input;
 
 namespace Simple_QR_Code_Maker.Views;
 

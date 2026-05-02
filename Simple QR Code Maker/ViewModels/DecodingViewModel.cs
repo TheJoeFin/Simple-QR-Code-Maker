@@ -5,6 +5,7 @@ using ImageMagick;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.Windows.Media.Capture;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Controls;
@@ -15,14 +16,12 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
-using Microsoft.Windows.Media.Capture;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
 using WinRT.Interop;
 using ZXing;
-using System.Linq;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
@@ -1505,7 +1504,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                 DecodingImageItems.Clear();
                 DecodingImageItems.Add(decodedItem);
                 OnPropertyChanged(nameof(IsMultiImagePanelVisible));
-            OnPropertyChanged(nameof(HasLeftPaneContent));
+                OnPropertyChanged(nameof(HasLeftPaneContent));
                 CurrentDecodingItem = decodedItem;
             }
         }

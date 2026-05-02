@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;

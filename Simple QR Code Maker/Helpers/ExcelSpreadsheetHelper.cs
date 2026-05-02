@@ -1,7 +1,7 @@
+using Simple_QR_Code_Maker.Models;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Simple_QR_Code_Maker.Models;
 
 namespace Simple_QR_Code_Maker.Helpers;
 

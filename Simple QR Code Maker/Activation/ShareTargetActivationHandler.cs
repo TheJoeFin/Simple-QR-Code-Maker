@@ -1,5 +1,3 @@
-using Microsoft.Windows.AppLifecycle;
-
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.ViewModels;
 

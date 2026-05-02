@@ -477,9 +477,9 @@ public sealed partial class ImageColorPickerControl : UserControl
         {
             double d = max - min;
             s = l > 0.5 ? d / (2.0 - max - min) : d / (max + min);
-            if (max == r)      h = ((g - b) / d + (g < b ? 6 : 0)) / 6.0;
+            if (max == r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6.0;
             else if (max == g) h = ((b - r) / d + 2) / 6.0;
-            else               h = ((r - g) / d + 4) / 6.0;
+            else h = ((r - g) / d + 4) / 6.0;
         }
 
         return (h, s, l);

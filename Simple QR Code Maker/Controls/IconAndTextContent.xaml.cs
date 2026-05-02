@@ -11,14 +11,16 @@ public sealed partial class IconAndTextContent : StackPanel
     }
 
     public Symbol Icon
-    { get => (Symbol)GetValue(IconProperty); set => SetValue(IconProperty, value);
+    {
+        get => (Symbol)GetValue(IconProperty); set => SetValue(IconProperty, value);
     }
 
     public static readonly DependencyProperty IconProperty =
         DependencyProperty.Register(nameof(Icon), typeof(Symbol), typeof(IconAndTextContent), new PropertyMetadata(Symbol.Placeholder));
 
     public string ContentText
-    { get => (string)GetValue(ContentTextProperty); set => SetValue(ContentTextProperty, value);
+    {
+        get => (string)GetValue(ContentTextProperty); set => SetValue(ContentTextProperty, value);
     }
 
     public static readonly DependencyProperty ContentTextProperty =

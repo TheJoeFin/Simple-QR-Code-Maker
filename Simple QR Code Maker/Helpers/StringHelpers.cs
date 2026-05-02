@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 
 namespace Simple_QR_Code_Maker.Helpers;
+
 public static partial class StringHelpers
 {
     public static readonly List<char> ReservedChars =

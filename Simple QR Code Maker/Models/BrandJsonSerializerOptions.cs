@@ -12,16 +12,16 @@ public static class BrandJsonSerializerOptions
         get
         {
             _options ??= new JsonSerializerOptions
-                {
-                    WriteIndented = true,
-                    DefaultIgnoreCondition = JsonIgnoreCondition.Never,
-                    Converters =
+            {
+                WriteIndented = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+                Converters =
                     {
                         new ColorJsonConverter(),
                         new NullableColorJsonConverter()
                     },
-                    TypeInfoResolver = BrandJsonContext.Default
-                };
+                TypeInfoResolver = BrandJsonContext.Default
+            };
             return _options;
         }
     }

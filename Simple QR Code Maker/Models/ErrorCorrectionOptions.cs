@@ -1,6 +1,7 @@
 ﻿using ZXing.QrCode.Internal;
 
 namespace Simple_QR_Code_Maker.Models;
+
 public struct ErrorCorrectionOptions
 {
     public string Description { get; set; }

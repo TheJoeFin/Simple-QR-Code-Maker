@@ -1,10 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
-using System.Drawing;
-using Windows.Foundation;
 
 namespace Simple_QR_Code_Maker.Helpers;
 

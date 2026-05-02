@@ -12,15 +12,15 @@ public static class HistoryJsonSerializerOptions
         get
         {
             _options ??= new JsonSerializerOptions
-                {
-                    WriteIndented = true,
-                    DefaultIgnoreCondition = JsonIgnoreCondition.Never,
-                    Converters =
+            {
+                WriteIndented = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+                Converters =
                     {
                         new ColorJsonConverter()
                     },
-                    TypeInfoResolver = HistoryJsonContext.Default
-                };
+                TypeInfoResolver = HistoryJsonContext.Default
+            };
             return _options;
         }
     }

@@ -27,7 +27,7 @@ public static class HistoryStorageHelper
 
         // Try to load from new file location first
         ObservableCollection<HistoryItem>? historyFromFile = await LoadHistoryFromFileAsync();
-        
+
         if (historyFromFile != null && historyFromFile.Count > 0)
         {
             foreach (HistoryItem item in historyFromFile)
@@ -40,7 +40,7 @@ public static class HistoryStorageHelper
 
         // If no file exists, attempt migration from old settings
         ObservableCollection<HistoryItem>? migratedHistory = await MigrateFromOldSettingsAsync();
-        
+
         if (migratedHistory != null && migratedHistory.Count > 0)
         {
             foreach (HistoryItem item in migratedHistory)
@@ -51,7 +51,7 @@ public static class HistoryStorageHelper
 
             // Save migrated history to new file location
             await SaveHistoryAsync(historyItems);
-            
+
             // Clean up old settings
             await ClearOldSettingsAsync();
         }
@@ -212,14 +212,14 @@ public static class HistoryStorageHelper
     private static string? ReadFromMsixSettings()
     {
         Debug.WriteLine("?? MSIX: Reading from ApplicationData.Current.LocalSettings");
-        
+
         if (ApplicationData.Current.LocalSettings.Values.TryGetValue(HistoryItemsKey, out object? obj))
         {
             string? historyJson = obj as string;
             Debug.WriteLine($"   Found {historyJson?.Length ?? 0} characters");
             return historyJson;
         }
-        
+
         Debug.WriteLine($"   Key '{HistoryItemsKey}' not found in LocalSettings");
         return null;
     }
@@ -230,7 +230,7 @@ public static class HistoryStorageHelper
     private static async Task<string?> ReadFromFileBasedSettingsAsync()
     {
         Debug.WriteLine("?? Non-MSIX: Reading from LocalSettings.json file");
-        
+
         try
         {
             string appDataPath = Path.Combine(
@@ -250,7 +250,7 @@ public static class HistoryStorageHelper
             Debug.WriteLine($"   File exists, size: {settingsJson.Length} bytes");
 
             Dictionary<string, string>? settingsDict = JsonSerializer.Deserialize<Dictionary<string, string>>(settingsJson);
-            
+
             if (settingsDict != null && settingsDict.TryGetValue(HistoryItemsKey, out string? histVal))
             {
                 Debug.WriteLine($"   Found {HistoryItemsKey}: {histVal.Length} characters");
@@ -314,7 +314,7 @@ public static class HistoryStorageHelper
                 {
                     HistoryItem item = ParseHistoryItem(element, itemCount);
                     migratedHistory.Add(item);
-                    
+
                     Debug.WriteLine($"   ? Item {itemCount} migrated: {item.CodesContent.Substring(0, Math.Min(50, item.CodesContent.Length))}");
                 }
                 catch (Exception itemEx)
@@ -328,7 +328,7 @@ public static class HistoryStorageHelper
                 Debug.WriteLine($"? Method 2 SUCCESS: Migrated {migratedHistory.Count} of {itemCount} items");
                 return migratedHistory;
             }
-            
+
             Debug.WriteLine($"? Method 2 FAILED: Parsed {itemCount} items but 0 were valid");
             return null;
         }
@@ -508,7 +508,7 @@ public static class HistoryStorageHelper
             "Simple QR Code Maker/ApplicationData");
 
         string settingsPath = Path.Combine(appDataPath, "LocalSettings.json");
-        
+
         if (!File.Exists(settingsPath))
         {
             return;
@@ -517,10 +517,10 @@ public static class HistoryStorageHelper
         string settingsJson = File.ReadAllText(settingsPath);
         Dictionary<string, string> settingsDict = JsonSerializer.Deserialize<Dictionary<string, string>>(settingsJson) ?? [];
         settingsDict.Remove(HistoryItemsKey);
-        
+
         string updatedJson = JsonSerializer.Serialize(settingsDict, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(settingsPath, updatedJson);
-        
+
         Debug.WriteLine("??? Cleared old file-based settings");
     }
 }

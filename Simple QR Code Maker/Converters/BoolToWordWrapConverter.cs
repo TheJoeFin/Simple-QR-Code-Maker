@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Data;
 
 namespace Simple_QR_Code_Maker.Converters;
+
 internal partial class BoolToWordWrapConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
