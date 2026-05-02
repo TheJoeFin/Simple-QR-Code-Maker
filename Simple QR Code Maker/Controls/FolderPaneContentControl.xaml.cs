@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
 
@@ -36,29 +36,16 @@ public sealed partial class FolderPaneContentControl : UserControl
             control.FolderFilesListView.DataContext = vm;
     }
 
-    private async void FolderFilesListView_Tapped(object sender, TappedRoutedEventArgs e)
+    private void FolderFileItem_Tapped(object sender, TappedRoutedEventArgs e)
     {
-        DependencyObject? el = e.OriginalSource as DependencyObject;
-        while (el != null && el != sender)
-        {
-            if (el is Button)
-                return; // let button handle its own click
+        if (sender is FrameworkElement { Tag: FolderFileItem folderItem })
+            WeakReferenceMessenger.Default.Send(new OpenFolderFileItemMessage(folderItem));
+    }
 
-            if (el is FrameworkElement fe)
-            {
-                if (fe.Tag is DecodingImageItem cutOut)
-                {
-                    ViewModel?.SelectDecodingImageItem(cutOut);
-                    return;
-                }
-                if (fe.Tag is FolderFileItem folderItem && ViewModel is not null)
-                {
-                    await ViewModel.OpenFolderFileItemCommand.ExecuteAsync(folderItem);
-                    return;
-                }
-            }
-            el = VisualTreeHelper.GetParent(el);
-        }
+    private void CutOutItem_Tapped(object sender, TappedRoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { Tag: DecodingImageItem cutOut })
+            WeakReferenceMessenger.Default.Send(new SelectDecodingImageItemMessage(cutOut));
     }
 
     private void CutOutItem_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -89,5 +76,10 @@ public sealed partial class FolderPaneContentControl : UserControl
     {
         if (sender is Button btn && btn.Tag is DecodingImageItem item && ViewModel is not null)
             await ViewModel.SaveCutOutCommand.ExecuteAsync(item);
+    }
+
+    private void SaveCutOutButton_Tapped(object sender, TappedRoutedEventArgs e)
+    {
+        e.Handled = true;
     }
 }

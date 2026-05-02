@@ -190,6 +190,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
         AttachClipboardHandler();
         AdvancedTools.RegionCutOut += AdvancedTools_RegionCutOut;
+        WeakReferenceMessenger.Default.Register<SelectDecodingImageItemMessage>(this, OnSelectDecodingImageItemMessage);
+        WeakReferenceMessenger.Default.Register<OpenFolderFileItemMessage>(this, OnOpenFolderFileItemMessage);
     }
 
     private async void AdvancedTools_RegionCutOut(object? sender, MagickImage croppedImage)
@@ -278,6 +280,16 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
         suppressHistorySave = true;
         CurrentDecodingItem = item;
+    }
+
+    private void OnSelectDecodingImageItemMessage(object recipient, SelectDecodingImageItemMessage message)
+    {
+        SelectDecodingImageItem(message.Item);
+    }
+
+    private async void OnOpenFolderFileItemMessage(object recipient, OpenFolderFileItemMessage message)
+    {
+        await OpenFolderFileItem(message.Item);
     }
 
     [RelayCommand]
@@ -1700,6 +1712,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     {
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
         App.MainWindow.Activated -= MainWindow_Activated;
+        WeakReferenceMessenger.Default.UnregisterAll(this);
         ResetViewState();
     }
 }
