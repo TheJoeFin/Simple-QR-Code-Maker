@@ -244,7 +244,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
         PerspectiveCornersClearedRequested?.Invoke(this, EventArgs.Empty);
     }
 
-    public void SetCutOutRegion(System.Drawing.Point start, System.Drawing.Point end)
+    public void SetCutOutRegion(Point start, Point end)
     {
         CutOutStartPoint = start;
         CutOutEndPoint = end;

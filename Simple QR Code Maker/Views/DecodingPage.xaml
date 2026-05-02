@@ -473,10 +473,7 @@
                                                     <controls:IconAndTextButton
                                                         Command="{x:Bind ViewModel.GoToCreateQrCodesCommand}"
                                                         Text="Create Codes"
-                                                        ToolTipService.ToolTip="Switch to creating QR Codes"
-                                                        Visibility="{x:Bind ViewModel.ShowCreateQrCodesButton,
-                                                                            Mode=OneWay,
-                                                                            Converter={StaticResource BoolToVisibilityConverter}}">
+                                                        ToolTipService.ToolTip="Switch to creating QR Codes">
                                                         <controls:IconAndTextButton.Icon>
                                                             <controls:QrCodeIcon />
                                                         </controls:IconAndTextButton.Icon>

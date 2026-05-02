@@ -128,8 +128,6 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
     public bool ShowBackButton => launchMode == LaunchMode.CreatingQrCodes;
 
-    public bool ShowCreateQrCodesButton => launchMode == LaunchMode.ReadingQrCodes;
-
     public bool CanUseTitleBarBack => ShowBackButton;
 
     public bool CanOpenCurrentSourceFile => HasImage
@@ -206,7 +204,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
         try
         {
-            System.Drawing.Bitmap bitmap = ImageProcessingHelper.ConvertToBitmap(croppedImage);
+            Bitmap bitmap = ImageProcessingHelper.ConvertToBitmap(croppedImage);
 
             string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}_cutout.png");
             bitmap.Save(cachePath);
@@ -421,7 +419,6 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
     partial void OnCurrentDecodingItemChanged(DecodingImageItem? value)
     {
-        IsAdvancedToolsVisible = false;
         AdvancedTools.ClearAll();
         ResetDecodedContentInfoBar();
 
@@ -458,8 +455,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         PreviewStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    [DllImport("user32.dll")]
-    private static extern uint GetClipboardSequenceNumber();
+    [LibraryImport("user32.dll")]
+    private static partial uint GetClipboardSequenceNumber();
 
     private bool isWaitingForSnippingTool = false;
     private uint clipboardSequenceOnSnipLaunch = 0;
@@ -643,7 +640,6 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         launchMode = await LocalSettingsService.ReadSettingAsync<LaunchMode?>(nameof(LaunchMode))
             ?? LaunchMode.CreatingQrCodes;
         OnPropertyChanged(nameof(ShowBackButton));
-        OnPropertyChanged(nameof(ShowCreateQrCodesButton));
 
         DecodingHistoryItems = await DecodingHistoryStorageHelper.LoadHistoryAsync();
 
@@ -679,7 +675,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         navigationHistoryItem = CloneHistoryItem(state.NavigationHistoryItem);
         nextSourceKind = state.CurrentSourceKind;
 
-        Dictionary<string, DecodingImageItem> restoredImages = new(StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, DecodingImageItem> restoredImages = [with(StringComparer.OrdinalIgnoreCase)];
 
         foreach (DecodingImageNavigationState imageState in state.DecodingImageItems)
         {
@@ -936,7 +932,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
         try
         {
-            CameraCaptureUI dialog = new CameraCaptureUI(App.MainWindow.AppWindow.Id);
+            CameraCaptureUI dialog = new(App.MainWindow.AppWindow.Id);
             dialog.PhotoSettings.AllowCropping = false;
 
             // Start the async operation then yield so the dispatcher renders
@@ -1028,7 +1024,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             item.ImagePixelHeight = (int)item.ProcessedMagickImage.Height;
             item.BitmapImage = processedBitmapImage;
 
-            List<string> decodedTexts = codeBorders.Select(b => b.BorderInfo.Text).ToList();
+            List<string> decodedTexts = [.. codeBorders.Select(b => b.BorderInfo.Text)];
             await DecodingHistoryStorageHelper.UpdateLatestAndSaveAsync(DecodingHistoryItems, cachePath, decodedTexts);
             OnPropertyChanged(nameof(HasDecodingHistory));
         }
@@ -1178,9 +1174,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             return;
 
         IReadOnlyList<StorageFile> allFiles = await folder.GetFilesAsync();
-        List<StorageFile> imageFiles = allFiles
-            .Where(f => imageExtensions.Contains(Path.GetExtension(f.Path).ToLowerInvariant()))
-            .ToList();
+        List<StorageFile> imageFiles = [.. allFiles.Where(f => imageExtensions.Contains(Path.GetExtension(f.Path).ToLowerInvariant()))];
 
         if (imageFiles.Count > LargeFolderThreshold)
         {
@@ -1241,7 +1235,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
         try
         {
-            List<FolderFileItem> snapshot = FolderFiles.ToList();
+            List<FolderFileItem> snapshot = [.. FolderFiles];
             int total = snapshot.Count;
             int current = 0;
 
@@ -1259,7 +1253,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                     IEnumerable<(string, Result)> results =
                         await Task.Run(() => BarcodeHelpers.GetStringsFromImageFile(fileItem.File), cts.Token);
 
-                    List<string> lines = results.Select(r => r.Item1).ToList();
+                    List<string> lines = [.. results.Select(r => r.Item1)];
                     outputText = lines.Count > 0
                         ? string.Join(Environment.NewLine, lines)
                         : "<no qr codes found>";
@@ -1312,7 +1306,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
         try
         {
-            List<FolderFileItem> snapshot = FolderFiles.ToList();
+            List<FolderFileItem> snapshot = [.. FolderFiles];
             int total = snapshot.Count;
             int current = 0;
 
@@ -1329,7 +1323,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                 {
                     IEnumerable<(string, Result)> results =
                         await Task.Run(() => BarcodeHelpers.GetStringsFromImageFile(fileItem.File), cts.Token);
-                    codes = results.Select(r => r.Item1).ToList();
+                    codes = [.. results.Select(r => r.Item1)];
                 }
                 catch (OperationCanceledException)
                 {
@@ -1527,7 +1521,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                 string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}.png");
                 orientedBitmap.Save(cachePath);
 
-                List<(string, Result)> strings = BarcodeHelpers.GetStringsFromBitmap(orientedBitmap).ToList();
+                List<(string, Result)> strings = [.. BarcodeHelpers.GetStringsFromBitmap(orientedBitmap)];
                 return (magickImage, cachePath, strings);
             });
 
@@ -1684,7 +1678,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         string pathToSave = !string.IsNullOrEmpty(item.CachedBitmapPath)
             ? item.CachedBitmapPath
             : item.ImagePath;
-        List<string> texts = item.CodeBorders.Select(b => b.BorderInfo.Text).ToList();
+        List<string> texts = [.. item.CodeBorders.Select(b => b.BorderInfo.Text)];
         string? sourceFilePath = nextSourceKind == DecodingSourceKind.File ? item.ImagePath : null;
         DecodingSourceKind sourceKind = nextSourceKind;
 
