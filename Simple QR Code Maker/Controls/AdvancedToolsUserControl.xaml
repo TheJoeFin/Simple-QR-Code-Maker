@@ -534,18 +534,18 @@
             </Button>
 
             <local:IconAndTextHyperlinkButton Command="{x:Bind ViewModel.UndoCommand}" ToolTipService.ToolTip="Undo the last applied change (Ctrl+Z)">
-                <local:IconAndTextHyperlinkButton.Icon>
-                    <SymbolIcon Symbol="Undo" />
-                </local:IconAndTextHyperlinkButton.Icon>
+                <local:IconAndTextHyperlinkButton.IconSource>
+                    <SymbolIconSource Symbol="Undo" />
+                </local:IconAndTextHyperlinkButton.IconSource>
             </local:IconAndTextHyperlinkButton>
 
             <local:IconAndTextHyperlinkButton
                 Command="{x:Bind ViewModel.RedoCommand}"
                 ToolTipService.ToolTip="Redo the last undone change (Ctrl+Y)"
                 Visibility="Collapsed">
-                <local:IconAndTextHyperlinkButton.Icon>
-                    <SymbolIcon Symbol="Redo" />
-                </local:IconAndTextHyperlinkButton.Icon>
+                <local:IconAndTextHyperlinkButton.IconSource>
+                    <SymbolIconSource Symbol="Redo" />
+                </local:IconAndTextHyperlinkButton.IconSource>
             </local:IconAndTextHyperlinkButton>
         </StackPanel>
     </Grid>

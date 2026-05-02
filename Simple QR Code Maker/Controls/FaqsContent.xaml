@@ -90,9 +90,9 @@
             HorizontalAlignment="Center"
             Click="IconAndTextButton_Click"
             Text="Email a Question">
-            <local:IconAndTextButton.Icon>
-                <SymbolIcon Symbol="Mail" />
-            </local:IconAndTextButton.Icon>
+            <local:IconAndTextButton.IconSource>
+                <SymbolIconSource Symbol="Mail" />
+            </local:IconAndTextButton.IconSource>
         </local:IconAndTextButton>
     </Grid>
 </UserControl>
