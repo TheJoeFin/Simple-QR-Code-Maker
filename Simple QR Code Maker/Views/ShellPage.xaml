@@ -20,6 +20,10 @@
             Height="48"
             IsBackButtonVisible="{x:Bind ViewModel.IsBackVisible,
                                          Mode=OneWay}">
+            <!--
+                This search box had to be removed because it cannot be centered correctly, and with margin or spacers
+                it created deadzones preventing the titlebar from being dragged
+            -->
             <!--<TitleBar.Content>
                 <AutoSuggestBox
                     x:Name="TitleBarSearchBox"
