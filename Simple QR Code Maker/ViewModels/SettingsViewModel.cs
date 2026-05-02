@@ -23,7 +23,7 @@ using WinRT.Interop;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-public partial class SettingsViewModel : ObservableRecipient, INavigationAware
+public partial class SettingsViewModel : ObservableRecipient, INavigationAware, ITitleBarBackNavigation
 {
     private readonly IThemeSelectorService _themeSelectorService;
 
@@ -32,6 +32,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty]
     public partial string VersionDescription { get; set; }
+
+    [ObservableProperty]
+    public partial LaunchMode LaunchMode { get; set; } = LaunchMode.CreatingQrCodes;
 
     [ObservableProperty]
     public partial MultiLineCodeMode MultiLineCodeMode { get; set; } = MultiLineCodeMode.OneLineOneCode;
@@ -111,11 +114,29 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private bool _isLoading;
 
     private HistoryItem? navigationHistoryItem = null;
+    private NavigationRestoreState? backNavigationState = null;
 
     private INavigationService NavigationService { get; }
     public ILocalSettingsService LocalSettingsService { get; }
 
     public ICommand SwitchThemeCommand { get; }
+
+    public bool CanUseTitleBarBack => true;
+
+    [RelayCommand]
+    private async Task SwitchLaunchMode(object param)
+    {
+        if (param is not string stringMode)
+            return;
+
+        bool parsed = Enum.TryParse(stringMode, out LaunchMode mode);
+
+        if (!parsed)
+            return;
+
+        LaunchMode = mode;
+        await LocalSettingsService.SaveSettingAsync(nameof(LaunchMode), LaunchMode);
+    }
 
     [RelayCommand]
     private async Task SwitchMultiLineMode(object param)
@@ -294,8 +315,29 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void GoHome()
     {
-        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, navigationHistoryItem);
+        if (NavigationService.CanGoBack)
+        {
+            NavigationService.GoBack();
+            return;
+        }
+
+        if (backNavigationState is not null)
+        {
+            NavigationService.NavigateTo(backNavigationState.PageKey, backNavigationState.Parameter);
+            return;
+        }
+
+        object? parameter = backNavigationState is null
+            ? navigationHistoryItem
+            : new MainNavigationParameter
+            {
+                Parameter = navigationHistoryItem,
+                BackNavigationState = backNavigationState,
+            };
+        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, parameter);
     }
+
+    public void NavigateBack() => GoHome();
 
     [RelayCommand]
     private async Task BrowseQuickSaveLocation()
@@ -841,13 +883,23 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         Trace.WriteLine($"[SettingsVM] OnNavigatedTo started (parameter: {parameter?.GetType().Name ?? "null"})");
         await ReloadAllSettingsAsync();
 
+        backNavigationState = null;
+        navigationHistoryItem = null;
+
+        object? effectiveParameter = parameter;
+        if (parameter is MainNavigationParameter mainNavigationParameter)
+        {
+            backNavigationState = mainNavigationParameter.BackNavigationState;
+            effectiveParameter = mainNavigationParameter.Parameter;
+        }
+
         // Store the HistoryItem to pass back when returning to main page
-        if (parameter is HistoryItem historyItem)
+        if (effectiveParameter is HistoryItem historyItem)
         {
             navigationHistoryItem = historyItem;
         }
         // For backward compatibility, also handle string parameter
-        else if (parameter is string urlText && !string.IsNullOrWhiteSpace(urlText))
+        else if (effectiveParameter is string urlText && !string.IsNullOrWhiteSpace(urlText))
         {
             navigationHistoryItem = new HistoryItem { CodesContent = urlText };
         }
@@ -858,6 +910,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         _isLoading = true;
         try
         {
+            await LoadSettingAsync(nameof(LaunchMode), async () =>
+                LaunchMode = await LocalSettingsService.ReadSettingAsync<LaunchMode?>(nameof(LaunchMode)) ?? LaunchMode.CreatingQrCodes);
+
             await LoadSettingAsync(nameof(MultiLineCodeMode), async () =>
                 MultiLineCodeMode = await LocalSettingsService.ReadSettingAsync<MultiLineCodeMode>(nameof(MultiLineCodeMode)));
 

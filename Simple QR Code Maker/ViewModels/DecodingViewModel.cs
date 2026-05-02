@@ -26,7 +26,7 @@ using System.Linq;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-public partial class DecodingViewModel : ObservableRecipient, INavigationAware, INavigationStateProvider
+public partial class DecodingViewModel : ObservableRecipient, INavigationAware, INavigationStateProvider, ITitleBarBackNavigation
 {
     [ObservableProperty]
     public partial string InfoBarMessage { get; set; } = string.Empty;
@@ -126,6 +126,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
     public bool HasActivePreviewSurface => HasImage || IsCameraPaneOpen;
 
+    public bool ShowBackButton => launchMode == LaunchMode.CreatingQrCodes;
+
+    public bool ShowCreateQrCodesButton => launchMode == LaunchMode.ReadingQrCodes;
+
+    public bool CanUseTitleBarBack => ShowBackButton;
+
     public bool CanOpenCurrentSourceFile => HasImage
         && currentSourceKind == DecodingSourceKind.File
         && !string.IsNullOrEmpty(currentSourceFilePath)
@@ -161,6 +167,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     private string? currentCachedImagePath = null;
     private StorageFolder? currentFolderPaneFolder = null;
     private FolderFileItem? currentFolderFileItem = null;
+    private LaunchMode launchMode = LaunchMode.CreatingQrCodes;
 
     private const int LargeFolderThreshold = 50;
 
@@ -187,12 +194,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         AdvancedTools.RegionCutOut += AdvancedTools_RegionCutOut;
     }
 
-    private async void AdvancedTools_RegionCutOut(object? sender, ImageMagick.MagickImage croppedImage)
+    private async void AdvancedTools_RegionCutOut(object? sender, MagickImage croppedImage)
     {
         await AddCutOutImageAsync(croppedImage);
     }
 
-    private async Task AddCutOutImageAsync(ImageMagick.MagickImage croppedImage)
+    private async Task AddCutOutImageAsync(MagickImage croppedImage)
     {
         IsLoading = true;
         LoadingMessage = "Extracting region…";
@@ -274,6 +281,18 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         suppressHistorySave = true;
         CurrentDecodingItem = item;
     }
+
+    [RelayCommand]
+    private void GoToSettings() =>
+        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!, new MainNavigationParameter
+        {
+            Parameter = CloneHistoryItem(navigationHistoryItem),
+            BackNavigationState = new NavigationRestoreState
+            {
+                PageKey = typeof(DecodingViewModel).FullName!,
+                Parameter = CreateNavigationState(),
+            },
+        });
 
     [RelayCommand]
     private async Task SaveCutOut(DecodingImageItem item)
@@ -621,6 +640,10 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         AttachClipboardHandler();
         warnWhenLikelyRedirector = await RedirectorWarningSettingsHelper.ReadWarningEnabledAsync(LocalSettingsService);
         safeRedirectorDomains = await RedirectorWarningSettingsHelper.ReadSafeDomainsAsync(LocalSettingsService);
+        launchMode = await LocalSettingsService.ReadSettingAsync<LaunchMode?>(nameof(LaunchMode))
+            ?? LaunchMode.CreatingQrCodes;
+        OnPropertyChanged(nameof(ShowBackButton));
+        OnPropertyChanged(nameof(ShowCreateQrCodesButton));
 
         DecodingHistoryItems = await DecodingHistoryStorageHelper.LoadHistoryAsync();
 
@@ -1069,6 +1092,22 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     private void GoBack()
     {
         NavigationService.NavigateTo(typeof(MainViewModel).FullName!, navigationHistoryItem);
+    }
+
+    public void NavigateBack() => GoBack();
+
+    [RelayCommand]
+    private void GoToCreateQrCodes()
+    {
+        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, new MainNavigationParameter
+        {
+            Parameter = CloneHistoryItem(navigationHistoryItem),
+            BackNavigationState = new NavigationRestoreState
+            {
+                PageKey = typeof(DecodingViewModel).FullName!,
+                Parameter = CreateNavigationState(),
+            },
+        });
     }
 
     [RelayCommand]

@@ -77,7 +77,7 @@
                                         VerticalAlignment="Center"
                                         FontWeight="SemiBold"
                                         MaxLines="2"
-                                        Text="{x:Bind FileName, Mode=OneWay}"
+                                        Text="{Binding FileName}"
                                         TextTrimming="CharacterEllipsis"
                                         TextWrapping="Wrap" />
 

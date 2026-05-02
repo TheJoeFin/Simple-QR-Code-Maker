@@ -15,43 +15,48 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TitleBar x:Name="AppTitleBar" IsBackButtonVisible="False">
+        <TitleBar x:Name="AppTitleBar" IsBackButtonVisible="{x:Bind ViewModel.IsBackVisible, Mode=OneWay}">
             <TitleBar.Content>
-                <AutoSuggestBox
-                    x:Name="TitleBarSearchBox"
-                    MinWidth="320"
-                    MaxWidth="800"
-                    Margin="0,0,-160,0"
-                    ItemsSource="{x:Bind ViewModel.TitleBarSearchResults,
-                                         Mode=OneWay}"
-                    PlaceholderText="Search FAQs, history, and brands"
-                    QueryIcon="Find"
-                    QuerySubmitted="TitleBarSearchBox_QuerySubmitted"
-                    SuggestionChosen="TitleBarSearchBox_SuggestionChosen"
-                    TextChanged="TitleBarSearchBox_TextChanged">
-                    <AutoSuggestBox.ItemTemplate>
-                        <DataTemplate x:DataType="models:TitleBarSearchResult">
-                            <StackPanel Padding="8,4">
-                                <TextBlock
-                                    FontSize="12"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="{x:Bind KindLabel,
-                                                  Mode=OneTime}" />
-                                <TextBlock
-                                    Style="{StaticResource BodyStrongTextBlockStyle}"
-                                    Text="{x:Bind Title,
-                                                  Mode=OneTime}"
-                                    TextTrimming="CharacterEllipsis" />
-                                <TextBlock
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Bind Subtitle,
-                                                  Mode=OneTime}"
-                                    TextTrimming="CharacterEllipsis" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </AutoSuggestBox.ItemTemplate>
-                </AutoSuggestBox>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="160" />
+                    </Grid.ColumnDefinitions>
+                    <AutoSuggestBox
+                        x:Name="TitleBarSearchBox"
+                        MinWidth="320"
+                        MaxWidth="800"
+                        ItemsSource="{x:Bind ViewModel.TitleBarSearchResults,
+                                             Mode=OneWay}"
+                        PlaceholderText="Search FAQs, history, and brands"
+                        QueryIcon="Find"
+                        QuerySubmitted="TitleBarSearchBox_QuerySubmitted"
+                        SuggestionChosen="TitleBarSearchBox_SuggestionChosen"
+                        TextChanged="TitleBarSearchBox_TextChanged">
+                        <AutoSuggestBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:TitleBarSearchResult">
+                                <StackPanel Padding="8,4">
+                                    <TextBlock
+                                        FontSize="12"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Text="{x:Bind KindLabel,
+                                                      Mode=OneTime}" />
+                                    <TextBlock
+                                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                                        Text="{x:Bind Title,
+                                                      Mode=OneTime}"
+                                        TextTrimming="CharacterEllipsis" />
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Bind Subtitle,
+                                                      Mode=OneTime}"
+                                        TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </AutoSuggestBox.ItemTemplate>
+                    </AutoSuggestBox>
+                </Grid>
             </TitleBar.Content>
             <TitleBar.IconSource>
                 <BitmapIconSource ShowAsMonochrome="False" UriSource="ms-appx:///Assets/WindowIcon.ico" />

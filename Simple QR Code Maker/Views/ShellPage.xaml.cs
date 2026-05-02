@@ -28,6 +28,7 @@ public sealed partial class ShellPage : Page
         ViewModel = viewModel;
         InitializeComponent();
 
+        AppTitleBar.BackRequested += (_, _) => ViewModel.BackCommand.Execute(null);
         ViewModel.NavigationService.Frame = NavigationFrame;
 
         App.MainWindow.Closed += MainWindow_Closed;

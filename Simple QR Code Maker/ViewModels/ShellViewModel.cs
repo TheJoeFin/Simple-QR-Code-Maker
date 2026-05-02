@@ -1,8 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Navigation;
 using Simple_QR_Code_Maker.Contracts.Services;
+using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
@@ -22,12 +23,24 @@ public partial class ShellViewModel : ObservableRecipient
     public partial bool IsBackEnabled { get; set; }
 
     [ObservableProperty]
+    public partial bool IsBackVisible { get; set; }
+
+    [ObservableProperty]
     public partial object? Selected { get; set; }
     public ObservableCollection<TitleBarSearchResult> TitleBarSearchResults { get; } = [];
 
     [RelayCommand]
     private void Back()
     {
+        object? currentPageViewModel = NavigationService.Frame?.GetPageViewModel();
+
+        if (currentPageViewModel is ITitleBarBackNavigation titleBarBackNavigation
+            && titleBarBackNavigation.CanUseTitleBarBack)
+        {
+            titleBarBackNavigation.NavigateBack();
+            return;
+        }
+
         if (NavigationService.CanGoBack)
             NavigationService.GoBack();
     }
@@ -45,8 +58,25 @@ public partial class ShellViewModel : ObservableRecipient
 
     private void OnNavigated(object sender, NavigationEventArgs e)
     {
-        IsBackEnabled = NavigationService.CanGoBack;
+        UpdateBackState();
         ClearTitleBarSearch();
+    }
+
+    private void UpdateBackState()
+    {
+        bool canGoBack = NavigationService.CanGoBack;
+        object? currentPageViewModel = NavigationService.Frame?.GetPageViewModel();
+
+        if (currentPageViewModel is ITitleBarBackNavigation titleBarBackNavigation)
+        {
+            bool canUseTitleBarBack = canGoBack && titleBarBackNavigation.CanUseTitleBarBack;
+            IsBackVisible = canUseTitleBarBack;
+            IsBackEnabled = canUseTitleBarBack;
+            return;
+        }
+
+        IsBackVisible = canGoBack;
+        IsBackEnabled = canGoBack;
     }
 
     public void ClearTitleBarSearch()
@@ -123,7 +153,7 @@ public partial class ShellViewModel : ObservableRecipient
                     return;
                 }
 
-                NavigationService.NavigateTo(typeof(MainViewModel).FullName!, searchResult);
+                NavigationService.NavigateTo(typeof(MainViewModel).FullName!, WrapMainNavigationParameter(searchResult, currentPageViewModel));
                 return;
 
             case TitleBarSearchResultKind.History when searchResult.HistoryItem is not null:
@@ -135,7 +165,7 @@ public partial class ShellViewModel : ObservableRecipient
                     return;
                 }
 
-                NavigationService.NavigateTo(typeof(MainViewModel).FullName!, searchResult);
+                NavigationService.NavigateTo(typeof(MainViewModel).FullName!, WrapMainNavigationParameter(searchResult, currentPageViewModel));
                 return;
 
             case TitleBarSearchResultKind.Faq:
@@ -152,9 +182,28 @@ public partial class ShellViewModel : ObservableRecipient
                     return;
                 }
 
-                NavigationService.NavigateTo(typeof(MainViewModel).FullName!, searchResult);
+                NavigationService.NavigateTo(typeof(MainViewModel).FullName!, WrapMainNavigationParameter(searchResult, currentPageViewModel));
                 return;
         }
+    }
+
+    private static object WrapMainNavigationParameter(object parameter, object? currentPageViewModel)
+    {
+        if (currentPageViewModel is INavigationStateProvider navigationStateProvider
+            && currentPageViewModel is not MainViewModel)
+        {
+            return new MainNavigationParameter
+            {
+                Parameter = parameter,
+                BackNavigationState = new NavigationRestoreState
+                {
+                    PageKey = currentPageViewModel.GetType().FullName!,
+                    Parameter = navigationStateProvider.CreateNavigationState(),
+                },
+            };
+        }
+
+        return parameter;
     }
 
     private static IEnumerable<TitleBarSearchResult> GetBrandSearchResults(

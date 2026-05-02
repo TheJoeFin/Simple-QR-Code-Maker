@@ -24,7 +24,7 @@ using ZXing.QrCode.Internal;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-public partial class MainViewModel : ObservableRecipient, INavigationAware, INavigationStateProvider
+public partial class MainViewModel : ObservableRecipient, INavigationAware, INavigationStateProvider, ITitleBarBackNavigation
 {
     private const int LargeBatchThreshold = 24;
     private const int PreviewBatchSize = LargeBatchThreshold;
@@ -263,6 +263,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     public partial bool CopySharePopupOpen { get; set; } = false;
 
     [ObservableProperty]
+    public partial bool ShowBackButton { get; set; } = false;
+
+    public bool CanUseTitleBarBack => ShowBackButton;
+
+    [ObservableProperty]
     public partial System.Drawing.Bitmap? LogoImage { get; set; } = null;
 
     [ObservableProperty]
@@ -297,6 +302,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private readonly DispatcherTimer copyInfoBarTimer = new();
     private bool _suppressEmojiSelectionChanges = false;
     private int _emojiPreviewRefreshVersion = 0;
+    private NavigationRestoreState? backNavigationState = null;
 
     public bool ShowMarkRedirectorSafeAction => IsRedirectorInfoBarActive && !string.IsNullOrWhiteSpace(CurrentRedirectorWarningDomain);
 
@@ -1905,9 +1911,26 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     [RelayCommand]
     private void GoToSettings() =>
-        // pass the current state as a HistoryItem to the settings page
-        // so when coming back it can be fully restored
-        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!, CreateCurrentStateHistoryItem());
+        // Pass the current state plus any secondary-page back target
+        // so settings can return to the same Main page context.
+        NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!, CreateMainNavigationParameter());
+
+    [RelayCommand]
+    private void GoBack()
+    {
+        if (backNavigationState is null)
+        {
+            if (NavigationService.CanGoBack)
+                NavigationService.GoBack();
+
+            return;
+        }
+
+        NavigationRestoreState restoreState = CreateUpdatedBackNavigationState() ?? backNavigationState;
+        NavigationService.NavigateTo(restoreState.PageKey, restoreState.Parameter);
+    }
+
+    public void NavigateBack() => GoBack();
 
     [RelayCommand]
     private async Task MarkRedirectorDomainSafe()
@@ -1924,6 +1947,33 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private HistoryItem CreateCurrentStateHistoryItem()
     {
         return QrCodeDesignStateMapper.ToHistoryItem(CreateCurrentDesignState(LogoImage != null ? GetCurrentLogoPath() : null));
+    }
+
+    private MainNavigationParameter CreateMainNavigationParameter()
+    {
+        return new MainNavigationParameter
+        {
+            Parameter = CreateCurrentStateHistoryItem(),
+            BackNavigationState = CreateUpdatedBackNavigationState(),
+        };
+    }
+
+    private NavigationRestoreState? CreateUpdatedBackNavigationState()
+    {
+        if (backNavigationState is null)
+            return null;
+
+        if (backNavigationState.PageKey == typeof(DecodingViewModel).FullName!
+            && backNavigationState.Parameter is DecodingNavigationState decodingNavigationState)
+        {
+            return new NavigationRestoreState
+            {
+                PageKey = backNavigationState.PageKey,
+                Parameter = decodingNavigationState.WithNavigationHistoryItem(CreateCurrentStateHistoryItem()),
+            };
+        }
+
+        return backNavigationState;
     }
 
     public object? CreateNavigationState() => CreateCurrentStateHistoryItem();
@@ -2315,6 +2365,17 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     public async void OnNavigatedTo(object parameter)
     {
+        backNavigationState = null;
+        ShowBackButton = false;
+
+        object? effectiveParameter = parameter;
+        if (parameter is MainNavigationParameter mainNavigationParameter)
+        {
+            backNavigationState = mainNavigationParameter.BackNavigationState;
+            ShowBackButton = backNavigationState is not null;
+            effectiveParameter = mainNavigationParameter.Parameter;
+        }
+
         await historyService.LoadAsync(HistoryItems);
         await brandService.LoadAsync(BrandItems);
 
@@ -2350,17 +2411,17 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             await LocalSettingsService.SaveSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
         }
 
-        if (parameter is TitleBarSearchResult searchResult)
+        if (effectiveParameter is TitleBarSearchResult searchResult)
         {
             await ApplyTitleBarSearchNavigationAsync(searchResult);
         }
         // Check if parameter is a HistoryItem with full state restoration
-        else if (parameter is HistoryItem historyItem)
+        else if (effectiveParameter is HistoryItem historyItem)
         {
             RestoreFromHistoryItem(historyItem);
         }
         // Otherwise check for text rehydration from other pages
-        else if (parameter is string textParam && !string.IsNullOrWhiteSpace(textParam))
+        else if (effectiveParameter is string textParam && !string.IsNullOrWhiteSpace(textParam))
         {
             ApplyDocumentText(textParam);
         }

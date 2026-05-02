@@ -2,13 +2,13 @@
     x:Class="Simple_QR_Code_Maker.Views.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:Name="SettingsPageRoot"
     xmlns:controls="using:Simple_QR_Code_Maker.Controls"
     xmlns:converters="using:Simple_QR_Code_Maker.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:settingsControls="using:CommunityToolkit.WinUI.Controls"
     xmlns:xaml="using:Microsoft.UI.Xaml"
+    x:Name="SettingsPageRoot"
     mc:Ignorable="d">
     <Page.Resources>
         <converters:EnumIsEqualConverter x:Key="EnumIsEqualConverter" />
@@ -23,7 +23,6 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Spacing="12">
-            <AppBarButton Command="{x:Bind ViewModel.GoHomeCommand}" Icon="Back" />
             <TextBlock x:Uid="Settings_Title" Style="{StaticResource PageTitleStyle}" />
         </StackPanel>
 
@@ -112,6 +111,41 @@
                     Style="{ThemeResource SubtitleTextBlockStyle}"
                     Text="QR Code" />
 
+                <settingsControls:SettingsExpander
+                    Description="Choose whether the app opens in QR code creation or QR code reading mode"
+                    Header="Launch mode"
+                    IsExpanded="True">
+                    <settingsControls:SettingsExpander.HeaderIcon>
+                        <controls:QrCodeIcon />
+                    </settingsControls:SettingsExpander.HeaderIcon>
+                    <settingsControls:SettingsExpander.Items>
+                        <settingsControls:SettingsCard ContentAlignment="Left">
+                            <StackPanel>
+                                <RadioButton
+                                    Command="{x:Bind ViewModel.SwitchLaunchModeCommand}"
+                                    CommandParameter="CreatingQrCodes"
+                                    Content="Creating QR Codes"
+                                    FontSize="15"
+                                    GroupName="LaunchMode"
+                                    IsChecked="{x:Bind ViewModel.LaunchMode,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=CreatingQrCodes,
+                                                       Mode=OneWay}" />
+                                <RadioButton
+                                    Command="{x:Bind ViewModel.SwitchLaunchModeCommand}"
+                                    CommandParameter="ReadingQrCodes"
+                                    Content="Reading QR Codes"
+                                    FontSize="15"
+                                    GroupName="LaunchMode"
+                                    IsChecked="{x:Bind ViewModel.LaunchMode,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=ReadingQrCodes,
+                                                       Mode=OneWay}" />
+                            </StackPanel>
+                        </settingsControls:SettingsCard>
+                    </settingsControls:SettingsExpander.Items>
+                </settingsControls:SettingsExpander>
+
                 <!--  Multi-line handling  -->
                 <settingsControls:SettingsExpander
                     Description="How to handle multiple lines when making QR Codes"
@@ -180,8 +214,8 @@
                     </settingsControls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.WarnWhenLikelyRedirector,
-                                       Mode=TwoWay,
-                                       UpdateSourceTrigger=PropertyChanged}"
+                                      Mode=TwoWay,
+                                      UpdateSourceTrigger=PropertyChanged}"
                         OffContent="Off"
                         OnContent="On" />
                 </settingsControls:SettingsCard>
@@ -195,7 +229,7 @@
                             <StackPanel Spacing="8">
                                 <TextBlock
                                     Text="{x:Bind ViewModel.SafeRedirectorDomainsEmptyStateText,
-                                                   Mode=OneWay}"
+                                                  Mode=OneWay}"
                                     TextWrapping="Wrap"
                                     Visibility="{x:Bind ViewModel.SafeRedirectorDomainsEmptyStateText,
                                                         Converter={StaticResource EmptyStringToCollapsedConverter},
@@ -214,7 +248,8 @@
                                                     TextWrapping="Wrap" />
                                                 <Button
                                                     Grid.Column="1"
-                                                    Command="{Binding ViewModel.RemoveSafeRedirectorDomainCommand, ElementName=SettingsPageRoot}"
+                                                    Command="{Binding ViewModel.RemoveSafeRedirectorDomainCommand,
+                                                                      ElementName=SettingsPageRoot}"
                                                     CommandParameter="{x:Bind}"
                                                     Content="Remove" />
                                             </Grid>
@@ -226,7 +261,7 @@
                                     Command="{x:Bind ViewModel.ClearSafeRedirectorDomainsCommand}"
                                     Content="Clear all"
                                     IsEnabled="{x:Bind ViewModel.HasSafeRedirectorDomains,
-                                                        Mode=OneWay}" />
+                                                       Mode=OneWay}" />
                             </StackPanel>
                         </settingsControls:SettingsCard>
                     </settingsControls:SettingsExpander.Items>

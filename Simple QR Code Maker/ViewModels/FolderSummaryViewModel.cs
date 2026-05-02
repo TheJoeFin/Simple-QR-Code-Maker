@@ -13,7 +13,7 @@ using WinRT.Interop;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAware
+public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAware, ITitleBarBackNavigation
 {
     private NavigationRestoreState? _backNavigationState;
 
@@ -22,6 +22,8 @@ public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAw
 
     [ObservableProperty]
     public partial string FolderName { get; set; } = string.Empty;
+
+    public bool CanUseTitleBarBack => true;
 
     private INavigationService NavigationService { get; }
 
@@ -55,6 +57,8 @@ public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAw
 
         NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!);
     }
+
+    public void NavigateBack() => GoBack();
 
     [RelayCommand]
     private async Task SaveAsCsv()

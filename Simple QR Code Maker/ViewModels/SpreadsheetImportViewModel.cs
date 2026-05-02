@@ -11,7 +11,7 @@ using System.Diagnostics;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigationAware
+public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigationAware, ITitleBarBackNavigation
 {
     private const int PreviewRowLimit = 200;
     private const string IdColumnName = "id";
@@ -89,6 +89,8 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     }
 
     public bool CanImport => !IsImportInProgress && SelectedColumnIndex >= 0 && _importableValueCount > 0;
+
+    public bool CanUseTitleBarBack => true;
 
     public string FileDescription => string.IsNullOrWhiteSpace(SourceFileName)
         ? "Review the detected rows and choose a column to import."
@@ -212,6 +214,8 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
 
         _navigationService.NavigateTo(typeof(MainViewModel).FullName!, _returnState);
     }
+
+    public void NavigateBack() => GoBack();
 
     [RelayCommand(CanExecute = nameof(CanImport))]
     private async Task Import()
