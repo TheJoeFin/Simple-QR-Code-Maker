@@ -52,6 +52,37 @@ public class DecodingNavigationState
     public IReadOnlyList<FolderFileNavigationState> FolderFiles { get; init; } = [];
 
     public DecodingImageNavigationState? CurrentDecodingItem { get; init; }
+
+    public DecodingNavigationState WithNavigationHistoryItem(HistoryItem? navigationHistoryItem)
+    {
+        return new DecodingNavigationState
+        {
+            NavigationHistoryItem = navigationHistoryItem,
+            CurrentSourceKind = CurrentSourceKind,
+            CurrentSourceFilePath = CurrentSourceFilePath,
+            CurrentCachedImagePath = CurrentCachedImagePath,
+            CurrentFolderPath = CurrentFolderPath,
+            CurrentFolderFilePath = CurrentFolderFilePath,
+            InfoBarMessage = InfoBarMessage,
+            IsInfoBarShowing = IsInfoBarShowing,
+            DecodedContentInfoBarTitle = DecodedContentInfoBarTitle,
+            DecodedContentInfoBarSeverity = DecodedContentInfoBarSeverity,
+            IsDecodedContentUrl = IsDecodedContentUrl,
+            IsLikelyRedirector = IsLikelyRedirector,
+            RedirectorWarningMessage = RedirectorWarningMessage,
+            IsRedirectorWarningVisible = IsRedirectorWarningVisible,
+            IsAdvancedToolsVisible = IsAdvancedToolsVisible,
+            IsCameraPaneOpen = IsCameraPaneOpen,
+            IsFaqPaneOpen = IsFaqPaneOpen,
+            IsDecodingHistoryPaneOpen = IsDecodingHistoryPaneOpen,
+            IsFolderPaneOpen = IsFolderPaneOpen,
+            IsCutOutImagesPaneOpen = IsCutOutImagesPaneOpen,
+            FolderPaneFolderName = FolderPaneFolderName,
+            DecodingImageItems = DecodingImageItems,
+            FolderFiles = FolderFiles,
+            CurrentDecodingItem = CurrentDecodingItem,
+        };
+    }
 }
 
 public class FolderFileNavigationState

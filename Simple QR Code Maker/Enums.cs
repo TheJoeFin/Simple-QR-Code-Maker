@@ -13,6 +13,12 @@ public enum MultiLineCodeMode
     MultilineOneCode = 1,
 }
 
+public enum LaunchMode
+{
+    CreatingQrCodes = 0,
+    ReadingQrCodes = 1,
+}
+
 public enum QrContentKind
 {
     PlainText = 0,
