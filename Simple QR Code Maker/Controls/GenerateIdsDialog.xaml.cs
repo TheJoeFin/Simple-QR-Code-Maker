@@ -31,7 +31,7 @@ public sealed partial class GenerateIdsDialog : ContentDialog
     [ObservableProperty]
     public partial string PreviewText { get; set; } = string.Empty;
 
-    public IReadOnlyList<SpreadsheetGeneratedIdFormatOption> GeneratedIdFormatOptions => SpreadsheetGeneratedIdFormatOption.All;
+    public static IReadOnlyList<SpreadsheetGeneratedIdFormatOption> GeneratedIdFormatOptions => SpreadsheetGeneratedIdFormatOption.All;
 
     public bool IsNanoIdLengthEnabled => SelectedGeneratedIdFormatOption?.Format == SpreadsheetGeneratedIdFormat.NanoId;
 
@@ -57,7 +57,7 @@ public sealed partial class GenerateIdsDialog : ContentDialog
 
     private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
-        if (!TryBuildRequest(out int count, out GeneratedIdOptions? options, out string validationMessage))
+        if (!TryBuildRequest(out int count, out GeneratedIdOptions options, out string validationMessage))
         {
             ValidationMessage = validationMessage;
             args.Cancel = true;
@@ -65,7 +65,7 @@ public sealed partial class GenerateIdsDialog : ContentDialog
         }
 
         int previewCount = Math.Min(count, PreviewLimit);
-        List<string> values = new(count);
+        List<string> values = [with(count)];
         if (_previewValues.Count == previewCount)
             values.AddRange(_previewValues);
         else
@@ -97,7 +97,7 @@ public sealed partial class GenerateIdsDialog : ContentDialog
     {
         ValidationMessage = string.Empty;
 
-        if (!TryBuildRequest(out int count, out GeneratedIdOptions? options, out _))
+        if (!TryBuildRequest(out int count, out GeneratedIdOptions options, out _))
         {
             _previewValues.Clear();
             PreviewDescription = string.Empty;
@@ -115,10 +115,10 @@ public sealed partial class GenerateIdsDialog : ContentDialog
         IsPrimaryButtonEnabled = true;
     }
 
-    private bool TryBuildRequest(out int count, out GeneratedIdOptions? options, out string validationMessage)
+    private bool TryBuildRequest(out int count, out GeneratedIdOptions options, out string validationMessage)
     {
         count = 0;
-        options = null;
+        options = new();
         validationMessage = string.Empty;
 
         if (!TryGetWholeNumber(CountNumberBox.Value, out count))
