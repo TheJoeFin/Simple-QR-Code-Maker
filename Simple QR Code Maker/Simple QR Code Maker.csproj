@@ -14,6 +14,9 @@
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <WindowsAppSdkBootstrapInitialize>false</WindowsAppSdkBootstrapInitialize>
+    <WindowsAppSdkDeploymentManagerInitialize>false</WindowsAppSdkDeploymentManagerInitialize>
+    <WindowsAppSdkUndockedRegFreeWinRTInitialize>false</WindowsAppSdkUndockedRegFreeWinRTInitialize>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>preview</LangVersion>
@@ -52,8 +55,8 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.4.0" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1721" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260416003" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1839" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.0.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
     <PackageReference Include="PDFsharp" Version="6.2.4" />
     <PackageReference Include="System.Text.Json" Version="10.0.7" />
@@ -117,7 +120,7 @@
 		<PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
 		<PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
 		<PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
-		<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+		<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">False</PublishTrimmed>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
 		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
