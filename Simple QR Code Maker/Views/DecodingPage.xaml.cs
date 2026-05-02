@@ -365,8 +365,8 @@ public sealed partial class DecodingPage : Page
             ? new GridLength(1, GridUnitType.Star)
             : GridLength.Auto;
 
-        TopSpacerRow.Height = ViewModel.HasImage
-            ? new GridLength(0)
-            : new GridLength(ActionButtonsPanel.ActualHeight);
+        //TopSpacerRow.Height = ViewModel.HasImage
+        //    ? new GridLength(1, GridUnitType.Star)
+        //    : new GridLength(1, GridUnitType.Auto);
     }
 }
