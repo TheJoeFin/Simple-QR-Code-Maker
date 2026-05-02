@@ -85,8 +85,6 @@ public sealed partial class DecodingPage : Page
         UpdateCursorForModes();
     }
 
-    private async void OpenNewFileButton_Click(object sender, RoutedEventArgs e) => await ViewModel.OpenNewFileCommand.ExecuteAsync(null);
-
     private async void PasteImageButton_Click(object sender, RoutedEventArgs e) => await ViewModel.OpenFileFromClipboardCommand.ExecuteAsync(null);
 
     private async void PasteKeyboardAccelerator_Invoked(KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)

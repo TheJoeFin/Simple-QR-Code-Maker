@@ -16,6 +16,7 @@ public sealed partial class ShellPage : Page
     {
         Interval = TimeSpan.FromMilliseconds(250)
     };
+    private bool isTitleBarConfigured;
 
     public ShellViewModel ViewModel
     {
@@ -29,13 +30,31 @@ public sealed partial class ShellPage : Page
 
         ViewModel.NavigationService.Frame = NavigationFrame;
 
+        App.MainWindow.Closed += MainWindow_Closed;
+        ViewModel.NavigationService.Navigated += NavigationService_Navigated;
+        titleBarSearchTimer.Tick += TitleBarSearchTimer_Tick;
+        Loaded += ShellPage_Loaded;
+    }
+
+    private void ShellPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (TryConfigureTitleBar())
+            return;
+
+        DispatcherQueue.TryEnqueue(() => _ = TryConfigureTitleBar());
+    }
+
+    private bool TryConfigureTitleBar()
+    {
+        if (isTitleBarConfigured || App.MainWindow.Content != this || AppTitleBar.XamlRoot is null)
+            return false;
+
         App.MainWindow.ExtendsContentIntoTitleBar = true;
         App.MainWindow.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         App.MainWindow.SetTitleBar(AppTitleBar);
-        App.MainWindow.Closed += MainWindow_Closed;
         AppTitleBar.Title = App.MainWindow.Title;
-        ViewModel.NavigationService.Navigated += NavigationService_Navigated;
-        titleBarSearchTimer.Tick += TitleBarSearchTimer_Tick;
+        isTitleBarConfigured = true;
+        return true;
     }
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
@@ -43,6 +62,7 @@ public sealed partial class ShellPage : Page
         titleBarSearchTimer.Stop();
         titleBarSearchTimer.Tick -= TitleBarSearchTimer_Tick;
         ViewModel.NavigationService.Navigated -= NavigationService_Navigated;
+        Loaded -= ShellPage_Loaded;
 
         try
         {

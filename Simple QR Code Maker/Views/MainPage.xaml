@@ -400,9 +400,9 @@
                                             Command="{x:Bind ViewModel.GoToSettingsCommand}"
                                             Text="Settings"
                                             ToolTipService.ToolTip="Simple QR Code Maker Settings">
-                                            <controls:IconAndTextButton.Icon>
-                                                <SymbolIcon Symbol="Setting" />
-                                            </controls:IconAndTextButton.Icon>
+                                            <controls:IconAndTextButton.IconSource>
+                                                <SymbolIconSource Symbol="Setting" />
+                                            </controls:IconAndTextButton.IconSource>
                                         </controls:IconAndTextButton>
                                     </StackPanel>
                                 </StackPanel>
@@ -530,9 +530,9 @@
                                         Visibility="{x:Bind ViewModel.ShowRedirectorSettingsAction,
                                                             Converter={StaticResource BoolToVisibility},
                                                             Mode=OneWay}">
-                                        <controls:IconAndTextHyperlinkButton.Icon>
-                                            <SymbolIcon Symbol="Setting" />
-                                        </controls:IconAndTextHyperlinkButton.Icon>
+                                        <controls:IconAndTextHyperlinkButton.IconSource>
+                                            <SymbolIconSource Symbol="Setting" />
+                                        </controls:IconAndTextHyperlinkButton.IconSource>
                                     </controls:IconAndTextHyperlinkButton>
                                 </StackPanel>
                             </InfoBar.Content>
