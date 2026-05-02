@@ -7,13 +7,14 @@ namespace Simple_QR_Code_Maker.Helpers;
 
 public static class ExcelSpreadsheetHelper
 {
-    private static readonly HashSet<string> SupportedExtensions = new(StringComparer.OrdinalIgnoreCase)
-    {
+    private static readonly HashSet<string> SupportedExtensions =
+    [
+    with(StringComparer.OrdinalIgnoreCase),
         ".csv",
         ".tsv",
         ".xlsx",
         ".xls",
-    };
+    ];
 
     private static readonly object Missing = Type.Missing;
     private static bool? _cachedAvailability;
@@ -87,13 +88,12 @@ public static class ExcelSpreadsheetHelper
     {
         string contents = await File.ReadAllTextAsync(filePath);
         List<List<string>> rows = CsvParser.Parse(contents, delimiter);
-        List<SpreadsheetSourceRow> sourceRows = rows
+        List<SpreadsheetSourceRow> sourceRows = [.. rows
             .Select((row, index) => new SpreadsheetSourceRow
             {
                 SourceRowIndex = index,
                 Cells = [.. row],
-            })
-            .ToList();
+            })];
 
         return new SpreadsheetReadResult
         {
@@ -199,13 +199,13 @@ public static class ExcelSpreadsheetHelper
                     Rows = [],
                 };
 
-            List<SpreadsheetSourceRow> rows = new(rowCount);
+            List<SpreadsheetSourceRow> rows = [with(rowCount)];
 
             if (cellsCollection is not null)
             {
                 for (int row = 1; row <= rowCount; row++)
                 {
-                    List<string> currentRow = new(columnCount);
+                    List<string> currentRow = [with(columnCount)];
                     bool hasContent = false;
 
                     for (int column = 1; column <= columnCount; column++)
@@ -294,13 +294,9 @@ public static class ExcelSpreadsheetHelper
                 Missing);
 
             worksheets = GetProperty(workbook, "Worksheets");
-            worksheet = worksheets is null
+            worksheet = (worksheets is null
                 ? null
-                : GetFirstWorksheetWithData(worksheets);
-
-            if (worksheet is null)
-                throw new InvalidOperationException("Unable to find a worksheet with data.");
-
+                : GetFirstWorksheetWithData(worksheets)) ?? throw new InvalidOperationException("Unable to find a worksheet with data.");
             usedRange = GetProperty(worksheet, "UsedRange");
             int startRow = Convert.ToInt32(GetProperty(usedRange, "Row"));
             int startColumn = Convert.ToInt32(GetProperty(usedRange, "Column"));
@@ -412,9 +408,12 @@ public static class ExcelSpreadsheetHelper
         }
     }
 
-    private static void SetWorksheetCellText(object cellsCollection, int row, int column, string value)
+    private static void SetWorksheetCellText(object? cellsCollection, int row, int column, string value)
     {
         object? cell = null;
+
+        if (cellsCollection is null)
+            return;
 
         try
         {

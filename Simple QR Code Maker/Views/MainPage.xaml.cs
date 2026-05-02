@@ -180,7 +180,7 @@ public sealed partial class MainPage : Page
         ViewModel.QrCodeBitmaps.CollectionChanged -= QrCodeBitmaps_CollectionChanged;
     }
 
-    private void MainContentScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+    private void MainContentScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
     {
         UpdateScrollToCodesButton();
     }

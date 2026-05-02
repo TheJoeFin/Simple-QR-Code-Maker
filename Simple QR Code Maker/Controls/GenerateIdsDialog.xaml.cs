@@ -31,7 +31,7 @@ public sealed partial class GenerateIdsDialog : ContentDialog
     [ObservableProperty]
     public partial string PreviewText { get; set; } = string.Empty;
 
-    public static IReadOnlyList<SpreadsheetGeneratedIdFormatOption> GeneratedIdFormatOptions => SpreadsheetGeneratedIdFormatOption.All;
+    public IReadOnlyList<SpreadsheetGeneratedIdFormatOption> GeneratedIdFormatOptions => SpreadsheetGeneratedIdFormatOption.All;
 
     public bool IsNanoIdLengthEnabled => SelectedGeneratedIdFormatOption?.Format == SpreadsheetGeneratedIdFormat.NanoId;
 
