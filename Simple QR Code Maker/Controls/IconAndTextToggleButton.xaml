@@ -11,17 +11,20 @@
     <ToggleButton
         Checked="ToggleButton_Checked"
         Click="ToggleButton_Click"
-        Command="{Binding Command, ElementName=Root}"
-        CommandParameter="{Binding CommandParameter, ElementName=Root}"
+        Command="{x:Bind Command, Mode=OneWay}"
+        CommandParameter="{x:Bind CommandParameter, Mode=OneWay}"
         Indeterminate="ToggleButton_Indeterminate"
-        IsChecked="{Binding IsChecked, ElementName=Root, Mode=TwoWay}"
-        IsThreeState="{Binding IsThreeState, ElementName=Root}"
+        IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
+        IsThreeState="{x:Bind IsThreeState, Mode=OneWay}"
         Unchecked="ToggleButton_Unchecked">
         <StackPanel Orientation="Horizontal" Spacing="10">
             <Viewbox Height="16">
-                <ContentPresenter Content="{Binding Icon, ElementName=Root}" />
+                <Grid>
+                    <ContentPresenter x:Name="ExplicitIconPresenter" />
+                    <IconSourceElement x:Name="IconSourcePresenter" />
+                </Grid>
             </Viewbox>
-            <TextBlock Text="{Binding Text, ElementName=Root}" />
+            <TextBlock Text="{x:Bind DisplayText, Mode=OneWay}" />
         </StackPanel>
     </ToggleButton>
 </UserControl>

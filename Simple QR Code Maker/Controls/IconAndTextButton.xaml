@@ -10,13 +10,16 @@
 
     <Button
         Click="Button_Click"
-        Command="{Binding Command, ElementName=Root}"
-        CommandParameter="{Binding CommandParameter, ElementName=Root}">
+        Command="{x:Bind Command, Mode=OneWay}"
+        CommandParameter="{x:Bind CommandParameter, Mode=OneWay}">
         <StackPanel Orientation="Horizontal" Spacing="10">
             <Viewbox Height="16">
-                <ContentPresenter Content="{Binding Icon, ElementName=Root}" />
+                <Grid>
+                    <ContentPresenter x:Name="ExplicitIconPresenter" />
+                    <IconSourceElement x:Name="IconSourcePresenter" />
+                </Grid>
             </Viewbox>
-            <TextBlock Text="{Binding Text, ElementName=Root}" />
+            <TextBlock Text="{x:Bind DisplayText, Mode=OneWay}" />
         </StackPanel>
     </Button>
 </UserControl>
