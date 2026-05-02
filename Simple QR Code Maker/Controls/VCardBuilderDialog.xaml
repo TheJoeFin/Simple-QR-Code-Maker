@@ -8,6 +8,7 @@
     Title="Build vCard"
     CloseButtonText="Cancel"
     DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
     PrimaryButtonText="Apply"
     mc:Ignorable="d">
 
@@ -30,7 +31,7 @@
                     x:Name="FormattedNameTextBox"
                     Header="Formatted name"
                     PlaceholderText="Jane Doe"
-                    Text="{x:Bind FormattedName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.FormattedName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <Grid ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
@@ -41,12 +42,12 @@
                         Grid.Column="0"
                         Header="First name"
                         PlaceholderText="Jane"
-                        Text="{x:Bind FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBox
                         Grid.Column="1"
                         Header="Last name"
                         PlaceholderText="Doe"
-                        Text="{x:Bind LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
 
                 <Grid ColumnSpacing="8">
@@ -58,43 +59,43 @@
                     <TextBox
                         Grid.Column="0"
                         Header="Middle"
-                        Text="{x:Bind MiddleName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{x:Bind ViewModel.MiddleName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBox
                         Grid.Column="1"
                         Header="Prefix"
                         PlaceholderText="Dr."
-                        Text="{x:Bind Prefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{x:Bind ViewModel.Prefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBox
                         Grid.Column="2"
                         Header="Suffix"
                         PlaceholderText="Jr."
-                        Text="{x:Bind Suffix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{x:Bind ViewModel.Suffix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
 
                 <TextBox
                     Header="Organization"
                     PlaceholderText="Contoso"
-                    Text="{x:Bind Organization, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.Organization, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
                     Header="Title"
                     PlaceholderText="Product Manager"
-                    Text="{x:Bind JobTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.JobTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
                     Header="Mobile phone"
                     PlaceholderText="+1 555 0100"
-                    Text="{x:Bind MobilePhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.MobilePhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
                     Header="Email"
                     PlaceholderText="jane@example.com"
-                    Text="{x:Bind Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
                     Header="Website"
                     PlaceholderText="https://example.com"
-                    Text="{x:Bind Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <Button
                     HorizontalAlignment="Left"
@@ -105,12 +106,12 @@
                     </StackPanel>
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
-                            <MenuFlyoutItem Click="AddOptionalField_Click" Tag="WorkPhone" Text="Work phone" />
-                            <MenuFlyoutItem Click="AddOptionalField_Click" Tag="HomePhone" Text="Home phone" />
-                            <MenuFlyoutItem Click="AddOptionalField_Click" Tag="Nickname" Text="Nickname" />
-                            <MenuFlyoutItem Click="AddOptionalField_Click" Tag="Birthday" Text="Birthday" />
-                            <MenuFlyoutItem Click="AddOptionalField_Click" Tag="Address" Text="Address" />
-                            <MenuFlyoutItem Click="AddOptionalField_Click" Tag="Note" Text="Note" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.AddOptionalFieldCommand}" CommandParameter="WorkPhone" Text="Work phone" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.AddOptionalFieldCommand}" CommandParameter="HomePhone" Text="Home phone" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.AddOptionalFieldCommand}" CommandParameter="Nickname" Text="Nickname" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.AddOptionalFieldCommand}" CommandParameter="Birthday" Text="Birthday" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.AddOptionalFieldCommand}" CommandParameter="Address" Text="Address" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.AddOptionalFieldCommand}" CommandParameter="Note" Text="Note" />
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>
@@ -121,7 +122,7 @@
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     CornerRadius="8"
-                    Visibility="{x:Bind WorkPhoneVisibility, Mode=OneWay}">
+                    Visibility="{x:Bind ViewModel.WorkPhoneVisibility, Mode=OneWay}">
                     <StackPanel Spacing="8">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -136,15 +137,15 @@
                             <HyperlinkButton
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
-                                Click="RemoveOptionalField_Click"
-                                Tag="WorkPhone"
+                                Command="{x:Bind ViewModel.RemoveOptionalFieldCommand}"
+                                CommandParameter="WorkPhone"
                                 ToolTipService.ToolTip="Remove work phone">
                                 <SymbolIcon Symbol="Delete" />
                             </HyperlinkButton>
                         </Grid>
                         <TextBox
                             PlaceholderText="+1 555 0101"
-                            Text="{x:Bind WorkPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{x:Bind ViewModel.WorkPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </Border>
 
@@ -154,7 +155,7 @@
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     CornerRadius="8"
-                    Visibility="{x:Bind HomePhoneVisibility, Mode=OneWay}">
+                    Visibility="{x:Bind ViewModel.HomePhoneVisibility, Mode=OneWay}">
                     <StackPanel Spacing="8">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -169,15 +170,15 @@
                             <HyperlinkButton
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
-                                Click="RemoveOptionalField_Click"
-                                Tag="HomePhone"
+                                Command="{x:Bind ViewModel.RemoveOptionalFieldCommand}"
+                                CommandParameter="HomePhone"
                                 ToolTipService.ToolTip="Remove home phone">
                                 <SymbolIcon Symbol="Delete" />
                             </HyperlinkButton>
                         </Grid>
                         <TextBox
                             PlaceholderText="+1 555 0102"
-                            Text="{x:Bind HomePhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{x:Bind ViewModel.HomePhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </Border>
 
@@ -187,7 +188,7 @@
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     CornerRadius="8"
-                    Visibility="{x:Bind NicknameVisibility, Mode=OneWay}">
+                    Visibility="{x:Bind ViewModel.NicknameVisibility, Mode=OneWay}">
                     <StackPanel Spacing="8">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -202,15 +203,15 @@
                             <HyperlinkButton
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
-                                Click="RemoveOptionalField_Click"
-                                Tag="Nickname"
+                                Command="{x:Bind ViewModel.RemoveOptionalFieldCommand}"
+                                CommandParameter="Nickname"
                                 ToolTipService.ToolTip="Remove nickname">
                                 <SymbolIcon Symbol="Delete" />
                             </HyperlinkButton>
                         </Grid>
                         <TextBox
                             PlaceholderText="Janie"
-                            Text="{x:Bind Nickname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{x:Bind ViewModel.Nickname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </Border>
 
@@ -220,7 +221,7 @@
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     CornerRadius="8"
-                    Visibility="{x:Bind BirthdayVisibility, Mode=OneWay}">
+                    Visibility="{x:Bind ViewModel.BirthdayVisibility, Mode=OneWay}">
                     <StackPanel Spacing="8">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -235,15 +236,15 @@
                             <HyperlinkButton
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
-                                Click="RemoveOptionalField_Click"
-                                Tag="Birthday"
+                                Command="{x:Bind ViewModel.RemoveOptionalFieldCommand}"
+                                CommandParameter="Birthday"
                                 ToolTipService.ToolTip="Remove birthday">
                                 <SymbolIcon Symbol="Delete" />
                             </HyperlinkButton>
                         </Grid>
                         <TextBox
                             PlaceholderText="1990-10-21"
-                            Text="{x:Bind Birthday, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{x:Bind ViewModel.Birthday, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </Border>
 
@@ -253,7 +254,7 @@
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     CornerRadius="8"
-                    Visibility="{x:Bind AddressVisibility, Mode=OneWay}">
+                    Visibility="{x:Bind ViewModel.AddressVisibility, Mode=OneWay}">
                     <StackPanel Spacing="8">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -268,15 +269,15 @@
                             <HyperlinkButton
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
-                                Click="RemoveOptionalField_Click"
-                                Tag="Address"
+                                Command="{x:Bind ViewModel.RemoveOptionalFieldCommand}"
+                                CommandParameter="Address"
                                 ToolTipService.ToolTip="Remove address">
                                 <SymbolIcon Symbol="Delete" />
                             </HyperlinkButton>
                         </Grid>
                         <TextBox
                             Header="Street"
-                            Text="{x:Bind StreetAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{x:Bind ViewModel.StreetAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <Grid ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -285,11 +286,11 @@
                             <TextBox
                                 Grid.Column="0"
                                 Header="City"
-                                Text="{x:Bind Locality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{x:Bind ViewModel.Locality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox
                                 Grid.Column="1"
                                 Header="State / region"
-                                Text="{x:Bind Region, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{x:Bind ViewModel.Region, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                         <Grid ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
@@ -299,11 +300,11 @@
                             <TextBox
                                 Grid.Column="0"
                                 Header="Postal code"
-                                Text="{x:Bind PostalCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{x:Bind ViewModel.PostalCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox
                                 Grid.Column="1"
                                 Header="Country"
-                                Text="{x:Bind Country, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{x:Bind ViewModel.Country, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -314,7 +315,7 @@
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     CornerRadius="8"
-                    Visibility="{x:Bind NoteVisibility, Mode=OneWay}">
+                    Visibility="{x:Bind ViewModel.NoteVisibility, Mode=OneWay}">
                     <StackPanel Spacing="8">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -329,8 +330,8 @@
                             <HyperlinkButton
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
-                                Click="RemoveOptionalField_Click"
-                                Tag="Note"
+                                Command="{x:Bind ViewModel.RemoveOptionalFieldCommand}"
+                                CommandParameter="Note"
                                 ToolTipService.ToolTip="Remove note">
                                 <SymbolIcon Symbol="Delete" />
                             </HyperlinkButton>
@@ -339,7 +340,7 @@
                             MinHeight="72"
                             AcceptsReturn="True"
                             PlaceholderText="Add contact notes"
-                            Text="{x:Bind Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Text="{x:Bind ViewModel.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>
@@ -349,7 +350,7 @@
                     AcceptsReturn="True"
                     Header="Preview"
                     IsReadOnly="True"
-                    Text="{x:Bind PreviewVCard, Mode=OneWay}"
+                    Text="{x:Bind ViewModel.PreviewVCard, Mode=OneWay}"
                     TextWrapping="Wrap" />
             </StackPanel>
         </Border>

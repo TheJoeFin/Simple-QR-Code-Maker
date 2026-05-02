@@ -8,6 +8,7 @@
     Title="Generate IDs"
     CloseButtonText="Cancel"
     DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
     PrimaryButtonText="Add"
     mc:Ignorable="d">
 
@@ -31,66 +32,69 @@
                     Minimum="1"
                     SmallChange="1"
                     SpinButtonPlacementMode="Compact"
-                    ValueChanged="NumberBox_ValueChanged"
-                    Value="20" />
+                    Value="{x:Bind ViewModel.GeneratedIdCount,
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged}" />
 
                 <ComboBox
                     DisplayMemberPath="DisplayName"
                     Header="ID style"
-                    ItemsSource="{x:Bind GeneratedIdFormatOptions,
+                    ItemsSource="{x:Bind ViewModel.GeneratedIdFormatOptions,
                                          Mode=OneWay}"
-                    SelectedItem="{x:Bind SelectedGeneratedIdFormatOption,
-                                          Mode=TwoWay}" />
+                    SelectedItem="{x:Bind ViewModel.SelectedGeneratedIdFormatOption,
+                                           Mode=TwoWay}" />
 
                 <NumberBox
                     x:Name="NanoIdLengthNumberBox"
                     Header="NanoID length"
-                    IsEnabled="{x:Bind IsNanoIdLengthEnabled,
-                                       Mode=OneWay}"
+                    IsEnabled="{x:Bind ViewModel.IsNanoIdLengthEnabled,
+                                        Mode=OneWay}"
                     Minimum="1"
                     SmallChange="1"
                     SpinButtonPlacementMode="Compact"
-                    ValueChanged="NumberBox_ValueChanged"
-                    Visibility="{x:Bind NanoIdLengthVisibility,
-                                        Mode=OneWay}"
-                    Value="12" />
+                    Value="{x:Bind ViewModel.NanoIdLength,
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged}"
+                    Visibility="{x:Bind ViewModel.NanoIdLengthVisibility,
+                                         Mode=OneWay}"
+                    />
 
                 <TextBox
                     Header="Text before each ID"
                     PlaceholderText="https://example.com/"
-                    Text="{x:Bind PrefixText,
-                                  Mode=TwoWay,
-                                  UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.PrefixText,
+                                   Mode=TwoWay,
+                                   UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
                     Header="Text after each ID"
                     PlaceholderText="?source=qr-code"
-                    Text="{x:Bind SuffixText,
-                                  Mode=TwoWay,
-                                  UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.SuffixText,
+                                   Mode=TwoWay,
+                                   UpdateSourceTrigger=PropertyChanged}" />
 
                 <StackPanel Spacing="6">
                     <TextBlock
                         FontSize="14"
                         FontWeight="SemiBold"
                         Text="Preview" />
-                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind PreviewDescription, Mode=OneWay}" />
+                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.PreviewDescription, Mode=OneWay}" />
                     <TextBox
                         MinHeight="112"
                         AcceptsReturn="True"
                         IsReadOnly="True"
-                        Text="{x:Bind PreviewText,
-                                      Mode=OneWay}"
+                        Text="{x:Bind ViewModel.PreviewText,
+                                       Mode=OneWay}"
                         TextWrapping="Wrap" />
                 </StackPanel>
 
                 <InfoBar
                     Title="Check your settings"
                     IsClosable="False"
-                    IsOpen="{x:Bind IsValidationVisible,
-                                    Mode=OneWay}"
-                    Message="{x:Bind ValidationMessage,
+                    IsOpen="{x:Bind ViewModel.IsValidationVisible,
                                      Mode=OneWay}"
+                    Message="{x:Bind ViewModel.ValidationMessage,
+                                      Mode=OneWay}"
                     Severity="Error" />
             </StackPanel>
         </Border>

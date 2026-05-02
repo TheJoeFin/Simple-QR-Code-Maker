@@ -80,6 +80,11 @@ public partial class App : Application
             services.AddTransient<SettingsPage>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
+            services.AddTransient<EmailBuilderDialogViewModel>();
+            services.AddTransient<GenerateIdsDialogViewModel>();
+            services.AddTransient<UrlBuilderDialogViewModel>();
+            services.AddTransient<VCardBuilderDialogViewModel>();
+            services.AddTransient<WifiBuilderDialogViewModel>();
             services.AddTransient<SpreadsheetImportViewModel>();
             services.AddTransient<SpreadsheetImportPage>();
             services.AddTransient<FolderSummaryViewModel>();

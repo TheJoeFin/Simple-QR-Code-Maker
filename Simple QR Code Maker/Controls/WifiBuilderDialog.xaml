@@ -8,6 +8,7 @@
     Title="Build WiFi"
     CloseButtonText="Cancel"
     DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
     PrimaryButtonText="Apply"
     mc:Ignorable="d">
 
@@ -30,12 +31,11 @@
                     x:Name="SsidTextBox"
                     Header="Network name (SSID)"
                     PlaceholderText="Contoso Guest"
-                    Text="{x:Bind Ssid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.Ssid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ComboBox
-                    x:Name="AuthenticationTypeComboBox"
                     Header="Security type"
-                    SelectionChanged="AuthenticationTypeComboBox_SelectionChanged">
+                    SelectedIndex="{x:Bind ViewModel.SelectedAuthenticationTypeIndex, Mode=TwoWay}">
                     <ComboBoxItem Tag="WPA">WPA / WPA2 / WPA3</ComboBoxItem>
                     <ComboBoxItem Tag="WEP">WEP (Legacy)</ComboBoxItem>
                     <ComboBoxItem Tag="None">None (Open network)</ComboBoxItem>
@@ -44,12 +44,12 @@
                 <TextBox
                     Header="Password"
                     PlaceholderText="Enter the WiFi password"
-                    Text="{x:Bind Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    Visibility="{x:Bind PasswordVisibility, Mode=OneWay}" />
+                    Text="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Visibility="{x:Bind ViewModel.PasswordVisibility, Mode=OneWay}" />
 
                 <CheckBox
                     Content="This is a hidden network"
-                    IsChecked="{x:Bind IsHiddenNetwork, Mode=TwoWay}" />
+                    IsChecked="{x:Bind ViewModel.IsHiddenNetwork, Mode=TwoWay}" />
 
                 <InfoBar
                     IsOpen="True"
@@ -57,7 +57,7 @@
                     Message="Open networks do not use a password, and many devices will still show the network details before joining."
                     Severity="Informational"
                     Title="Open network"
-                    Visibility="{x:Bind OpenNetworkInfoVisibility, Mode=OneWay}" />
+                    Visibility="{x:Bind ViewModel.OpenNetworkInfoVisibility, Mode=OneWay}" />
 
                 <InfoBar
                     IsOpen="True"
@@ -65,7 +65,7 @@
                     Message="WEP is obsolete and insecure. Only use it if you need compatibility with very old equipment."
                     Severity="Warning"
                     Title="Legacy security"
-                    Visibility="{x:Bind LegacySecurityWarningVisibility, Mode=OneWay}" />
+                    Visibility="{x:Bind ViewModel.LegacySecurityWarningVisibility, Mode=OneWay}" />
 
                 <InfoBar
                     IsOpen="True"
@@ -80,7 +80,7 @@
                     AcceptsReturn="True"
                     Header="Preview"
                     IsReadOnly="True"
-                    Text="{x:Bind PreviewWifiPayload, Mode=OneWay}"
+                    Text="{x:Bind ViewModel.PreviewWifiPayload, Mode=OneWay}"
                     TextWrapping="Wrap" />
             </StackPanel>
         </Border>

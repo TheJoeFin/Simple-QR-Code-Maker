@@ -8,6 +8,7 @@
     Title="Build Email"
     CloseButtonText="Cancel"
     DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
     PrimaryButtonText="Apply"
     mc:Ignorable="d">
 
@@ -31,31 +32,31 @@
                     Header="To (required)"
                     InputScope="EmailSmtpAddress"
                     PlaceholderText="recipient@example.com"
-                    Text="{x:Bind To, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.To, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
                     Header="CC"
                     InputScope="EmailSmtpAddress"
                     PlaceholderText="cc@example.com"
-                    Text="{x:Bind Cc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.Cc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
                     Header="BCC"
                     InputScope="EmailSmtpAddress"
                     PlaceholderText="bcc@example.com"
-                    Text="{x:Bind Bcc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.Bcc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
                     Header="Subject"
                     PlaceholderText="Enter the email subject"
-                    Text="{x:Bind Subject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.Subject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
                     MinHeight="96"
                     AcceptsReturn="True"
                     Header="Body"
                     PlaceholderText="Enter the email body"
-                    Text="{x:Bind Body, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Text="{x:Bind ViewModel.Body, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     TextWrapping="Wrap" />
 
                 <InfoBar
@@ -70,7 +71,7 @@
                     AcceptsReturn="True"
                     Header="Preview"
                     IsReadOnly="True"
-                    Text="{x:Bind PreviewEmailUri, Mode=OneWay}"
+                    Text="{x:Bind ViewModel.PreviewEmailUri, Mode=OneWay}"
                     TextWrapping="Wrap" />
             </StackPanel>
         </Border>
