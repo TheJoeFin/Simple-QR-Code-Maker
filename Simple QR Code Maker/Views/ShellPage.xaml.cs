@@ -7,6 +7,7 @@ using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
 using System.Diagnostics;
+using Microsoft.UI.Xaml.Input;
 
 namespace Simple_QR_Code_Maker.Views;
 
@@ -102,8 +103,8 @@ public sealed partial class ShellPage : Page
 
     private async void TitleBarSearchTimer_Tick(object? sender, object e)
     {
-        titleBarSearchTimer.Stop();
-        await ViewModel.RefreshTitleBarSearchResultsAsync(TitleBarSearchBox.Text);
+        //titleBarSearchTimer.Stop();
+        //await ViewModel.RefreshTitleBarSearchResultsAsync(TitleBarSearchBox.Text);
     }
 
     private void TitleBarSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
@@ -126,13 +127,18 @@ public sealed partial class ShellPage : Page
 
     private void ClearTitleBarSearchBox()
     {
-        titleBarSearchTimer.Stop();
-        TitleBarSearchBox.Text = string.Empty;
+        //titleBarSearchTimer.Stop();
+        //TitleBarSearchBox.Text = string.Empty;
         ViewModel.ClearTitleBarSearch();
     }
 
     private void NavigationService_Navigated(object sender, NavigationEventArgs e)
     {
         ClearTitleBarSearchBox();
+    }
+
+    private void CtrlF_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        //TitleBarSearchBox.Focus(FocusState.Programmatic);
     }
 }
