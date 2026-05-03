@@ -8,7 +8,7 @@
     Title="Remove Background"
     CloseButtonText="Cancel"
     DefaultButton="Primary"
-    IsPrimaryButtonEnabled="{x:Bind IsPrimaryEnabled, Mode=OneWay}"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.IsPrimaryEnabled, Mode=OneWay}"
     PrimaryButtonText="Apply"
     mc:Ignorable="d">
 
@@ -58,9 +58,9 @@
                 BorderThickness="1"
                 CornerRadius="4">
                 <Image
-                    x:Name="OriginalImage"
                     MaxWidth="200"
                     MaxHeight="200"
+                    Source="{x:Bind ViewModel.OriginalImageSource, Mode=OneWay}"
                     Stretch="Uniform" />
             </Border>
 
@@ -74,29 +74,27 @@
                 CornerRadius="4">
                 <Grid>
                     <Image
-                        x:Name="ResultImage"
                         MaxWidth="200"
                         MaxHeight="200"
+                        Source="{x:Bind ViewModel.ResultImageSource, Mode=OneWay}"
                         Stretch="Uniform" />
                     <ProgressRing
-                        x:Name="ProcessingRing"
                         Width="36"
                         Height="36"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        IsActive="False" />
+                        IsActive="{x:Bind ViewModel.IsProcessing, Mode=OneWay}" />
                 </Grid>
             </Border>
         </Grid>
 
         <!--  Status text  -->
         <TextBlock
-            x:Name="StatusText"
             Grid.Row="2"
             HorizontalAlignment="Center"
             FontSize="12"
             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-            Text="Processing…"
-            Visibility="Collapsed" />
+            Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
+            Visibility="{x:Bind ViewModel.StatusVisibility, Mode=OneWay}" />
     </Grid>
 </ContentDialog>
