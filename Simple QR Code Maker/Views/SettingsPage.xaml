@@ -467,7 +467,7 @@
                         <FontIcon Glyph="&#xE8F1;" />
                     </settingsControls:SettingsExpander.HeaderIcon>
                     <settingsControls:SettingsExpander.Items>
-                        <settingsControls:SettingsCard Description="Create, edit, and convert icon files" Header="Simple Icon FileMaker">
+                        <settingsControls:SettingsCard Description="Create, edit, and convert icon files" Header="Simple Icon File Maker">
                             <HyperlinkButton Command="{x:Bind ViewModel.OpenSimpleIconFileMakerCommand}" Content="Microsoft Store" />
                         </settingsControls:SettingsCard>
                         <settingsControls:SettingsCard Description="Copy text from anywhere on your screen" Header="TextGrab">
@@ -484,18 +484,46 @@
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE74C;" />
                     </settingsControls:SettingsExpander.HeaderIcon>
+                    <Button Click="ViewLicensesButton_Click" Content="View licenses..." />
                     <settingsControls:SettingsExpander.Items>
-                        <settingsControls:SettingsCard Header="ZXing.NET">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/micjahn/ZXing.Net" />
+                        <settingsControls:SettingsCard Description="MIT License" Header="CommunityToolkit.Mvvm">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/CommunityToolkit/dotnet" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Header="Windows App SDK">
+                        <settingsControls:SettingsCard Description="MIT License" Header="CommunityToolkit WinUI">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/CommunityToolkit/Windows" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Description="MIT License" Header="Humanizer">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/Humanizr/Humanizer" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Description="Apache-2.0 License" Header="Magick.NET">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/dlemstra/Magick.NET" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Description="MIT License" Header="Microsoft.Extensions.Hosting">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/dotnet/runtime" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Description="MIT License" Header="Microsoft.Graphics.Win2D">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/microsoft/Win2D" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Description="MIT License" Header="PDFsharp">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/empira/PDFsharp" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Description="MIT License" Header="Windows App SDK">
                             <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/microsoft/WindowsAppSDK" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Header="WinUI 3">
+                        <settingsControls:SettingsCard Description="MIT License" Header="WinUI 3">
                             <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Header="WinUIEx">
+                        <settingsControls:SettingsCard Description="MIT License" Header="WinUI.TableView">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/w-ahmad/WinUI.TableView" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Description="MIT License" Header="WinUIEx">
                             <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/dotMorten/WinUIEx" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Description="MIT License" Header="XAML Behaviors">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/microsoft/XamlBehaviors" />
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard Description="Apache-2.0 License" Header="ZXing.NET">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/micjahn/ZXing.Net" />
                         </settingsControls:SettingsCard>
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>

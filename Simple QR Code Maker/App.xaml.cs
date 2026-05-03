@@ -82,6 +82,8 @@ public partial class App : Application
             services.AddTransient<MainPage>();
             services.AddTransient<EmailBuilderDialogViewModel>();
             services.AddTransient<GenerateIdsDialogViewModel>();
+            services.AddTransient<LicensesDialogViewModel>();
+            services.AddTransient<RemoveBackgroundDialogViewModel>();
             services.AddTransient<UrlBuilderDialogViewModel>();
             services.AddTransient<VCardBuilderDialogViewModel>();
             services.AddTransient<WifiBuilderDialogViewModel>();

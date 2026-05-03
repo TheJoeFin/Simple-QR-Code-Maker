@@ -42,6 +42,15 @@ public sealed partial class SettingsPage : Page
         }
     }
 
+    private async void ViewLicensesButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        LicensesDialog dialog = new()
+        {
+            XamlRoot = XamlRoot
+        };
+        await dialog.ShowAsync();
+    }
+
     private void SettingsExpander_Expanded(object sender, EventArgs e)
     {
 

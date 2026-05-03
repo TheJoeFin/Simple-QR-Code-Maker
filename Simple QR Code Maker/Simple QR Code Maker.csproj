@@ -35,6 +35,7 @@
     <None Remove="Controls\NewFile1.txt" />
     <None Remove="Controls\QrCodeImageControl.xaml" />
     <None Remove="Controls\FeedbackDialog.xaml" />
+    <None Remove="Controls\LicensesDialog.xaml" />
     <None Remove="Controls\RemoveBackgroundDialog.xaml" />
     <None Remove="Controls\TextBorder.xaml" />
     <None Remove="Views\ShellPage.xaml" />
@@ -69,10 +70,19 @@
     <ProjectReference Include="..\Simple QR Code Maker.Core\Simple QR Code Maker.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Licenses\Apache-2.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Page Update="Controls\FeedbackDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Controls\LicensesDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Controls\RemoveBackgroundDialog.xaml">
