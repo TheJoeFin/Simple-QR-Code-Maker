@@ -59,6 +59,16 @@
                                          Mode=OneWay}"
                         Icon="Copy"
                         Text="Copy SVG as Text" />
+                    <MenuFlyoutSeparator Visibility="{x:Bind BoolToVisibility(Data.IsAutoBranded), Mode=OneWay}" />
+                    <MenuFlyoutItem
+                        Command="{x:Bind Data.IgnoreAutoBrandContextCommand,
+                                         Mode=OneWay}"
+                        Text="Use current style"
+                        Visibility="{x:Bind BoolToVisibility(Data.IsAutoBranded), Mode=OneWay}">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE8D7;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
                 </MenuFlyout>
             </Image.ContextFlyout>
         </Image>

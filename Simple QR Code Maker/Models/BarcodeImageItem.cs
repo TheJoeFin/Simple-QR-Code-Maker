@@ -49,6 +49,8 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public string? FrameText { get; set; }
 
+    public bool IsAutoBranded { get; set; } = false;
+
     public QRCode QRCodeDetails => Encoder.encode(CodeAsText, ErrorCorrection);
 
     private QrCodeSizeRecommendation SizeRecommendation => BarcodeHelpers.GetSizeRecommendation(32 * MaxSizeScaleFactor, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor, QrPaddingModules);
@@ -125,6 +127,12 @@ public partial class BarcodeImageItem : ObservableRecipient
         {
             return string.Empty;
         }
+    }
+
+    [RelayCommand]
+    private void IgnoreAutoBrandContext()
+    {
+        WeakReferenceMessenger.Default.Send(new IgnoreAutoBrandMessage(this));
     }
 
     [RelayCommand]

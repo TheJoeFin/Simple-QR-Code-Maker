@@ -195,6 +195,19 @@
                                       UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
+                <!--  Auto brands  -->
+                <settingsControls:SettingsCard Description="Automatically apply a matching brand when a QR Code's base URL matches a brand's URL" Header="Auto brands">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE8F9;" />
+                    </settingsControls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.UseAutoBrands,
+                                      Mode=TwoWay,
+                                      UpdateSourceTrigger=PropertyChanged}"
+                        OffContent="Off"
+                        OnContent="On" />
+                </settingsControls:SettingsCard>
+
                 <!--  URL warnings  -->
                 <settingsControls:SettingsCard Description="Show warnings when QR Codes are not URLs" Header="URL warnings">
                     <settingsControls:SettingsCard.HeaderIcon>

@@ -61,6 +61,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     public partial bool ShowZipSaveOptions { get; set; } = true;
 
     [ObservableProperty]
+    public partial bool UseAutoBrands { get; set; } = false;
+
+    [ObservableProperty]
     public partial double MinSizeScanDistanceScaleFactor { get; set; } = 1.0;
 
     [ObservableProperty]
@@ -205,6 +208,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
         await SaveSingleSettingAsync(nameof(ShowSaveBothButton), ShowSaveBothButton);
         await SaveSingleSettingAsync(nameof(ShowPrintButton), ShowPrintButton);
         await SaveSingleSettingAsync(nameof(ShowZipSaveOptions), ShowZipSaveOptions);
+        await SaveSingleSettingAsync(nameof(UseAutoBrands), UseAutoBrands);
         await SaveSingleSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
         await SaveSingleSettingAsync(nameof(QrPaddingModules), QrPaddingModules);
         await SaveSingleSettingAsync(nameof(QuickSaveLocation), QuickSaveLocation);
@@ -265,6 +269,11 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     }
 
     partial void OnShowZipSaveOptionsChanged(bool value)
+    {
+        RestartDebounceTimer();
+    }
+
+    partial void OnUseAutoBrandsChanged(bool value)
     {
         RestartDebounceTimer();
     }
@@ -962,6 +971,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
 
             await LoadSettingAsync(nameof(QuickSaveLocation), async () =>
                 QuickSaveLocation = await LocalSettingsService.ReadSettingAsync<string>(nameof(QuickSaveLocation)) ?? string.Empty);
+
+            await LoadSettingAsync(nameof(UseAutoBrands), async () =>
+                UseAutoBrands = await LocalSettingsService.ReadSettingAsync<bool>(nameof(UseAutoBrands)));
 
             await _themeSelectorService.RefreshThemeAsync();
             ElementTheme = _themeSelectorService.Theme;

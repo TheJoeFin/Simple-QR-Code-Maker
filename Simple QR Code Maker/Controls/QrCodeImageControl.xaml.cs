@@ -26,6 +26,9 @@ public sealed partial class QrCodeImageControl : UserControl
         InitializeComponent();
     }
 
+    private Visibility BoolToVisibility(bool value) =>
+        value ? Visibility.Visible : Visibility.Collapsed;
+
     private async void QrCodeImage_DragStarting(UIElement sender, DragStartingEventArgs args)
     {
         if (sender is not Image image || image.Source is not WriteableBitmap bitmap)

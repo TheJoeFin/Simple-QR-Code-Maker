@@ -189,10 +189,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private bool WarnWhenNotUrl = true;
     private bool WarnWhenLikelyRedirector = RedirectorWarningSettingsHelper.DefaultWarnWhenLikelyRedirector;
     private bool HideMinimumSizeText = false;
+    private bool UseAutoBrands = false;
     private string QuickSaveLocation = string.Empty;
     private IReadOnlyList<string> SafeRedirectorDomains = [];
     private QrContentKind currentContentKind = QrContentKind.PlainText;
     private MultiLineCodeMode? multiLineCodeModeOverride = null;
+    private readonly Dictionary<string, (System.Drawing.Bitmap? Logo, string? Svg)> _brandLogoCache = [];
 
     [ObservableProperty]
     public partial bool ShowSaveBothButton { get; set; } = false;
@@ -894,6 +896,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         WeakReferenceMessenger.Default.Register<RequestShowMessage>(this, OnRequestShowMessage);
         WeakReferenceMessenger.Default.Register<SaveHistoryMessage>(this, OnSaveHistoryMessage);
         WeakReferenceMessenger.Default.Register<RequestPaneChange>(this, OnRequestPaneChange);
+        WeakReferenceMessenger.Default.Register<IgnoreAutoBrandMessage>(this, OnIgnoreAutoBrand);
     }
 
     private void BrandItems_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -963,6 +966,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     private async void OnSaveHistoryMessage(object recipient, SaveHistoryMessage message) => await SaveCurrentStateToHistory();
 
+    private void OnIgnoreAutoBrand(object recipient, IgnoreAutoBrandMessage message)
+    {
+        int itemIndex = QrCodeBitmaps.IndexOf(message.Item);
+        if (itemIndex < 0 || itemIndex >= requestedQrCodes.Count)
+            return;
+
+        QrCodeBitmaps[itemIndex] = CreatePreviewItem(requestedQrCodes[itemIndex]);
+    }
+
     private void OnRequestShowMessage(object recipient, RequestShowMessage rsm)
     {
         CurrentRedirectorWarningDomain = string.Empty;
@@ -1028,13 +1040,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         PlaceholderText = $"ex: {placeholdersList[random.Next(placeholdersList.Length)]}";
     }
 
-    private void DebounceTimer_Tick(object? sender, object e)
+    private async void DebounceTimer_Tick(object? sender, object e)
     {
         debounceTimer.Stop();
-        RefreshRequestedCodes();
+        await RefreshRequestedCodesAsync();
     }
 
-    private void RefreshRequestedCodes()
+    private async Task RefreshRequestedCodesAsync()
     {
         ResetRequestedCodeState();
 
@@ -1059,7 +1071,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
         if (RequestedCodeCount > 0)
         {
-            MaterializePreviewBatch(Math.Min(PreviewBatchSize, RequestedCodeCount));
+            await MaterializePreviewBatchAsync(Math.Min(PreviewBatchSize, RequestedCodeCount));
             ShowCodeInfoBar = false;
             CodeInfoBarSeverity = InfoBarSeverity.Informational;
         }
@@ -1147,34 +1159,175 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         }
     }
 
-    private void MaterializePreviewBatch(int additionalCount)
+    private async Task MaterializePreviewBatchAsync(int additionalCount)
     {
         if (additionalCount <= 0)
             return;
 
+        if (UseAutoBrands)
+            await PreloadBrandLogosAsync();
+
         int targetCount = Math.Min(RequestedCodeCount, LoadedPreviewCount + additionalCount);
         for (int index = LoadedPreviewCount; index < targetCount; index++)
         {
-            BarcodeImageItem previewItem = CreatePreviewItem(requestedQrCodes[index]);
+            BrandItem? matchedBrand = null;
+            System.Drawing.Bitmap? brandLogo = null;
+            string? brandLogoSvg = null;
+
+            if (UseAutoBrands)
+            {
+                matchedBrand = FindMatchingBrand(requestedQrCodes[index].CodeAsText);
+                if (matchedBrand is not null && _brandLogoCache.TryGetValue(matchedBrand.Name, out var cachedLogo))
+                {
+                    brandLogo = cachedLogo.Logo;
+                    brandLogoSvg = cachedLogo.Svg;
+                }
+            }
+
+            BarcodeImageItem previewItem = CreatePreviewItem(requestedQrCodes[index], matchedBrand, brandLogo, brandLogoSvg);
             QrCodeBitmaps.Add(previewItem);
         }
 
         LoadedPreviewCount = targetCount;
     }
 
-    private BarcodeImageItem CreatePreviewItem(RequestedQrCodeItem requestedCode)
+    private BrandItem? FindMatchingBrand(string content)
     {
-        string? resolvedFrameText = ResolveFrameText(requestedCode);
+        string normalizedContent = NormalizeUrlForBrandMatching(content);
+        if (string.IsNullOrEmpty(normalizedContent))
+            return null;
+
+        foreach (BrandItem brand in BrandItems)
+        {
+            if (string.IsNullOrWhiteSpace(brand.UrlContent))
+                continue;
+
+            // Strip trailing slashes so "example.com/" and "example.com" are equivalent patterns
+            string brandPattern = NormalizeUrlForBrandMatching(brand.UrlContent).TrimEnd('/');
+            if (string.IsNullOrEmpty(brandPattern))
+                continue;
+
+            if (!normalizedContent.StartsWith(brandPattern, StringComparison.Ordinal))
+                continue;
+
+            // Require a URL boundary after the pattern so "pexample.com" cannot match brand "example.com",
+            // and "example.com.evil.com" cannot match "example.com" (next char would be '.').
+            if (normalizedContent.Length == brandPattern.Length)
+                return brand;
+
+            char next = normalizedContent[brandPattern.Length];
+            if (next is '/' or '?' or '#' or ':' or '@')
+                return brand;
+        }
+
+        return null;
+    }
+
+    private static string NormalizeUrlForBrandMatching(string url)
+    {
+        string s = url.Trim().ToLowerInvariant();
+
+        if (s.StartsWith("https://", StringComparison.Ordinal))
+            s = s[8..];
+        else if (s.StartsWith("http://", StringComparison.Ordinal))
+            s = s[7..];
+
+        if (s.StartsWith("www.", StringComparison.Ordinal))
+            s = s[4..];
+
+        return s;
+    }
+
+    private async Task PreloadBrandLogosAsync()
+    {
+        foreach (BrandItem brand in BrandItems)
+        {
+            if (_brandLogoCache.ContainsKey(brand.Name))
+                continue;
+
+            if (!string.IsNullOrWhiteSpace(brand.LogoImagePath) && File.Exists(brand.LogoImagePath))
+            {
+                try
+                {
+                    StorageFile file = await StorageFile.GetFileFromPathAsync(brand.LogoImagePath);
+                    LogoImageResult result = await logoService.LoadFromStorageFileAsync(file);
+                    _brandLogoCache[brand.Name] = (result.LogoImage, result.SvgContent);
+                }
+                catch
+                {
+                    _brandLogoCache[brand.Name] = (null, null);
+                }
+            }
+            else if (!string.IsNullOrWhiteSpace(brand.LogoEmoji))
+            {
+                try
+                {
+                    Windows.UI.Color color = brand.Foreground ?? ForegroundColor;
+                    EmojiLogoStyle style = brand.LogoEmojiStyle ?? EmojiLogoStyle.Monochrome;
+                    LogoImageResult result = await logoService.CreateEmojiLogoAsync(brand.LogoEmoji, style, color);
+                    _brandLogoCache[brand.Name] = (result.LogoImage, result.SvgContent);
+                }
+                catch
+                {
+                    _brandLogoCache[brand.Name] = (null, null);
+                }
+            }
+            else
+            {
+                _brandLogoCache[brand.Name] = (null, null);
+            }
+        }
+    }
+
+    private BarcodeImageItem CreatePreviewItem(
+        RequestedQrCodeItem requestedCode,
+        BrandItem? brandOverride = null,
+        System.Drawing.Bitmap? brandLogoOverride = null,
+        string? brandLogoSvgOverride = null)
+    {
+        Windows.UI.Color foreground = brandOverride?.Foreground ?? ForegroundColor;
+        Windows.UI.Color background = brandOverride?.Background ?? BackgroundColor;
+
+        ErrorCorrectionOptions errorCorrection = SelectedOption;
+        if (brandOverride?.ErrorCorrectionLevelAsString is not null)
+        {
+            ErrorCorrectionOptions? match = ErrorCorrectionLevels
+                .FirstOrDefault(x => x.ErrorCorrectionLevel.ToString() == brandOverride.ErrorCorrectionLevelAsString);
+            if (match is not null)
+                errorCorrection = match.Value;
+        }
+
+        bool brandHasLogo = brandOverride is not null
+            && (brandOverride.LogoImagePath is not null || brandOverride.LogoEmoji is not null);
+        System.Drawing.Bitmap? logo = brandHasLogo ? brandLogoOverride : LogoImage;
+        string? logoSvg = brandHasLogo ? brandLogoSvgOverride : LogoSvgContent;
+        double logoSize = brandOverride?.LogoSizePercentage ?? LogoSizePercentage;
+        double logoPadding = brandOverride?.LogoPaddingPixels ?? LogoPaddingPixels;
+
+        QrFramePreset framePreset = FramePreset;
+        string? resolvedFrameText;
+        if (brandOverride?.FramePreset.HasValue == true)
+        {
+            framePreset = brandOverride.FramePreset.Value;
+            resolvedFrameText = framePreset == QrFramePreset.None
+                ? null
+                : QrFramePresetCatalog.ResolveText(framePreset, brandOverride.FrameText);
+        }
+        else
+        {
+            resolvedFrameText = ResolveFrameText(requestedCode);
+        }
+
         WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(
             requestedCode.CodeAsText,
-            SelectedOption.ErrorCorrectionLevel,
-            ForegroundColor.ToSystemDrawingColor(),
-            BackgroundColor.ToSystemDrawingColor(),
-            LogoImage,
-            LogoSizePercentage,
-            LogoPaddingPixels,
+            errorCorrection.ErrorCorrectionLevel,
+            foreground.ToSystemDrawingColor(),
+            background.ToSystemDrawingColor(),
+            logo,
+            logoSize,
+            logoPadding,
             QrPaddingModules,
-            FramePreset,
+            framePreset,
             resolvedFrameText);
         BarcodeImageItem barcodeImageItem = new()
         {
@@ -1182,24 +1335,25 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             CodeAsText = requestedCode.CodeAsText,
             IsAppShowingUrlWarnings = WarnWhenNotUrl,
             SizeTextVisible = (HideMinimumSizeText
-                || LogoImage != null
-                || ForegroundColor.A < 255
-                || BackgroundColor.A < 255
+                || logo != null
+                || foreground.A < 255
+                || background.A < 255
                 || !BarcodeHelpers.IsSizeRecommendationAvailableForPadding(QrPaddingModules)
-                || FramePreset != QrFramePreset.None)
+                || framePreset != QrFramePreset.None)
                 ? Visibility.Collapsed
                 : Visibility.Visible,
-            ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
-            ForegroundColor = ForegroundColor,
-            BackgroundColor = BackgroundColor,
+            ErrorCorrection = errorCorrection.ErrorCorrectionLevel,
+            ForegroundColor = foreground,
+            BackgroundColor = background,
             MaxSizeScaleFactor = MinSizeScanDistanceScaleFactor,
             QrPaddingModules = QrPaddingModules,
-            LogoImage = LogoImage,
-            LogoSizePercentage = LogoSizePercentage,
-            LogoPaddingPixels = LogoPaddingPixels,
-            LogoSvgContent = LogoSvgContent,
-            FramePreset = FramePreset,
+            LogoImage = logo,
+            LogoSizePercentage = logoSize,
+            LogoPaddingPixels = logoPadding,
+            LogoSvgContent = logoSvg,
+            FramePreset = framePreset,
             FrameText = resolvedFrameText,
+            IsAutoBranded = brandOverride is not null,
         };
 
         double ratio = barcodeImageItem.ColorContrastRatio;
@@ -1211,9 +1365,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private bool CanLoadMorePreviewBatch() => CanLoadMorePreviews;
 
     [RelayCommand(CanExecute = nameof(CanLoadMorePreviewBatch))]
-    private void LoadMorePreviews()
+    private async Task LoadMorePreviews()
     {
-        MaterializePreviewBatch(PreviewBatchSize);
+        await MaterializePreviewBatchAsync(PreviewBatchSize);
     }
 
     [RelayCommand]
@@ -1738,6 +1892,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             });
 
         await brandService.AddOrReplaceAndSaveAsync(BrandItems, brand);
+        _brandLogoCache.Clear();
         NewBrandName = string.Empty;
         IsNewBrandFormVisible = false;
 
@@ -1821,6 +1976,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             return;
 
         await brandService.DeleteAndSaveAsync(BrandItems, brand);
+        _brandLogoCache.Remove(brand.Name);
 
         if (SelectedBrand is not null && SelectedBrand.Equals(brand))
             SelectedBrand = null;
@@ -1857,6 +2013,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         bool replaced = await brandService.ReplaceAndSaveAsync(BrandItems, brand, edited);
         if (!replaced)
             return;
+        _brandLogoCache.Remove(brand.Name);
+        _brandLogoCache.Remove(edited.Name);
 
         if (SelectedBrand is not null && SelectedBrand.Equals(brand))
             SelectedBrand = edited;
@@ -1941,7 +2099,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         List<string> safeDomains = [.. SafeRedirectorDomains, CurrentRedirectorWarningDomain];
         SafeRedirectorDomains = RedirectorWarningHelper.NormalizeHosts(safeDomains);
         await RedirectorWarningSettingsHelper.SaveSafeDomainsAsync(LocalSettingsService, SafeRedirectorDomains);
-        RefreshRequestedCodes();
+        await RefreshRequestedCodesAsync();
     }
 
     private HistoryItem CreateCurrentStateHistoryItem()
@@ -2378,6 +2536,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
         await historyService.LoadAsync(HistoryItems);
         await brandService.LoadAsync(BrandItems);
+        _brandLogoCache.Clear();
 
         // Force property change notification to refresh UI bindings after history loads
         OnPropertyChanged(nameof(HistoryItems));
@@ -2394,6 +2553,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         ApplyDocumentText(BaseText);
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
+        UseAutoBrands = await LocalSettingsService.ReadSettingAsync<bool>(nameof(UseAutoBrands));
         ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton));
         ShowPrintButton = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowPrintButton)) ?? true;
         ShowZipSaveOptions = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowZipSaveOptions)) ?? true;
