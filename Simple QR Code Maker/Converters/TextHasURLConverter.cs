@@ -2,7 +2,7 @@
 
 namespace Simple_QR_Code_Maker.Converters;
 
-internal class TextHasURLConverter : IValueConverter
+internal partial class TextHasURLConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {

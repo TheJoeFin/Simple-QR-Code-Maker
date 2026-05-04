@@ -2,7 +2,7 @@
 
 namespace Simple_QR_Code_Maker.Converters;
 
-internal class IsZeroConverter : IValueConverter
+internal partial class IsZeroConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {

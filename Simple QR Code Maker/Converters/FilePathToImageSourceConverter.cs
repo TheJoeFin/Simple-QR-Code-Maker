@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace Simple_QR_Code_Maker.Converters;
 
-public class FilePathToImageSourceConverter : IValueConverter
+public partial class FilePathToImageSourceConverter : IValueConverter
 {
     public object? Convert(object value, Type targetType, object parameter, string language)
     {
@@ -16,8 +16,10 @@ public class FilePathToImageSourceConverter : IValueConverter
             if (path.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
                 return new SvgImageSource(uri);
 
-            BitmapImage bitmap = new();
-            bitmap.UriSource = uri;
+            BitmapImage bitmap = new()
+            {
+                UriSource = uri
+            };
             return bitmap;
         }
         catch

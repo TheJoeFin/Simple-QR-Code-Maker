@@ -2,19 +2,15 @@ using Microsoft.UI.Xaml.Data;
 
 namespace Simple_QR_Code_Maker.Converters;
 
-public partial class NoCodesWarningVisibilityConverter : IValueConverter
+public partial class BoolNegationConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        // value is CodeBorders.Count
-        int count = value is int c ? c : -1;
-
-        // Show warning if count is 0 (no codes found)
-        return count == 0;
+        return value is bool b && !b;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        throw new NotImplementedException();
+        return value is bool b && !b;
     }
 }

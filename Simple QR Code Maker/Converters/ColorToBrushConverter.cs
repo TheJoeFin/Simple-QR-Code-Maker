@@ -4,7 +4,7 @@ using Windows.UI;
 
 namespace Simple_QR_Code_Maker.Converters;
 
-public class ColorToBrushConverter : IValueConverter
+public partial class ColorToBrushConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {

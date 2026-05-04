@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Data;
 
 namespace Simple_QR_Code_Maker.Converters;
 
-public class EnumToBooleanConverter : IValueConverter
+public partial class EnumToBooleanConverter : IValueConverter
 {
     public EnumToBooleanConverter()
     {
@@ -18,7 +18,7 @@ public class EnumToBooleanConverter : IValueConverter
                 throw new ArgumentException("ExceptionEnumToBooleanConverterValueMustBeAnEnum");
             }
 
-            object enumValue = Enum.Parse(typeof(ElementTheme), enumString);
+            object enumValue = Enum.Parse<ElementTheme>(enumString);
 
             return enumValue.Equals(value);
         }
@@ -30,7 +30,7 @@ public class EnumToBooleanConverter : IValueConverter
     {
         if (parameter is string enumString)
         {
-            return Enum.Parse(typeof(ElementTheme), enumString);
+            return Enum.Parse<ElementTheme>(enumString);
         }
 
         throw new ArgumentException("ExceptionEnumToBooleanConverterParameterMustBeAnEnumName");
