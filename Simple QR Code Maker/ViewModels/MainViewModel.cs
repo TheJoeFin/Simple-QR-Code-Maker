@@ -191,6 +191,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private bool HideMinimumSizeText = false;
     private bool UseAutoBrands = false;
     private string QuickSaveLocation = string.Empty;
+    private int AppLaunchCount = 0;
+    private bool HasUsedAddButton = false;
+    private bool HasUsedHistoryButton = false;
+    private bool HasUsedBrandButton = false;
     private IReadOnlyList<string> SafeRedirectorDomains = [];
     private QrContentKind currentContentKind = QrContentKind.PlainText;
     private MultiLineCodeMode? multiLineCodeModeOverride = null;
@@ -233,6 +237,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     [NotifyPropertyChangedFor(nameof(HasEmojiLogoSelection))]
     [NotifyPropertyChangedFor(nameof(CanRemoveLogoBackground))]
     public partial bool IsEmojiLogoSelected { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool ShowAddButtonTeachingTip { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool ShowHistoryButtonTeachingTip { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool ShowBrandButtonTeachingTip { get; set; } = false;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowMarkRedirectorSafeAction))]
@@ -837,6 +850,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             debounceTimer.Stop();
             debounceTimer.Start();
         }
+
+        if (AppLaunchCount >= 5 && !HasUsedBrandButton && string.IsNullOrWhiteSpace(value))
+            ShowBrandButtonTeachingTip = false;
     }
 
     private readonly DispatcherTimer debounceTimer = new();
@@ -1072,6 +1088,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         if (RequestedCodeCount > 0)
         {
             await MaterializePreviewBatchAsync(Math.Min(PreviewBatchSize, RequestedCodeCount));
+            if (AppLaunchCount >= 5 && !HasUsedBrandButton)
+                ShowBrandButtonTeachingTip = true;
             ShowCodeInfoBar = false;
             CodeInfoBarSeverity = InfoBarSeverity.Informational;
         }
@@ -1491,6 +1509,30 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     {
         ShowZipSaveOptions = !ShowZipSaveOptions;
         await LocalSettingsService.SaveSettingAsync(nameof(ShowZipSaveOptions), ShowZipSaveOptions);
+    }
+
+    [RelayCommand]
+    private async Task MarkAddButtonUsed()
+    {
+        HasUsedAddButton = true;
+        ShowAddButtonTeachingTip = false;
+        await LocalSettingsService.SaveSettingAsync(nameof(HasUsedAddButton), true);
+    }
+
+    [RelayCommand]
+    private async Task MarkHistoryButtonUsed()
+    {
+        HasUsedHistoryButton = true;
+        ShowHistoryButtonTeachingTip = false;
+        await LocalSettingsService.SaveSettingAsync(nameof(HasUsedHistoryButton), true);
+    }
+
+    [RelayCommand]
+    private async Task MarkBrandButtonUsed()
+    {
+        HasUsedBrandButton = true;
+        ShowBrandButtonTeachingTip = false;
+        await LocalSettingsService.SaveSettingAsync(nameof(HasUsedBrandButton), true);
     }
 
     [RelayCommand]
@@ -2564,6 +2606,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         FramePreset = await LocalSettingsService.ReadSettingAsync<QrFramePreset?>(nameof(FramePreset)) ?? QrFramePreset.None;
         FrameTextSource = await LocalSettingsService.ReadSettingAsync<QrFrameTextSource?>(nameof(FrameTextSource)) ?? QrFrameTextSource.Manual;
         FrameText = await LocalSettingsService.ReadSettingAsync<string>(nameof(FrameText)) ?? string.Empty;
+        AppLaunchCount = (await LocalSettingsService.ReadSettingAsync<int?>(nameof(AppLaunchCount)) ?? 0) + 1;
+        await LocalSettingsService.SaveSettingAsync(nameof(AppLaunchCount), AppLaunchCount);
+        HasUsedAddButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasUsedAddButton));
+        ShowAddButtonTeachingTip = AppLaunchCount >= 3 && !HasUsedAddButton;
+        HasUsedHistoryButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasUsedHistoryButton));
+        ShowHistoryButtonTeachingTip = AppLaunchCount >= 3 && !HasUsedHistoryButton;
+        HasUsedBrandButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasUsedBrandButton));
         if (MinSizeScanDistanceScaleFactor < 0.35)
         {
             MinSizeScanDistanceScaleFactor = 1;

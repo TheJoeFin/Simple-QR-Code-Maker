@@ -92,6 +92,7 @@
                                             Margin="0,0,0,-1"
                                             Padding="0"
                                             VerticalAlignment="Bottom"
+                                            Click="UrlImportButton_Click"
                                             ToolTipService.ToolTip="Add or import text">
                                             <Button.Flyout>
                                                 <MenuFlyout Placement="Bottom">
@@ -229,7 +230,7 @@
                                             </DropDownButton.Flyout>
                                         </DropDownButton>
                                         <controls:QrLogoDesignerControl ViewModel="{x:Bind ViewModel}" />
-                                        <controls:BrandManagementControl ViewModel="{x:Bind ViewModel}" />
+                                        <controls:BrandManagementControl x:Name="BrandMgmtControl" ViewModel="{x:Bind ViewModel}" />
                                         <DropDownButton
                                             Width="60"
                                             Height="36"
@@ -446,6 +447,8 @@
                             Orientation="Vertical"
                             Spacing="-20">
                             <AppBarButton
+                                x:Name="HistoryButton"
+                                Click="HistoryButton_Click"
                                 Command="{x:Bind ViewModel.ToggleHistoryPaneOpenCommand}"
                                 IsCompact="True"
                                 ToolTipService.ToolTip="History of previously generated QR Codes">
@@ -537,6 +540,36 @@
                                 </StackPanel>
                             </InfoBar.Content>
                         </InfoBar>
+
+                        <TeachingTip
+                            x:Name="AddButtonTeachingTip"
+                            Title="More ways to add content"
+                            Closed="AddButtonTeachingTip_Closed"
+                            CloseButtonContent="Got it"
+                            IsOpen="{x:Bind ViewModel.ShowAddButtonTeachingTip, Mode=OneWay}"
+                            PreferredPlacement="BottomRight"
+                            Subtitle="Open this menu to paste text, build URL, vCard, WiFi, or Email QR codes, or import from a file."
+                            Target="{x:Bind UrlImportButton}" />
+
+                        <TeachingTip
+                            x:Name="HistoryButtonTeachingTip"
+                            Title="Your QR code history"
+                            Closed="HistoryButtonTeachingTip_Closed"
+                            CloseButtonContent="Got it"
+                            IsOpen="{x:Bind ViewModel.ShowHistoryButtonTeachingTip, Mode=OneWay}"
+                            PreferredPlacement="BottomLeft"
+                            Subtitle="Previously generated QR codes are saved here. Tap one to restore its settings and colors."
+                            Target="{x:Bind HistoryButton}" />
+
+                        <TeachingTip
+                            x:Name="BrandButtonTeachingTip"
+                            Title="Save your style as a brand"
+                            Closed="BrandButtonTeachingTip_Closed"
+                            CloseButtonContent="Got it"
+                            IsOpen="{x:Bind ViewModel.ShowBrandButtonTeachingTip, Mode=OneWay}"
+                            PreferredPlacement="Bottom"
+                            Subtitle="Use this button to save your current colors, logo, and settings as a named brand — then apply it to any QR code instantly."
+                            Target="{x:Bind BrandMgmtControl}" />
                     </Grid>
                 </SplitView.Content>
                 <SplitView.Pane>

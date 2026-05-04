@@ -334,4 +334,29 @@ public sealed partial class MainPage : Page
         measurementTextBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         return measurementTextBlock.DesiredSize.Width;
     }
+
+    private void UrlImportButton_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.MarkAddButtonUsedCommand.Execute(null);
+    }
+
+    private void AddButtonTeachingTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
+    {
+        ViewModel.MarkAddButtonUsedCommand.Execute(null);
+    }
+
+    private void HistoryButton_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.MarkHistoryButtonUsedCommand.Execute(null);
+    }
+
+    private void HistoryButtonTeachingTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
+    {
+        ViewModel.MarkHistoryButtonUsedCommand.Execute(null);
+    }
+
+    private void BrandButtonTeachingTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
+    {
+        ViewModel.MarkBrandButtonUsedCommand.Execute(null);
+    }
 }

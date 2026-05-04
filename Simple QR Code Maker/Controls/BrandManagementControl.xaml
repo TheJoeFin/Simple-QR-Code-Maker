@@ -19,7 +19,7 @@
 
     <Button ToolTipService.ToolTip="Save and manage Brands">
         <Button.Flyout>
-            <Flyout x:Name="BrandFlyout" Placement="Bottom">
+            <Flyout x:Name="BrandFlyout" Opened="BrandFlyout_Opened" Placement="Bottom">
                 <StackPanel Width="280" Spacing="12">
                     <TextBlock
                         FontWeight="SemiBold"

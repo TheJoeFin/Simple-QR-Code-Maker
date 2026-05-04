@@ -28,6 +28,11 @@ public sealed partial class BrandManagementControl : UserControl
         ((BrandManagementControl)d).Bindings.Update();
     }
 
+    private void BrandFlyout_Opened(object sender, object e)
+    {
+        ViewModel?.MarkBrandButtonUsedCommand.Execute(null);
+    }
+
     private void BrandListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is not ListView listView)
