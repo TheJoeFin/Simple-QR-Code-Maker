@@ -17,7 +17,7 @@ public static class WriteableBitmapExtensions
             BitmapEncoder pngEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
             Stream pixelStream = writeableBitmap.PixelBuffer.AsStream();
             byte[] bytes = new byte[pixelStream.Length];
-            await pixelStream.ReadAsync(bytes);
+            await pixelStream.ReadExactlyAsync(bytes);
 
             pngEncoder.SetPixelData(
                 BitmapPixelFormat.Bgra8,
