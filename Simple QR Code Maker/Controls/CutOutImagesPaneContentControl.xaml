@@ -8,12 +8,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
-    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
     mc:Ignorable="d">
 
     <UserControl.Resources>
         <converters:EmptyCollectionToVisibilityConverter x:Key="EmptyCollectionToVisibility" />
-        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </UserControl.Resources>
 
     <Grid

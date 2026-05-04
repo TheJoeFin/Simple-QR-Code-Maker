@@ -9,7 +9,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
     xmlns:settingsControls="using:CommunityToolkit.WinUI.Controls"
-    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
     Title="Edit Brand"
     CloseButtonText="Cancel"
     DefaultButton="Primary"
@@ -18,7 +17,7 @@
     mc:Ignorable="d">
 
     <ContentDialog.Resources>
-        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
         <converters:FilePathToImageSourceConverter x:Key="FilePathToImage" />
         <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
         <x:Double x:Key="SettingsCardWrapThreshold">320</x:Double>
