@@ -85,6 +85,7 @@ public partial class App : Application
             services.AddTransient<LicensesDialogViewModel>();
             services.AddTransient<RemoveBackgroundDialogViewModel>();
             services.AddTransient<UrlBuilderDialogViewModel>();
+            services.AddTransient<BrandEditDialogViewModel>();
             services.AddTransient<VCardBuilderDialogViewModel>();
             services.AddTransient<WifiBuilderDialogViewModel>();
             services.AddTransient<SpreadsheetImportViewModel>();
