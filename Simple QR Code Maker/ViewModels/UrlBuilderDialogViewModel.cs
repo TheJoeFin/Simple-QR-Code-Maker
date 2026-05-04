@@ -9,8 +9,7 @@ using System.ComponentModel;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-[ObservableObject]
-public sealed partial class UrlBuilderDialogViewModel
+public sealed partial class UrlBuilderDialogViewModel : ObservableRecipient
 {
     private readonly List<UrlBuilderLine> _lines = [];
 

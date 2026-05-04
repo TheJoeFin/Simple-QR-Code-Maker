@@ -5,8 +5,7 @@ using Simple_QR_Code_Maker.Models;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-[ObservableObject]
-public sealed partial class GenerateIdsDialogViewModel
+public sealed partial class GenerateIdsDialogViewModel : ObservableRecipient
 {
     private const int PreviewLimit = 5;
     private List<string> _previewValues = [];

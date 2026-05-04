@@ -5,8 +5,7 @@ using Simple_QR_Code_Maker.Models;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-[ObservableObject]
-public sealed partial class WifiBuilderDialogViewModel
+public sealed partial class WifiBuilderDialogViewModel : ObservableRecipient
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PreviewWifiPayload))]

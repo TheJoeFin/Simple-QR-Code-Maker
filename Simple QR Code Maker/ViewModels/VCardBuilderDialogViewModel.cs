@@ -6,8 +6,7 @@ using Simple_QR_Code_Maker.Models;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-[ObservableObject]
-public sealed partial class VCardBuilderDialogViewModel
+public sealed partial class VCardBuilderDialogViewModel : ObservableRecipient
 {
     private readonly HashSet<VCardOptionalFieldKind> _visibleOptionalFields = [];
 

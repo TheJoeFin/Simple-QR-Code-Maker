@@ -14,8 +14,7 @@ using Windows.Storage.Streams;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-[ObservableObject]
-public sealed partial class RemoveBackgroundDialogViewModel
+public sealed partial class RemoveBackgroundDialogViewModel : ObservableRecipient
 {
     private Bitmap? _sourceImage;
 

@@ -6,8 +6,7 @@ using Windows.ApplicationModel;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-[ObservableObject]
-public sealed partial class LicensesDialogViewModel
+public sealed partial class LicensesDialogViewModel : ObservableRecipient
 {
     public ObservableCollection<LibraryInfo> Libraries { get; } = [];
 

@@ -4,8 +4,7 @@ using Simple_QR_Code_Maker.Models;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
-[ObservableObject]
-public sealed partial class EmailBuilderDialogViewModel
+public sealed partial class EmailBuilderDialogViewModel : ObservableRecipient
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PreviewEmailUri))]

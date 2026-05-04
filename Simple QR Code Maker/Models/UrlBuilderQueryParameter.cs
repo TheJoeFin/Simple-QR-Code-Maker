@@ -2,8 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Simple_QR_Code_Maker.Models;
 
-[ObservableObject]
-public sealed partial class UrlBuilderQueryParameter
+public sealed partial class UrlBuilderQueryParameter : ObservableRecipient
 {
     [ObservableProperty]
     public partial string Name { get; set; } = string.Empty;
