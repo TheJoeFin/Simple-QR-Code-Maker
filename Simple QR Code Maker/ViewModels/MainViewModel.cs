@@ -45,7 +45,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     [NotifyPropertyChangedFor(nameof(IsBulkClipboardEnabled))]
     [NotifyPropertyChangedFor(nameof(IsBulkClipboardDisabled))]
     [NotifyPropertyChangedFor(nameof(BulkClipboardRestrictionText))]
-    [NotifyPropertyChangedFor(nameof(CanLoadMorePreviews))]
     [NotifyPropertyChangedFor(nameof(PreviewSummaryText))]
     [NotifyCanExecuteChangedFor(nameof(LoadMorePreviewsCommand))]
     [NotifyCanExecuteChangedFor(nameof(SavePngCommand))]
@@ -851,7 +850,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             debounceTimer.Start();
         }
 
-        if (AppLaunchCount >= 5 && !HasUsedBrandButton && string.IsNullOrWhiteSpace(value))
+        if (AppLaunchCount >= 10 && !HasUsedBrandButton && string.IsNullOrWhiteSpace(value))
             ShowBrandButtonTeachingTip = false;
     }
 
@@ -1088,7 +1087,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         if (RequestedCodeCount > 0)
         {
             await MaterializePreviewBatchAsync(Math.Min(PreviewBatchSize, RequestedCodeCount));
-            if (AppLaunchCount >= 5 && !HasUsedBrandButton)
+            if (AppLaunchCount >= 10 && !HasUsedBrandButton)
                 ShowBrandButtonTeachingTip = true;
             ShowCodeInfoBar = false;
             CodeInfoBarSeverity = InfoBarSeverity.Informational;
@@ -2410,7 +2409,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         if (LogoImage is null)
             return;
 
-        Controls.RemoveBackgroundDialog dialog = new(LogoImage)
+        RemoveBackgroundDialog dialog = new(LogoImage)
         {
             XamlRoot = App.MainWindow.Content.XamlRoot,
         };
@@ -2611,7 +2610,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         HasUsedAddButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasUsedAddButton));
         ShowAddButtonTeachingTip = AppLaunchCount >= 3 && !HasUsedAddButton;
         HasUsedHistoryButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasUsedHistoryButton));
-        ShowHistoryButtonTeachingTip = AppLaunchCount >= 3 && !HasUsedHistoryButton;
+        ShowHistoryButtonTeachingTip = AppLaunchCount >= 6 && !HasUsedHistoryButton;
         HasUsedBrandButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasUsedBrandButton));
         if (MinSizeScanDistanceScaleFactor < 0.35)
         {
