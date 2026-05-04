@@ -7,7 +7,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
-    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
     x:Name="DecodingPageRoot"
     mc:Ignorable="d">
 
@@ -23,8 +22,8 @@
         <converters:NoCodesWarningVisibilityConverter x:Key="NoCodesWarningVisibilityConverter" />
         <converters:BoolToAlignmentConverter x:Key="BoolToAlignmentConverter" />
         <converters:InvertedBoolToVisibilityConverter x:Key="InvertedBoolToVisibilityConverter" />
-        <toolkitConverters:BoolNegationConverter x:Key="BoolNegationConverter" />
-        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:BoolNegationConverter x:Key="BoolNegationConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Page.Resources>
 
     <!--  FAQ pane (left overlay)  -->

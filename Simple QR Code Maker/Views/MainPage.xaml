@@ -8,7 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
     xmlns:toolkitControls="using:CommunityToolkit.WinUI.Controls"
-    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
     Name="EncodingPage"
     Loaded="Page_Loaded"
     Unloaded="Page_Unloaded"
@@ -19,7 +18,7 @@
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
         <converters:EmptyStringToCollapsedConverter x:Key="EmptyStringToCollapsed" />
         <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
-        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
         <converters:EmptyCollectionToVisibilityConverter x:Key="EmptyCollectionToVisibility" />
 
         <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">

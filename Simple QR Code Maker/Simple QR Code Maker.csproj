@@ -20,7 +20,7 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>preview</LangVersion>
-    <PublishAot>false</PublishAot>
+    <PublishAot>true</PublishAot>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\AdvancedToolsControl.xaml" />
@@ -50,7 +50,6 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.251219" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.251219" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
-    <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
     <PackageReference Include="Humanizer" Version="3.0.10" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.13.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
