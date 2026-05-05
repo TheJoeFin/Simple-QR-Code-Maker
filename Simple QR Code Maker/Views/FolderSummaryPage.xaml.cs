@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
+using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
 using WinUI.TableView;
 
@@ -15,6 +16,12 @@ public sealed partial class FolderSummaryPage : Page
     {
         ViewModel = App.GetService<FolderSummaryViewModel>();
         InitializeComponent();
+    }
+
+    private void OpenFileLinkButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is HyperlinkButton { DataContext: FolderSummaryItem item })
+            ViewModel.OpenFileCommand.Execute(item);
     }
 
     private void FileNameCellRoot_Loaded(object sender, RoutedEventArgs e)

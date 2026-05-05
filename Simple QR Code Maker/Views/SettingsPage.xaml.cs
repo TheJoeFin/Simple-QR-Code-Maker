@@ -60,4 +60,10 @@ public sealed partial class SettingsPage : Page
     {
         ViewModel.ImportExportStatusMessage = string.Empty;
     }
+
+    private void RemoveSafeRedirectorDomainButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (sender is Button { DataContext: string domain })
+            ViewModel.RemoveSafeRedirectorDomainCommand.Execute(domain);
+    }
 }

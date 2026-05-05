@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Simple_QR_Code_Maker.Models"
     xmlns:settingsControls="using:CommunityToolkit.WinUI.Controls"
     xmlns:tableView="using:WinUI.TableView"
     Loaded="Page_Loaded"
@@ -19,11 +20,6 @@
             <RowDefinition Height="48" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
-        <StackPanel Orientation="Horizontal" Spacing="12">
-            <AppBarButton Command="{x:Bind ViewModel.GoBackCommand}" Icon="Back" />
-            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Import spreadsheet" />
-        </StackPanel>
 
         <ScrollViewer Grid.Row="1">
             <StackPanel
@@ -72,13 +68,18 @@
                         <ComboBox
                             MinWidth="220"
                             HorizontalAlignment="Stretch"
-                            DisplayMemberPath="DisplayName"
                             IsEnabled="{x:Bind ViewModel.CanConfigureGeneratedIdFormat,
                                                Mode=OneWay}"
                             ItemsSource="{x:Bind ViewModel.GeneratedIdFormatOptions,
                                                  Mode=OneWay}"
                             SelectedItem="{x:Bind ViewModel.SelectedGeneratedIdFormatOption,
-                                                  Mode=TwoWay}" />
+                                                  Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:SpreadsheetGeneratedIdFormatOption">
+                                    <TextBlock Text="{x:Bind DisplayName}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </StackPanel>
                 </settingsControls:SettingsCard>
 

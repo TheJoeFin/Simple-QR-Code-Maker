@@ -261,9 +261,7 @@
                                                     TextWrapping="Wrap" />
                                                 <Button
                                                     Grid.Column="1"
-                                                    Command="{Binding ViewModel.RemoveSafeRedirectorDomainCommand,
-                                                                      ElementName=SettingsPageRoot}"
-                                                    CommandParameter="{x:Bind}"
+                                                    Click="RemoveSafeRedirectorDomainButton_Click"
                                                     Content="Remove" />
                                             </Grid>
                                         </DataTemplate>

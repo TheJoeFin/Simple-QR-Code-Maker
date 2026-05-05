@@ -543,9 +543,10 @@
                         <TeachingTip
                             x:Name="AddButtonTeachingTip"
                             Title="More ways to add content"
-                            Closed="AddButtonTeachingTip_Closed"
                             CloseButtonContent="Got it"
-                            IsOpen="{x:Bind ViewModel.ShowAddButtonTeachingTip, Mode=OneWay}"
+                            Closed="AddButtonTeachingTip_Closed"
+                            IsOpen="{x:Bind ViewModel.ShowAddButtonTeachingTip,
+                                            Mode=OneWay}"
                             PreferredPlacement="BottomRight"
                             Subtitle="Open this menu to paste text, build URL, vCard, WiFi, or Email QR codes, or import from a file."
                             Target="{x:Bind UrlImportButton}" />
@@ -553,9 +554,10 @@
                         <TeachingTip
                             x:Name="HistoryButtonTeachingTip"
                             Title="Your QR code history"
-                            Closed="HistoryButtonTeachingTip_Closed"
                             CloseButtonContent="Got it"
-                            IsOpen="{x:Bind ViewModel.ShowHistoryButtonTeachingTip, Mode=OneWay}"
+                            Closed="HistoryButtonTeachingTip_Closed"
+                            IsOpen="{x:Bind ViewModel.ShowHistoryButtonTeachingTip,
+                                            Mode=OneWay}"
                             PreferredPlacement="BottomLeft"
                             Subtitle="Previously generated QR codes are saved here. Tap one to restore its settings and colors."
                             Target="{x:Bind HistoryButton}" />
@@ -563,9 +565,10 @@
                         <TeachingTip
                             x:Name="BrandButtonTeachingTip"
                             Title="Save your style as a brand"
-                            Closed="BrandButtonTeachingTip_Closed"
                             CloseButtonContent="Got it"
-                            IsOpen="{x:Bind ViewModel.ShowBrandButtonTeachingTip, Mode=OneWay}"
+                            Closed="BrandButtonTeachingTip_Closed"
+                            IsOpen="{x:Bind ViewModel.ShowBrandButtonTeachingTip,
+                                            Mode=OneWay}"
                             PreferredPlacement="Bottom"
                             Subtitle="Use this button to save your current colors, logo, and settings as a named brand — then apply it to any QR code instantly."
                             Target="{x:Bind BrandMgmtControl}" />
