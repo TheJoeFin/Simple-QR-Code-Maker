@@ -8,7 +8,6 @@ using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO.Compression;
 using System.Reflection;
@@ -443,7 +442,6 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     }
 
     [RelayCommand]
-    [RequiresUnreferencedCode("Loads history and brand items for export")]
     private async Task ExportSettings()
     {
         if (!ExportIncludeSettings && !ExportIncludeBrands && !ExportIncludeHistory)
@@ -488,7 +486,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
                             item.SavedDateTime);
                     }
 
-                    string historyJson = JsonSerializer.Serialize(historyItems, HistoryJsonSerializerOptions.Options);
+                    string historyJson = JsonSerializer.Serialize(historyItems, HistoryJsonContext.Default.ObservableCollectionHistoryItem);
                     ZipArchiveEntry historyEntry = archive.CreateEntry("History.json", CompressionLevel.Fastest);
                     using StreamWriter historyWriter = new(historyEntry.Open(), leaveOpen: false);
                     await historyWriter.WriteAsync(historyJson);
@@ -508,7 +506,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
                             brand.CreatedDateTime);
                     }
 
-                    string brandsJson = JsonSerializer.Serialize(brandItems, BrandJsonSerializerOptions.Options);
+                    string brandsJson = JsonSerializer.Serialize(brandItems, BrandJsonContext.Default.ObservableCollectionBrandItem);
                     ZipArchiveEntry brandsEntry = archive.CreateEntry("Brands.json", CompressionLevel.Fastest);
                     using StreamWriter brandsWriter = new(brandsEntry.Open(), leaveOpen: false);
                     await brandsWriter.WriteAsync(brandsJson);
@@ -523,8 +521,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
                             settingsDict[kvp.Key] = strVal;
                     }
 
-                    JsonSerializerOptions options = new() { WriteIndented = true };
-                    string settingsJson = JsonSerializer.Serialize(settingsDict, options);
+                    string settingsJson = JsonSerializer.Serialize(settingsDict, HistoryJsonContext.Default.DictionaryStringString);
                     ZipArchiveEntry settingsEntry = archive.CreateEntry("LocalSettings.json", CompressionLevel.Fastest);
                     using StreamWriter settingsWriter = new(settingsEntry.Open(), leaveOpen: false);
                     await settingsWriter.WriteAsync(settingsJson);
@@ -548,7 +545,6 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     }
 
     [RelayCommand]
-    [RequiresUnreferencedCode("Deserializes history and brand items during import")]
     private async Task ImportSettings()
     {
         try
@@ -582,8 +578,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
                 using StreamReader reader = new(historyEntry.Open());
                 string historyJson = await reader.ReadToEndAsync();
 
-                ObservableCollection<HistoryItem>? historyItems = JsonSerializer.Deserialize<ObservableCollection<HistoryItem>>(
-                    historyJson, HistoryJsonSerializerOptions.Options);
+                ObservableCollection<HistoryItem>? historyItems = JsonSerializer.Deserialize(historyJson, HistoryJsonContext.Default.ObservableCollectionHistoryItem);
 
                 if (historyItems is not null)
                 {
@@ -602,8 +597,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
                 using StreamReader reader = new(brandsEntry.Open());
                 string brandsJson = await reader.ReadToEndAsync();
 
-                ObservableCollection<BrandItem>? brandItems = JsonSerializer.Deserialize<ObservableCollection<BrandItem>>(
-                    brandsJson, BrandJsonSerializerOptions.Options);
+                ObservableCollection<BrandItem>? brandItems = JsonSerializer.Deserialize(brandsJson, BrandJsonContext.Default.ObservableCollectionBrandItem);
 
                 if (brandItems is not null)
                 {
@@ -621,7 +615,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
             {
                 using StreamReader reader = new(settingsEntry.Open());
                 string settingsJson = await reader.ReadToEndAsync();
-                Dictionary<string, string>? settingsDict = JsonSerializer.Deserialize<Dictionary<string, string>>(settingsJson);
+                Dictionary<string, string>? settingsDict = JsonSerializer.Deserialize(settingsJson, HistoryJsonContext.Default.DictionaryStringString);
                 if (settingsDict is not null)
                 {
                     foreach (KeyValuePair<string, string> kvp in settingsDict)
