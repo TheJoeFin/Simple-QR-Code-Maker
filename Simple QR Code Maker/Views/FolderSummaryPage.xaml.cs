@@ -1,10 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Media;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
-using WinUI.TableView;
 
 namespace Simple_QR_Code_Maker.Views;
 
@@ -24,41 +21,33 @@ public sealed partial class FolderSummaryPage : Page
             ViewModel.OpenFileCommand.Execute(item);
     }
 
-    private void FileNameCellRoot_Loaded(object sender, RoutedEventArgs e)
+    private void FileNameCellRoot_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
-        if (sender is not FrameworkElement cellRoot)
-            return;
-
-        if (cellRoot.FindName("OpenFileLinkButton") is not HyperlinkButton openFileLinkButton)
-            return;
-
-        TableViewRow? row = FindAncestor<TableViewRow>(cellRoot);
-        if (row is null)
-            return;
-
-        BindingOperations.SetBinding(
-            openFileLinkButton,
-            VisibilityProperty,
-            new Binding
+        if (sender is Grid { Children: { } children })
+        {
+            foreach (UIElement child in children)
             {
-                Source = row,
-                Path = new PropertyPath("IsPointerOver"),
-                Converter = Resources["BoolToVisibilityConverter"] as IValueConverter,
-            });
+                if (child is HyperlinkButton hyperlinkButton)
+                {
+                    hyperlinkButton.Visibility = Visibility.Visible;
+                    break;
+                }
+            }
+        }
     }
 
-    private static T? FindAncestor<T>(DependencyObject? dependencyObject)
-        where T : DependencyObject
+    private void FileNameCellRoot_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
-        DependencyObject? current = dependencyObject;
-        while (current is not null)
+        if (sender is Grid { Children: { } children })
         {
-            if (current is T target)
-                return target;
-
-            current = VisualTreeHelper.GetParent(current);
+            foreach (UIElement child in children)
+            {
+                if (child is HyperlinkButton hyperlinkButton)
+                {
+                    hyperlinkButton.Visibility = Visibility.Collapsed;
+                    break;
+                }
+            }
         }
-
-        return null;
     }
 }

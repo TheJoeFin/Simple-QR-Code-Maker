@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Models;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using Windows.Storage;
@@ -18,7 +19,7 @@ public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAw
     private NavigationRestoreState? _backNavigationState;
 
     [ObservableProperty]
-    public partial List<FolderSummaryItem> SummaryItems { get; set; } = [];
+    public partial ObservableCollection<FolderSummaryItem> SummaryItems { get; set; } = [];
 
     [ObservableProperty]
     public partial string FolderName { get; set; } = string.Empty;
@@ -39,7 +40,7 @@ public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAw
         if (parameter is FolderSummaryNavigationParameter navParam)
         {
             FolderName = navParam.FolderName;
-            SummaryItems = navParam.Items;
+            SummaryItems = new ObservableCollection<FolderSummaryItem>(navParam.Items);
             _backNavigationState = navParam.BackNavigationState;
         }
     }

@@ -2,17 +2,12 @@
     x:Class="Simple_QR_Code_Maker.Views.FolderSummaryPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="using:Simple_QR_Code_Maker.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
     xmlns:tableView="using:WinUI.TableView"
     x:Name="FolderSummaryPageRoot"
     mc:Ignorable="d">
-
-    <Page.Resources>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    </Page.Resources>
 
     <Grid Padding="40,0,0,0">
         <Grid.RowDefinitions>
@@ -22,7 +17,6 @@
 
         <Grid>
             <StackPanel Orientation="Horizontal" Spacing="12">
-                <AppBarButton Command="{x:Bind ViewModel.GoBackCommand}" Icon="Back" />
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Style="{StaticResource PageTitleStyle}" Text="Folder Summary" />
                     <TextBlock
@@ -68,7 +62,8 @@
                                     x:Name="FileNameCellRoot"
                                     Padding="0,2"
                                     ColumnSpacing="8"
-                                    Loaded="FileNameCellRoot_Loaded">
+                                    PointerEntered="FileNameCellRoot_PointerEntered"
+                                    PointerExited="FileNameCellRoot_PointerExited">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
@@ -97,21 +92,30 @@
                         </tableView:TableViewTemplateColumn.CellTemplate>
                     </tableView:TableViewTemplateColumn>
 
-                    <tableView:TableViewTextColumn
+                    <tableView:TableViewTemplateColumn
                         MinWidth="80"
-                        Binding="{Binding QrCodeCount}"
                         CanFilter="False"
                         CanSort="True"
                         Header="QR Codes"
-                        IsReadOnly="True" />
+                        SortMemberPath="QrCodeCount">
+                        <tableView:TableViewTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="models:FolderSummaryItem">
+                                <TextBlock Text="{x:Bind QrCodeCount}" />
+                            </DataTemplate>
+                        </tableView:TableViewTemplateColumn.CellTemplate>
+                    </tableView:TableViewTemplateColumn>
 
-                    <tableView:TableViewTextColumn
+                    <tableView:TableViewTemplateColumn
                         MinWidth="300"
-                        Binding="{Binding QrCodeContents}"
                         CanFilter="False"
                         CanSort="False"
-                        Header="Contents"
-                        IsReadOnly="True" />
+                        Header="Contents">
+                        <tableView:TableViewTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="models:FolderSummaryItem">
+                                <TextBlock Text="{x:Bind QrCodeContents}" TextWrapping="WrapWholeWords" />
+                            </DataTemplate>
+                        </tableView:TableViewTemplateColumn.CellTemplate>
+                    </tableView:TableViewTemplateColumn>
                 </tableView:TableView.Columns>
             </tableView:TableView>
         </Border>
