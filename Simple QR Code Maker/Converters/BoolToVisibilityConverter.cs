@@ -8,6 +8,10 @@ public partial class BoolToVisibilityConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, string language)
     {
         bool isVisible = value is bool boolValue && boolValue;
+
+        if (parameter is "true" or "True")
+            isVisible = !isVisible;
+
         return isVisible ? Visibility.Visible : Visibility.Collapsed;
     }
 
