@@ -20,7 +20,6 @@ public static class HistoryStorageHelper
     /// Loads history from storage, attempting migration from old settings if needed.
     /// </summary>
     /// <returns>Collection of history items, or empty collection if no history exists.</returns>
-    [RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer operations")]
     public static async Task<ObservableCollection<HistoryItem>> LoadHistoryAsync()
     {
         ObservableCollection<HistoryItem> historyItems = [];
@@ -62,14 +61,13 @@ public static class HistoryStorageHelper
     /// <summary>
     /// Saves history to the JSON file.
     /// </summary>
-    [RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Serialize")]
     public static async Task SaveHistoryAsync(ObservableCollection<HistoryItem> historyItems)
     {
         try
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
 
-            string json = JsonSerializer.Serialize(historyItems, HistoryJsonSerializerOptions.Options);
+            string json = JsonSerializer.Serialize(historyItems, HistoryJsonContext.Default.ObservableCollectionHistoryItem);
 
             // Write to a temp file first, then rename over the real file.
             // This prevents an empty History.json when the app exits before
@@ -118,7 +116,6 @@ public static class HistoryStorageHelper
     /// <summary>
     /// Loads history from the JSON file.
     /// </summary>
-    [RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Deserialize")]
     private static async Task<ObservableCollection<HistoryItem>?> LoadHistoryFromFileAsync()
     {
         try
@@ -133,9 +130,7 @@ public static class HistoryStorageHelper
                 return null;
             }
 
-            ObservableCollection<HistoryItem>? history = JsonSerializer.Deserialize<ObservableCollection<HistoryItem>>(
-                json,
-                HistoryJsonSerializerOptions.Options);
+            ObservableCollection<HistoryItem>? history = JsonSerializer.Deserialize(json, HistoryJsonContext.Default.ObservableCollectionHistoryItem);
 
             Debug.WriteLine($"? Loaded {history?.Count ?? 0} items from {HistoryFileName}");
             return history;
@@ -155,7 +150,6 @@ public static class HistoryStorageHelper
     /// <summary>
     /// Migrates history from old settings storage to new format.
     /// </summary>
-    [RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer operations")]
     private static async Task<ObservableCollection<HistoryItem>?> MigrateFromOldSettingsAsync()
     {
         Debug.WriteLine("?? Starting history migration from old settings...");
@@ -249,7 +243,7 @@ public static class HistoryStorageHelper
             string settingsJson = File.ReadAllText(appDataPath);
             Debug.WriteLine($"   File exists, size: {settingsJson.Length} bytes");
 
-            Dictionary<string, string>? settingsDict = JsonSerializer.Deserialize<Dictionary<string, string>>(settingsJson);
+            Dictionary<string, string>? settingsDict = JsonSerializer.Deserialize(settingsJson, HistoryJsonContext.Default.DictionaryStringString);
 
             if (settingsDict != null && settingsDict.TryGetValue(HistoryItemsKey, out string? histVal))
             {
@@ -270,14 +264,11 @@ public static class HistoryStorageHelper
     /// <summary>
     /// Attempts to deserialize history using proper serializer options.
     /// </summary>
-    [RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Deserialize")]
     private static async Task<ObservableCollection<HistoryItem>?> TryDeserializeWithOptionsAsync(string historyJson)
     {
         try
         {
-            ObservableCollection<HistoryItem>? history = JsonSerializer.Deserialize<ObservableCollection<HistoryItem>>(
-                historyJson,
-                HistoryJsonSerializerOptions.Options);
+            ObservableCollection<HistoryItem>? history = JsonSerializer.Deserialize(historyJson, HistoryJsonContext.Default.ObservableCollectionHistoryItem);
 
             if (history != null && history.Count > 0)
             {
@@ -515,10 +506,10 @@ public static class HistoryStorageHelper
         }
 
         string settingsJson = File.ReadAllText(settingsPath);
-        Dictionary<string, string> settingsDict = JsonSerializer.Deserialize<Dictionary<string, string>>(settingsJson) ?? [];
+        Dictionary<string, string> settingsDict = JsonSerializer.Deserialize(settingsJson, HistoryJsonContext.Default.DictionaryStringString) ?? [];
         settingsDict.Remove(HistoryItemsKey);
 
-        string updatedJson = JsonSerializer.Serialize(settingsDict, new JsonSerializerOptions { WriteIndented = true });
+        string updatedJson = JsonSerializer.Serialize(settingsDict, HistoryJsonContext.Default.DictionaryStringString);
         File.WriteAllText(settingsPath, updatedJson);
 
         Debug.WriteLine("??? Cleared old file-based settings");

@@ -55,9 +55,7 @@ public static class DecodingHistoryStorageHelper
                 return [];
 
             ObservableCollection<DecodingHistoryItem>? history =
-                JsonSerializer.Deserialize<ObservableCollection<DecodingHistoryItem>>(
-                    json,
-                    DecodingHistoryJsonSerializerOptions.Options);
+                JsonSerializer.Deserialize(json, DecodingHistoryJsonContext.Default.ObservableCollectionDecodingHistoryItem);
 
             return history ?? [];
         }
@@ -73,7 +71,7 @@ public static class DecodingHistoryStorageHelper
         try
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            string json = JsonSerializer.Serialize(items, DecodingHistoryJsonSerializerOptions.Options);
+            string json = JsonSerializer.Serialize(items, DecodingHistoryJsonContext.Default.ObservableCollectionDecodingHistoryItem);
 
             string tempFileName = HistoryFileName + ".tmp";
             StorageFile tempFile = await localFolder.CreateFileAsync(

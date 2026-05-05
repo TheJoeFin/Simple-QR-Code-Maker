@@ -1,5 +1,6 @@
 using Simple_QR_Code_Maker.Models;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -131,6 +132,8 @@ public static class ExcelSpreadsheetHelper
         });
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "COM interop requires runtime Excel type instantiation; Excel is always available when this path is reached.")]
+    [UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "COM interop uses late-bound property/method dispatch; Excel COM objects always expose these members at runtime.")]
     private static SpreadsheetReadResult ReadWorkbookRowsInternal(string filePath)
     {
         object? application = null;
@@ -250,6 +253,8 @@ public static class ExcelSpreadsheetHelper
         }
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "COM interop requires runtime Excel type instantiation; Excel is always available when this path is reached.")]
+    [UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "COM interop uses late-bound property/method dispatch; Excel COM objects always expose these members at runtime.")]
     private static void WriteWorkbookGeneratedIdsInternal(string filePath, SpreadsheetIdWriteRequest request)
     {
         object? application = null;

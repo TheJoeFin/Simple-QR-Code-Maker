@@ -1,7 +1,6 @@
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Windows.Storage;
 
@@ -11,7 +10,6 @@ public static class BrandStorageHelper
 {
     private const string BrandsFileName = "Brands.json";
 
-    [RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer operations")]
     public static async Task<ObservableCollection<BrandItem>> LoadBrandsAsync()
     {
         try
@@ -26,9 +24,7 @@ public static class BrandStorageHelper
                 return [];
             }
 
-            ObservableCollection<BrandItem>? brands = JsonSerializer.Deserialize<ObservableCollection<BrandItem>>(
-                json,
-                BrandJsonSerializerOptions.Options);
+            ObservableCollection<BrandItem>? brands = JsonSerializer.Deserialize(json, BrandJsonContext.Default.ObservableCollectionBrandItem);
 
             Debug.WriteLine($"Loaded {brands?.Count ?? 0} brands from {BrandsFileName}");
             return brands ?? [];
@@ -45,14 +41,13 @@ public static class BrandStorageHelper
         }
     }
 
-    [RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Serialize")]
     public static async Task SaveBrandsAsync(ObservableCollection<BrandItem> brandItems)
     {
         try
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
 
-            string json = JsonSerializer.Serialize(brandItems, BrandJsonSerializerOptions.Options);
+            string json = JsonSerializer.Serialize(brandItems, BrandJsonContext.Default.ObservableCollectionBrandItem);
 
             string tempFileName = BrandsFileName + ".tmp";
             StorageFile tempFile = await localFolder.CreateFileAsync(
