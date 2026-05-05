@@ -1,6 +1,9 @@
+using WinRT;
+
 namespace Simple_QR_Code_Maker.Models;
 
-public class FolderSummaryItem
+[GeneratedBindableCustomProperty]
+public partial class FolderSummaryItem
 {
     public string FileName { get; set; } = string.Empty;
     public string FilePath { get; set; } = string.Empty;
