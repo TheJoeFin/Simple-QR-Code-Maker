@@ -21,8 +21,8 @@
         HorizontalScrollMode="Disabled"
         VerticalScrollBarVisibility="Auto">
         <Border
-            Width="{Binding ElementName=DialogScrollViewer,
-                            Path=ActualWidth}"
+            Width="{x:Bind DialogScrollViewer.ActualWidth,
+                           Mode=OneWay}"
             MinWidth="420"
             Padding="0,0,12,0">
             <StackPanel HorizontalAlignment="Stretch" Spacing="12">
