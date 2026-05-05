@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
+using System.Collections.ObjectModel;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
@@ -40,7 +41,7 @@ public sealed partial class GenerateIdsDialogViewModel : ObservableRecipient
     [ObservableProperty]
     public partial bool CanApply { get; set; }
 
-    public IReadOnlyList<SpreadsheetGeneratedIdFormatOption> GeneratedIdFormatOptions => SpreadsheetGeneratedIdFormatOption.All;
+    public ObservableCollection<SpreadsheetGeneratedIdFormatOption> GeneratedIdFormatOptions { get; } = [.. SpreadsheetGeneratedIdFormatOption.All];
 
     public bool IsNanoIdLengthEnabled => SelectedGeneratedIdFormatOption?.Format == SpreadsheetGeneratedIdFormat.NanoId;
 
@@ -116,7 +117,7 @@ public sealed partial class GenerateIdsDialogViewModel : ObservableRecipient
         options = new();
         validationMessage = string.Empty;
 
-        if (!TryGetWholeNumber(GeneratedIdCount, out count))
+        if (!GeneratedIdGenerator.TryGetWholeNumber(GeneratedIdCount, out count))
         {
             validationMessage = "Enter a whole number of IDs to generate.";
             return false;
@@ -124,7 +125,7 @@ public sealed partial class GenerateIdsDialogViewModel : ObservableRecipient
 
         int nanoIdLength = GeneratedIdGenerator.DefaultNanoIdLength;
         if (IsNanoIdLengthEnabled
-            && !TryGetWholeNumber(NanoIdLength, out nanoIdLength))
+            && !GeneratedIdGenerator.TryGetWholeNumber(NanoIdLength, out nanoIdLength))
         {
             validationMessage = "Enter a whole-number NanoID length.";
             return false;
@@ -139,23 +140,6 @@ public sealed partial class GenerateIdsDialogViewModel : ObservableRecipient
             Suffix = SuffixText,
         };
 
-        return true;
-    }
-
-    private static bool TryGetWholeNumber(double value, out int result)
-    {
-        result = 0;
-
-        if (double.IsNaN(value) || double.IsInfinity(value))
-            return false;
-
-        if (value < 1 || value > int.MaxValue)
-            return false;
-
-        if (Math.Floor(value) != value)
-            return false;
-
-        result = Convert.ToInt32(value);
         return true;
     }
 }

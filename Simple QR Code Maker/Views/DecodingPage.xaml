@@ -396,8 +396,8 @@
                                                                             </ItemsPanelTemplate>
                                                                         </ItemsControl.ItemsPanel>
                                                                         <ItemsControl.ItemTemplate>
-                                                                            <DataTemplate>
-                                                                                <ContentControl Content="{Binding}" />
+                                                                            <DataTemplate x:DataType="controls:TextBorder">
+                                                                                <ContentControl Content="{x:Bind}" />
                                                                             </DataTemplate>
                                                                         </ItemsControl.ItemTemplate>
                                                                     </ItemsControl>
@@ -415,8 +415,8 @@
                                                                             </ItemsPanelTemplate>
                                                                         </ItemsControl.ItemsPanel>
                                                                         <ItemsControl.ItemTemplate>
-                                                                            <DataTemplate>
-                                                                                <ContentControl Content="{Binding}" />
+                                                                            <DataTemplate x:DataType="FrameworkElement">
+                                                                                <ContentControl Content="{x:Bind}" />
                                                                             </DataTemplate>
                                                                         </ItemsControl.ItemTemplate>
                                                                     </ItemsControl>
