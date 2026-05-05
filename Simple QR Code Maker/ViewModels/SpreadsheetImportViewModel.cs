@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
@@ -32,6 +33,10 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     [ObservableProperty]
     public partial ObservableCollection<string> ColumnNames { get; set; } = [];
 
+    public ObservableCollection<SpreadsheetPreviewRow> PreviewTableRows { get; } = [];
+
+    public ObservableCollection<SpreadsheetGeneratedIdFormatOption> GeneratedIdFormatOptions { get; } = [.. SpreadsheetGeneratedIdFormatOption.All];
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanImport))]
     public partial int SelectedColumnIndex { get; set; } = -1;
@@ -62,7 +67,14 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     public partial bool GenerateIdsToSpreadsheet { get; set; } = false;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanImport))]
+    [NotifyPropertyChangedFor(nameof(IsNanoIdLengthEnabled))]
+    [NotifyPropertyChangedFor(nameof(NanoIdLengthVisibility))]
     public partial SpreadsheetGeneratedIdFormatOption? SelectedGeneratedIdFormatOption { get; set; } = SpreadsheetGeneratedIdFormatOption.All[0];
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanImport))]
+    public partial double NanoIdLength { get; set; } = GeneratedIdGenerator.DefaultNanoIdLength;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanImport))]
@@ -102,7 +114,9 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
 
     public bool CanConfigureGeneratedIdFormat => GenerateIdsToSpreadsheet && _dataRows.Count > 0;
 
-    public IReadOnlyList<SpreadsheetGeneratedIdFormatOption> GeneratedIdFormatOptions => SpreadsheetGeneratedIdFormatOption.All;
+    public bool IsNanoIdLengthEnabled => SelectedGeneratedIdFormatOption?.Format == SpreadsheetGeneratedIdFormat.NanoId;
+
+    public Visibility NanoIdLengthVisibility => IsNanoIdLengthEnabled ? Visibility.Visible : Visibility.Collapsed;
 
     public IReadOnlyList<string> Headers => _headers;
 
@@ -157,6 +171,13 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         Refresh(FirstRowIsHeader);
     }
 
+    partial void OnNanoIdLengthChanged(double value)
+    {
+        _generatedIds.Clear();
+        ClearStatus();
+        Refresh(FirstRowIsHeader);
+    }
+
     partial void OnIsImportInProgressChanged(bool value)
     {
         OnPropertyChanged(nameof(CanImport));
@@ -173,6 +194,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         _generatedIds.Clear();
         _backNavigationState = null;
         ColumnNames.Clear();
+        PreviewTableRows.Clear();
         SelectedColumnIndex = -1;
         SourceFileName = string.Empty;
         _sourceFilePath = string.Empty;
@@ -181,6 +203,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         RemoveDuplicates = true;
         GenerateIdsToSpreadsheet = false;
         SelectedGeneratedIdFormatOption = SpreadsheetGeneratedIdFormatOption.All[0];
+        NanoIdLength = GeneratedIdGenerator.DefaultNanoIdLength;
         IsImportInProgress = false;
         RowCountDescription = string.Empty;
         ImportCountDescription = string.Empty;
@@ -275,12 +298,14 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
             _dataRows = [];
             _displayRows = [];
             ColumnNames.Clear();
+            PreviewTableRows.Clear();
             RowCountDescription = "No data found";
             ImportCountDescription = string.Empty;
             IdGenerationDescription = "Generated IDs will not be written back because no data was found.";
             _importableValueCount = 0;
             OnPropertyChanged(nameof(Headers));
             OnPropertyChanged(nameof(PreviewRows));
+            OnPropertyChanged(nameof(PreviewTableRows));
             OnPropertyChanged(nameof(CanImport));
             OnPropertyChanged(nameof(CanConfigureGeneratedIdFormat));
             ImportCommand.NotifyCanExecuteChanged();
@@ -330,6 +355,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
 
         OnPropertyChanged(nameof(Headers));
         OnPropertyChanged(nameof(PreviewRows));
+        OnPropertyChanged(nameof(PreviewTableRows));
         OnPropertyChanged(nameof(CanConfigureGeneratedIdFormat));
         OnPropertyChanged(nameof(ImportButtonText));
         UpdateImportCount();
@@ -338,7 +364,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     private void UpdateImportCount()
     {
         int columnIndex = SelectedColumnIndex;
-        if (columnIndex < 0 || _dataRows.Count == 0)
+        if (columnIndex < 0 || _dataRows.Count == 0 || (GenerateIdsToSpreadsheet && !TryBuildGeneratedIdOptions(out _, out _)))
         {
             _importableValueCount = 0;
             ImportCountDescription = string.Empty;
@@ -395,6 +421,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     {
         List<IReadOnlyList<string>> displayRows = new(_dataRows.Count);
         int missingIdCount = 0;
+        bool hasGeneratedIdOptions = TryBuildGeneratedIdOptions(out GeneratedIdOptions generatedIdOptions, out string? generatedIdValidationMessage);
 
         foreach (SpreadsheetSourceRow row in _dataRows)
         {
@@ -404,8 +431,15 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
                 string existingId = GetCellValue(row.Cells, _idColumnIndex);
                 if (string.IsNullOrWhiteSpace(existingId) && ShouldGenerateIdForRow(row))
                 {
-                    missingIdCount++;
-                    currentRow[_idColumnIndex] = GetOrCreateGeneratedId(row.SourceRowIndex);
+                    if (hasGeneratedIdOptions)
+                    {
+                        missingIdCount++;
+                        currentRow[_idColumnIndex] = GetOrCreateGeneratedId(row.SourceRowIndex, generatedIdOptions);
+                    }
+                    else
+                    {
+                        currentRow[_idColumnIndex] = string.Empty;
+                    }
                 }
                 else
                 {
@@ -417,7 +451,22 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         }
 
         _displayRows = displayRows;
-        IdGenerationDescription = BuildIdGenerationDescription(missingIdCount);
+        ReplaceItems(
+            PreviewTableRows,
+            _displayRows
+                .Take(PreviewRowLimit)
+                .Select(row => new SpreadsheetPreviewRow
+                {
+                    Cells = [.. row],
+                }));
+        IdGenerationDescription = BuildIdGenerationDescription(missingIdCount, generatedIdValidationMessage);
+    }
+
+    private static void ReplaceItems<T>(ObservableCollection<T> collection, IEnumerable<T> items)
+    {
+        collection.Clear();
+        foreach (T item in items)
+            collection.Add(item);
     }
 
     private static List<string> CreateNormalizedRow(IReadOnlyList<string> values, int columnCount)
@@ -429,13 +478,16 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         return row;
     }
 
-    private string BuildIdGenerationDescription(int missingIdCount)
+    private string BuildIdGenerationDescription(int missingIdCount, string? generatedIdValidationMessage)
     {
         if (!GenerateIdsToSpreadsheet)
             return "Generated IDs will not be written back to the spreadsheet.";
 
         if (_dataRows.Count == 0)
             return "Generated IDs cannot be written because there are no data rows.";
+
+        if (!string.IsNullOrWhiteSpace(generatedIdValidationMessage))
+            return generatedIdValidationMessage;
 
         string formatName = SelectedGeneratedIdFormatOption?.DisplayName ?? "GUID";
         if (!FirstRowIsHeader)
@@ -456,6 +508,8 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
             throw new InvalidOperationException("A spreadsheet file path is required to save generated IDs.");
         if (_idColumnIndex < 0)
             throw new InvalidOperationException("An ID column must be available before generated IDs can be saved.");
+        if (!TryBuildGeneratedIdOptions(out GeneratedIdOptions generatedIdOptions, out string? validationMessage))
+            throw new InvalidOperationException(validationMessage);
 
         List<SpreadsheetIdWriteRow> rows = [];
         foreach (SpreadsheetSourceRow row in _dataRows)
@@ -466,7 +520,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
             rows.Add(new SpreadsheetIdWriteRow
             {
                 SourceRowIndex = row.SourceRowIndex,
-                Value = GetOrCreateGeneratedId(row.SourceRowIndex),
+                Value = GetOrCreateGeneratedId(row.SourceRowIndex, generatedIdOptions),
             });
         }
 
@@ -479,19 +533,40 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         };
     }
 
-    private string GetOrCreateGeneratedId(int sourceRowIndex)
+    private string GetOrCreateGeneratedId(int sourceRowIndex, GeneratedIdOptions options)
     {
         if (_generatedIds.TryGetValue(sourceRowIndex, out string? existingValue))
             return existingValue;
 
-        GeneratedIdOptions options = new()
-        {
-            Format = SelectedGeneratedIdFormatOption?.Format ?? SpreadsheetGeneratedIdFormat.Guid,
-            NanoIdLength = GeneratedIdGenerator.DefaultNanoIdLength,
-        };
         string value = GeneratedIdGenerator.Create(options);
         _generatedIds[sourceRowIndex] = value;
         return value;
+    }
+
+    private bool TryBuildGeneratedIdOptions(out GeneratedIdOptions options, out string validationMessage)
+    {
+        SpreadsheetGeneratedIdFormat format = SelectedGeneratedIdFormatOption?.Format ?? SpreadsheetGeneratedIdFormat.Guid;
+        int nanoIdLength = GeneratedIdGenerator.DefaultNanoIdLength;
+        validationMessage = string.Empty;
+
+        if (format == SpreadsheetGeneratedIdFormat.NanoId
+            && !GeneratedIdGenerator.TryGetWholeNumber(NanoIdLength, out nanoIdLength))
+        {
+            options = new GeneratedIdOptions
+            {
+                Format = format,
+                NanoIdLength = GeneratedIdGenerator.DefaultNanoIdLength,
+            };
+            validationMessage = "Enter a whole-number NanoID length before saving generated IDs.";
+            return false;
+        }
+
+        options = new GeneratedIdOptions
+        {
+            Format = format,
+            NanoIdLength = nanoIdLength,
+        };
+        return true;
     }
 
     private bool ShouldGenerateIdForRow(SpreadsheetSourceRow row)

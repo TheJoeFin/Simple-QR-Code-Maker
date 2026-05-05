@@ -7,12 +7,15 @@
     xmlns:models="using:Simple_QR_Code_Maker.Models"
     xmlns:settingsControls="using:CommunityToolkit.WinUI.Controls"
     xmlns:tableView="using:WinUI.TableView"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>
         <x:Double x:Key="SettingsCardWrapThreshold">320</x:Double>
         <x:Double x:Key="SettingsCardWrapNoIconThreshold">200</x:Double>
+        <Style x:Key="SpreadsheetPreviewCellTextStyle" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="WrapWholeWords" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
     </Page.Resources>
 
     <Grid Padding="40,0,0,0">
@@ -55,33 +58,57 @@
                         OnContent="" />
                 </settingsControls:SettingsCard>
 
-                <settingsControls:SettingsCard Description="{x:Bind ViewModel.IdGenerationDescription, Mode=OneWay}" Header="Generate IDs and save back">
-                    <settingsControls:SettingsCard.HeaderIcon>
+                <settingsControls:SettingsExpander
+                    Description="{x:Bind ViewModel.IdGenerationDescription, Mode=OneWay}"
+                    Header="Generate IDs and save back"
+                    IsExpanded="{x:Bind ViewModel.GenerateIdsToSpreadsheet,
+                                        Mode=OneWay}">
+                    <settingsControls:SettingsExpander.HeaderIcon>
                         <SymbolIcon Symbol="Save" />
-                    </settingsControls:SettingsCard.HeaderIcon>
-                    <StackPanel Spacing="12">
+                    </settingsControls:SettingsExpander.HeaderIcon>
+                    <settingsControls:SettingsExpander.Content>
                         <ToggleSwitch
                             IsOn="{x:Bind ViewModel.GenerateIdsToSpreadsheet,
                                           Mode=TwoWay}"
                             OffContent=""
                             OnContent="" />
-                        <ComboBox
-                            MinWidth="220"
-                            HorizontalAlignment="Stretch"
-                            IsEnabled="{x:Bind ViewModel.CanConfigureGeneratedIdFormat,
-                                               Mode=OneWay}"
-                            ItemsSource="{x:Bind ViewModel.GeneratedIdFormatOptions,
-                                                 Mode=OneWay}"
-                            SelectedItem="{x:Bind ViewModel.SelectedGeneratedIdFormatOption,
-                                                  Mode=TwoWay}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate x:DataType="models:SpreadsheetGeneratedIdFormatOption">
-                                    <TextBlock Text="{x:Bind DisplayName}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </StackPanel>
-                </settingsControls:SettingsCard>
+                    </settingsControls:SettingsExpander.Content>
+                    <settingsControls:SettingsExpander.Items>
+                        <settingsControls:SettingsCard Header="ID style">
+                            <ComboBox
+                                MinWidth="220"
+                                HorizontalAlignment="Stretch"
+                                IsEnabled="{x:Bind ViewModel.CanConfigureGeneratedIdFormat,
+                                                   Mode=OneWay}"
+                                ItemsSource="{x:Bind ViewModel.GeneratedIdFormatOptions,
+                                                     Mode=OneWay}"
+                                SelectedItem="{x:Bind ViewModel.SelectedGeneratedIdFormatOption,
+                                                      Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="models:SpreadsheetGeneratedIdFormatOption">
+                                        <TextBlock Text="{x:Bind DisplayName}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </settingsControls:SettingsCard>
+                        <settingsControls:SettingsCard
+                            Description="Only used when ID style is NanoID."
+                            Header="NanoID length"
+                            Visibility="{x:Bind ViewModel.NanoIdLengthVisibility,
+                                                 Mode=OneWay}">
+                            <NumberBox
+                                MinWidth="220"
+                                IsEnabled="{x:Bind ViewModel.IsNanoIdLengthEnabled,
+                                                   Mode=OneWay}"
+                                Minimum="1"
+                                SmallChange="1"
+                                SpinButtonPlacementMode="Compact"
+                                Value="{x:Bind ViewModel.NanoIdLength,
+                                               Mode=TwoWay,
+                                               UpdateSourceTrigger=PropertyChanged}" />
+                        </settingsControls:SettingsCard>
+                    </settingsControls:SettingsExpander.Items>
+                </settingsControls:SettingsExpander>
 
                 <settingsControls:SettingsCard Description="{x:Bind ViewModel.ImportCountDescription, Mode=OneWay}" Header="Column to import">
                     <settingsControls:SettingsCard.HeaderIcon>
@@ -168,10 +195,16 @@
                     <tableView:TableView
                         x:Name="PreviewTableView"
                         AutoGenerateColumns="False"
+                        CanFilterColumns="True"
+                        CanSortColumns="True"
+                        IsReadOnly="True"
+                        ItemsSource="{x:Bind ViewModel.PreviewTableRows,
+                                             Mode=OneWay}"
+                        MinColumnWidth="140"
                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
                         ScrollViewer.HorizontalScrollMode="Enabled"
-                        ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                        ScrollViewer.VerticalScrollMode="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        ScrollViewer.VerticalScrollMode="Enabled"
                         SelectionMode="None" />
                 </Border>
             </StackPanel>

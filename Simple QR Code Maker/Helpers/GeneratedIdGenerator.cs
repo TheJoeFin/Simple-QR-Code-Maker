@@ -36,6 +36,23 @@ public static class GeneratedIdGenerator
         return values;
     }
 
+    public static bool TryGetWholeNumber(double value, out int result)
+    {
+        result = 0;
+
+        if (double.IsNaN(value) || double.IsInfinity(value))
+            return false;
+
+        if (value < 1 || value > int.MaxValue)
+            return false;
+
+        if (Math.Floor(value) != value)
+            return false;
+
+        result = Convert.ToInt32(value);
+        return true;
+    }
+
     private static string CreateNanoId(int length)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(length);

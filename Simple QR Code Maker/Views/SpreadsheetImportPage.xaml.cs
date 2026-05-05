@@ -15,57 +15,59 @@ public sealed partial class SpreadsheetImportPage : Page
     {
         ViewModel = App.GetService<SpreadsheetImportViewModel>();
         InitializeComponent();
+        Loaded += SpreadsheetImportPage_Loaded;
         Unloaded += SpreadsheetImportPage_Unloaded;
-        ViewModel.PropertyChanged += ViewModel_PropertyChanged;
     }
 
-    private void Page_Loaded(object sender, RoutedEventArgs e)
+    private void SpreadsheetImportPage_Loaded(object sender, RoutedEventArgs e)
     {
-        RefreshPreviewTableView();
+        ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+        ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        RebuildPreviewColumns();
     }
 
     private void SpreadsheetImportPage_Unloaded(object sender, RoutedEventArgs e)
     {
         ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
-        Unloaded -= SpreadsheetImportPage_Unloaded;
     }
 
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(SpreadsheetImportViewModel.Headers)
-            or nameof(SpreadsheetImportViewModel.PreviewRows))
-        {
-            RefreshPreviewTableView();
-        }
+        if (e.PropertyName == nameof(SpreadsheetImportViewModel.Headers))
+            RebuildPreviewColumns();
     }
 
-    private void RefreshPreviewTableView()
+    private void RebuildPreviewColumns()
     {
-        PreviewTableView.ItemsSource = null;
         PreviewTableView.Columns.Clear();
 
-        IReadOnlyList<string> headers = ViewModel.Headers;
-        if (headers.Count == 0)
-        {
-            return;
-        }
+        Style? cellTextStyle = Resources["SpreadsheetPreviewCellTextStyle"] as Style;
 
-        for (int i = 0; i < headers.Count; i++)
+        for (int columnIndex = 0; columnIndex < ViewModel.Headers.Count; columnIndex++)
         {
-            PreviewTableView.Columns.Add(new TableViewTextColumn
+            Binding binding = new()
             {
-                Header = headers[i],
-                IsReadOnly = true,
+                Mode = BindingMode.OneWay,
+                Path = new PropertyPath($"Cells[{columnIndex}]"),
+                TargetNullValue = string.Empty,
+                FallbackValue = string.Empty,
+            };
+
+            TableViewTextColumn column = new()
+            {
+                Header = ViewModel.Headers[columnIndex],
+                Binding = binding,
+                ClipboardContentBinding = binding,
+                MinWidth = 140,
                 CanFilter = false,
                 CanSort = false,
-                Binding = new Binding
-                {
-                    Mode = BindingMode.OneWay,
-                    Path = new PropertyPath($"[{i}]"),
-                },
-            });
-        }
+                IsReadOnly = true,
+            };
 
-        PreviewTableView.ItemsSource = ViewModel.PreviewRows;
+            if (cellTextStyle is not null)
+                column.ElementStyle = cellTextStyle;
+
+            PreviewTableView.Columns.Add(column);
+        }
     }
 }
