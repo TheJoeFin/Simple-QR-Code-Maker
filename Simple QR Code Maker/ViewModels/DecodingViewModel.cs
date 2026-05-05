@@ -387,6 +387,9 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         if (value && IsCameraPaneOpen)
             IsCameraPaneOpen = false;
 
+        if (!value)
+            AdvancedTools.CloseActiveWorkflow();
+
         IsSidePaneOpen = value || IsCameraPaneOpen;
     }
 
@@ -932,6 +935,15 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             return;
 
         IsAdvancedToolsVisible = !IsAdvancedToolsVisible;
+    }
+
+    [RelayCommand]
+    private void ShowAdvancedToolsPane()
+    {
+        if (!HasImage)
+            return;
+
+        IsAdvancedToolsVisible = true;
     }
 
     [RelayCommand]

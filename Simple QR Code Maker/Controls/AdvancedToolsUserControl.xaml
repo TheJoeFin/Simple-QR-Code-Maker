@@ -7,24 +7,19 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Simple_QR_Code_Maker.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:settingsControls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-        <converters:MagickColorToBrushConverter x:Key="MagickColorToBrushConverter" />
         <converters:BoolNegationConverter x:Key="BoolNegationConverter" />
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <x:Double x:Key="SettingsCardWrapThreshold">320</x:Double>
+        <x:Double x:Key="SettingsCardWrapNoIconThreshold">200</x:Double>
 
-        <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Margin" Value="0,12,0,8" />
-        </Style>
-
-        <Style x:Key="ToolToggleButtonStyle" TargetType="ToggleButton">
-            <Setter Property="Padding" Value="12,10" />
-            <Setter Property="CornerRadius" Value="4" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="MinHeight" Value="40" />
+        <Style x:Key="WorkflowLauncherButtonStyle" TargetType="Button">
+            <Setter Property="MinHeight" Value="44" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
         </Style>
     </UserControl.Resources>
 
@@ -34,348 +29,443 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--  Scrollable Content  -->
-        <ScrollViewer
-            Grid.Row="0"
-            Padding="12,12,12,0"
-            VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="12">
-                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Advanced Image Processing Tools" />
-
-                <StackPanel
-                    Padding="12"
-                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    CornerRadius="8"
-                    Spacing="8">
-                    <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Basic Adjustments" />
-                    <TextBlock
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="Apply grayscale, invert, and contrast adjustments for better QR code detection"
-                        TextWrapping="Wrap" />
-
-                    <Button
-                        Command="{x:Bind ViewModel.ApplyGrayscaleCommand}"
-                        IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                           Mode=OneWay,
-                                           Converter={StaticResource BoolNegationConverter}}"
-                        ToolTipService.ToolTip="Convert the image to grayscale for better QR code detection">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
-                            <TextBlock Text="Convert to Grayscale" />
-                        </StackPanel>
-                    </Button>
-
-                    <Button
-                        Command="{x:Bind ViewModel.ApplyInvertCommand}"
-                        IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                           Mode=OneWay,
-                                           Converter={StaticResource BoolNegationConverter}}"
-                        ToolTipService.ToolTip="Invert image colors, useful for light QR codes on dark backgrounds">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
-                            <TextBlock Text="Invert Colors" />
-                        </StackPanel>
-                    </Button>
-
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Contrast" />
-                        <Grid ColumnSpacing="8">
+        <Grid Grid.Row="0">
+            <ScrollViewer
+                Padding="16,16,16,0"
+                VerticalScrollBarVisibility="Auto"
+                Visibility="{x:Bind ViewModel.IsWorkflowPickerVisible,
+                                    Mode=OneWay,
+                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Spacing="12">
+                    <Border
+                        Padding="16"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource OverlayCornerRadius}">
+                        <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Slider
-                                x:Name="ContrastSlider"
-                                Grid.Column="0"
-                                Maximum="100"
-                                Minimum="-100"
-                                StepFrequency="1"
-                                ToolTipService.ToolTip="Adjust image contrast"
-                                Value="{x:Bind ViewModel.ContrastValue,
-                                               Mode=TwoWay}" />
-                            <TextBlock
-                                Grid.Column="1"
-                                MinWidth="40"
-                                VerticalAlignment="Center"
-                                Text="{x:Bind ViewModel.ContrastValue,
-                                              Mode=OneWay}" />
-                        </Grid>
-                    </StackPanel>
-                </StackPanel>
-
-                <StackPanel
-                    Padding="12"
-                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    CornerRadius="8"
-                    Spacing="8">
-                    <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Levels Adjustment" />
-                    <TextBlock
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="Fine-tune the black and white points to improve image contrast"
-                        TextWrapping="Wrap" />
-
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Black Point" />
-                        <Grid ColumnSpacing="8">
-                            <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Slider
-                                x:Name="BlackPointSlider"
-                                Grid.Column="0"
-                                Maximum="100"
-                                Minimum="0"
-                                StepFrequency="1"
-                                ToolTipService.ToolTip="Adjust the black point level"
-                                Value="{x:Bind ViewModel.BlackPointLevel,
-                                               Mode=TwoWay}" />
-                            <TextBlock
+
+                            <Border
+                                Width="40"
+                                Height="40"
+                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                CornerRadius="20">
+                                <SymbolIcon
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Symbol="Repair" />
+                            </Border>
+
+                            <StackPanel
                                 Grid.Column="1"
-                                MinWidth="40"
                                 VerticalAlignment="Center"
-                                Text="{x:Bind ViewModel.BlackPointLevel,
-                                              Mode=OneWay}" />
-                        </Grid>
-                    </StackPanel>
-
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="White Point" />
-                        <Grid ColumnSpacing="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Slider
-                                x:Name="WhitePointSlider"
-                                Grid.Column="0"
-                                Maximum="100"
-                                Minimum="0"
-                                StepFrequency="1"
-                                ToolTipService.ToolTip="Adjust the white point level"
-                                Value="{x:Bind ViewModel.WhitePointLevel,
-                                               Mode=TwoWay}" />
-                            <TextBlock
-                                Grid.Column="1"
-                                MinWidth="40"
-                                VerticalAlignment="Center"
-                                Text="{x:Bind ViewModel.WhitePointLevel,
-                                              Mode=OneWay}" />
-                        </Grid>
-                    </StackPanel>
-                </StackPanel>
-
-                <StackPanel
-                    Padding="12"
-                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    CornerRadius="8"
-                    Spacing="8">
-                    <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Eyedropper Tools" />
-                    <TextBlock
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="Select colors from the image to set black and white points for better contrast"
-                        TextWrapping="Wrap" />
-
-                    <Grid ColumnSpacing="8" RowSpacing="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="auto" />
-                        </Grid.RowDefinitions>
-                        <ToggleButton
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            HorizontalAlignment="Center"
-                            IsChecked="{x:Bind ViewModel.IsEyedropperBlackMode,
-                                               Mode=TwoWay}"
-                            Style="{StaticResource ToolToggleButtonStyle}"
-                            ToolTipService.ToolTip="Click to enable eyedropper, then click on the image to select the black point">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xEF3C;" />
-                                <TextBlock Text="Black Point" />
+                                Spacing="4">
+                                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Advanced decoding" />
+                                <TextBlock
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Choose a focused workflow or make quick image adjustments before decoding."
+                                    TextWrapping="Wrap" />
                             </StackPanel>
-                        </ToggleButton>
+                        </Grid>
+                    </Border>
 
-                        <ToggleButton
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            IsChecked="{x:Bind ViewModel.IsEyedropperWhiteMode,
-                                               Mode=TwoWay}"
-                            Style="{StaticResource ToolToggleButtonStyle}"
-                            ToolTipService.ToolTip="Click to enable eyedropper, then click on the image to select the white point">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xEF3C;" />
-                                <TextBlock Text="White Point" />
-                            </StackPanel>
-                        </ToggleButton>
+                    <settingsControls:SettingsExpander
+                        Description="Make quick, non-guided image adjustments."
+                        Header="Quick fixes"
+                        IsExpanded="True">
+                        <settingsControls:SettingsExpander.HeaderIcon>
+                            <FontIcon Glyph="&#xE793;" />
+                        </settingsControls:SettingsExpander.HeaderIcon>
+                        <settingsControls:SettingsExpander.Items>
+                            <settingsControls:SettingsCard Header="One-tap fixes">
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
 
-                        <StackPanel
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            HorizontalAlignment="Center"
-                            Spacing="4"
-                            Visibility="{x:Bind ViewModel.SelectedBlackPointColor,
-                                                Mode=OneWay,
-                                                Converter={StaticResource NullToVisibilityConverter}}">
-                            <TextBlock FontSize="12" Text="Black Point Color" />
-                            <Rectangle
-                                Width="60"
-                                Height="30"
-                                Fill="{x:Bind ViewModel.SelectedBlackPointColor,
-                                              Mode=OneWay,
-                                              Converter={StaticResource MagickColorToBrushConverter}}"
-                                RadiusX="4"
-                                RadiusY="4"
-                                Stroke="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                StrokeThickness="1" />
-                        </StackPanel>
+                                    <Button
+                                        Grid.Column="0"
+                                        Width="360"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Command="{x:Bind ViewModel.ApplyGrayscaleCommand}"
+                                        IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                                           Mode=OneWay,
+                                                           Converter={StaticResource BoolNegationConverter}}"
+                                        ToolTipService.ToolTip="Convert the image to grayscale for better QR code detection">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                                            <TextBlock Text="Grayscale" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Button>
 
+                                    <Button
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Command="{x:Bind ViewModel.ApplyInvertCommand}"
+                                        IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                                           Mode=OneWay,
+                                                           Converter={StaticResource BoolNegationConverter}}"
+                                        ToolTipService.ToolTip="Invert image colors when the code is lighter than its background">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
+                                            <TextBlock Text="Invert" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Button>
+                                </Grid>
+                            </settingsControls:SettingsCard>
 
-                        <StackPanel
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            Spacing="4"
-                            Visibility="{x:Bind ViewModel.SelectedWhitePointColor,
-                                                Mode=OneWay,
-                                                Converter={StaticResource NullToVisibilityConverter}}">
-                            <TextBlock FontSize="12" Text="White Point Color" />
-                            <Rectangle
-                                Width="60"
-                                Height="30"
-                                Fill="{x:Bind ViewModel.SelectedWhitePointColor,
-                                              Mode=OneWay,
-                                              Converter={StaticResource MagickColorToBrushConverter}}"
-                                RadiusX="4"
-                                RadiusY="4"
-                                Stroke="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                StrokeThickness="1" />
-                        </StackPanel>
+                            <settingsControls:SettingsCard Header="Contrast">
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Slider
+                                        x:Name="ContrastSlider"
+                                        Grid.Column="0"
+                                        Maximum="100"
+                                        Minimum="-100"
+                                        StepFrequency="1"
+                                        ToolTipService.ToolTip="Increase or decrease contrast to separate the code from its background"
+                                        Value="{x:Bind ViewModel.ContrastValue,
+                                                       Mode=TwoWay}" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        MinWidth="40"
+                                        VerticalAlignment="Center"
+                                        Text="{x:Bind ViewModel.ContrastValue,
+                                                      Mode=OneWay}" />
+                                </Grid>
+                            </settingsControls:SettingsCard>
 
-                        <InfoBar
-                            Grid.Row="2"
-                            Grid.ColumnSpan="2"
-                            IsClosable="False"
-                            IsOpen="{x:Bind ViewModel.IsEyedropperBlackMode,
-                                            Mode=OneWay}"
-                            Message="Click on the image to select the black point"
-                            Severity="Informational" />
+                            <settingsControls:SettingsCard Header="Black point">
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Slider
+                                        x:Name="BlackPointSlider"
+                                        Grid.Column="0"
+                                        Maximum="100"
+                                        Minimum="0"
+                                        StepFrequency="1"
+                                        ToolTipService.ToolTip="Set how dark a pixel needs to be before it becomes black"
+                                        Value="{x:Bind ViewModel.BlackPointLevel,
+                                                       Mode=TwoWay}" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        MinWidth="40"
+                                        VerticalAlignment="Center"
+                                        Text="{x:Bind ViewModel.BlackPointLevel,
+                                                      Mode=OneWay}" />
+                                </Grid>
+                            </settingsControls:SettingsCard>
 
-                        <InfoBar
-                            Grid.Row="2"
-                            Grid.ColumnSpan="2"
-                            IsClosable="False"
-                            IsOpen="{x:Bind ViewModel.IsEyedropperWhiteMode,
-                                            Mode=OneWay}"
-                            Message="Click on the image to select the white point"
-                            Severity="Informational" />
-                    </Grid>
+                            <settingsControls:SettingsCard Header="White point">
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Slider
+                                        x:Name="WhitePointSlider"
+                                        Grid.Column="0"
+                                        Maximum="100"
+                                        Minimum="0"
+                                        StepFrequency="1"
+                                        ToolTipService.ToolTip="Set how bright a pixel needs to be before it becomes white"
+                                        Value="{x:Bind ViewModel.WhitePointLevel,
+                                                       Mode=TwoWay}" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        MinWidth="40"
+                                        VerticalAlignment="Center"
+                                        Text="{x:Bind ViewModel.WhitePointLevel,
+                                                      Mode=OneWay}" />
+                                </Grid>
+                            </settingsControls:SettingsCard>
+
+                            <settingsControls:SettingsCard Header="Apply quick fixes">
+                                <Button
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    Command="{x:Bind ViewModel.ApplyProcessingCommand}"
+                                    IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                                       Mode=OneWay,
+                                                       Converter={StaticResource BoolNegationConverter}}"
+                                    Style="{StaticResource AccentButtonStyle}"
+                                    ToolTipService.ToolTip="Apply the current quick-fix settings to the image">
+                                    <Grid ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid Width="16" Height="16">
+                                            <FontIcon
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                Glyph="&#xE73E;"
+                                                Visibility="{x:Bind ViewModel.IsProcessing,
+                                                                    Mode=OneWay,
+                                                                    Converter={StaticResource BoolToVisibilityConverter},
+                                                                    ConverterParameter=inverse}" />
+                                            <ProgressRing
+                                                Width="16"
+                                                Height="16"
+                                                IsActive="{x:Bind ViewModel.IsProcessing,
+                                                                  Mode=OneWay}"
+                                                Visibility="{x:Bind ViewModel.IsProcessing,
+                                                                    Mode=OneWay,
+                                                                    Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        </Grid>
+
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Text="Apply quick fixes"
+                                            TextWrapping="Wrap" />
+
+                                        <Ellipse
+                                            Grid.Column="2"
+                                            Width="8"
+                                            Height="8"
+                                            VerticalAlignment="Center"
+                                            Fill="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
+                                            Visibility="{x:Bind ViewModel.HasPendingChanges,
+                                                                Mode=OneWay,
+                                                                Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    </Grid>
+                                </Button>
+                            </settingsControls:SettingsCard>
+                        </settingsControls:SettingsExpander.Items>
+                    </settingsControls:SettingsExpander>
+
+                    <settingsControls:SettingsExpander
+                        Description="Open a focused tool flow and return here when finished."
+                        Header="Guided workflows"
+                        IsExpanded="True">
+                        <settingsControls:SettingsExpander.HeaderIcon>
+                            <SymbolIcon Symbol="Edit" />
+                        </settingsControls:SettingsExpander.HeaderIcon>
+                        <settingsControls:SettingsExpander.Items>
+                            <settingsControls:SettingsCard Description="Click a dark pixel and apply that sample immediately." Header="Sample black point">
+                                <Button
+                                    Command="{x:Bind ViewModel.OpenBlackPointWorkflowCommand}"
+                                    IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                                       Mode=OneWay,
+                                                       Converter={StaticResource BoolNegationConverter}}"
+                                    Style="{StaticResource WorkflowLauncherButtonStyle}"
+                                    ToolTipService.ToolTip="Open the black-point sampling workflow">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <FontIcon Glyph="&#xEF3C;" />
+                                        <TextBlock Text="Pick Black Point" />
+                                    </StackPanel>
+                                </Button>
+                            </settingsControls:SettingsCard>
+
+                            <settingsControls:SettingsCard Description="Click a light pixel and apply that sample immediately." Header="Sample white point">
+                                <Button
+                                    Command="{x:Bind ViewModel.OpenWhitePointWorkflowCommand}"
+                                    IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                                       Mode=OneWay,
+                                                       Converter={StaticResource BoolNegationConverter}}"
+                                    Style="{StaticResource WorkflowLauncherButtonStyle}"
+                                    ToolTipService.ToolTip="Open the white-point sampling workflow">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <FontIcon Glyph="&#xEF3C;" />
+                                        <TextBlock Text="White Black Point" />
+                                    </StackPanel>
+                                </Button>
+                            </settingsControls:SettingsCard>
+
+                            <settingsControls:SettingsCard Description="Mark all four corners, then apply the correction." Header="Straighten a QR code">
+                                <Button
+                                    Command="{x:Bind ViewModel.OpenPerspectiveWorkflowCommand}"
+                                    IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                                       Mode=OneWay,
+                                                       Converter={StaticResource BoolNegationConverter}}"
+                                    Style="{StaticResource WorkflowLauncherButtonStyle}"
+                                    ToolTipService.ToolTip="Open the perspective correction workflow">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <local:QrCodeIcon />
+                                        <TextBlock Text="Pick Code Corners" />
+                                    </StackPanel>
+                                </Button>
+                            </settingsControls:SettingsCard>
+
+                            <settingsControls:SettingsCard Description="Draw a region on the image, then extract it as a new image." Header="Extract a region">
+                                <Button
+                                    Command="{x:Bind ViewModel.OpenCutOutWorkflowCommand}"
+                                    IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                                       Mode=OneWay,
+                                                       Converter={StaticResource BoolNegationConverter}}"
+                                    Style="{StaticResource WorkflowLauncherButtonStyle}"
+                                    ToolTipService.ToolTip="Open the extract-region workflow">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <SymbolIcon Symbol="Crop" />
+                                        <TextBlock Text="Cutout area" />
+                                    </StackPanel>
+                                </Button>
+                            </settingsControls:SettingsCard>
+                        </settingsControls:SettingsExpander.Items>
+                    </settingsControls:SettingsExpander>
                 </StackPanel>
+            </ScrollViewer>
 
-                <StackPanel
-                    Padding="12"
-                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    CornerRadius="8"
-                    Spacing="8">
-                    <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Perspective Correction" />
-                    <TextBlock
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="Correct perspective distortion by selecting the four corners of the QR code"
-                        TextWrapping="Wrap" />
-
-                    <ToggleButton
-                        IsChecked="{x:Bind ViewModel.IsPerspectiveCorrectionMode,
-                                           Mode=TwoWay}"
-                        Style="{StaticResource ToolToggleButtonStyle}"
-                        ToolTipService.ToolTip="Enable to select the 4 corners of the QR code for perspective correction">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE91F;" />
-                            <TextBlock Text="Enable Perspective Correction and Crop" />
+            <ScrollViewer
+                Padding="16,16,16,0"
+                VerticalScrollBarVisibility="Auto"
+                Visibility="{x:Bind ViewModel.IsSampleBlackPointWorkflowVisible,
+                                    Mode=OneWay,
+                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Spacing="12">
+                    <Border
+                        Padding="16"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource OverlayCornerRadius}">
+                        <StackPanel Spacing="4">
+                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Sample black point" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="Click the darkest meaningful part of the code or background. The sample is applied as soon as you pick it."
+                                TextWrapping="Wrap" />
                         </StackPanel>
-                    </ToggleButton>
+                    </Border>
 
                     <InfoBar
                         IsClosable="False"
-                        IsOpen="{x:Bind ViewModel.IsPerspectiveCorrectionMode,
-                                        Mode=OneWay}"
-                        Message="Click on the image to mark each corner in sequence"
+                        IsOpen="True"
+                        Message="Click once on the image to choose the black point."
+                        Severity="Informational" />
+                </StackPanel>
+            </ScrollViewer>
+
+            <ScrollViewer
+                Padding="16,16,16,0"
+                VerticalScrollBarVisibility="Auto"
+                Visibility="{x:Bind ViewModel.IsSampleWhitePointWorkflowVisible,
+                                    Mode=OneWay,
+                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Spacing="12">
+                    <Border
+                        Padding="16"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource OverlayCornerRadius}">
+                        <StackPanel Spacing="4">
+                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Sample white point" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="Click the lightest meaningful part of the code or background. The sample is applied as soon as you pick it."
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <InfoBar
+                        IsClosable="False"
+                        IsOpen="True"
+                        Message="Click once on the image to choose the white point."
+                        Severity="Informational" />
+                </StackPanel>
+            </ScrollViewer>
+
+            <ScrollViewer
+                Padding="16,16,16,0"
+                VerticalScrollBarVisibility="Auto"
+                Visibility="{x:Bind ViewModel.IsPerspectiveWorkflowVisible,
+                                    Mode=OneWay,
+                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Spacing="12">
+                    <Border
+                        Padding="16"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource OverlayCornerRadius}">
+                        <StackPanel Spacing="4">
+                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Straighten a QR code" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="Work through the corner selection steps, then apply the correction when the outline is complete."
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <InfoBar
+                        IsClosable="False"
+                        IsOpen="True"
+                        Message="Click each corner on the image in order."
                         Severity="Informational" />
 
-                    <!--  Current step indicator  -->
-                    <StackPanel
-                        Margin="0,8,0,0"
-                        Orientation="Horizontal"
-                        Spacing="8"
-                        Visibility="{x:Bind ViewModel.IsPerspectiveCorrectionMode,
-                                            Mode=OneWay}">
+                    <settingsControls:SettingsCard Header="Current step">
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                        <!--  Number badge  -->
-                        <Border
-                            Width="28"
-                            Height="28"
-                            Background="{ThemeResource SystemAccentColor}"
-                            CornerRadius="14"
-                            Visibility="{x:Bind ViewModel.IsCornerSelectionComplete,
-                                                Mode=OneWay,
-                                                Converter={StaticResource BoolToVisibilityConverter},
-                                                ConverterParameter=inverse}">
+                            <Border
+                                Width="28"
+                                Height="28"
+                                Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                CornerRadius="14"
+                                Visibility="{x:Bind ViewModel.IsCornerSelectionComplete,
+                                                    Mode=OneWay,
+                                                    Converter={StaticResource BoolToVisibilityConverter},
+                                                    ConverterParameter=inverse}">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                    Text="{x:Bind ViewModel.CurrentCornerNumber,
+                                                  Mode=OneWay}" />
+                            </Border>
+
+                            <Border
+                                Width="28"
+                                Height="28"
+                                Background="{ThemeResource SystemFillColorSuccessBrush}"
+                                CornerRadius="14"
+                                Visibility="{x:Bind ViewModel.IsCornerSelectionComplete,
+                                                    Mode=OneWay,
+                                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                                <FontIcon
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
+                                    Glyph="&#xE73E;" />
+                            </Border>
+
                             <TextBlock
-                                HorizontalAlignment="Center"
+                                Grid.Column="1"
                                 VerticalAlignment="Center"
-                                FontSize="14"
-                                FontWeight="Bold"
-                                Foreground="White"
-                                Text="{x:Bind ViewModel.CurrentCornerNumber,
-                                              Mode=OneWay}" />
-                        </Border>
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="{x:Bind ViewModel.CurrentCornerInstruction,
+                                              Mode=OneWay}"
+                                TextWrapping="Wrap" />
+                        </Grid>
+                    </settingsControls:SettingsCard>
 
-                        <!--  Success checkmark  -->
-                        <Border
-                            Width="28"
-                            Height="28"
-                            Background="{ThemeResource SystemFillColorSuccessBrush}"
-                            CornerRadius="14"
-                            Visibility="{x:Bind ViewModel.IsCornerSelectionComplete,
-                                                Mode=OneWay,
-                                                Converter={StaticResource BoolToVisibilityConverter}}">
-                            <FontIcon
-                                FontSize="14"
-                                Foreground="White"
-                                Glyph="&#xE73E;" />
-                        </Border>
-
-                        <!--  Instruction text  -->
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            FontWeight="SemiBold"
-                            Foreground="{ThemeResource SystemAccentColor}"
-                            Text="{x:Bind ViewModel.CurrentCornerInstruction,
-                                          Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsCornerSelectionComplete,
-                                                Mode=OneWay,
-                                                Converter={StaticResource BoolToVisibilityConverter},
-                                                ConverterParameter=inverse}" />
-
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            FontWeight="SemiBold"
-                            Foreground="{ThemeResource SystemFillColorSuccessBrush}"
-                            Text="{x:Bind ViewModel.CurrentCornerInstruction,
-                                          Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsCornerSelectionComplete,
-                                                Mode=OneWay,
-                                                Converter={StaticResource BoolToVisibilityConverter}}" />
-                    </StackPanel>
-
-                    <StackPanel Spacing="4" Visibility="{x:Bind ViewModel.IsPerspectiveCorrectionMode, Mode=OneWay}">
-                        <TextBlock Text="Border Size (pixels)" />
-                        <Grid ColumnSpacing="8">
+                    <settingsControls:SettingsCard Header="Border size">
+                        <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -386,7 +476,7 @@
                                 Maximum="50"
                                 Minimum="0"
                                 StepFrequency="1"
-                                ToolTipService.ToolTip="Add a white border around the corrected image for better detection"
+                                ToolTipService.ToolTip="Add white padding around the corrected image to improve detection"
                                 Value="{x:Bind ViewModel.BorderPixels,
                                                Mode=TwoWay}" />
                             <TextBlock
@@ -396,157 +486,271 @@
                                 Text="{x:Bind ViewModel.BorderPixels,
                                               Mode=OneWay}" />
                         </Grid>
-                    </StackPanel>
+                    </settingsControls:SettingsCard>
 
-                    <Button
-                        Command="{x:Bind ViewModel.ClearPerspectiveCornersCommand}"
-                        Content="Clear Corner Selection"
-                        ToolTipService.ToolTip="Clear all selected corners to start over" />
-                </StackPanel>
-
-                <StackPanel
-                    Padding="12"
-                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    CornerRadius="8"
-                    Spacing="8">
-                    <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Cut Out Region" />
-                    <TextBlock
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="Select a rectangular region to extract as a separate image for independent processing"
-                        TextWrapping="Wrap" />
-
-                    <ToggleButton
-                        IsChecked="{x:Bind ViewModel.IsCutOutRegionMode,
-                                           Mode=TwoWay}"
-                        Style="{StaticResource ToolToggleButtonStyle}"
-                        ToolTipService.ToolTip="Enable to click and drag a rectangle on the image to select a region">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE8A3;" />
-                            <TextBlock Text="Enable Cut Out Region" />
-                        </StackPanel>
-                    </ToggleButton>
-
-                    <StackPanel
-                        Orientation="Horizontal"
-                        Spacing="8"
-                        Visibility="{x:Bind ViewModel.HasCutOutSelection,
-                                            Mode=OneWay,
-                                            Converter={StaticResource BoolToVisibilityConverter}}">
-                        <Border
-                            Width="28"
-                            Height="28"
-                            Background="{ThemeResource SystemFillColorSuccessBrush}"
-                            CornerRadius="14">
-                            <FontIcon
-                                FontSize="14"
-                                Foreground="White"
-                                Glyph="&#xE73E;" />
-                        </Border>
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            FontWeight="SemiBold"
-                            Foreground="{ThemeResource SystemFillColorSuccessBrush}"
-                            Text="Region selected — click Cut Out to extract" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Spacing="8">
+                    <settingsControls:SettingsCard Header="Selection">
                         <Button
-                            Command="{x:Bind ViewModel.PerformCutOutCommand}"
-                            Style="{StaticResource AccentButtonStyle}"
-                            ToolTipService.ToolTip="Extract the selected region as a new image in the panel below">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xE8A3;" />
-                                <TextBlock Text="Cut Out Region" />
-                            </StackPanel>
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.ClearPerspectiveCornersCommand}"
+                            ToolTipService.ToolTip="Clear all selected corners and start over">
+                            <TextBlock Text="Clear corners" />
                         </Button>
-                        <Button Command="{x:Bind ViewModel.ClearCutOutSelectionCommand}" ToolTipService.ToolTip="Clear the current selection">
-                            <TextBlock Text="Clear Selection" />
-                        </Button>
-                    </StackPanel>
+                    </settingsControls:SettingsCard>
+                </StackPanel>
+            </ScrollViewer>
+
+            <ScrollViewer
+                Padding="16,16,16,0"
+                VerticalScrollBarVisibility="Auto"
+                Visibility="{x:Bind ViewModel.IsCutOutWorkflowVisible,
+                                    Mode=OneWay,
+                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Spacing="12">
+                    <Border
+                        Padding="16"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource OverlayCornerRadius}">
+                        <StackPanel Spacing="4">
+                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Extract a region" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="Drag over the image to select a region, then extract it into its own decoding item."
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
 
                     <InfoBar
                         IsClosable="False"
-                        IsOpen="{x:Bind ViewModel.IsCutOutRegionMode,
-                                        Mode=OneWay}"
-                        Message="Click and drag on the image to select a rectangular region"
+                        IsOpen="True"
+                        Message="Click and drag on the image to draw a region."
                         Severity="Informational" />
-                </StackPanel>
-            </StackPanel>
-        </ScrollViewer>
 
-        <!--  Fixed Action Buttons  -->
-        <StackPanel
+                    <settingsControls:SettingsCard Header="Selection status">
+                        <StackPanel Spacing="8">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="No region selected yet."
+                                TextWrapping="Wrap"
+                                Visibility="{x:Bind ViewModel.HasCutOutSelection,
+                                                    Mode=OneWay,
+                                                    Converter={StaticResource BoolToVisibilityConverter},
+                                                    ConverterParameter=inverse}" />
+
+                            <Grid ColumnSpacing="12" Visibility="{x:Bind ViewModel.HasCutOutSelection, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border
+                                    Width="28"
+                                    Height="28"
+                                    Background="{ThemeResource SystemFillColorSuccessBrush}"
+                                    CornerRadius="14">
+                                    <FontIcon
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
+                                        Glyph="&#xE73E;" />
+                                </Border>
+
+                                <TextBlock
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                    Text="Region selected and ready to extract."
+                                    TextWrapping="Wrap" />
+                            </Grid>
+                        </StackPanel>
+                    </settingsControls:SettingsCard>
+
+                    <settingsControls:SettingsCard Header="Selection">
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.ClearCutOutSelectionCommand}"
+                            ToolTipService.ToolTip="Clear the current region selection">
+                            <TextBlock Text="Clear selection" />
+                        </Button>
+                    </settingsControls:SettingsCard>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <Border
             Grid.Row="1"
-            Padding="12"
+            Padding="16"
             Background="{ThemeResource LayerFillColorDefaultBrush}"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="0,1,0,0"
-            Orientation="Horizontal"
-            Spacing="12">
+            Visibility="{x:Bind ViewModel.IsWorkflowPickerVisible,
+                                Mode=OneWay,
+                                Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.ResetAllSettingsCommand}"
+                    IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                       Mode=OneWay,
+                                       Converter={StaticResource BoolNegationConverter}}"
+                    ToolTipService.ToolTip="Reset all quick-fix settings to their defaults">
+                    <TextBlock Text="Reset all" />
+                </Button>
+
+                <local:IconAndTextHyperlinkButton
+                    Grid.Column="1"
+                    Command="{x:Bind ViewModel.UndoCommand}"
+                    Text="Undo"
+                    ToolTipService.ToolTip="Undo the last applied change (Ctrl+Z)">
+                    <local:IconAndTextHyperlinkButton.IconSource>
+                        <SymbolIconSource Symbol="Undo" />
+                    </local:IconAndTextHyperlinkButton.IconSource>
+                </local:IconAndTextHyperlinkButton>
+
+                <local:IconAndTextHyperlinkButton
+                    Grid.Column="2"
+                    Command="{x:Bind ViewModel.RedoCommand}"
+                    Text="Redo"
+                    ToolTipService.ToolTip="Redo the last undone change (Ctrl+Y)"
+                    Visibility="Collapsed">
+                    <local:IconAndTextHyperlinkButton.IconSource>
+                        <SymbolIconSource Symbol="Redo" />
+                    </local:IconAndTextHyperlinkButton.IconSource>
+                </local:IconAndTextHyperlinkButton>
+            </Grid>
+        </Border>
+
+        <Border
+            Grid.Row="1"
+            Padding="16"
+            Background="{ThemeResource LayerFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="0,1,0,0"
+            Visibility="{x:Bind ViewModel.IsSampleBlackPointWorkflowVisible,
+                                Mode=OneWay,
+                                Converter={StaticResource BoolToVisibilityConverter}}">
             <Button
-                Command="{x:Bind ViewModel.ApplyProcessingCommand}"
-                IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                   Mode=OneWay,
-                                   Converter={StaticResource BoolNegationConverter}}"
-                Style="{StaticResource AccentButtonStyle}"
-                ToolTipService.ToolTip="Apply all selected adjustments to the image">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon
-                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                            Glyph="&#xE73E;"
-                            Visibility="{x:Bind ViewModel.IsProcessing,
-                                                Mode=OneWay,
-                                                Converter={StaticResource BoolToVisibilityConverter},
-                                                ConverterParameter=inverse}" />
-                        <TextBlock Text="Apply Changes" />
-                        <TextBlock
-                            FontSize="16"
-                            FontWeight="Bold"
-                            Foreground="White"
-                            Text="●"
-                            Visibility="{x:Bind ViewModel.HasPendingChanges,
-                                                Mode=OneWay,
-                                                Converter={StaticResource BoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <ProgressRing
-                        Width="16"
-                        Height="16"
-                        IsActive="{x:Bind ViewModel.IsProcessing,
-                                          Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IsProcessing,
-                                            Mode=OneWay,
-                                            Converter={StaticResource BoolToVisibilityConverter}}" />
+                HorizontalAlignment="Stretch"
+                Command="{x:Bind ViewModel.CancelWorkflowCommand}"
+                Content="Cancel"
+                ToolTipService.ToolTip="Cancel black-point sampling and return to the tool list" />
+        </Border>
+
+        <Border
+            Grid.Row="1"
+            Padding="16"
+            Background="{ThemeResource LayerFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="0,1,0,0"
+            Visibility="{x:Bind ViewModel.IsSampleWhitePointWorkflowVisible,
+                                Mode=OneWay,
+                                Converter={StaticResource BoolToVisibilityConverter}}">
+            <Button
+                HorizontalAlignment="Stretch"
+                Command="{x:Bind ViewModel.CancelWorkflowCommand}"
+                Content="Cancel"
+                ToolTipService.ToolTip="Cancel white-point sampling and return to the tool list" />
+        </Border>
+
+        <Border
+            Grid.Row="1"
+            Padding="16"
+            Background="{ThemeResource LayerFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="0,1,0,0"
+            Visibility="{x:Bind ViewModel.IsPerspectiveWorkflowVisible,
+                                Mode=OneWay,
+                                Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid RowSpacing="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Button
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.ApplyProcessingCommand}"
+                    Content="Apply correction"
+                    IsEnabled="{x:Bind ViewModel.CanApplyPerspectiveWorkflow,
+                                       Mode=OneWay}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    ToolTipService.ToolTip="Apply the perspective correction and return to the tool list" />
+
+                <Grid Grid.Row="1" ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        Grid.Column="0"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.ClearPerspectiveCornersCommand}"
+                        Content="Clear corners" />
+                    <Button
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.CancelWorkflowCommand}"
+                        Content="Cancel" />
                 </Grid>
-            </Button>
+            </Grid>
+        </Border>
 
-            <Button
-                Command="{x:Bind ViewModel.ResetAllSettingsCommand}"
-                IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                   Mode=OneWay,
-                                   Converter={StaticResource BoolNegationConverter}}"
-                ToolTipService.ToolTip="Reset all settings to default values">
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <SymbolIcon Symbol="Refresh" />
-                    <TextBlock Text="Reset All" />
-                </StackPanel>
-            </Button>
+        <Border
+            Grid.Row="1"
+            Padding="16"
+            Background="{ThemeResource LayerFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="0,1,0,0"
+            Visibility="{x:Bind ViewModel.IsCutOutWorkflowVisible,
+                                Mode=OneWay,
+                                Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid RowSpacing="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <local:IconAndTextHyperlinkButton Command="{x:Bind ViewModel.UndoCommand}" ToolTipService.ToolTip="Undo the last applied change (Ctrl+Z)">
-                <local:IconAndTextHyperlinkButton.IconSource>
-                    <SymbolIconSource Symbol="Undo" />
-                </local:IconAndTextHyperlinkButton.IconSource>
-            </local:IconAndTextHyperlinkButton>
+                <Button
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.PerformCutOutCommand}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    ToolTipService.ToolTip="Extract the selected region and return to the tool list">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <SymbolIcon Symbol="Crop" />
+                        <TextBlock Text="Extract region" />
+                    </StackPanel>
+                </Button>
 
-            <local:IconAndTextHyperlinkButton
-                Command="{x:Bind ViewModel.RedoCommand}"
-                ToolTipService.ToolTip="Redo the last undone change (Ctrl+Y)"
-                Visibility="Collapsed">
-                <local:IconAndTextHyperlinkButton.IconSource>
-                    <SymbolIconSource Symbol="Redo" />
-                </local:IconAndTextHyperlinkButton.IconSource>
-            </local:IconAndTextHyperlinkButton>
-        </StackPanel>
+                <Grid Grid.Row="1" ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        Grid.Column="0"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.ClearCutOutSelectionCommand}"
+                        Content="Clear selection" />
+                    <Button
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.CancelWorkflowCommand}"
+                        Content="Cancel" />
+                </Grid>
+            </Grid>
+        </Border>
     </Grid>
 
     <UserControl.KeyboardAccelerators>

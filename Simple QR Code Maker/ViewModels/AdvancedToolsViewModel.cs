@@ -1,12 +1,27 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ImageMagick;
+using Simple_QR_Code_Maker.Models;
 using System.Drawing;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
 public partial class AdvancedToolsViewModel : ObservableObject
 {
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsWorkflowPickerVisible))]
+    [NotifyPropertyChangedFor(nameof(IsSampleBlackPointWorkflowVisible))]
+    [NotifyPropertyChangedFor(nameof(IsSampleWhitePointWorkflowVisible))]
+    [NotifyPropertyChangedFor(nameof(IsPerspectiveWorkflowVisible))]
+    [NotifyPropertyChangedFor(nameof(IsCutOutWorkflowVisible))]
+    public partial AdvancedToolWorkflow ActiveWorkflow { get; set; } = AdvancedToolWorkflow.None;
+
+    public bool IsWorkflowPickerVisible => ActiveWorkflow == AdvancedToolWorkflow.None;
+    public bool IsSampleBlackPointWorkflowVisible => ActiveWorkflow == AdvancedToolWorkflow.SampleBlackPoint;
+    public bool IsSampleWhitePointWorkflowVisible => ActiveWorkflow == AdvancedToolWorkflow.SampleWhitePoint;
+    public bool IsPerspectiveWorkflowVisible => ActiveWorkflow == AdvancedToolWorkflow.PerspectiveCorrection;
+    public bool IsCutOutWorkflowVisible => ActiveWorkflow == AdvancedToolWorkflow.CutOutRegion;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     public partial bool IsGrayscaleEnabled { get; set; } = false;
@@ -48,6 +63,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     [NotifyPropertyChangedFor(nameof(IsAnyToolActive))]
+    [NotifyPropertyChangedFor(nameof(CanApplyPerspectiveWorkflow))]
     public partial bool IsPerspectiveCorrectionMode { get; set; } = false;
 
     partial void OnIsPerspectiveCorrectionModeChanged(bool value)
@@ -93,6 +109,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(CurrentCornerNumber))]
     [NotifyPropertyChangedFor(nameof(IsCornerSelectionComplete))]
     [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
+    [NotifyPropertyChangedFor(nameof(CanApplyPerspectiveWorkflow))]
     public partial Point? TopLeftCorner { get; set; } = null;
 
     [ObservableProperty]
@@ -100,6 +117,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(CurrentCornerNumber))]
     [NotifyPropertyChangedFor(nameof(IsCornerSelectionComplete))]
     [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
+    [NotifyPropertyChangedFor(nameof(CanApplyPerspectiveWorkflow))]
     public partial Point? TopRightCorner { get; set; } = null;
 
     [ObservableProperty]
@@ -107,6 +125,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(CurrentCornerNumber))]
     [NotifyPropertyChangedFor(nameof(IsCornerSelectionComplete))]
     [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
+    [NotifyPropertyChangedFor(nameof(CanApplyPerspectiveWorkflow))]
     public partial Point? BottomRightCorner { get; set; } = null;
 
     [ObservableProperty]
@@ -114,18 +133,19 @@ public partial class AdvancedToolsViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(CurrentCornerNumber))]
     [NotifyPropertyChangedFor(nameof(IsCornerSelectionComplete))]
     [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
+    [NotifyPropertyChangedFor(nameof(CanApplyPerspectiveWorkflow))]
     public partial Point? BottomLeftCorner { get; set; } = null;
 
     public string CurrentCornerInstruction
     {
         get
         {
-            if (!IsPerspectiveCorrectionMode) return string.Empty;
+            if (!IsPerspectiveCorrectionMode) return "1. Select Top-Left corner";
             if (TopLeftCorner == null) return "1. Select Top-Left corner";
             if (TopRightCorner == null) return "2. Select Top-Right corner";
             if (BottomRightCorner == null) return "3. Select Bottom-Right corner";
             if (BottomLeftCorner == null) return "4. Select Bottom-Left corner";
-            return "? All corners selected! Click 'Apply Changes' to process.";
+            return "All corners selected. Apply correction to continue.";
         }
     }
 
@@ -142,6 +162,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     }
 
     public bool IsCornerSelectionComplete => CurrentCornerNumber == 0;
+    public bool CanApplyPerspectiveWorkflow => IsPerspectiveCorrectionMode && IsCornerSelectionComplete && !IsProcessing;
 
     [ObservableProperty]
     public partial int BorderPixels { get; set; } = 20;
@@ -183,6 +204,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanApplyPerspectiveWorkflow))]
     public partial bool IsProcessing { get; set; } = false;
 
     // Track if there are pending changes that need to be applied
@@ -234,6 +256,67 @@ public partial class AdvancedToolsViewModel : ObservableObject
     public event EventHandler<MagickImage>? RegionCutOut;
     public event EventHandler? CutOutSelectionClearedRequested;
 
+    [RelayCommand]
+    private void OpenBlackPointWorkflow() => ActivateWorkflow(AdvancedToolWorkflow.SampleBlackPoint);
+
+    [RelayCommand]
+    private void OpenWhitePointWorkflow() => ActivateWorkflow(AdvancedToolWorkflow.SampleWhitePoint);
+
+    [RelayCommand]
+    private void OpenPerspectiveWorkflow() => ActivateWorkflow(AdvancedToolWorkflow.PerspectiveCorrection);
+
+    [RelayCommand]
+    private void OpenCutOutWorkflow() => ActivateWorkflow(AdvancedToolWorkflow.CutOutRegion);
+
+    [RelayCommand]
+    private void CancelWorkflow() => CloseActiveWorkflow();
+
+    public void CloseActiveWorkflow()
+    {
+        switch (ActiveWorkflow)
+        {
+            case AdvancedToolWorkflow.SampleBlackPoint:
+                IsEyedropperBlackMode = false;
+                break;
+            case AdvancedToolWorkflow.SampleWhitePoint:
+                IsEyedropperWhiteMode = false;
+                break;
+            case AdvancedToolWorkflow.PerspectiveCorrection:
+                IsPerspectiveCorrectionMode = false;
+                break;
+            case AdvancedToolWorkflow.CutOutRegion:
+                IsCutOutRegionMode = false;
+                break;
+        }
+
+        ActiveWorkflow = AdvancedToolWorkflow.None;
+    }
+
+    private void ActivateWorkflow(AdvancedToolWorkflow workflow)
+    {
+        if (ActiveWorkflow == workflow)
+            return;
+
+        CloseActiveWorkflow();
+        ActiveWorkflow = workflow;
+
+        switch (workflow)
+        {
+            case AdvancedToolWorkflow.SampleBlackPoint:
+                IsEyedropperBlackMode = true;
+                break;
+            case AdvancedToolWorkflow.SampleWhitePoint:
+                IsEyedropperWhiteMode = true;
+                break;
+            case AdvancedToolWorkflow.PerspectiveCorrection:
+                IsPerspectiveCorrectionMode = true;
+                break;
+            case AdvancedToolWorkflow.CutOutRegion:
+                IsCutOutRegionMode = true;
+                break;
+        }
+    }
+
     private void ClearPerspectiveSelection()
     {
         TopLeftCorner = null;
@@ -284,8 +367,8 @@ public partial class AdvancedToolsViewModel : ObservableObject
         height = Math.Clamp(height, 1, (int)baselineImage.Height - y);
 
         MagickImage cropped = Helpers.ImageProcessingHelper.CropRegion(baselineImage, x, y, width, height);
-        ClearCutOutSelectionInternal();
         RegionCutOut?.Invoke(this, cropped);
+        CloseActiveWorkflow();
     }
 
     public void SetOriginalImage(MagickImage image)
@@ -306,6 +389,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     [RelayCommand]
     private void ResetAllSettings()
     {
+        ActiveWorkflow = AdvancedToolWorkflow.None;
         IsGrayscaleEnabled = false;
         IsInvertEnabled = false;
         ContrastValue = 0.0;
@@ -449,6 +533,9 @@ public partial class AdvancedToolsViewModel : ObservableObject
             // Reset the settings that were just applied so they don't stack
             ResetPendingSettings();
 
+            if (doPerspective)
+                CloseActiveWorkflow();
+
             // Raise event on UI thread
             ImageProcessed?.Invoke(this, processedImage);
         }
@@ -486,10 +573,12 @@ public partial class AdvancedToolsViewModel : ObservableObject
         if (HasPendingChanges)
         {
             ResetPendingSettings();
+            ActiveWorkflow = AdvancedToolWorkflow.None;
             if (IsPerspectiveCorrectionMode)
                 IsPerspectiveCorrectionMode = false;
             IsEyedropperBlackMode = false;
             IsEyedropperWhiteMode = false;
+            IsCutOutRegionMode = false;
             return;
         }
 
@@ -564,11 +653,15 @@ public partial class AdvancedToolsViewModel : ObservableObject
         {
             SelectedBlackPointColor = new MagickColor(color.R, color.G, color.B, color.A);
             IsEyedropperBlackMode = false;
+            ActiveWorkflow = AdvancedToolWorkflow.None;
+            await ApplyProcessingAsync();
         }
         else if (IsEyedropperWhiteMode)
         {
             SelectedWhitePointColor = new MagickColor(color.R, color.G, color.B, color.A);
             IsEyedropperWhiteMode = false;
+            ActiveWorkflow = AdvancedToolWorkflow.None;
+            await ApplyProcessingAsync();
         }
     }
 
@@ -587,6 +680,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     /// </summary>
     public void ClearAll()
     {
+        ActiveWorkflow = AdvancedToolWorkflow.None;
         IsGrayscaleEnabled = false;
         IsInvertEnabled = false;
         ContrastValue = 0.0;

@@ -121,7 +121,7 @@ public partial class FaqsContentViewModel : ObservableRecipient
 
         if (currentPageViewModel is DecodingViewModel decodingViewModel)
         {
-            decodingViewModel.IsAdvancedToolsVisible = true;
+            decodingViewModel.ShowAdvancedToolsPaneCommand.Execute(null);
             decodingViewModel.IsFaqPaneOpen = false;
         }
     }
