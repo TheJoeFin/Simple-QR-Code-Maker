@@ -69,12 +69,10 @@
                                     Margin="0,8,0,0"
                                     Padding="0"
                                     Click="FaqActionButton_Click"
-                                    Content="{x:Bind ActionText,
-                                                     Mode=OneTime}"
-                                    Tag="{x:Bind}"
-                                    Visibility="{x:Bind ActionText,
-                                                        Converter={StaticResource NullToVisibility},
-                                                        Mode=OneWay}" />
+                                    Content="{Binding ActionText}"
+                                    Tag="{Binding}"
+                                    Visibility="{Binding ActionText,
+                                                         Converter={StaticResource NullToVisibility}}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>

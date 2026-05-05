@@ -83,6 +83,23 @@
                                             <Border Visibility="{x:Bind ViewModel.IsAdvancedToolsVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                                 <controls:AdvancedToolsUserControl x:Name="AdvancedToolsPanel" />
                                             </Border>
+                                            <Button
+                                                Width="32"
+                                                Height="32"
+                                                Margin="0,28,20,0"
+                                                Padding="6"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Top"
+                                                AutomationProperties.Name="Close advanced tools"
+                                                Command="{x:Bind ViewModel.ToggleAdvancedToolsCommand}"
+                                                ToolTipService.ToolTip="Close advanced tools"
+                                                Visibility="{x:Bind ViewModel.IsAdvancedToolsVisible,
+                                                                    Mode=OneWay,
+                                                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <Viewbox>
+                                                    <SymbolIcon Symbol="ClosePane" />
+                                                </Viewbox>
+                                            </Button>
                                         </Grid>
                                     </Border>
                                 </SplitView.Pane>
@@ -151,8 +168,7 @@
                                                 Spacing="10"
                                                 Visibility="{x:Bind ViewModel.HasImage,
                                                                     Mode=OneWay,
-                                                                    ConverterParameter=true,
-                                                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                                                                    Converter={StaticResource InvertedBoolToVisibilityConverter}}">
 
                                                 <StackPanel
                                                     HorizontalAlignment="Center"
@@ -445,7 +461,7 @@
                                                     <StackPanel Margin="0,0,0,12" Spacing="8">
                                                         <TextBlock
                                                             IsTextSelectionEnabled="True"
-                                                            Text="Use Advanced Tools to adjust image conditions and improve detection."
+                                                            Text="Use Advanced Tools to open a guided workflow or apply quick image fixes to improve detection."
                                                             TextWrapping="Wrap" />
                                                         <StackPanel Orientation="Horizontal" Spacing="4">
                                                             <TextBlock VerticalAlignment="Center" Text="FAQs about why decoding might not work" />
@@ -552,10 +568,9 @@
                                                         </DropDownButton.Flyout>
                                                     </DropDownButton>
                                                     <ToggleButton
-                                                        Command="{x:Bind ViewModel.ToggleAdvancedToolsCommand}"
                                                         IsChecked="{x:Bind ViewModel.IsAdvancedToolsVisible,
-                                                                           Mode=OneWay}"
-                                                        ToolTipService.ToolTip="Toggle advanced image processing tools"
+                                                                           Mode=TwoWay}"
+                                                        ToolTipService.ToolTip="Show or hide advanced image-processing workflows"
                                                         Visibility="{x:Bind ViewModel.HasImage,
                                                                             Mode=OneWay,
                                                                             Converter={StaticResource BoolToVisibilityConverter}}">
