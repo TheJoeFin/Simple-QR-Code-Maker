@@ -71,9 +71,10 @@
                                     Click="FaqActionButton_Click"
                                     Content="{x:Bind ActionText,
                                                      Mode=OneTime}"
-                                    Tag="{Binding}"
-                                    Visibility="{Binding ActionText,
-                                                         Converter={StaticResource NullToVisibility}}" />
+                                    Tag="{x:Bind}"
+                                    Visibility="{x:Bind ActionText,
+                                                        Converter={StaticResource NullToVisibility},
+                                                        Mode=OneWay}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>

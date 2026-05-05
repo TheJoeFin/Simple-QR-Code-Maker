@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
 
 namespace Simple_QR_Code_Maker.Controls;
@@ -32,5 +33,11 @@ public sealed partial class UrlBuilderDialog : ContentDialog
     private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         ResultText = ViewModel.CreateResultText();
+    }
+
+    private void RemoveQueryParameterButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is HyperlinkButton { DataContext: UrlBuilderQueryParameter param })
+            ViewModel.RemoveQueryParameterCommand.Execute(param);
     }
 }

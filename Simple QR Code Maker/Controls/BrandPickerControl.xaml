@@ -31,24 +31,32 @@
                 <StackPanel
                     Orientation="Horizontal"
                     Spacing="6"
-                    Visibility="{x:Bind ViewModel.SelectedBrand, Mode=OneWay, Converter={StaticResource NullToVisibility}}">
+                    Visibility="{x:Bind ViewModel.SelectedBrand,
+                                        Mode=OneWay,
+                                        Converter={StaticResource NullToVisibility}}">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"
-                        Text="{x:Bind ViewModel.SelectedBrand.Name, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.SelectedBrand.Name,
+                                      Mode=OneWay}"
                         TextTrimming="CharacterEllipsis" />
                     <SymbolIcon
                         VerticalAlignment="Center"
                         Symbol="OutlineStar"
                         ToolTipService.ToolTip="Default brand"
-                        Visibility="{x:Bind ViewModel.SelectedBrand.IsDefault, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
+                        Visibility="{x:Bind ViewModel.SelectedBrand.IsDefault,
+                                            Mode=OneWay,
+                                            Converter={StaticResource BoolToVisibility}}" />
                 </StackPanel>
 
                 <TextBlock
                     VerticalAlignment="Center"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Text="Select a brand"
-                    Visibility="{x:Bind ViewModel.SelectedBrand, Mode=OneWay, Converter={StaticResource NullToVisibility}, ConverterParameter=Inverted}" />
+                    Visibility="{x:Bind ViewModel.SelectedBrand,
+                                        Mode=OneWay,
+                                        Converter={StaticResource NullToVisibility},
+                                        ConverterParameter=Inverted}" />
             </Grid>
         </DropDownButton.Content>
         <DropDownButton.Flyout>

@@ -5,10 +5,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Simple_QR_Code_Maker.Models"
     Title="Generate IDs"
     CloseButtonText="Cancel"
     DefaultButton="Primary"
-    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanApply,
+                                    Mode=OneWay}"
     PrimaryButtonText="Add"
     mc:Ignorable="d">
 
@@ -33,45 +35,49 @@
                     SmallChange="1"
                     SpinButtonPlacementMode="Compact"
                     Value="{x:Bind ViewModel.GeneratedIdCount,
-                                    Mode=TwoWay,
-                                    UpdateSourceTrigger=PropertyChanged}" />
+                                   Mode=TwoWay,
+                                   UpdateSourceTrigger=PropertyChanged}" />
 
                 <ComboBox
-                    DisplayMemberPath="DisplayName"
                     Header="ID style"
                     ItemsSource="{x:Bind ViewModel.GeneratedIdFormatOptions,
                                          Mode=OneWay}"
                     SelectedItem="{x:Bind ViewModel.SelectedGeneratedIdFormatOption,
-                                           Mode=TwoWay}" />
+                                          Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:SpreadsheetGeneratedIdFormatOption">
+                            <TextBlock Text="{x:Bind DisplayName}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
                 <NumberBox
                     x:Name="NanoIdLengthNumberBox"
                     Header="NanoID length"
                     IsEnabled="{x:Bind ViewModel.IsNanoIdLengthEnabled,
-                                        Mode=OneWay}"
+                                       Mode=OneWay}"
                     Minimum="1"
                     SmallChange="1"
                     SpinButtonPlacementMode="Compact"
-                    Value="{x:Bind ViewModel.NanoIdLength,
-                                    Mode=TwoWay,
-                                    UpdateSourceTrigger=PropertyChanged}"
                     Visibility="{x:Bind ViewModel.NanoIdLengthVisibility,
-                                         Mode=OneWay}"
-                    />
+                                        Mode=OneWay}"
+                    Value="{x:Bind ViewModel.NanoIdLength,
+                                   Mode=TwoWay,
+                                   UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
                     Header="Text before each ID"
                     PlaceholderText="https://example.com/"
                     Text="{x:Bind ViewModel.PrefixText,
-                                   Mode=TwoWay,
-                                   UpdateSourceTrigger=PropertyChanged}" />
+                                  Mode=TwoWay,
+                                  UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
                     Header="Text after each ID"
                     PlaceholderText="?source=qr-code"
                     Text="{x:Bind ViewModel.SuffixText,
-                                   Mode=TwoWay,
-                                   UpdateSourceTrigger=PropertyChanged}" />
+                                  Mode=TwoWay,
+                                  UpdateSourceTrigger=PropertyChanged}" />
 
                 <StackPanel Spacing="6">
                     <TextBlock
@@ -84,7 +90,7 @@
                         AcceptsReturn="True"
                         IsReadOnly="True"
                         Text="{x:Bind ViewModel.PreviewText,
-                                       Mode=OneWay}"
+                                      Mode=OneWay}"
                         TextWrapping="Wrap" />
                 </StackPanel>
 
@@ -92,9 +98,9 @@
                     Title="Check your settings"
                     IsClosable="False"
                     IsOpen="{x:Bind ViewModel.IsValidationVisible,
-                                     Mode=OneWay}"
+                                    Mode=OneWay}"
                     Message="{x:Bind ViewModel.ValidationMessage,
-                                      Mode=OneWay}"
+                                     Mode=OneWay}"
                     Severity="Error" />
             </StackPanel>
         </Border>
