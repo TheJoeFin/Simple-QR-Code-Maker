@@ -56,13 +56,13 @@
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
                                     Orientation="Vertical"
-                                    Spacing="12">
+                                    Spacing="10">
                                     <controls:BrandPickerControl ViewModel="{x:Bind ViewModel}" />
 
                                     <Grid
                                         x:Name="QrCodeInputRow"
                                         HorizontalAlignment="Stretch"
-                                        ColumnSpacing="6"
+                                        ColumnSpacing="10"
                                         SizeChanged="QrCodeInputRow_SizeChanged">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
@@ -171,7 +171,7 @@
                                         x:Name="QrCodeOptions"
                                         HorizontalAlignment="Center"
                                         Orientation="Horizontal"
-                                        Spacing="6"
+                                        Spacing="10"
                                         Visibility="{x:Bind ViewModel.CanSaveImage,
                                                             Mode=OneWay,
                                                             Converter={StaticResource BoolToVisibility}}">

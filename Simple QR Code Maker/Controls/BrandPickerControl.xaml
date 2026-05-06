@@ -18,7 +18,7 @@
 
     <DropDownButton
         Height="36"
-        MinWidth="216"
+        MinWidth="212"
         HorizontalAlignment="Center"
         HorizontalContentAlignment="Stretch"
         ToolTipService.ToolTip="Select brand"

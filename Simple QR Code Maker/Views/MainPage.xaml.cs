@@ -16,8 +16,8 @@ public sealed partial class MainPage : Page
     private const double ScrollToCodesButtonTopGap = 12;
     private const double QrCodePreviewTileWidth = 308;
     private const double UrlTextBoxCompactWidth = 258;
-    private const double UrlTextBoxChromeWidth = 32;
-    private const double UrlInputRowSpacing = 6;
+    private const double UrlTextBoxChromeWidth = 0;
+    private const double UrlInputRowSpacing = 10;
 
     public MainViewModel ViewModel
     {
