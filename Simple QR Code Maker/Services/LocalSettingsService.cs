@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Options;
-
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Core.Contracts.Services;
 using Simple_QR_Code_Maker.Core.Helpers;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
+using System.Text.Json;
 using Windows.Storage;
 
 namespace Simple_QR_Code_Maker.Services;
@@ -52,7 +52,8 @@ public class LocalSettingsService : ILocalSettingsService
         {
             if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out object? obj))
             {
-                return await Json.ToObjectAsync<T>((string)obj);
+                object? deserialized = JsonSerializer.Deserialize((string)obj, typeof(T), LocalSettingsJsonContext.Default);
+                return deserialized is T result ? result : default;
             }
         }
         else
@@ -72,7 +73,7 @@ public class LocalSettingsService : ILocalSettingsService
     {
         if (RuntimeHelper.IsMSIX)
         {
-            ApplicationData.Current.LocalSettings.Values[key] = await Json.StringifyAsync(value);
+            ApplicationData.Current.LocalSettings.Values[key] = JsonSerializer.Serialize(value, typeof(T), LocalSettingsJsonContext.Default);
         }
         else
         {
