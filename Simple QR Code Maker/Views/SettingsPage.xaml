@@ -208,6 +208,96 @@
                         OnContent="On" />
                 </settingsControls:SettingsCard>
 
+                <!--  Brand URL on plain-text items  -->
+                <settingsControls:SettingsExpander
+                    Description="Action when applying a brand with a URL to non-URL plain text content"
+                    Header="Brand URL on plain text items">
+                    <settingsControls:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE8F9;" />
+                    </settingsControls:SettingsExpander.HeaderIcon>
+                    <settingsControls:SettingsExpander.Items>
+                        <settingsControls:SettingsCard ContentAlignment="Left">
+                            <StackPanel>
+                                <RadioButton
+                                    Command="{x:Bind ViewModel.SwitchBrandUrlMissingBehaviorCommand}"
+                                    CommandParameter="Ignore"
+                                    Content="Ignore — leave existing content unchanged"
+                                    FontSize="15"
+                                    GroupName="BrandUrlMissingBehavior"
+                                    IsChecked="{x:Bind ViewModel.BrandUrlMissingBehavior,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=Ignore,
+                                                       Mode=OneWay}" />
+                                <RadioButton
+                                    Command="{x:Bind ViewModel.SwitchBrandUrlMissingBehaviorCommand}"
+                                    CommandParameter="Warn"
+                                    Content="Warn (default) — show an info bar"
+                                    FontSize="15"
+                                    GroupName="BrandUrlMissingBehavior"
+                                    IsChecked="{x:Bind ViewModel.BrandUrlMissingBehavior,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=Warn,
+                                                       Mode=OneWay}" />
+                                <RadioButton
+                                    Command="{x:Bind ViewModel.SwitchBrandUrlMissingBehaviorCommand}"
+                                    CommandParameter="AutoPrepend"
+                                    Content="Auto-prepend — add brand URL before each plain text item"
+                                    FontSize="15"
+                                    GroupName="BrandUrlMissingBehavior"
+                                    IsChecked="{x:Bind ViewModel.BrandUrlMissingBehavior,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=AutoPrepend,
+                                                       Mode=OneWay}" />
+                            </StackPanel>
+                        </settingsControls:SettingsCard>
+                    </settingsControls:SettingsExpander.Items>
+                </settingsControls:SettingsExpander>
+
+                <!--  Brand URL mismatch behavior  -->
+                <settingsControls:SettingsExpander
+                    Description="Action when applying a brand with a URL to content containing non-matching URLs"
+                    Header="Brand URL mismatch">
+                    <settingsControls:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE8F9;" />
+                    </settingsControls:SettingsExpander.HeaderIcon>
+                    <settingsControls:SettingsExpander.Items>
+                        <settingsControls:SettingsCard ContentAlignment="Left">
+                            <StackPanel>
+                                <RadioButton
+                                    Command="{x:Bind ViewModel.SwitchBrandUrlMismatchBehaviorCommand}"
+                                    CommandParameter="Ignore"
+                                    Content="Ignore — keep existing URLs"
+                                    FontSize="15"
+                                    GroupName="BrandUrlMismatchBehavior"
+                                    IsChecked="{x:Bind ViewModel.BrandUrlMismatchBehavior,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=Ignore,
+                                                       Mode=OneWay}" />
+                                <RadioButton
+                                    Command="{x:Bind ViewModel.SwitchBrandUrlMismatchBehaviorCommand}"
+                                    CommandParameter="Warn"
+                                    Content="Warn (default) — show an info bar"
+                                    FontSize="15"
+                                    GroupName="BrandUrlMismatchBehavior"
+                                    IsChecked="{x:Bind ViewModel.BrandUrlMismatchBehavior,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=Warn,
+                                                       Mode=OneWay}" />
+                                <RadioButton
+                                    Command="{x:Bind ViewModel.SwitchBrandUrlMismatchBehaviorCommand}"
+                                    CommandParameter="AutoFix"
+                                    Content="Auto-fix — replace non-matching URLs with the brand URL"
+                                    FontSize="15"
+                                    GroupName="BrandUrlMismatchBehavior"
+                                    IsChecked="{x:Bind ViewModel.BrandUrlMismatchBehavior,
+                                                       Converter={StaticResource EnumIsEqualConverter},
+                                                       ConverterParameter=AutoFix,
+                                                       Mode=OneWay}" />
+                            </StackPanel>
+                        </settingsControls:SettingsCard>
+                    </settingsControls:SettingsExpander.Items>
+                </settingsControls:SettingsExpander>
+
                 <!--  URL warnings  -->
                 <settingsControls:SettingsCard Description="Show warnings when QR Codes are not URLs" Header="URL warnings">
                     <settingsControls:SettingsCard.HeaderIcon>

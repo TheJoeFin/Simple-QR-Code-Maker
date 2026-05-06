@@ -359,4 +359,9 @@ public sealed partial class MainPage : Page
     {
         ViewModel.MarkBrandButtonUsedCommand.Execute(null);
     }
+
+    private void BrandUrlWarningTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
+    {
+        ViewModel.DismissBrandUrlWarningTip();
+    }
 }

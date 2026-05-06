@@ -22,4 +22,8 @@ namespace Simple_QR_Code_Maker.Models;
 [JsonSerializable(typeof(PrintPageType?))]
 [JsonSerializable(typeof(PrintPageLayout))]
 [JsonSerializable(typeof(PrintPageLayout?))]
+[JsonSerializable(typeof(BrandUrlMissingBehavior))]
+[JsonSerializable(typeof(BrandUrlMissingBehavior?))]
+[JsonSerializable(typeof(BrandUrlMismatchBehavior))]
+[JsonSerializable(typeof(BrandUrlMismatchBehavior?))]
 internal partial class LocalSettingsJsonContext : JsonSerializerContext { }

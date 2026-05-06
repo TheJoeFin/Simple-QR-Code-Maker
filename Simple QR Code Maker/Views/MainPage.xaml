@@ -57,7 +57,9 @@
                                     VerticalAlignment="Center"
                                     Orientation="Vertical"
                                     Spacing="10">
-                                    <controls:BrandPickerControl ViewModel="{x:Bind ViewModel}" />
+                                    <controls:BrandPickerControl
+                                        x:Name="BrandPickerArea"
+                                        ViewModel="{x:Bind ViewModel}" />
 
                                     <Grid
                                         x:Name="QrCodeInputRow"
@@ -572,6 +574,17 @@
                             PreferredPlacement="Bottom"
                             Subtitle="Use this button to save your current colors, logo, and settings as a named brand — then apply it to any QR code instantly."
                             Target="{x:Bind BrandMgmtControl}" />
+
+                        <TeachingTip
+                            x:Name="BrandUrlWarningTip"
+                            Title="Brand URL conflict"
+                            CloseButtonContent="Got it"
+                            Closed="BrandUrlWarningTip_Closed"
+                            IsOpen="{x:Bind ViewModel.ShowBrandUrlWarningTip,
+                                            Mode=OneWay}"
+                            PreferredPlacement="Bottom"
+                            Subtitle="Some content doesn't match this brand's URL. You can change how brands handle URL conflicts in Settings."
+                            Target="{x:Bind BrandPickerArea}" />
                     </Grid>
                 </SplitView.Content>
                 <SplitView.Pane>

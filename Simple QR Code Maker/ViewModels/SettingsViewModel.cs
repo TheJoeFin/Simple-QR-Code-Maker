@@ -63,6 +63,12 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     public partial bool UseAutoBrands { get; set; } = false;
 
     [ObservableProperty]
+    public partial BrandUrlMissingBehavior BrandUrlMissingBehavior { get; set; } = BrandUrlMissingBehavior.Warn;
+
+    [ObservableProperty]
+    public partial BrandUrlMismatchBehavior BrandUrlMismatchBehavior { get; set; } = BrandUrlMismatchBehavior.Warn;
+
+    [ObservableProperty]
     public partial double MinSizeScanDistanceScaleFactor { get; set; } = 1.0;
 
     [ObservableProperty]
@@ -153,6 +159,32 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
 
         MultiLineCodeMode = mode;
         await LocalSettingsService.SaveSettingAsync(nameof(MultiLineCodeMode), MultiLineCodeMode);
+    }
+
+    [RelayCommand]
+    private async Task SwitchBrandUrlMissingBehavior(object param)
+    {
+        if (param is not string stringMode)
+            return;
+
+        if (!Enum.TryParse(stringMode, out BrandUrlMissingBehavior mode))
+            return;
+
+        BrandUrlMissingBehavior = mode;
+        await LocalSettingsService.SaveSettingAsync(nameof(BrandUrlMissingBehavior), BrandUrlMissingBehavior);
+    }
+
+    [RelayCommand]
+    private async Task SwitchBrandUrlMismatchBehavior(object param)
+    {
+        if (param is not string stringMode)
+            return;
+
+        if (!Enum.TryParse(stringMode, out BrandUrlMismatchBehavior mode))
+            return;
+
+        BrandUrlMismatchBehavior = mode;
+        await LocalSettingsService.SaveSettingAsync(nameof(BrandUrlMismatchBehavior), BrandUrlMismatchBehavior);
     }
 
     public SettingsViewModel(IThemeSelectorService themeSelectorService, INavigationService navigationService, ILocalSettingsService localSettingsService)
@@ -968,6 +1000,12 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
 
             await LoadSettingAsync(nameof(UseAutoBrands), async () =>
                 UseAutoBrands = await LocalSettingsService.ReadSettingAsync<bool>(nameof(UseAutoBrands)));
+
+            await LoadSettingAsync(nameof(BrandUrlMissingBehavior), async () =>
+                BrandUrlMissingBehavior = await LocalSettingsService.ReadSettingAsync<BrandUrlMissingBehavior?>(nameof(BrandUrlMissingBehavior)) ?? BrandUrlMissingBehavior.Warn);
+
+            await LoadSettingAsync(nameof(BrandUrlMismatchBehavior), async () =>
+                BrandUrlMismatchBehavior = await LocalSettingsService.ReadSettingAsync<BrandUrlMismatchBehavior?>(nameof(BrandUrlMismatchBehavior)) ?? BrandUrlMismatchBehavior.Warn);
 
             await _themeSelectorService.RefreshThemeAsync();
             ElementTheme = _themeSelectorService.Theme;

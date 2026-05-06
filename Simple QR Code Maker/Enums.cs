@@ -26,3 +26,17 @@ public enum QrContentKind
     WiFi = 2,
     Email = 3,
 }
+
+public enum BrandUrlMissingBehavior
+{
+    Ignore = 0,
+    Warn = 1,
+    AutoPrepend = 2,
+}
+
+public enum BrandUrlMismatchBehavior
+{
+    Ignore = 0,
+    Warn = 1,
+    AutoFix = 2,
+}

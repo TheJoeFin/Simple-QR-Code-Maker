@@ -194,6 +194,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private bool HasUsedAddButton = false;
     private bool HasUsedHistoryButton = false;
     private bool HasUsedBrandButton = false;
+    private BrandUrlMissingBehavior BrandUrlMissingBehavior = BrandUrlMissingBehavior.Warn;
+    private BrandUrlMismatchBehavior BrandUrlMismatchBehavior = BrandUrlMismatchBehavior.Warn;
+    private bool HasSeenBrandUrlWarningTip = false;
+    private (string Title, string Message)? _pendingBrandUrlWarning;
     private IReadOnlyList<string> SafeRedirectorDomains = [];
     private QrContentKind currentContentKind = QrContentKind.PlainText;
     private MultiLineCodeMode? multiLineCodeModeOverride = null;
@@ -245,6 +249,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     [ObservableProperty]
     public partial bool ShowBrandButtonTeachingTip { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool ShowBrandUrlWarningTip { get; set; } = false;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowMarkRedirectorSafeAction))]
@@ -1091,6 +1098,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
                 ShowBrandButtonTeachingTip = true;
             ShowCodeInfoBar = false;
             CodeInfoBarSeverity = InfoBarSeverity.Informational;
+
+            if (_pendingBrandUrlWarning is { } warning)
+            {
+                _pendingBrandUrlWarning = null;
+                CodeInfoBarTitle = warning.Title;
+                CodeInfoBarMessage = warning.Message;
+                CodeInfoBarSeverity = InfoBarSeverity.Informational;
+                ShowCodeInfoBar = true;
+            }
         }
 
         if (skippedAnyInvalidCodes)
@@ -1253,6 +1269,91 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             s = s[4..];
 
         return s;
+    }
+
+    private static bool IsUrlLike(string line)
+        => line.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+        || line.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+        || line.StartsWith("ftp://", StringComparison.OrdinalIgnoreCase);
+
+    private bool LineMatchesBrandUrl(string line, string brandUrl)
+    {
+        string normalizedLine = NormalizeUrlForBrandMatching(line);
+        string normalizedBrand = NormalizeUrlForBrandMatching(brandUrl).TrimEnd('/');
+
+        if (string.IsNullOrEmpty(normalizedBrand))
+            return false;
+
+        if (!normalizedLine.StartsWith(normalizedBrand, StringComparison.Ordinal))
+            return false;
+
+        if (normalizedLine.Length == normalizedBrand.Length)
+            return true;
+
+        char next = normalizedLine[normalizedBrand.Length];
+        return next is '/' or '?' or '#' or ':' or '@';
+    }
+
+    private bool ApplyBrandUrlToExistingContent(BrandItem brand)
+    {
+        string brandUrl = brand.UrlContent!;
+        string[] lines = UseSingleCodeForCurrentDocument
+            ? [UrlText]
+            : UrlText.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+
+        if (lines.All(l => LineMatchesBrandUrl(l, brandUrl)))
+            return false;
+
+        List<string> nonUrlLines = [.. lines.Where(l => !IsUrlLike(l) && !LineMatchesBrandUrl(l, brandUrl))];
+        List<string> mismatchedUrlLines = [.. lines.Where(l => IsUrlLike(l) && !LineMatchesBrandUrl(l, brandUrl))];
+
+        bool warned = false;
+
+        if (nonUrlLines.Count > 0)
+        {
+            switch (BrandUrlMissingBehavior)
+            {
+                case BrandUrlMissingBehavior.Warn:
+                    _pendingBrandUrlWarning = (
+                        "Non-URL content detected",
+                        "This brand has a URL but some items are plain text. Change brand URL behavior in Settings.");
+                    warned = true;
+                    break;
+                case BrandUrlMissingBehavior.AutoPrepend:
+                    string prefix = brandUrl.TrimEnd('/') + "/";
+                    string prepended = string.Join("\r", lines.Select(l =>
+                        !IsUrlLike(l) && !LineMatchesBrandUrl(l, brandUrl) ? prefix + l.TrimStart('/') : l));
+                    ApplyDocumentText(prepended);
+                    break;
+            }
+        }
+
+        if (mismatchedUrlLines.Count > 0)
+        {
+            switch (BrandUrlMismatchBehavior)
+            {
+                case BrandUrlMismatchBehavior.Warn:
+                    _pendingBrandUrlWarning = (
+                        "URL doesn't match brand",
+                        "Some URLs don't match this brand's URL. Change brand URL conflict behavior in Settings.");
+                    warned = true;
+                    break;
+                case BrandUrlMismatchBehavior.AutoFix:
+                    string fixed_ = string.Join("\r", lines.Select(l =>
+                        IsUrlLike(l) && !LineMatchesBrandUrl(l, brandUrl) ? brandUrl : l));
+                    ApplyDocumentText(fixed_);
+                    break;
+            }
+        }
+
+        return warned;
+    }
+
+    public async void DismissBrandUrlWarningTip()
+    {
+        ShowBrandUrlWarningTip = false;
+        HasSeenBrandUrlWarningTip = true;
+        await LocalSettingsService.SaveSettingAsync(nameof(HasSeenBrandUrlWarningTip), true);
     }
 
     private async Task PreloadBrandLogosAsync()
@@ -1957,7 +2058,19 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
                 BackgroundColor = brand.Background.Value;
 
             if (brand.UrlContent is not null)
-                ApplyDocumentText(brand.UrlContent, brand.ContentKind, brand.MultiLineCodeModeOverride);
+            {
+                if (string.IsNullOrWhiteSpace(UrlText))
+                {
+                    ApplyDocumentText(brand.UrlContent, brand.ContentKind, brand.MultiLineCodeModeOverride);
+                }
+                else if (currentContentKind == QrContentKind.PlainText)
+                {
+                    bool warned = ApplyBrandUrlToExistingContent(brand);
+                    if (warned && !HasSeenBrandUrlWarningTip)
+                        ShowBrandUrlWarningTip = true;
+                }
+                // VCard/WiFi/Email — skip silently
+            }
 
             if (brand.ErrorCorrectionLevelAsString is not null)
             {
@@ -2612,6 +2725,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         HasUsedHistoryButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasUsedHistoryButton));
         ShowHistoryButtonTeachingTip = AppLaunchCount >= 6 && !HasUsedHistoryButton;
         HasUsedBrandButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasUsedBrandButton));
+        BrandUrlMissingBehavior = await LocalSettingsService.ReadSettingAsync<BrandUrlMissingBehavior?>(nameof(BrandUrlMissingBehavior)) ?? BrandUrlMissingBehavior.Warn;
+        BrandUrlMismatchBehavior = await LocalSettingsService.ReadSettingAsync<BrandUrlMismatchBehavior?>(nameof(BrandUrlMismatchBehavior)) ?? BrandUrlMismatchBehavior.Warn;
+        HasSeenBrandUrlWarningTip = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasSeenBrandUrlWarningTip));
         if (MinSizeScanDistanceScaleFactor < 0.35)
         {
             MinSizeScanDistanceScaleFactor = 1;
