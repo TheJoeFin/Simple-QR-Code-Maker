@@ -20,7 +20,8 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>preview</LangVersion>
-    <PublishAot>true</PublishAot>
+    <PublishAot>false</PublishAot>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\AdvancedToolsControl.xaml" />
