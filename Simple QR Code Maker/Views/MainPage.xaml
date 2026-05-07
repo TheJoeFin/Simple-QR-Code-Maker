@@ -187,6 +187,13 @@
                                             ToolTipText="Code Color"
                                             Color="{x:Bind ViewModel.ForegroundColor,
                                                            Mode=TwoWay}">
+                                            <controls:ColorPickerButton.ContextFlyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem
+                                                        Text="Set as default code color"
+                                                        Command="{x:Bind ViewModel.SetForegroundAsDefaultCommand}" />
+                                                </MenuFlyout>
+                                            </controls:ColorPickerButton.ContextFlyout>
                                             <controls:ColorPickerButton.ButtonContent>
                                                 <Viewbox Width="18" Height="18">
                                                     <controls:QrCodeIcon Foreground="{x:Bind ViewModel.ForegroundColor, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
@@ -202,9 +209,24 @@
                                                                       Mode=OneWay}"
                                             ToolTipText="Background Color"
                                             Color="{x:Bind ViewModel.BackgroundColor,
-                                                           Mode=TwoWay}" />
+                                                           Mode=TwoWay}">
+                                            <controls:ColorPickerButton.ContextFlyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem
+                                                        Text="Set as default background color"
+                                                        Command="{x:Bind ViewModel.SetBackgroundAsDefaultCommand}" />
+                                                </MenuFlyout>
+                                            </controls:ColorPickerButton.ContextFlyout>
+                                        </controls:ColorPickerButton>
                                         <DropDownButton Width="60" ToolTipService.ToolTip="Level of Error Correction">
                                             <TextBlock Text="{x:Bind ViewModel.SelectedOption.ShortDescription, Mode=OneWay}" />
+                                            <DropDownButton.ContextFlyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem
+                                                        Text="Set as default error correction"
+                                                        Command="{x:Bind ViewModel.SetErrorCorrectionAsDefaultCommand}" />
+                                                </MenuFlyout>
+                                            </DropDownButton.ContextFlyout>
                                             <DropDownButton.Flyout>
                                                 <Flyout x:Name="ErrorCorrectionFlyout" Placement="Bottom">
                                                     <StackPanel Spacing="8">
@@ -239,6 +261,13 @@
                                             <Viewbox Width="16" Height="16">
                                                 <controls:FrameIcon />
                                             </Viewbox>
+                                            <DropDownButton.ContextFlyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem
+                                                        Text="Set as default frame"
+                                                        Command="{x:Bind ViewModel.SetFrameAsDefaultCommand}" />
+                                                </MenuFlyout>
+                                            </DropDownButton.ContextFlyout>
                                             <DropDownButton.Flyout>
                                                 <Flyout
                                                     x:Name="FramePresetFlyout"

@@ -207,7 +207,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     public partial bool ShowSaveBothButton { get; set; } = false;
 
     [ObservableProperty]
-    public partial bool ShowPrintButton { get; set; } = true;
+    public partial bool ShowPrintButton { get; set; } = false;
 
     [ObservableProperty]
     public partial bool ShowZipSaveOptions { get; set; } = true;
@@ -811,21 +811,18 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     {
         debounceTimer.Stop();
         debounceTimer.Start();
-        _ = LocalSettingsService.SaveSettingAsync(nameof(FramePreset), value);
     }
 
     partial void OnFrameTextChanged(string value)
     {
         debounceTimer.Stop();
         debounceTimer.Start();
-        _ = LocalSettingsService.SaveSettingAsync(nameof(FrameText), value);
     }
 
     partial void OnFrameTextSourceChanged(QrFrameTextSource value)
     {
         debounceTimer.Stop();
         debounceTimer.Start();
-        _ = LocalSettingsService.SaveSettingAsync(nameof(FrameTextSource), value);
     }
 
     private bool UrlMatchesBrand(string url)
@@ -1996,6 +1993,39 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private void SelectErrorCorrectionLevel(ErrorCorrectionOptions option) => SelectedOption = option;
 
     [RelayCommand]
+    private async Task SetForegroundAsDefaultAsync()
+        => await LocalSettingsService.SaveSettingAsync("DefaultForegroundColor", ColorToHex(ForegroundColor));
+
+    [RelayCommand]
+    private async Task SetBackgroundAsDefaultAsync()
+        => await LocalSettingsService.SaveSettingAsync("DefaultBackgroundColor", ColorToHex(BackgroundColor));
+
+    [RelayCommand]
+    private async Task SetErrorCorrectionAsDefaultAsync()
+        => await LocalSettingsService.SaveSettingAsync("DefaultErrorCorrection", SelectedOption.ErrorCorrectionLevel.ToString());
+
+    [RelayCommand]
+    private async Task SetFrameAsDefaultAsync()
+    {
+        await LocalSettingsService.SaveSettingAsync("DefaultFramePreset", FramePreset);
+        await LocalSettingsService.SaveSettingAsync("DefaultFrameTextSource", FrameTextSource);
+        await LocalSettingsService.SaveSettingAsync("DefaultFrameText", FrameText);
+    }
+
+    private static string ColorToHex(Windows.UI.Color c)
+        => $"#{c.A:X2}{c.R:X2}{c.G:X2}{c.B:X2}";
+
+    private static Windows.UI.Color HexToColor(string hex)
+    {
+        hex = hex.TrimStart('#');
+        return Windows.UI.Color.FromArgb(
+            Convert.ToByte(hex[0..2], 16),
+            Convert.ToByte(hex[2..4], 16),
+            Convert.ToByte(hex[4..6], 16),
+            Convert.ToByte(hex[6..8], 16));
+    }
+
+    [RelayCommand]
     private void SelectFramePreset(QrFramePresetOption option)
     {
         string normalizedFrameText = FrameText.Trim();
@@ -2709,15 +2739,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
         UseAutoBrands = await LocalSettingsService.ReadSettingAsync<bool>(nameof(UseAutoBrands));
         ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton));
-        ShowPrintButton = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowPrintButton)) ?? true;
+        ShowPrintButton = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowPrintButton)) ?? false;
         ShowZipSaveOptions = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowZipSaveOptions)) ?? true;
         QuickSaveLocation = await LocalSettingsService.ReadSettingAsync<string>(nameof(QuickSaveLocation)) ?? string.Empty;
         MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
         QrPaddingModules = BarcodeHelpers.NormalizeQrPaddingModules(
             await LocalSettingsService.ReadSettingAsync<double?>(nameof(QrPaddingModules)) ?? 2.0);
-        FramePreset = await LocalSettingsService.ReadSettingAsync<QrFramePreset?>(nameof(FramePreset)) ?? QrFramePreset.None;
-        FrameTextSource = await LocalSettingsService.ReadSettingAsync<QrFrameTextSource?>(nameof(FrameTextSource)) ?? QrFrameTextSource.Manual;
-        FrameText = await LocalSettingsService.ReadSettingAsync<string>(nameof(FrameText)) ?? string.Empty;
         AppLaunchCount = (await LocalSettingsService.ReadSettingAsync<int?>(nameof(AppLaunchCount)) ?? 0) + 1;
         await LocalSettingsService.SaveSettingAsync(nameof(AppLaunchCount), AppLaunchCount);
         HasUsedAddButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasUsedAddButton));
@@ -2751,6 +2778,30 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         }
         else
         {
+            // Load per-property defaults, then let default brand override them
+            string? defaultFg = await LocalSettingsService.ReadSettingAsync<string>("DefaultForegroundColor");
+            if (defaultFg is not null) ForegroundColor = HexToColor(defaultFg);
+
+            string? defaultBg = await LocalSettingsService.ReadSettingAsync<string>("DefaultBackgroundColor");
+            if (defaultBg is not null) BackgroundColor = HexToColor(defaultBg);
+
+            string? defaultEc = await LocalSettingsService.ReadSettingAsync<string>("DefaultErrorCorrection");
+            if (defaultEc is not null)
+            {
+                ErrorCorrectionOptions? match = ErrorCorrectionLevels
+                    .FirstOrDefault(x => x.ErrorCorrectionLevel.ToString() == defaultEc);
+                if (match.HasValue) SelectedOption = match.Value;
+            }
+
+            QrFramePreset? defaultFp = await LocalSettingsService.ReadSettingAsync<QrFramePreset?>("DefaultFramePreset");
+            if (defaultFp.HasValue) FramePreset = defaultFp.Value;
+
+            QrFrameTextSource? defaultFts = await LocalSettingsService.ReadSettingAsync<QrFrameTextSource?>("DefaultFrameTextSource");
+            if (defaultFts.HasValue) FrameTextSource = defaultFts.Value;
+
+            string? defaultFt = await LocalSettingsService.ReadSettingAsync<string>("DefaultFrameText");
+            if (defaultFt is not null) FrameText = defaultFt;
+
             // Apply default brand last, after all settings are loaded
             BrandItem? defaultBrand = BrandItems.FirstOrDefault(b => b.IsDefault);
             if (defaultBrand is not null)
