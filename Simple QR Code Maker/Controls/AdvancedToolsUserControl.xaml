@@ -342,6 +342,21 @@
                                     </StackPanel>
                                 </Button>
                             </settingsControls:SettingsCard>
+
+                            <settingsControls:SettingsCard Description="Mark corners and alignment points to unwarp a curved or bent QR code." Header="Unwarp a QR code">
+                                <Button
+                                    Command="{x:Bind ViewModel.OpenUnwarpWorkflowCommand}"
+                                    IsEnabled="{x:Bind ViewModel.IsProcessing,
+                                                       Mode=OneWay,
+                                                       Converter={StaticResource BoolNegationConverter}}"
+                                    Style="{StaticResource WorkflowLauncherButtonStyle}"
+                                    ToolTipService.ToolTip="Open the unwarp workflow to correct warped or curved QR codes">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <FontIcon Glyph="&#xF207;" />
+                                        <TextBlock Text="Pick Unwarp Points" />
+                                    </StackPanel>
+                                </Button>
+                            </settingsControls:SettingsCard>
                         </settingsControls:SettingsExpander.Items>
                     </settingsControls:SettingsExpander>
                 </StackPanel>
@@ -518,6 +533,163 @@
                             Command="{x:Bind ViewModel.ClearPerspectiveCornersCommand}"
                             ToolTipService.ToolTip="Clear all selected corners and start over">
                             <TextBlock Text="Clear corners" />
+                        </Button>
+                    </settingsControls:SettingsCard>
+                </StackPanel>
+            </ScrollViewer>
+
+            <ScrollViewer
+                Padding="16,16,16,0"
+                VerticalScrollBarVisibility="Auto"
+                Visibility="{x:Bind ViewModel.IsUnwarpWorkflowVisible,
+                                    Mode=OneWay,
+                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Spacing="12">
+                    <Border
+                        Padding="16"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource OverlayCornerRadius}">
+                        <StackPanel Spacing="4">
+                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Unwarp a QR code" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="Set the QR version, click each corner then each alignment point. Use Estimated to accept calculated positions."
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <InfoBar
+                        IsClosable="False"
+                        IsOpen="True"
+                        Message="Click on the image to place each point in order."
+                        Severity="Informational" />
+
+                    <settingsControls:SettingsCard Header="QR Code Version">
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Slider
+                                Grid.Column="0"
+                                Maximum="40"
+                                Minimum="10"
+                                StepFrequency="5"
+                                ToolTipService.ToolTip="Select the QR code version (10–40). Higher versions have more alignment points."
+                                Value="{x:Bind ViewModel.QrVersionDouble,
+                                               Mode=TwoWay}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                MinWidth="28"
+                                VerticalAlignment="Center"
+                                Text="{x:Bind ViewModel.QrVersion,
+                                              Mode=OneWay}" />
+                        </Grid>
+                    </settingsControls:SettingsCard>
+
+                    <Border
+                        Padding="12"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource OverlayCornerRadius}">
+                        <StackPanel Spacing="8">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="Point layout" />
+                            <Border
+                                Width="140"
+                                Height="140"
+                                HorizontalAlignment="Center"
+                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4">
+                                <Canvas
+                                    x:Name="UnwarpPreviewCanvas"
+                                    Width="140"
+                                    Height="140"
+                                    PointerPressed="UnwarpPreviewCanvas_PointerPressed" />
+                            </Border>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="{x:Bind ViewModel.UnwarpPointSummary,
+                                              Mode=OneWay}"
+                                TextAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
+                    <settingsControls:SettingsCard Header="Current step">
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Border
+                                Width="28"
+                                Height="28"
+                                Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                CornerRadius="14"
+                                Visibility="{x:Bind ViewModel.IsUnwarpComplete,
+                                                    Mode=OneWay,
+                                                    Converter={StaticResource BoolToVisibilityConverter},
+                                                    ConverterParameter=inverse}">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                    Text="{x:Bind ViewModel.PlacedCount,
+                                                  Mode=OneWay}" />
+                            </Border>
+
+                            <Border
+                                Width="28"
+                                Height="28"
+                                Background="{ThemeResource SystemFillColorSuccessBrush}"
+                                CornerRadius="14"
+                                Visibility="{x:Bind ViewModel.IsUnwarpComplete,
+                                                    Mode=OneWay,
+                                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                                <FontIcon
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
+                                    Glyph="&#xE73E;" />
+                            </Border>
+
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="{x:Bind ViewModel.CurrentUnwarpInstruction,
+                                              Mode=OneWay}"
+                                TextWrapping="Wrap" />
+                        </Grid>
+                    </settingsControls:SettingsCard>
+
+                    <settingsControls:SettingsCard Header="Use estimated position" Visibility="{x:Bind ViewModel.IsNextUnwarpPointAlignment, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.UseEstimatedUnwarpPointCommand}"
+                            ToolTipService.ToolTip="Accept the calculated (bilinear) position for the current alignment point">
+                            <TextBlock Text="Use Estimated" />
+                        </Button>
+                    </settingsControls:SettingsCard>
+
+                    <settingsControls:SettingsCard Header="Points">
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.ClearUnwarpPointsCommand}"
+                            ToolTipService.ToolTip="Clear all placed points and start over">
+                            <TextBlock Text="Clear all points" />
                         </Button>
                     </settingsControls:SettingsCard>
                 </StackPanel>
@@ -767,6 +939,52 @@
                         HorizontalAlignment="Stretch"
                         Command="{x:Bind ViewModel.ClearCutOutSelectionCommand}"
                         Content="Clear selection" />
+                    <Button
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.CancelWorkflowCommand}"
+                        Content="Cancel" />
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border
+            Grid.Row="1"
+            Padding="16"
+            Background="{ThemeResource LayerFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="0,1,0,0"
+            Visibility="{x:Bind ViewModel.IsUnwarpWorkflowVisible,
+                                Mode=OneWay,
+                                Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid RowSpacing="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Button
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.ApplyUnwarpCommand}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    ToolTipService.ToolTip="Apply polynomial unwarp correction and return to the tool list">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xF207;" />
+                        <TextBlock Text="Apply Unwarp" />
+                    </StackPanel>
+                </Button>
+
+                <Grid Grid.Row="1" ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        Grid.Column="0"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.ClearUnwarpPointsCommand}"
+                        Content="Clear points" />
                     <Button
                         Grid.Column="1"
                         HorizontalAlignment="Stretch"

@@ -14,6 +14,9 @@ public partial class AdvancedToolsViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsSampleWhitePointWorkflowVisible))]
     [NotifyPropertyChangedFor(nameof(IsPerspectiveWorkflowVisible))]
     [NotifyPropertyChangedFor(nameof(IsCutOutWorkflowVisible))]
+    [NotifyPropertyChangedFor(nameof(IsUnwarpWorkflowVisible))]
+    [NotifyPropertyChangedFor(nameof(IsUnwarpMode))]
+    [NotifyPropertyChangedFor(nameof(IsAnyToolActive))]
     public partial AdvancedToolWorkflow ActiveWorkflow { get; set; } = AdvancedToolWorkflow.None;
 
     public bool IsWorkflowPickerVisible => ActiveWorkflow == AdvancedToolWorkflow.None;
@@ -21,6 +24,85 @@ public partial class AdvancedToolsViewModel : ObservableObject
     public bool IsSampleWhitePointWorkflowVisible => ActiveWorkflow == AdvancedToolWorkflow.SampleWhitePoint;
     public bool IsPerspectiveWorkflowVisible => ActiveWorkflow == AdvancedToolWorkflow.PerspectiveCorrection;
     public bool IsCutOutWorkflowVisible => ActiveWorkflow == AdvancedToolWorkflow.CutOutRegion;
+    public bool IsUnwarpWorkflowVisible => ActiveWorkflow == AdvancedToolWorkflow.UnwarpQrCode;
+    public bool IsUnwarpMode => ActiveWorkflow == AdvancedToolWorkflow.UnwarpQrCode;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(QrVersionDouble))]
+    public partial int QrVersion { get; set; } = 10;
+
+    // Double façade so NumberBox/Slider can bind directly (Value is double in WinUI).
+    public double QrVersionDouble
+    {
+        get => QrVersion;
+        set => QrVersion = Math.Clamp((int)Math.Round(value), 10, 40);
+    }
+
+    partial void OnQrVersionChanged(int value)
+    {
+        if (IsUnwarpMode)
+        {
+            InitializeUnwarpPoints();
+            UnwarpPointsClearedRequested?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public List<UnwarpControlPoint> UnwarpControlPoints { get; private set; } = [];
+
+    private UnwarpControlPoint? _activeUnwarpPoint;
+
+    public UnwarpControlPoint? NextUnwarpPoint =>
+        _activeUnwarpPoint ?? UnwarpControlPoints.FirstOrDefault(p => !p.IsPlacedOrEstimated);
+
+    public void SetActiveUnwarpPoint(UnwarpControlPoint? pt)
+    {
+        _activeUnwarpPoint = pt;
+        RefreshUnwarpProperties();
+    }
+
+    public bool AllCornersPlaced =>
+        UnwarpControlPoints.Where(p => p.Kind == UnwarpPointKind.OuterCorner).All(p => p.IsPlacedOrEstimated);
+
+    public bool IsUnwarpComplete =>
+        UnwarpControlPoints.Count > 0 && UnwarpControlPoints.All(p => p.IsPlacedOrEstimated);
+
+    public bool IsNextUnwarpPointAlignment =>
+        NextUnwarpPoint?.Kind == UnwarpPointKind.AlignmentPattern;
+
+    public int PlacedCount => UnwarpControlPoints.Count(p => p.IsPlacedOrEstimated);
+    public int TotalPoints => UnwarpControlPoints.Count;
+
+    public string UnwarpPointSummary
+    {
+        get
+        {
+            int alignmentCount = UnwarpControlPoints.Count(p => p.Kind == UnwarpPointKind.AlignmentPattern);
+            if (alignmentCount == 0)
+                return "4 corners, no alignment points";
+            return $"4 corners + {alignmentCount} alignment {(alignmentCount == 1 ? "point" : "points")}";
+        }
+    }
+
+    public string CurrentUnwarpInstruction
+    {
+        get
+        {
+            var next = NextUnwarpPoint;
+            if (next == null)
+                return TotalPoints == 0
+                    ? "Set the version and open the unwarp workflow."
+                    : "All points placed — click Apply Unwarp.";
+
+            if (next.Kind == UnwarpPointKind.OuterCorner)
+                return $"Click corner {next.OrderIndex + 1} of 4 on the image ({next.Label}).";
+
+            var alignments = UnwarpControlPoints.Where(p => p.Kind == UnwarpPointKind.AlignmentPattern).ToList();
+            int alignIndex = alignments.IndexOf(next) + 1;
+            return $"Click alignment point {alignIndex} of {alignments.Count} ({next.Label}), or use Estimated.";
+        }
+    }
+
+    public event EventHandler? UnwarpPointsClearedRequested;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
@@ -222,13 +304,14 @@ public partial class AdvancedToolsViewModel : ObservableObject
             bool hasEyedropperChanges = SelectedBlackPointColor != null || SelectedWhitePointColor != null;
             bool hasPerspectiveChanges = IsPerspectiveCorrectionMode && AllCornersSet();
             bool hasBorderChanges = BorderPercent > 0.01;
+            bool hasUnwarpChanges = IsUnwarpMode && IsUnwarpComplete;
 
-            return hasBasicChanges || hasLevelChanges || hasEyedropperChanges || hasPerspectiveChanges || hasBorderChanges;
+            return hasBasicChanges || hasLevelChanges || hasEyedropperChanges || hasPerspectiveChanges || hasBorderChanges || hasUnwarpChanges;
         }
     }
 
     // Track if any interactive tool is currently active
-    public bool IsAnyToolActive => IsEyedropperBlackMode || IsEyedropperWhiteMode || IsPerspectiveCorrectionMode || IsCutOutRegionMode;
+    public bool IsAnyToolActive => IsEyedropperBlackMode || IsEyedropperWhiteMode || IsPerspectiveCorrectionMode || IsCutOutRegionMode || IsUnwarpMode;
 
     /// <summary>
     /// The unmodified original image. Only used by "Reset All" to restore the baseline.
@@ -274,6 +357,95 @@ public partial class AdvancedToolsViewModel : ObservableObject
     private void OpenCutOutWorkflow() => ActivateWorkflow(AdvancedToolWorkflow.CutOutRegion);
 
     [RelayCommand]
+    private void OpenUnwarpWorkflow()
+    {
+        InitializeUnwarpPoints();
+        ActivateWorkflow(AdvancedToolWorkflow.UnwarpQrCode);
+    }
+
+    [RelayCommand]
+    private void UseEstimatedUnwarpPoint()
+    {
+        var next = NextUnwarpPoint;
+        if (next == null || next.Kind != UnwarpPointKind.AlignmentPattern) return;
+        next.IsEstimated = true;
+        _activeUnwarpPoint = null;
+        RefreshUnwarpProperties();
+    }
+
+    [RelayCommand]
+    private void ClearUnwarpPoints()
+    {
+        InitializeUnwarpPoints();
+        UnwarpPointsClearedRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    [RelayCommand(CanExecute = nameof(IsUnwarpComplete))]
+    private async Task ApplyUnwarp()
+    {
+        if (baselineImage == null) return;
+        IsProcessing = true;
+
+        var image = baselineImage;
+        var points = UnwarpControlPoints.ToList();
+        var version = QrVersion;
+
+        MagickImage result;
+        try
+        {
+            result = await Task.Run(() =>
+            {
+                int dim = Helpers.QrAlignmentPatternHelper.GetDimension(version);
+
+                // Base output size on the actual pixel span of the placed corners so small
+                // images aren't massively upscaled and large images aren't capped too early.
+                var orderedCorners = points
+                    .Where(p => p.Kind == UnwarpPointKind.OuterCorner && p.PlacedImagePoint.HasValue)
+                    .OrderBy(p => p.OrderIndex)
+                    .Select(p => p.PlacedImagePoint!.Value)
+                    .ToList();
+
+                int outputSize;
+                if (orderedCorners.Count == 4)
+                {
+                    static double Dist(System.Drawing.Point a, System.Drawing.Point b) =>
+                        Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
+
+                    double spanW = Math.Max(Dist(orderedCorners[0], orderedCorners[1]),
+                                            Dist(orderedCorners[3], orderedCorners[2]));
+                    double spanH = Math.Max(Dist(orderedCorners[0], orderedCorners[3]),
+                                            Dist(orderedCorners[1], orderedCorners[2]));
+                    double pixelsPerModule = Math.Max(spanW, spanH) / dim;
+                    outputSize = Math.Clamp((int)(dim * pixelsPerModule), dim * 3, 1500);
+                }
+                else
+                {
+                    outputSize = Math.Min(dim * 10, 1500);
+                }
+
+                var controlPts = BuildControlPointList(points, version, outputSize);
+                return Helpers.ImageProcessingHelper.ApplyPolynomialUnwarp(image, controlPts, outputSize, outputSize);
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Unwarp failed: {ex.Message}");
+            IsProcessing = false;
+            return;
+        }
+
+        _undoStack.Push((MagickImage)baselineImage.Clone());
+        _redoStack.Clear();
+        baselineImage = (MagickImage)result.Clone();
+        UndoCommand.NotifyCanExecuteChanged();
+        RedoCommand.NotifyCanExecuteChanged();
+
+        IsProcessing = false;
+        CloseActiveWorkflow();
+        ImageProcessed?.Invoke(this, result);
+    }
+
+    [RelayCommand]
     private void CancelWorkflow() => CloseActiveWorkflow();
 
     public void CloseActiveWorkflow()
@@ -291,6 +463,10 @@ public partial class AdvancedToolsViewModel : ObservableObject
                 break;
             case AdvancedToolWorkflow.CutOutRegion:
                 IsCutOutRegionMode = false;
+                break;
+            case AdvancedToolWorkflow.UnwarpQrCode:
+                InitializeUnwarpPoints();
+                UnwarpPointsClearedRequested?.Invoke(this, EventArgs.Empty);
                 break;
         }
 
@@ -319,7 +495,116 @@ public partial class AdvancedToolsViewModel : ObservableObject
             case AdvancedToolWorkflow.CutOutRegion:
                 IsCutOutRegionMode = true;
                 break;
+            case AdvancedToolWorkflow.UnwarpQrCode:
+                // IsUnwarpMode is derived from ActiveWorkflow; no separate bool needed.
+                break;
         }
+    }
+
+    public void PlaceNextUnwarpPoint(System.Drawing.Point imagePoint)
+    {
+        var next = NextUnwarpPoint;
+        if (next == null) return;
+        next.PlacedImagePoint = imagePoint;
+        next.IsEstimated = false;
+        _activeUnwarpPoint = null;
+        RefreshUnwarpProperties();
+    }
+
+    private void InitializeUnwarpPoints()
+    {
+        _activeUnwarpPoint = null;
+        int version = Math.Clamp(QrVersion, 1, 40);
+        int dim = Helpers.QrAlignmentPatternHelper.GetDimension(version);
+        int outputSize = Math.Min(dim * 10, 1500);
+
+        var pts = new List<UnwarpControlPoint>
+        {
+            new() { ModuleRow = 0, ModuleCol = 0, Kind = UnwarpPointKind.OuterCorner, Label = "TL", OrderIndex = 0, IdealX = 0, IdealY = 0 },
+            new() { ModuleRow = 0, ModuleCol = dim - 1, Kind = UnwarpPointKind.OuterCorner, Label = "TR", OrderIndex = 1, IdealX = outputSize, IdealY = 0 },
+            new() { ModuleRow = dim - 1, ModuleCol = dim - 1, Kind = UnwarpPointKind.OuterCorner, Label = "BR", OrderIndex = 2, IdealX = outputSize, IdealY = outputSize },
+            new() { ModuleRow = dim - 1, ModuleCol = 0, Kind = UnwarpPointKind.OuterCorner, Label = "BL", OrderIndex = 3, IdealX = 0, IdealY = outputSize },
+        };
+
+        int alignIndex = 1;
+        foreach (var (row, col) in Helpers.QrAlignmentPatternHelper.GetAlignmentPatternCenters(version))
+        {
+            var (idealX, idealY) = Helpers.QrAlignmentPatternHelper.GetIdealPixelCoord(row, col, version, outputSize);
+            pts.Add(new UnwarpControlPoint
+            {
+                ModuleRow = row,
+                ModuleCol = col,
+                Kind = UnwarpPointKind.AlignmentPattern,
+                Label = $"A{alignIndex++}",
+                OrderIndex = pts.Count,
+                IdealX = idealX,
+                IdealY = idealY,
+            });
+        }
+
+        UnwarpControlPoints = pts;
+        RefreshUnwarpProperties();
+    }
+
+    private void RefreshUnwarpProperties()
+    {
+        OnPropertyChanged(nameof(UnwarpControlPoints));
+        OnPropertyChanged(nameof(NextUnwarpPoint));
+        OnPropertyChanged(nameof(CurrentUnwarpInstruction));
+        OnPropertyChanged(nameof(PlacedCount));
+        OnPropertyChanged(nameof(TotalPoints));
+        OnPropertyChanged(nameof(IsUnwarpComplete));
+        OnPropertyChanged(nameof(AllCornersPlaced));
+        OnPropertyChanged(nameof(IsNextUnwarpPointAlignment));
+        OnPropertyChanged(nameof(HasPendingChanges));
+        OnPropertyChanged(nameof(UnwarpPointSummary));
+        ApplyUnwarpCommand.NotifyCanExecuteChanged();
+    }
+
+    private static List<(System.Drawing.Point src, System.Drawing.PointF dst)> BuildControlPointList(
+        List<UnwarpControlPoint> points, int version, int outputSize)
+    {
+        var result = new List<(System.Drawing.Point, System.Drawing.PointF)>();
+
+        var corners = points.Where(p => p.Kind == UnwarpPointKind.OuterCorner)
+                            .OrderBy(p => p.OrderIndex)
+                            .ToList();
+        if (corners.Count != 4 || corners.Any(c => !c.PlacedImagePoint.HasValue))
+            return result;
+
+        var tl = corners[0].PlacedImagePoint!.Value;
+        var tr = corners[1].PlacedImagePoint!.Value;
+        var br = corners[2].PlacedImagePoint!.Value;
+        var bl = corners[3].PlacedImagePoint!.Value;
+
+        result.Add((tl, new(0, 0)));
+        result.Add((tr, new(outputSize, 0)));
+        result.Add((br, new(outputSize, outputSize)));
+        result.Add((bl, new(0, outputSize)));
+
+        // Auto-add the three finder-pattern centers to strengthen the polynomial fit.
+        int dim = Helpers.QrAlignmentPatternHelper.GetDimension(version);
+        (int Row, int Col)[] finderCenters = [(3, 3), (3, dim - 4), (dim - 4, 3)];
+        foreach (var (fr, fc) in finderCenters)
+        {
+            var src = Helpers.QrAlignmentPatternHelper.EstimateImagePosition(tl, tr, bl, br, fr, fc, version);
+            var (idealX, idealY) = Helpers.QrAlignmentPatternHelper.GetIdealPixelCoord(fr, fc, version, outputSize);
+            result.Add((System.Drawing.Point.Round(src), new((float)idealX, (float)idealY)));
+        }
+
+        // Alignment patterns: use the user-placed point if available, otherwise bilinear estimate.
+        // Always recompute ideal coords from module position so they stay in sync with outputSize.
+        foreach (var pt in points.Where(p => p.Kind == UnwarpPointKind.AlignmentPattern && p.IsPlacedOrEstimated))
+        {
+            System.Drawing.Point src = pt.PlacedImagePoint.HasValue
+                ? pt.PlacedImagePoint.Value
+                : System.Drawing.Point.Round(Helpers.QrAlignmentPatternHelper.EstimateImagePosition(tl, tr, bl, br, pt.ModuleRow, pt.ModuleCol, version));
+
+            var (idealX, idealY) = Helpers.QrAlignmentPatternHelper.GetIdealPixelCoord(pt.ModuleRow, pt.ModuleCol, version, outputSize);
+            result.Add((src, new((float)idealX, (float)idealY)));
+        }
+
+        return result;
     }
 
     private void ClearPerspectiveSelection()
@@ -408,6 +693,8 @@ public partial class AdvancedToolsViewModel : ObservableObject
         SelectedWhitePointColor = null;
         IsEyedropperBlackMode = false;
         IsEyedropperWhiteMode = false;
+        InitializeUnwarpPoints();
+        UnwarpPointsClearedRequested?.Invoke(this, EventArgs.Empty);
 
         // Notify property changes for computed properties
         OnPropertyChanged(nameof(CurrentCornerInstruction));
@@ -586,6 +873,11 @@ public partial class AdvancedToolsViewModel : ObservableObject
         if (HasPendingChanges)
         {
             ResetPendingSettings();
+            if (IsUnwarpMode)
+            {
+                InitializeUnwarpPoints();
+                UnwarpPointsClearedRequested?.Invoke(this, EventArgs.Empty);
+            }
             ActiveWorkflow = AdvancedToolWorkflow.None;
             if (IsPerspectiveCorrectionMode)
                 IsPerspectiveCorrectionMode = false;
@@ -708,6 +1000,8 @@ public partial class AdvancedToolsViewModel : ObservableObject
         IsEyedropperBlackMode = false;
         IsEyedropperWhiteMode = false;
         IsProcessing = false;
+        InitializeUnwarpPoints();
+        UnwarpPointsClearedRequested?.Invoke(this, EventArgs.Empty);
 
         trueOriginalImage = null;
         baselineImage = null;

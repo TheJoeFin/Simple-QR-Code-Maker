@@ -182,6 +182,53 @@ public static class ImageProcessingHelper
         return result;
     }
 
+    public static MagickImage ApplyPolynomialUnwarp(
+        MagickImage image,
+        List<(Point src, System.Drawing.PointF dst)> controlPoints,
+        int outputWidth,
+        int outputHeight,
+        int borderPixels = 20)
+    {
+        var result = (MagickImage)image.Clone();
+        result.AutoOrient();
+
+        if (controlPoints.Count < 3)
+            throw new ArgumentException("At least 3 control points are required for polynomial distortion.");
+
+        int polynomialOrder = controlPoints.Count >= 6 ? 2 : 1;
+
+        var distortArgs = new List<double> { polynomialOrder };
+        foreach (var (src, dst) in controlPoints)
+        {
+            distortArgs.Add(src.X);
+            distortArgs.Add(src.Y);
+            distortArgs.Add(dst.X);
+            distortArgs.Add(dst.Y);
+        }
+
+        try
+        {
+            result.VirtualPixelMethod = VirtualPixelMethod.White;
+            result.Distort(DistortMethod.Polynomial, [.. distortArgs]);
+
+            result.Crop(new MagickGeometry(0, 0, (uint)outputWidth, (uint)outputHeight));
+            result.ResetPage();
+
+            if (borderPixels > 0)
+            {
+                result.BorderColor = MagickColors.White;
+                result.Border((uint)borderPixels);
+            }
+        }
+        catch (MagickOptionErrorException ex) when (ex.Message.Contains("Unsolvable Matrix"))
+        {
+            throw new InvalidOperationException(
+                "Cannot apply unwarp: the selected points form an invalid shape. Please re-check the corner and alignment point positions.", ex);
+        }
+
+        return result;
+    }
+
     private static bool IsValidQuadrilateral(Point p1, Point p2, Point p3, Point p4)
     {
         // Check if any three points are collinear (which would make this degenerate)

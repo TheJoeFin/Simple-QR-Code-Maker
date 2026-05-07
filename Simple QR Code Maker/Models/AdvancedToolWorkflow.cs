@@ -7,4 +7,5 @@ public enum AdvancedToolWorkflow
     SampleWhitePoint = 2,
     PerspectiveCorrection = 3,
     CutOutRegion = 4,
+    UnwarpQrCode = 5,
 }
