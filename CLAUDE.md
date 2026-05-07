@@ -8,20 +8,20 @@ Simple QR Code Maker is a WinUI 3 Windows desktop application (.NET 10, C#) for 
 
 ## Build Commands
 
-The project uses MSBuild (not `dotnet build`) because it is a WinUI 3/MSIX packaged app.
+The project uses MSBuild (not `dotnet build`) because it is a WinUI 3/MSIX packaged app. The solution file is `Simple QR Code Maker.slnx`. The default target platform is `arm64`.
 
 ```bash
 # Restore NuGet packages
-msbuild "Simple QR Code Maker.sln" /t:Restore /p:Configuration=Release /p:Platform=x64
+dotnet msbuild "Simple QR Code Maker.slnx" -t:Restore -p:Configuration=Release -p:Platform=arm64
 
 # Build (Debug)
-msbuild "Simple QR Code Maker.sln" /p:Configuration=Debug /p:Platform=x64
+dotnet msbuild "Simple QR Code Maker.slnx" -p:Configuration=Debug -p:Platform=arm64
 
 # Build (Release)
-msbuild "Simple QR Code Maker.sln" /p:Configuration=Release /p:Platform=x64
+dotnet msbuild "Simple QR Code Maker.slnx" -p:Configuration=Release -p:Platform=arm64
 
-# Build for ARM64
-msbuild "Simple QR Code Maker.sln" /p:Configuration=Release /p:Platform=arm64
+# Build for x64
+dotnet msbuild "Simple QR Code Maker.slnx" -p:Configuration=Release -p:Platform=x64
 ```
 
 Visual Studio 2022 with the Windows App SDK workload and MSIX packaging tools is required. See `.vsconfig` for the exact required components.
@@ -49,10 +49,10 @@ Access services anywhere via `App.GetService<T>()`.
 
 | Directory | Purpose |
 |-----------|---------|
-| `Views/` | XAML pages (ShellPage, MainPage, DecodingPage, SettingsPage) |
+| `Views/` | XAML pages (ShellPage, MainPage, DecodingPage, SettingsPage, FolderSummaryPage, SpreadsheetImportPage, AboutQrCodesWebPage) |
 | `ViewModels/` | MVVM ViewModels with `[ObservableProperty]` and `[RelayCommand]` source generators |
 | `Controls/` | Reusable custom XAML controls and icon controls |
-| `Helpers/` | Core logic: `BarcodeHelpers`, `ImageProcessingHelper`, `PerspectiveCorrectionHelper`, `BackgroundRemovalHelper`, `HistoryStorageHelper` |
+| `Helpers/` | Core logic: `BarcodeHelpers`, `ImageProcessingHelper`, `PerspectiveCorrectionHelper`, `BackgroundRemovalHelper`, `HistoryStorageHelper`, `DecodingHistoryStorageHelper`, `BrandStorageHelper`, `UrlBuilderHelper`, `VCardBuilderHelper`, `WifiBuilderHelper`, `EmailBuilderHelper`, `CsvParser`, `ExcelSpreadsheetHelper`, `PrintLayoutHelper`, `QrCodeDesignStateMapper`, `QrFrameTextResolver`, `EmojiLogoHelper`, `ColorHelpers`, `ColorPickerListBuilder`, `ShareHelper`, and others |
 | `Services/` | App-level services (navigation, theme, settings, activation) |
 | `Contracts/` | Service interfaces |
 | `Converters/` | XAML value converters for data binding |
@@ -69,6 +69,9 @@ Uses `CommunityToolkit.Mvvm.Messaging` with message types in `Models/`:
 - `SaveHistoryMessage` — triggers history save
 - `RequestShowMessage` — requests a dialog
 - `RequestPaneChange` — toggles pane visibility
+- `OpenFolderFileItemMessage` — opens a specific file item from the folder view
+- `SelectDecodingImageItemMessage` — selects a decoding image item
+- `IgnoreAutoBrandMessage` — suppresses automatic brand application
 
 ### Settings Persistence
 
@@ -76,11 +79,23 @@ Uses `CommunityToolkit.Mvvm.Messaging` with message types in `Models/`:
 
 ### JSON Serialization
 
-Uses AOT-compatible source generation via `HistoryJsonContext.cs`. When adding new types to history serialization, register them in this context.
+Uses AOT-compatible source generation. There are multiple JSON contexts in `Models/`:
+- `HistoryJsonContext.cs` — generation history types
+- `DecodingHistoryJsonContext.cs` — decoding history types
+- `BrandJsonContext.cs` — brand/design preset types
+- `LocalSettingsJsonContext.cs` — local settings types
+
+When adding new types to serialization, register them in the appropriate context.
 
 ### Key Dependencies
 
-- **ZXing.Net** — QR code generation and barcode decoding
-- **Magick.NET** — Image processing (grayscale, contrast, perspective correction)
+- **ZXing.Net** / **ZXing.Net.Bindings.Windows.Compatibility** — QR code generation and barcode decoding
+- **Magick.NET-Q16-AnyCPU** — Image processing (grayscale, contrast, perspective correction)
 - **CommunityToolkit.Mvvm** — `[ObservableProperty]`, `[RelayCommand]`, `WeakReferenceMessenger`
+- **CommunityToolkit.WinUI.Controls.Primitives/Segmented/SettingsControls** — WinUI community controls
 - **WinUIEx** — Extended window management and `WindowEx`
+- **Microsoft.Graphics.Win2D** — 2D graphics rendering
+- **Microsoft.Xaml.Behaviors.WinUI.Managed** — XAML behavior support
+- **WinUI.TableView** — Table/grid view control
+- **PDFsharp** — PDF generation for print layouts
+- **Humanizer** — Human-readable string formatting
