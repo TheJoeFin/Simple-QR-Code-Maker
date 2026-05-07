@@ -64,6 +64,15 @@ public static class ImageProcessingHelper
         return result;
     }
 
+    public static MagickImage AddWhiteBorder(MagickImage image, double borderPercent)
+    {
+        var result = (MagickImage)image.Clone();
+        int borderPixels = (int)(result.Width * borderPercent / 100.0);
+        result.BorderColor = MagickColors.White;
+        result.Border((uint)borderPixels);
+        return result;
+    }
+
     public static MagickImage CorrectPerspectiveDistortion(
         MagickImage image,
         Point topLeft,

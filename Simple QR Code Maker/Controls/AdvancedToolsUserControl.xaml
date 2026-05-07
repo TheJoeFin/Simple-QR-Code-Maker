@@ -194,6 +194,30 @@
                                 </Grid>
                             </settingsControls:SettingsCard>
 
+                            <settingsControls:SettingsCard Header="Add border">
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Slider
+                                        x:Name="BorderPercentSlider"
+                                        Grid.Column="0"
+                                        Maximum="50"
+                                        Minimum="0"
+                                        StepFrequency="1"
+                                        ToolTipService.ToolTip="Add a white border sized as a percentage of the image width (e.g. 10 = 10% border on each side)"
+                                        Value="{x:Bind ViewModel.BorderPercent,
+                                                       Mode=TwoWay}" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        MinWidth="40"
+                                        VerticalAlignment="Center"
+                                        Text="{x:Bind ViewModel.BorderPercent,
+                                                      Mode=OneWay}" />
+                                </Grid>
+                            </settingsControls:SettingsCard>
+
                             <settingsControls:SettingsCard Header="Apply quick fixes">
                                 <Button
                                     HorizontalAlignment="Stretch"

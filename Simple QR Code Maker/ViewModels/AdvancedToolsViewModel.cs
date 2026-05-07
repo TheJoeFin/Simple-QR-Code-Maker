@@ -62,6 +62,10 @@ public partial class AdvancedToolsViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
+    public partial double BorderPercent { get; set; } = 0.0;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasPendingChanges))]
     [NotifyPropertyChangedFor(nameof(IsAnyToolActive))]
     [NotifyPropertyChangedFor(nameof(CanApplyPerspectiveWorkflow))]
     public partial bool IsPerspectiveCorrectionMode { get; set; } = false;
@@ -217,8 +221,9 @@ public partial class AdvancedToolsViewModel : ObservableObject
             bool hasLevelChanges = Math.Abs(BlackPointLevel) > 0.01 || Math.Abs(WhitePointLevel - 100.0) > 0.01;
             bool hasEyedropperChanges = SelectedBlackPointColor != null || SelectedWhitePointColor != null;
             bool hasPerspectiveChanges = IsPerspectiveCorrectionMode && AllCornersSet();
+            bool hasBorderChanges = BorderPercent > 0.01;
 
-            return hasBasicChanges || hasLevelChanges || hasEyedropperChanges || hasPerspectiveChanges;
+            return hasBasicChanges || hasLevelChanges || hasEyedropperChanges || hasPerspectiveChanges || hasBorderChanges;
         }
     }
 
@@ -395,6 +400,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
         ContrastValue = 0.0;
         BlackPointLevel = 0.0;
         WhitePointLevel = 100.0;
+        BorderPercent = 0.0;
         IsPerspectiveCorrectionMode = false;
         IsCutOutRegionMode = false;
         BorderPixels = 20;
@@ -456,6 +462,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
             Point? br = BottomRightCorner;
             Point? bl = BottomLeftCorner;
             int border = BorderPixels;
+            double borderPercent = BorderPercent;
 
             // Perform image processing on a background thread.
             // Apply only the current pending changes on top of the baseline.
@@ -517,6 +524,11 @@ public partial class AdvancedToolsViewModel : ObservableObject
                     }
                 }
 
+                if (borderPercent > 0.01)
+                {
+                    tempProcessedImage = Helpers.ImageProcessingHelper.AddWhiteBorder(tempProcessedImage, borderPercent);
+                }
+
                 processedImage = tempProcessedImage;
             });
 
@@ -556,6 +568,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
         ContrastValue = 0.0;
         BlackPointLevel = 0.0;
         WhitePointLevel = 100.0;
+        BorderPercent = 0.0;
         SelectedBlackPointColor = null;
         SelectedWhitePointColor = null;
 
@@ -686,6 +699,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
         ContrastValue = 0.0;
         BlackPointLevel = 0.0;
         WhitePointLevel = 100.0;
+        BorderPercent = 0.0;
         IsPerspectiveCorrectionMode = false;
         IsCutOutRegionMode = false;
         BorderPixels = 20;
