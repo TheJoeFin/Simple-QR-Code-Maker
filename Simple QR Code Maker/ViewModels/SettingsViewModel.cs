@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Helpers;
@@ -54,7 +55,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     public partial bool ShowSaveBothButton { get; set; } = false;
 
     [ObservableProperty]
-    public partial bool ShowPrintButton { get; set; } = true;
+    public partial bool ShowPrintButton { get; set; } = false;
 
     [ObservableProperty]
     public partial bool ShowZipSaveOptions { get; set; } = true;
@@ -84,6 +85,67 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
 
     [ObservableProperty]
     public partial bool HasQuickSaveLocation { get; set; } = false;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasDefaultForegroundColor))]
+    [NotifyPropertyChangedFor(nameof(DefaultForegroundColorText))]
+    [NotifyPropertyChangedFor(nameof(DefaultForegroundColorBrush))]
+    public partial Windows.UI.Color? DefaultForegroundColor { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasDefaultBackgroundColor))]
+    [NotifyPropertyChangedFor(nameof(DefaultBackgroundColorText))]
+    [NotifyPropertyChangedFor(nameof(DefaultBackgroundColorBrush))]
+    public partial Windows.UI.Color? DefaultBackgroundColor { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasDefaultErrorCorrection))]
+    [NotifyPropertyChangedFor(nameof(DefaultErrorCorrectionText))]
+    public partial string? DefaultErrorCorrection { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasDefaultFramePreset))]
+    [NotifyPropertyChangedFor(nameof(DefaultFramePresetText))]
+    public partial QrFramePreset? DefaultFramePresetValue { get; set; }
+
+    public bool HasDefaultForegroundColor => DefaultForegroundColor.HasValue;
+    public bool HasDefaultBackgroundColor => DefaultBackgroundColor.HasValue;
+    public bool HasDefaultErrorCorrection => !string.IsNullOrEmpty(DefaultErrorCorrection);
+    public bool HasDefaultFramePreset => DefaultFramePresetValue.HasValue;
+
+    public string DefaultForegroundColorText => DefaultForegroundColor.HasValue
+        ? ColorToHex(DefaultForegroundColor.Value)
+        : "System default — black";
+
+    public string DefaultBackgroundColorText => DefaultBackgroundColor.HasValue
+        ? ColorToHex(DefaultBackgroundColor.Value)
+        : "System default — white";
+
+    public string DefaultErrorCorrectionText => DefaultErrorCorrection switch
+    {
+        "L" => "L — Low 7%",
+        "M" => "M — Medium 15%",
+        "Q" => "Q — Quarter 25%",
+        "H" => "H — High 30%",
+        _ => "System default — M (Medium 15%)"
+    };
+
+    public string DefaultFramePresetText => DefaultFramePresetValue switch
+    {
+        QrFramePreset.None => "None (no frame)",
+        QrFramePreset.BottomLabel => "Bottom label",
+        QrFramePreset.RoundedFrame => "Rounded frame",
+        QrFramePreset.CornerCallout => "Corner callout",
+        _ => "System default — none"
+    };
+
+    public Brush DefaultForegroundColorBrush => DefaultForegroundColor.HasValue
+        ? new SolidColorBrush(DefaultForegroundColor.Value)
+        : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 0, 0, 0));
+
+    public Brush DefaultBackgroundColorBrush => DefaultBackgroundColor.HasValue
+        ? new SolidColorBrush(DefaultBackgroundColor.Value)
+        : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 255, 255));
 
     [ObservableProperty]
     public partial bool ExportIncludeSettings { get; set; } = true;
@@ -187,6 +249,47 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
         await LocalSettingsService.SaveSettingAsync(nameof(BrandUrlMismatchBehavior), BrandUrlMismatchBehavior);
     }
 
+    [RelayCommand]
+    private async Task ResetErrorCorrectionDefaultAsync()
+    {
+        DefaultErrorCorrection = null;
+        await LocalSettingsService.SaveSettingAsync("DefaultErrorCorrection", (string?)null);
+    }
+
+    [RelayCommand]
+    private async Task ResetFramePresetDefaultAsync()
+    {
+        DefaultFramePresetValue = null;
+        await LocalSettingsService.SaveSettingAsync("DefaultFramePreset", (QrFramePreset?)null);
+    }
+
+    [RelayCommand]
+    private async Task ResetForegroundDefaultAsync()
+    {
+        DefaultForegroundColor = null;
+        await LocalSettingsService.SaveSettingAsync("DefaultForegroundColor", (string?)null);
+    }
+
+    [RelayCommand]
+    private async Task ResetBackgroundDefaultAsync()
+    {
+        DefaultBackgroundColor = null;
+        await LocalSettingsService.SaveSettingAsync("DefaultBackgroundColor", (string?)null);
+    }
+
+    private static string ColorToHex(Windows.UI.Color c)
+        => $"#{c.A:X2}{c.R:X2}{c.G:X2}{c.B:X2}";
+
+    private static Windows.UI.Color HexToColor(string hex)
+    {
+        hex = hex.TrimStart('#');
+        return Windows.UI.Color.FromArgb(
+            Convert.ToByte(hex[0..2], 16),
+            Convert.ToByte(hex[2..4], 16),
+            Convert.ToByte(hex[4..6], 16),
+            Convert.ToByte(hex[6..8], 16));
+    }
+
     public SettingsViewModel(IThemeSelectorService themeSelectorService, INavigationService navigationService, ILocalSettingsService localSettingsService)
     {
         NavigationService = navigationService;
@@ -232,6 +335,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     private async Task SaveAllSettingsAsync()
     {
         Trace.WriteLine("[SettingsVM] SaveAllSettingsAsync started");
+        await SaveSingleSettingAsync(nameof(LaunchMode), LaunchMode);
+        await SaveSingleSettingAsync(nameof(MultiLineCodeMode), MultiLineCodeMode);
         await SaveSingleSettingAsync(nameof(BaseText), BaseText);
         await SaveSingleSettingAsync(nameof(WarnWhenNotUrl), WarnWhenNotUrl);
         await RedirectorWarningSettingsHelper.SaveWarningEnabledAsync(LocalSettingsService, WarnWhenLikelyRedirector);
@@ -240,6 +345,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
         await SaveSingleSettingAsync(nameof(ShowPrintButton), ShowPrintButton);
         await SaveSingleSettingAsync(nameof(ShowZipSaveOptions), ShowZipSaveOptions);
         await SaveSingleSettingAsync(nameof(UseAutoBrands), UseAutoBrands);
+        await SaveSingleSettingAsync(nameof(BrandUrlMissingBehavior), BrandUrlMissingBehavior);
+        await SaveSingleSettingAsync(nameof(BrandUrlMismatchBehavior), BrandUrlMismatchBehavior);
         await SaveSingleSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
         await SaveSingleSettingAsync(nameof(QrPaddingModules), QrPaddingModules);
         await SaveSingleSettingAsync(nameof(QuickSaveLocation), QuickSaveLocation);
@@ -480,6 +587,12 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
         {
             ShowStatus("Select at least one item to export.", InfoBarSeverity.Warning);
             return;
+        }
+
+        if (ExportIncludeSettings)
+        {
+            settingChangedDebounceTimer.Stop();
+            await SaveAllSettingsAsync();
         }
 
         try
@@ -970,7 +1083,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
                 ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton)));
 
             await LoadSettingAsync(nameof(ShowPrintButton), async () =>
-                ShowPrintButton = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowPrintButton)) ?? true);
+                ShowPrintButton = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowPrintButton)) ?? false);
 
             await LoadSettingAsync(nameof(ShowZipSaveOptions), async () =>
                 ShowZipSaveOptions = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowZipSaveOptions)) ?? true);
@@ -1006,6 +1119,24 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
 
             await LoadSettingAsync(nameof(BrandUrlMismatchBehavior), async () =>
                 BrandUrlMismatchBehavior = await LocalSettingsService.ReadSettingAsync<BrandUrlMismatchBehavior?>(nameof(BrandUrlMismatchBehavior)) ?? BrandUrlMismatchBehavior.Warn);
+
+            await LoadSettingAsync("DefaultForegroundColor", async () =>
+            {
+                string? hex = await LocalSettingsService.ReadSettingAsync<string>("DefaultForegroundColor");
+                DefaultForegroundColor = hex is not null ? HexToColor(hex) : null;
+            });
+
+            await LoadSettingAsync("DefaultBackgroundColor", async () =>
+            {
+                string? hex = await LocalSettingsService.ReadSettingAsync<string>("DefaultBackgroundColor");
+                DefaultBackgroundColor = hex is not null ? HexToColor(hex) : null;
+            });
+
+            await LoadSettingAsync("DefaultErrorCorrection", async () =>
+                DefaultErrorCorrection = await LocalSettingsService.ReadSettingAsync<string>("DefaultErrorCorrection"));
+
+            await LoadSettingAsync("DefaultFramePreset", async () =>
+                DefaultFramePresetValue = await LocalSettingsService.ReadSettingAsync<QrFramePreset?>("DefaultFramePreset"));
 
             await _themeSelectorService.RefreshThemeAsync();
             ElementTheme = _themeSelectorService.Theme;

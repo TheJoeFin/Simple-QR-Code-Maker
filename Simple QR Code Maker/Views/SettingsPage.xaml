@@ -474,6 +474,104 @@
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>
 
+                <!--  Defaults  -->
+                <TextBlock
+                    Margin="0,16,0,4"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Defaults" />
+
+                <settingsControls:SettingsExpander
+                    Description="Starting values each session, before any brand is applied. Set these from the main page using right-click or the flyout buttons."
+                    Header="QR code defaults"
+                    IsExpanded="True">
+                    <settingsControls:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE713;" />
+                    </settingsControls:SettingsExpander.HeaderIcon>
+                    <settingsControls:SettingsExpander.Items>
+
+                        <!--  Default foreground color  -->
+                        <settingsControls:SettingsCard
+                            Description="{x:Bind ViewModel.DefaultForegroundColorText,
+                                                  Mode=OneWay}"
+                            Header="Code color">
+                            <settingsControls:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE790;" />
+                            </settingsControls:SettingsCard.HeaderIcon>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Border
+                                    Width="24"
+                                    Height="24"
+                                    Background="{x:Bind ViewModel.DefaultForegroundColorBrush,
+                                                         Mode=OneWay}"
+                                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4" />
+                                <Button
+                                    Command="{x:Bind ViewModel.ResetForegroundDefaultCommand}"
+                                    Content="Reset"
+                                    IsEnabled="{x:Bind ViewModel.HasDefaultForegroundColor,
+                                                        Mode=OneWay}" />
+                            </StackPanel>
+                        </settingsControls:SettingsCard>
+
+                        <!--  Default background color  -->
+                        <settingsControls:SettingsCard
+                            Description="{x:Bind ViewModel.DefaultBackgroundColorText,
+                                                  Mode=OneWay}"
+                            Header="Background color">
+                            <settingsControls:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE771;" />
+                            </settingsControls:SettingsCard.HeaderIcon>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Border
+                                    Width="24"
+                                    Height="24"
+                                    Background="{x:Bind ViewModel.DefaultBackgroundColorBrush,
+                                                         Mode=OneWay}"
+                                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4" />
+                                <Button
+                                    Command="{x:Bind ViewModel.ResetBackgroundDefaultCommand}"
+                                    Content="Reset"
+                                    IsEnabled="{x:Bind ViewModel.HasDefaultBackgroundColor,
+                                                        Mode=OneWay}" />
+                            </StackPanel>
+                        </settingsControls:SettingsCard>
+
+                        <!--  Default error correction  -->
+                        <settingsControls:SettingsCard
+                            Description="{x:Bind ViewModel.DefaultErrorCorrectionText,
+                                                  Mode=OneWay}"
+                            Header="Error correction">
+                            <settingsControls:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xEBE8;" />
+                            </settingsControls:SettingsCard.HeaderIcon>
+                            <Button
+                                Command="{x:Bind ViewModel.ResetErrorCorrectionDefaultCommand}"
+                                Content="Reset"
+                                IsEnabled="{x:Bind ViewModel.HasDefaultErrorCorrection,
+                                                    Mode=OneWay}" />
+                        </settingsControls:SettingsCard>
+
+                        <!--  Default frame  -->
+                        <settingsControls:SettingsCard
+                            Description="{x:Bind ViewModel.DefaultFramePresetText,
+                                                  Mode=OneWay}"
+                            Header="Frame">
+                            <settingsControls:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE8BC;" />
+                            </settingsControls:SettingsCard.HeaderIcon>
+                            <Button
+                                Command="{x:Bind ViewModel.ResetFramePresetDefaultCommand}"
+                                Content="Reset"
+                                IsEnabled="{x:Bind ViewModel.HasDefaultFramePreset,
+                                                    Mode=OneWay}" />
+                        </settingsControls:SettingsCard>
+
+                    </settingsControls:SettingsExpander.Items>
+                </settingsControls:SettingsExpander>
+
                 <!--  Data Import/Export  -->
                 <TextBlock
                     Margin="0,16,0,4"
