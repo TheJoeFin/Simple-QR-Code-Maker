@@ -308,7 +308,7 @@
                                     ToolTipService.ToolTip="Open the white-point sampling workflow">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <FontIcon Glyph="&#xEF3C;" />
-                                        <TextBlock Text="White Black Point" />
+                                        <TextBlock Text="Pick White Point" />
                                     </StackPanel>
                                 </Button>
                             </settingsControls:SettingsCard>
