@@ -120,31 +120,34 @@ public static class ImageProcessingHelper
             throw new ArgumentException("The four corners do not form a valid quadrilateral. Please ensure the points are not collinear and form a proper shape.");
         }
 
-        // Calculate the output dimensions based on the distances between corners
-        double width = Math.Max(
+        // Calculate the output dimensions based on the distances between corners.
+        // Use the larger of width/height for both so QR codes always come out square.
+        double spanW = Math.Max(
             Distance(topLeft, topRight),
             Distance(bottomLeft, bottomRight));
 
-        double height = Math.Max(
+        double spanH = Math.Max(
             Distance(topLeft, bottomLeft),
             Distance(topRight, bottomRight));
 
-        System.Diagnostics.Debug.WriteLine($"Output size: {width:F2} x {height:F2}");
+        double size = Math.Max(spanW, spanH);
+
+        System.Diagnostics.Debug.WriteLine($"Output size: {size:F2} x {size:F2} (spans: w={spanW:F2} h={spanH:F2})");
 
         // Ensure dimensions are valid
-        if (width < 10 || height < 10)
+        if (size < 10)
         {
-            System.Diagnostics.Debug.WriteLine($"ERROR: Output dimensions too small: {width:F2} x {height:F2}");
-            throw new ArgumentException($"The selected area is too small ({width:F0}x{height:F0}). Please select a larger region.");
+            System.Diagnostics.Debug.WriteLine($"ERROR: Output dimensions too small: {size:F2}");
+            throw new ArgumentException($"The selected area is too small ({size:F0}x{size:F0}). Please select a larger region.");
         }
 
         // ImageMagick Distort expects: source_x1, source_y1, dest_x1, dest_y1, source_x2, source_y2, dest_x2, dest_y2, ...
         var distortArgs = new double[]
         {
             topLeft.X, topLeft.Y, 0, 0,
-            topRight.X, topRight.Y, width, 0,
-            bottomRight.X, bottomRight.Y, width, height,
-            bottomLeft.X, bottomLeft.Y, 0, height
+            topRight.X, topRight.Y, size, 0,
+            bottomRight.X, bottomRight.Y, size, size,
+            bottomLeft.X, bottomLeft.Y, 0, size
         };
 
         System.Diagnostics.Debug.WriteLine($"Distort args: [{string.Join(", ", distortArgs.Select(d => d.ToString("F2")))}]");
@@ -157,8 +160,8 @@ public static class ImageProcessingHelper
 
             // Explicitly crop to the exact dimensions we calculated
             // This removes any extra virtual canvas that might have been created
-            uint cropWidth = (uint)Math.Ceiling(width);
-            uint cropHeight = (uint)Math.Ceiling(height);
+            uint cropWidth = (uint)Math.Ceiling(size);
+            uint cropHeight = (uint)Math.Ceiling(size);
             result.Crop(new MagickGeometry(0, 0, cropWidth, cropHeight));
             result.ResetPage(); // Reset the page/canvas to the cropped size
 
