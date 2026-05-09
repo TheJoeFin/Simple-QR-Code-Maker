@@ -56,7 +56,7 @@ On the reading side, v2 can decode codes from files, folders, drag-and-drop, the
 - Generate one QR code or many QR codes at once from multiline text.
 - Build QR codes for plain text, URLs, Wi-Fi credentials, email messages, and vCards.
 - Load source text from `.txt` and `.csv` files.
-- Import rows from `.csv` and `.tsv`, plus `.xlsx` and `.xls` when workbook support is available.
+- Import data from `.csv` and `.tsv` for making large numbers of QR Codes
 - Preview spreadsheet rows before import, choose the exact column to use, and add text before or after every imported value.
 - Remove duplicate values during spreadsheet import.
 - Optionally generate IDs during spreadsheet import and write them back to the source sheet.
@@ -133,3 +133,9 @@ On the reading side, v2 can decode codes from files, folders, drag-and-drop, the
 - Set a quick-save location.
 - Export settings, brands, and history to a ZIP backup.
 - Import settings, brands, and history from a ZIP backup.
+
+---
+
+Made with ❤️ in Milwaukee by Joe Finney.
+
+Find more great apps at [JoeFinApps.com](https://JoeFinApps.com).
