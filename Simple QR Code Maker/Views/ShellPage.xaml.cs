@@ -8,16 +8,20 @@ using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
 using System.Diagnostics;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace Simple_QR_Code_Maker.Views;
 
 public sealed partial class ShellPage : Page
 {
+    private const string AppStoreUrl = "https://apps.microsoft.com/detail/9nch56g3rqfc";
+
     private readonly DispatcherTimer titleBarSearchTimer = new()
     {
         Interval = TimeSpan.FromMilliseconds(250)
     };
     private bool isTitleBarConfigured;
+    private bool isSyncingNavItem;
 
     public ShellViewModel ViewModel
     {
@@ -135,6 +139,109 @@ public sealed partial class ShellPage : Page
     private void NavigationService_Navigated(object sender, NavigationEventArgs e)
     {
         ClearTitleBarSearchBox();
+        SyncNavViewSelection();
+    }
+
+    private void SyncNavViewSelection()
+    {
+        isSyncingNavItem = true;
+        try
+        {
+            NavView.SelectedItem = NavigationFrame.GetPageViewModel() switch
+            {
+                MainViewModel => MakeCodesNavItem,
+                DecodingViewModel => ReadCodesNavItem,
+                SettingsViewModel => SettingsNavItem,
+                _ => NavView.SelectedItem,
+            };
+        }
+        finally
+        {
+            isSyncingNavItem = false;
+        }
+    }
+
+    private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    {
+        if (isSyncingNavItem)
+            return;
+
+        switch (args.SelectedItem)
+        {
+            case NavigationViewItem { Tag: "Make" }:
+                ViewModel.NavigationService.NavigateTo(typeof(MainViewModel).FullName!, clearNavigation: true);
+                break;
+
+            case NavigationViewItem { Tag: "Read" }:
+                ViewModel.NavigationService.NavigateTo(typeof(DecodingViewModel).FullName!, clearNavigation: true);
+                break;
+
+            case NavigationViewItem { Tag: "Settings" }:
+                ViewModel.NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!);
+                break;
+        }
+    }
+
+    private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+    {
+        switch (args.InvokedItemContainer)
+        {
+            case NavigationViewItem { Tag: "Faq" }:
+                HandleFaqToggle();
+                break;
+
+            case NavigationViewItem { Tag: "History" }:
+                HandleHistoryToggle();
+                break;
+
+            case NavigationViewItem { Tag: "Share" }:
+                HandleShareToggle();
+                break;
+        }
+    }
+
+    private void HandleFaqToggle()
+    {
+        switch (NavigationFrame.GetPageViewModel())
+        {
+            case MainViewModel mainVm:
+                mainVm.ToggleFaqPaneOpenCommand.Execute(null);
+                break;
+            case DecodingViewModel decodingVm:
+                decodingVm.ToggleFaqPaneOpenCommand.Execute(null);
+                break;
+        }
+    }
+
+    private void HandleHistoryToggle()
+    {
+        switch (NavigationFrame.GetPageViewModel())
+        {
+            case MainViewModel mainVm:
+                mainVm.ToggleHistoryPaneOpenCommand.Execute(null);
+                mainVm.MarkHistoryButtonUsedCommand.Execute(null);
+                break;
+            case DecodingViewModel decodingVm:
+                decodingVm.ToggleDecodingHistoryPaneOpenCommand.Execute(null);
+                break;
+        }
+    }
+
+    private void HandleShareToggle()
+    {
+        ViewModel.IsShareOpen = !ViewModel.IsShareOpen;
+    }
+
+    private void CopyLinkButton_Click(object sender, RoutedEventArgs e)
+    {
+        DataPackage dataPackage = new();
+        dataPackage.SetText(AppStoreUrl);
+        Clipboard.SetContent(dataPackage);
+    }
+
+    private async void VisitLinkButton_Click(object sender, RoutedEventArgs e)
+    {
+        _ = await Windows.System.Launcher.LaunchUriAsync(new Uri(AppStoreUrl));
     }
 
     private void CtrlF_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)

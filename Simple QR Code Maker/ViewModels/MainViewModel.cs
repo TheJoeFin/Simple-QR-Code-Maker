@@ -281,9 +281,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     public partial string SavedFolderPath { get; set; } = string.Empty;
 
     [ObservableProperty]
-    public partial bool CopySharePopupOpen { get; set; } = false;
-
-    [ObservableProperty]
     public partial bool ShowBackButton { get; set; } = false;
 
     public bool CanUseTitleBarBack => ShowBackButton;
@@ -545,7 +542,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             RemoveLogo();
     }
 
-    public ObservableCollection<ErrorCorrectionOptions> ErrorCorrectionLevels { get; set; } = new(allCorrectionLevels);
+    public ObservableCollection<ErrorCorrectionOptions> ErrorCorrectionLevels { get; set; } = [with(allCorrectionLevels)];
 
     private static readonly List<ErrorCorrectionOptions> allCorrectionLevels =
     [
@@ -1207,7 +1204,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             if (UseAutoBrands)
             {
                 matchedBrand = FindMatchingBrand(requestedQrCodes[index].CodeAsText);
-                if (matchedBrand is not null && _brandLogoCache.TryGetValue(matchedBrand.Name, out var cachedLogo))
+                if (matchedBrand is not null && _brandLogoCache.TryGetValue(matchedBrand.Name, out (System.Drawing.Bitmap? Logo, string? Svg) cachedLogo))
                 {
                     brandLogo = cachedLogo.Logo;
                     brandLogoSvg = cachedLogo.Svg;
@@ -1986,8 +1983,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     [RelayCommand]
     private void ToggleHistoryPaneOpen() => IsHistoryPaneOpen = !IsHistoryPaneOpen;
 
-    [RelayCommand]
-    private void ShareApp() => CopySharePopupOpen = !CopySharePopupOpen;
 
     [RelayCommand]
     private void SelectErrorCorrectionLevel(ErrorCorrectionOptions option) => SelectedOption = option;
