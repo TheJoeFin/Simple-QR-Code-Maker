@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.UI.Xaml;
+#if WINDOWS
 using Microsoft.Windows.AppLifecycle;
+#endif
 using Simple_QR_Code_Maker.Activation;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Core.Contracts.Services;
@@ -38,7 +39,7 @@ public partial class App : Application
         return service;
     }
 
-    public static WindowEx MainWindow { get; } = new MainWindow();
+    public static Window MainWindow { get; } = new MainWindow();
 
     public App()
     {
@@ -134,9 +135,10 @@ public partial class App : Application
     {
         base.OnLaunched(args);
 
+#if WINDOWS
         // Check if the app was activated via share target or other non-launch activation.
-        AppInstance appInstance = Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent();
-        var activatedArgs = appInstance.GetActivatedEventArgs();
+        Microsoft.Windows.AppLifecycle.AppInstance appInstance = Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent();
+        AppActivationArguments activatedArgs = appInstance.GetActivatedEventArgs();
 
         if (activatedArgs?.Kind == Microsoft.Windows.AppLifecycle.ExtendedActivationKind.ShareTarget
             && activatedArgs.Data is Windows.ApplicationModel.Activation.ShareTargetActivatedEventArgs shareArgs)
@@ -147,5 +149,8 @@ public partial class App : Application
         {
             await App.GetService<IActivationService>().ActivateAsync(args);
         }
+#else
+        await App.GetService<IActivationService>().ActivateAsync(args);
+#endif
     }
 }

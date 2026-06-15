@@ -1,5 +1,7 @@
+#if WINDOWS
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
+#endif
 using Simple_QR_Code_Maker.Models;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -46,6 +48,28 @@ public static class EmojiLogoHelper
         return await RenderEmojiWithWin2DAsync(emoji, style, monochromeColor, pixelSize);
     }
 
+#if !WINDOWS
+    private static Task<Bitmap> RenderEmojiWithWin2DAsync(string emoji, EmojiLogoStyle style, System.Drawing.Color monochromeColor, int pixelSize)
+    {
+        // Win2D isn't available outside the Windows App SDK; render the emoji glyph with GDI+ instead.
+        Bitmap bitmap = new(pixelSize, pixelSize, PixelFormat.Format32bppPArgb);
+        using Graphics graphics = Graphics.FromImage(bitmap);
+        graphics.Clear(System.Drawing.Color.Transparent);
+        graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+        graphics.SmoothingMode = SmoothingMode.HighQuality;
+
+        using Font font = new(GetFontFamilyName(style), pixelSize * 0.7f, GraphicsUnit.Pixel);
+        using StringFormat stringFormat = new()
+        {
+            Alignment = StringAlignment.Center,
+            LineAlignment = StringAlignment.Center,
+        };
+        using SolidBrush brush = new(style == EmojiLogoStyle.Monochrome ? monochromeColor : System.Drawing.Color.Black);
+        graphics.DrawString(emoji, font, brush, new RectangleF(0, 0, pixelSize, pixelSize), stringFormat);
+
+        return Task.FromResult(bitmap);
+    }
+#else
     private static async Task<Bitmap> RenderEmojiWithWin2DAsync(string emoji, EmojiLogoStyle style, System.Drawing.Color monochromeColor, int pixelSize)
     {
         CanvasDevice device = CanvasDevice.GetSharedDevice();
@@ -90,6 +114,7 @@ public static class EmojiLogoHelper
         using Bitmap bitmap = new(memoryStream);
         return new Bitmap(bitmap);
     }
+#endif
 
     private static Bitmap NormalizeCapturedEmojiBitmap(Bitmap source, EmojiLogoStyle style, int targetSize, Rectangle contentBounds)
     {
@@ -229,7 +254,7 @@ public static class EmojiLogoHelper
     private static string? TryCreateMonochromeSvgContent(string emoji, Color monochromeColor)
     {
         using GraphicsPath glyphPath = new(FillMode.Winding);
-        using FontFamily fontFamily = new(GetFontFamilyName(EmojiLogoStyle.Monochrome));
+        using System.Drawing.FontFamily fontFamily = new(GetFontFamilyName(EmojiLogoStyle.Monochrome));
         using StringFormat stringFormat = StringFormat.GenericTypographic;
 
         glyphPath.AddString(

@@ -26,7 +26,7 @@ public partial class FolderFileItem : ObservableObject
     {
         try
         {
-            StorageItemThumbnail stream = await File.GetThumbnailAsync(ThumbnailMode.SingleItem, 56);
+            StorageItemThumbnail stream = await File.GetThumbnailAsync(Windows.Storage.FileProperties.ThumbnailMode.SingleItem, 56);
             BitmapImage image = new();
             await image.SetSourceAsync(stream);
             Thumbnail = image;

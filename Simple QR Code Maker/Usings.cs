@@ -1,1 +1,3 @@
-﻿global using WinUIEx;
+#if WINDOWS
+global using WinUIEx;
+#endif

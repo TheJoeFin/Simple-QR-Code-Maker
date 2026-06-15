@@ -143,7 +143,11 @@ public class PrintService : IPrintService
 
             try
             {
+#if WINDOWS
                 await PrintManagerInterop.ShowPrintUIForWindowAsync(windowHandle);
+#else
+                await PrintManager.ShowPrintUIAsync();
+#endif
             }
             catch
             {
@@ -356,7 +360,11 @@ public class PrintService : IPrintService
 
     private void RegisterForPrinting(IntPtr windowHandle)
     {
+#if WINDOWS
         activePrintManager = PrintManagerInterop.GetForWindow(windowHandle);
+#else
+        activePrintManager = PrintManager.GetForCurrentView();
+#endif
         activePrintManager.PrintTaskRequested += OnPrintTaskRequested;
 
         activePrintDocument = new PrintDocument();

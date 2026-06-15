@@ -1,7 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
+#if WINDOWS
 using Microsoft.Windows.AI.Imaging;
+#endif
 using Simple_QR_Code_Maker.Helpers;
 using System.Diagnostics;
 using System.Drawing;
@@ -66,6 +68,7 @@ public sealed partial class RemoveBackgroundDialogViewModel : ObservableRecipien
                 return;
             }
 
+#if WINDOWS
             StatusText = "Removing background…";
 
             using SoftwareBitmap softwareBitmap = ConvertToSoftwareBitmap(_sourceImage);
@@ -86,6 +89,7 @@ public sealed partial class RemoveBackgroundDialogViewModel : ObservableRecipien
 
             IsPrimaryEnabled = true;
             StatusText = "Background removed successfully";
+#endif
         }
         catch (Exception ex)
         {

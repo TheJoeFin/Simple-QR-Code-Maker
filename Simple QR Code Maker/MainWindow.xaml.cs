@@ -5,7 +5,7 @@ using Windows.UI.ViewManagement;
 
 namespace Simple_QR_Code_Maker;
 
-public sealed partial class MainWindow : WindowEx
+public sealed partial class MainWindow : Window
 {
     private Microsoft.UI.Dispatching.DispatcherQueue dispatcherQueue;
 
@@ -15,6 +15,13 @@ public sealed partial class MainWindow : WindowEx
     {
         InitializeComponent();
         ApplySystemBackdrop();
+
+#if WINDOWS
+        WinUIEx.WindowManager manager = WinUIEx.WindowManager.Get(this);
+        manager.MinWidth = 500;
+        manager.MinHeight = 500;
+        manager.PersistenceId = "MainWindow";
+#endif
 
         AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/WindowIcon.ico"));
         Content = null;

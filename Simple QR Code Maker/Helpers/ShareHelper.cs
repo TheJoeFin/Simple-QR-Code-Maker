@@ -1,11 +1,18 @@
 using System.Runtime.InteropServices;
 using Windows.ApplicationModel.DataTransfer;
+#if WINDOWS
 using WinRT;
+#endif
 
 namespace Simple_QR_Code_Maker.Helpers;
 
 internal static class ShareHelper
 {
+#if !WINDOWS
+    public static DataTransferManager GetForWindow(IntPtr hwnd) => DataTransferManager.GetForCurrentView();
+
+    public static void ShowShareUIForWindow(IntPtr hwnd) => DataTransferManager.ShowShareUI();
+#else
     [ComImport]
     [Guid("3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -31,4 +38,5 @@ internal static class ShareHelper
         IDataTransferManagerInterop interop = DataTransferManager.As<IDataTransferManagerInterop>();
         interop.ShowShareUIForWindow(hwnd);
     }
+#endif
 }

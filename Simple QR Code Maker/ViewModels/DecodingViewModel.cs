@@ -5,7 +5,9 @@ using ImageMagick;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
+#if WINDOWS
 using Microsoft.Windows.Media.Capture;
+#endif
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Controls;
@@ -518,8 +520,13 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
     private async void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
     {
+#if WINDOWS
         if (args.WindowActivationState == WindowActivationState.Deactivated || !isWaitingForSnippingTool)
             return;
+#else
+        if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated || !isWaitingForSnippingTool)
+            return;
+#endif
 
         // Yield briefly so Clipboard_ContentChanged can fire first if the clipboard
         // was already updated by the snipping tool before the window re-activated.
@@ -949,6 +956,13 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     [RelayCommand]
     private async Task CapturePhoto()
     {
+#if !WINDOWS
+        DecodedContentInfoBarTitle = "Camera unavailable";
+        InfoBarMessage = "Camera capture requires the Windows App SDK build of this app.";
+        DecodedContentInfoBarSeverity = InfoBarSeverity.Error;
+        IsInfoBarShowing = true;
+        await Task.CompletedTask;
+#else
         nextSourceKind = DecodingSourceKind.Camera;
         IsLoading = true;
         LoadingMessage = "Opening camera…";
@@ -984,6 +998,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             IsLoading = false;
             LoadingMessage = string.Empty;
         }
+#endif
     }
 
     [RelayCommand]

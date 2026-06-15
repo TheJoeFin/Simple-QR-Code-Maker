@@ -1,8 +1,12 @@
+#if WINDOWS
 using WinRT;
+#endif
 
 namespace Simple_QR_Code_Maker.Models;
 
+#if WINDOWS
 [GeneratedBindableCustomProperty]
+#endif
 public partial class FolderSummaryItem
 {
     public string FileName { get; set; } = string.Empty;

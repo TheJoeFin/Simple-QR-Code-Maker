@@ -1,5 +1,7 @@
+#if WINDOWS
 using Microsoft.Windows.AI;
 using Microsoft.Windows.AI.Imaging;
+#endif
 using System.Diagnostics;
 
 namespace Simple_QR_Code_Maker.Helpers;
@@ -33,6 +35,11 @@ public static class BackgroundRemovalHelper
 
     private static async Task<bool> CheckIsAvailableInternalAsync()
     {
+#if !WINDOWS
+        // On-device AI background removal is only available through the Windows App SDK.
+        _cachedAvailability = false;
+        return await Task.FromResult(false);
+#else
         try
         {
             AIFeatureReadyState state = ImageObjectExtractor.GetReadyState();
@@ -61,5 +68,6 @@ public static class BackgroundRemovalHelper
             _cachedAvailability = false;
             return false;
         }
+#endif
     }
 }

@@ -1677,7 +1677,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         picker.FileTypeFilter.Add(".csv");
         picker.FileTypeFilter.Add("*");
 
-        InitializeWithWindow.Initialize(picker, App.MainWindow.GetWindowHandle());
+        InitializeWithWindow.Initialize(picker, WindowNative.GetWindowHandle(App.MainWindow));
 
         StorageFile? file = await picker.PickSingleFileAsync();
         if (file is null)
@@ -1714,7 +1714,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             picker.FileTypeFilter.Add(".xls");
         }
 
-        InitializeWithWindow.Initialize(picker, App.MainWindow.GetWindowHandle());
+        InitializeWithWindow.Initialize(picker, WindowNative.GetWindowHandle(App.MainWindow));
 
         StorageFile? file = await picker.PickSingleFileAsync();
         if (file is null)
