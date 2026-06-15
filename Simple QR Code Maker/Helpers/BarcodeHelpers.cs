@@ -1,21 +1,16 @@
 ﻿using ImageMagick;
-using Microsoft.UI.Xaml.Media.Imaging;
+using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Models;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using SkiaSharp;
 using SkiaSharp.QrCode;
+using System.Drawing;
 using System.Globalization;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
 using Windows.Storage;
 using ZXing;
 using ZXing.Common;
 using ZXing.QrCode.Internal;
 using ZXing.Rendering;
-using ZXing.Windows.Compatibility;
 using static ZXing.Rendering.SvgRenderer;
 
 namespace Simple_QR_Code_Maker.Helpers;
@@ -46,10 +41,10 @@ public static partial class BarcodeHelpers
     }
 
     /// <summary>
-    /// Rasterizes SVG content to a System.Drawing.Bitmap at the specified dimensions.
+    /// Rasterizes SVG content to an SKBitmap at the specified dimensions.
     /// Uses Magick.NET; the SVG is scaled to fit preserving aspect ratio.
     /// </summary>
-    public static Bitmap RasterizeSvgToBitmap(string svgContent, int width, int height)
+    public static SKBitmap RasterizeSvgToBitmap(string svgContent, int width, int height)
     {
         MagickReadSettings settings = new()
         {
@@ -60,80 +55,19 @@ public static partial class BarcodeHelpers
         };
         byte[] svgBytes = System.Text.Encoding.UTF8.GetBytes(svgContent);
         using MagickImage image = new(svgBytes, settings);
-        image.Format = MagickFormat.Png32;
-        using MemoryStream ms = new();
-        image.Write(ms);
-        ms.Position = 0;
-        return new Bitmap(ms);
-    }
-
-    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
-    {
-        // The plain QR is rendered with SkiaSharp so the preview works on the Uno Skia head
-        // (no System.Drawing/GDI+, which is Windows-only). Logo and frame decoration still use the
-        // System.Drawing pipeline for now, so those paths remain functional on the Windows head.
-        bool hasDecoration = logoImage != null || framePreset != QrFramePreset.None;
-        if (!hasDecoration)
-            return CreateSkiaQrWriteableBitmap(text, correctionLevel, foreground, background, qrPaddingModules);
-
-        using Bitmap bitmap = CreateQrCodeBitmap(
-            text,
-            correctionLevel,
-            foreground,
-            background,
-            logoImage,
-            logoSizePercentage,
-            logoPaddingPixels,
-            qrPaddingModules,
-            framePreset,
-            frameText,
-            out _);
-
-        return CreateWriteableBitmapFromBitmap(bitmap);
+        return SkiaImaging.FromMagick(image);
     }
 
     /// <summary>
-    /// Renders a plain QR code with SkiaSharp and copies the BGRA pixels into a WriteableBitmap.
-    /// Fully managed and cross-platform — works on the Uno Skia head where System.Drawing/GDI+ is
-    /// unavailable.
+    /// Renders a QR code (optionally with a centered logo and a decorative frame) to PNG bytes
+    /// using SkiaSharp. Fully managed and cross-platform (works on the Uno Skia head).
     /// </summary>
-    private static WriteableBitmap CreateSkiaQrWriteableBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, double qrPaddingModules)
+    public static byte[] GetQrCodePngBytes(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, SKBitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
     {
-        int normalizedMargin = NormalizeQrPaddingModules(qrPaddingModules);
-        // Reuse the existing ZXing sizing so module crispness matches the rest of the app.
-        QRCode zxingQr = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
-        int moduleCount = zxingQr.Version.DimensionForVersion;
-        int renderSize = GetQrRenderSize(moduleCount, normalizedMargin);
-
-        QRCodeData qrData = QRCodeGenerator.CreateQrCode(text, MapEccLevel(correctionLevel), quietZoneSize: normalizedMargin);
-
-        SKColor foregroundColor = new(foreground.R, foreground.G, foreground.B, foreground.A);
-        SKColor backgroundColor = new(background.R, background.G, background.B, background.A);
-
-        SKImageInfo info = new(renderSize, renderSize, SKColorType.Bgra8888, SKAlphaType.Premul);
-        using SKBitmap skBitmap = new(info);
-        using (SKCanvas canvas = new(skBitmap))
-        {
-            canvas.Render(
-                qrData,
-                renderSize,
-                renderSize,
-                clearColor: backgroundColor,
-                codeColor: foregroundColor,
-                backgroundColor: backgroundColor);
-            canvas.Flush();
-        }
-
-        // SKAlphaType.Premul + Bgra8888 matches WriteableBitmap's premultiplied BGRA PixelBuffer.
-        byte[] pixels = skBitmap.Bytes;
-        WriteableBitmap writeableBitmap = new(renderSize, renderSize);
-        using (Stream pixelStream = writeableBitmap.PixelBuffer.AsStream())
-        {
-            pixelStream.Write(pixels, 0, pixels.Length);
-        }
-        writeableBitmap.Invalidate();
-
-        return writeableBitmap;
+        using SKBitmap bitmap = CreateQrCodeSkBitmap(
+            text, correctionLevel, foreground, background, logoImage,
+            logoSizePercentage, logoPaddingPixels, qrPaddingModules, framePreset, frameText, out _);
+        return SkiaImaging.EncodePng(bitmap);
     }
 
     private static ECCLevel MapEccLevel(ErrorCorrectionLevel correctionLevel) => correctionLevel.ToString() switch
@@ -145,94 +79,80 @@ public static partial class BarcodeHelpers
     };
 
     /// <summary>
-    /// Copies a System.Drawing bitmap into a WinUI/Uno <see cref="WriteableBitmap"/> by writing
-    /// BGRA pixels directly into the PixelBuffer. This avoids the synchronous SetSource and the
-    /// async stream-decode paths, both of which are unreliable on the Uno Skia head; the PixelBuffer
-    /// is the same surface <c>SavePngToStorageFile</c> reads back, so it is well supported everywhere.
+    /// Renders the bare QR matrix (with quiet-zone margin) to an SKBitmap using SkiaSharp.QrCode.
     /// </summary>
-    private static WriteableBitmap CreateWriteableBitmapFromBitmap(Bitmap source)
+    private static SKBitmap RenderQrSkBitmap(string text, ErrorCorrectionLevel correctionLevel, SKColor foreground, SKColor background, int margin, out int renderSize, out int moduleCount)
     {
-        int width = source.Width;
-        int height = source.Height;
+        // Reuse the existing ZXing sizing so module crispness matches the rest of the app.
+        QRCode zxingQr = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
+        moduleCount = zxingQr.Version.DimensionForVersion;
+        renderSize = GetQrRenderSize(moduleCount, margin);
 
-        // Normalize to 32bpp ARGB (stored as B,G,R,A bytes on little-endian) so the byte layout
-        // matches WriteableBitmap's BGRA8 PixelBuffer regardless of the source pixel format.
-        using Bitmap argb = source.Clone(
-            new System.Drawing.Rectangle(0, 0, width, height),
-            PixelFormat.Format32bppArgb);
+        QRCodeData qrData = QRCodeGenerator.CreateQrCode(text, MapEccLevel(correctionLevel), quietZoneSize: margin);
 
-        int rowBytes = width * 4;
-        byte[] pixels = new byte[rowBytes * height];
+        SKImageInfo info = new(renderSize, renderSize, SKColorType.Bgra8888, SKAlphaType.Premul);
+        SKBitmap bitmap = new(info);
+        using SKCanvas canvas = new(bitmap);
+        canvas.Render(
+            qrData,
+            renderSize,
+            renderSize,
+            clearColor: background,
+            codeColor: foreground,
+            backgroundColor: background);
+        canvas.Flush();
+        return bitmap;
+    }
 
-        BitmapData data = argb.LockBits(
-            new System.Drawing.Rectangle(0, 0, width, height),
-            ImageLockMode.ReadOnly,
-            PixelFormat.Format32bppArgb);
+    /// <summary>
+    /// Builds the full QR SKBitmap: bare code, optional centered logo, optional decorative frame.
+    /// </summary>
+    private static SKBitmap CreateQrCodeSkBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, SKBitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out int qrRenderSize)
+    {
+        int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
+        SKColor foregroundColor = foreground.ToSkColor();
+        SKColor backgroundColor = background.ToSkColor();
+
+        SKBitmap bitmap = RenderQrSkBitmap(text, correctionLevel, foregroundColor, backgroundColor, normalizedQrPaddingModules, out qrRenderSize, out int moduleCount);
+
         try
         {
-            // Copy row by row to respect a stride that may include padding.
-            for (int y = 0; y < height; y++)
-                Marshal.Copy(IntPtr.Add(data.Scan0, y * data.Stride), pixels, y * rowBytes, rowBytes);
-        }
-        finally
-        {
-            argb.UnlockBits(data);
-        }
+            if (logoImage != null)
+                OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, normalizedQrPaddingModules, logoPaddingPixels, backgroundColor);
 
-        // WriteableBitmap stores premultiplied BGRA; System.Drawing uses straight alpha.
-        for (int i = 0; i < pixels.Length; i += 4)
-        {
-            byte a = pixels[i + 3];
-            if (a == 255)
-                continue;
-            pixels[i] = (byte)(pixels[i] * a / 255);         // B
-            pixels[i + 1] = (byte)(pixels[i + 1] * a / 255); // G
-            pixels[i + 2] = (byte)(pixels[i + 2] * a / 255); // R
-        }
+            SKBitmap framedBitmap = AddFrameToBitmap(bitmap, foregroundColor, backgroundColor, framePreset, frameText);
+            if (!ReferenceEquals(framedBitmap, bitmap))
+            {
+                bitmap.Dispose();
+                bitmap = framedBitmap;
+            }
 
-        WriteableBitmap writeableBitmap = new(width, height);
-        using (Stream pixelStream = writeableBitmap.PixelBuffer.AsStream())
-        {
-            pixelStream.Write(pixels, 0, pixels.Length);
+            return bitmap;
         }
-        writeableBitmap.Invalidate();
-
-        return writeableBitmap;
+        catch
+        {
+            bitmap.Dispose();
+            throw;
+        }
     }
 
-    public static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
+    public static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, SKBitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
     {
-        using Bitmap bitmap = CreateQrCodeBitmap(
-            text,
-            correctionLevel,
-            foreground,
-            background,
-            logoImage,
-            logoSizePercentage,
-            logoPaddingPixels,
-            qrPaddingModules,
-            framePreset,
-            frameText,
-            out _);
-        bitmap.Save(outputStream, ImageFormat.Png);
+        using SKBitmap bitmap = CreateQrCodeSkBitmap(
+            text, correctionLevel, foreground, background, logoImage,
+            logoSizePercentage, logoPaddingPixels, qrPaddingModules, framePreset, frameText, out _);
+        byte[] png = SkiaImaging.EncodePng(bitmap);
+        outputStream.Write(png, 0, png.Length);
     }
 
-    internal static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out QrImageLayoutMetrics imageLayout)
+    internal static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, SKBitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out QrImageLayoutMetrics imageLayout)
     {
-        using Bitmap bitmap = CreateQrCodeBitmap(
-            text,
-            correctionLevel,
-            foreground,
-            background,
-            logoImage,
-            logoSizePercentage,
-            logoPaddingPixels,
-            qrPaddingModules,
-            framePreset,
-            frameText,
-            out int qrRenderSize);
+        using SKBitmap bitmap = CreateQrCodeSkBitmap(
+            text, correctionLevel, foreground, background, logoImage,
+            logoSizePercentage, logoPaddingPixels, qrPaddingModules, framePreset, frameText, out int qrRenderSize);
         imageLayout = GetQrImageLayoutMetrics(qrRenderSize, framePreset);
-        bitmap.Save(outputStream, ImageFormat.Png);
+        byte[] png = SkiaImaging.EncodePng(bitmap);
+        outputStream.Write(png, 0, png.Length);
     }
 
     internal static QrImageLayoutMetrics GetQrImageLayoutMetrics(
@@ -284,114 +204,7 @@ public static partial class BarcodeHelpers
         }
     }
 
-    /// <summary>
-    /// Converts a ZXing-generated bitmap (Format32bppRgb, no alpha) to a Format32bppArgb
-    /// bitmap with the correct alpha channel applied to foreground and background pixels.
-    /// </summary>
-    private static Bitmap ApplyAlphaToQrBitmap(Bitmap source, System.Drawing.Color foreground, System.Drawing.Color background)
-    {
-        // Clone to Format32bppArgb first: Format32bppRgb stores the alpha byte as 0 in memory,
-        // so SetRemapTable would fail to match OldColor.A=255. The clone conversion sets alpha=255
-        // for every pixel (all Format32bppRgb pixels are fully opaque by definition).
-        using Bitmap argbSource = source.Clone(
-            new System.Drawing.Rectangle(0, 0, source.Width, source.Height),
-            PixelFormat.Format32bppArgb);
-
-        Bitmap result = new(source.Width, source.Height, PixelFormat.Format32bppArgb);
-        using Graphics g = Graphics.FromImage(result);
-        g.Clear(System.Drawing.Color.Transparent);
-
-        // Remap the opaque source colors to the user's alpha-aware colors
-        ColorMap[] colorMaps =
-        [
-            new ColorMap
-            {
-                OldColor = System.Drawing.Color.FromArgb(255, background.R, background.G, background.B),
-                NewColor = background
-            },
-            new ColorMap
-            {
-                OldColor = System.Drawing.Color.FromArgb(255, foreground.R, foreground.G, foreground.B),
-                NewColor = foreground
-            }
-        ];
-
-        using ImageAttributes attributes = new();
-        attributes.SetRemapTable(colorMaps);
-
-        g.DrawImage(argbSource,
-            new System.Drawing.Rectangle(0, 0, result.Width, result.Height),
-            0, 0, argbSource.Width, argbSource.Height,
-            GraphicsUnit.Pixel, attributes);
-
-        return result;
-    }
-
-    private static Bitmap CreateQrCodeBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out int qrRenderSize)
-    {
-        // Always pass fully opaque colors to ZXing — if the background color has A=0, ZXing fills
-        // nothing (transparent brush = SourceOver no-op) and the bitmap initializes to black, making
-        // foreground and background pixels indistinguishable. ApplyAlphaToQrBitmap handles alpha.
-        int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
-        QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
-        int moduleCount = qrCode.Version.DimensionForVersion;
-        qrRenderSize = GetQrRenderSize(moduleCount, normalizedQrPaddingModules);
-
-        BitmapRenderer bitmapRenderer = new()
-        {
-            Foreground = System.Drawing.Color.FromArgb(255, foreground.R, foreground.G, foreground.B),
-            Background = System.Drawing.Color.FromArgb(255, background.R, background.G, background.B)
-        };
-
-        BarcodeWriter barcodeWriter = new()
-        {
-            Format = BarcodeFormat.QR_CODE,
-            Renderer = bitmapRenderer,
-        };
-
-        EncodingOptions encodingOptions = new()
-        {
-            Width = qrRenderSize,
-            Height = qrRenderSize,
-            Margin = normalizedQrPaddingModules,
-        };
-        encodingOptions.Hints.Add(EncodeHintType.ERROR_CORRECTION, correctionLevel);
-        barcodeWriter.Options = encodingOptions;
-
-        Bitmap rawBitmap = barcodeWriter.Write(text);
-        bool needsAlpha = foreground.A < 255 || background.A < 255;
-        Bitmap bitmap = rawBitmap;
-
-        if (needsAlpha)
-        {
-            bitmap = ApplyAlphaToQrBitmap(rawBitmap, foreground, background);
-            rawBitmap.Dispose();
-        }
-
-        try
-        {
-            if (logoImage != null)
-            {
-                OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
-            }
-
-            Bitmap framedBitmap = AddFrameToBitmap(bitmap, foreground, background, framePreset, frameText);
-            if (!ReferenceEquals(framedBitmap, bitmap))
-            {
-                bitmap.Dispose();
-                bitmap = framedBitmap;
-            }
-
-            return bitmap;
-        }
-        catch
-        {
-            bitmap.Dispose();
-            throw;
-        }
-    }
-
-    private static Bitmap AddFrameToBitmap(Bitmap qrBitmap, System.Drawing.Color foreground, System.Drawing.Color background, QrFramePreset framePreset, string? frameText)
+    private static SKBitmap AddFrameToBitmap(SKBitmap qrBitmap, SKColor foreground, SKColor background, QrFramePreset framePreset, string? frameText)
     {
         string? resolvedFrameText = QrFramePresetCatalog.ResolveText(framePreset, frameText);
         if (string.IsNullOrWhiteSpace(resolvedFrameText))
@@ -406,7 +219,7 @@ public static partial class BarcodeHelpers
         };
     }
 
-    private static Bitmap AddBottomLabelFrameToBitmap(Bitmap qrBitmap, string frameText, System.Drawing.Color foreground, System.Drawing.Color background)
+    private static SKBitmap AddBottomLabelFrameToBitmap(SKBitmap qrBitmap, string frameText, SKColor foreground, SKColor background)
     {
         int outerPadding = ScaleMetric(qrBitmap.Width, 0.05, 36);
         int labelHeight = ScaleMetric(qrBitmap.Width, 0.16, 84);
@@ -423,28 +236,28 @@ public static partial class BarcodeHelpers
         int accentWidth = Math.Max(labelWidth / 4, ScaleMetric(qrBitmap.Width, 0.18, 120));
         int accentX = (canvasWidth - accentWidth) / 2;
         int accentY = labelY - (labelSpacing / 2);
-        Bitmap canvas = new(canvasWidth, canvasHeight, PixelFormat.Format32bppArgb);
 
-        using Graphics g = Graphics.FromImage(canvas);
-        PrepareGraphics(g);
-        g.Clear(System.Drawing.Color.Transparent);
-        g.DrawImage(qrBitmap, qrX, qrY, qrBitmap.Width, qrBitmap.Height);
+        SKBitmap canvas = new(new SKImageInfo(canvasWidth, canvasHeight, SKColorType.Bgra8888, SKAlphaType.Premul));
+        using SKCanvas g = new(canvas);
+        g.Clear(SKColors.Transparent);
+        g.DrawBitmap(qrBitmap, qrX, qrY);
 
-        using GraphicsPath labelPath = CreateRoundedRectanglePath(new System.Drawing.RectangleF(labelX, labelY, labelWidth, labelHeight), labelHeight / 2f);
-        using GraphicsPath accentPath = CreateRoundedRectanglePath(new System.Drawing.RectangleF(accentX, accentY, accentWidth, accentHeight), accentHeight / 2f);
-        using SolidBrush backgroundBrush = new(background);
-        using SolidBrush foregroundBrush = new(foreground);
-        using Pen outlinePen = new(foreground, outlineThickness);
+        SKRect labelRect = SKRect.Create(labelX, labelY, labelWidth, labelHeight);
+        SKRect accentRect = SKRect.Create(accentX, accentY, accentWidth, accentHeight);
+        using SKPaint backgroundPaint = new() { Color = background, IsAntialias = true, Style = SKPaintStyle.Fill };
+        using SKPaint foregroundPaint = new() { Color = foreground, IsAntialias = true, Style = SKPaintStyle.Fill };
+        using SKPaint outlinePaint = new() { Color = foreground, IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = outlineThickness };
 
-        g.FillPath(backgroundBrush, labelPath);
-        g.DrawPath(outlinePen, labelPath);
-        g.FillPath(foregroundBrush, accentPath);
-        DrawFrameText(g, frameText, foreground, new System.Drawing.RectangleF(labelX, labelY, labelWidth, labelHeight), outlineThickness);
+        g.DrawRoundRect(labelRect, labelHeight / 2f, labelHeight / 2f, backgroundPaint);
+        g.DrawRoundRect(labelRect, labelHeight / 2f, labelHeight / 2f, outlinePaint);
+        g.DrawRoundRect(accentRect, accentHeight / 2f, accentHeight / 2f, foregroundPaint);
+        DrawFrameText(g, frameText, foreground, labelRect, outlineThickness);
+        g.Flush();
 
         return canvas;
     }
 
-    private static Bitmap AddRoundedFrameToBitmap(Bitmap qrBitmap, string frameText, System.Drawing.Color foreground, System.Drawing.Color background)
+    private static SKBitmap AddRoundedFrameToBitmap(SKBitmap qrBitmap, string frameText, SKColor foreground, SKColor background)
     {
         int outerPadding = ScaleMetric(qrBitmap.Width, 0.1, 56);
         int borderInset = ScaleMetric(qrBitmap.Width, 0.032, 18);
@@ -456,7 +269,7 @@ public static partial class BarcodeHelpers
         int canvasWidth = qrBitmap.Width + (outerPadding * 2);
         int canvasHeight = qrY + qrBitmap.Height + outerPadding + labelSpacing + labelHeight;
         float borderRadius = ScaleMetric(qrBitmap.Width, 0.085, 42);
-        System.Drawing.RectangleF borderRect = new(
+        SKRect borderRect = SKRect.Create(
             qrX - borderInset,
             qrY - borderInset,
             qrBitmap.Width + (borderInset * 2),
@@ -464,25 +277,23 @@ public static partial class BarcodeHelpers
         int labelWidth = (int)Math.Round(borderRect.Width * 0.72, MidpointRounding.AwayFromZero);
         int labelX = (canvasWidth - labelWidth) / 2;
         int labelY = (int)Math.Round(borderRect.Bottom + labelSpacing, MidpointRounding.AwayFromZero);
-        Bitmap canvas = new(canvasWidth, canvasHeight, PixelFormat.Format32bppArgb);
 
-        using Graphics g = Graphics.FromImage(canvas);
-        PrepareGraphics(g);
-        g.Clear(System.Drawing.Color.Transparent);
+        SKBitmap canvas = new(new SKImageInfo(canvasWidth, canvasHeight, SKColorType.Bgra8888, SKAlphaType.Premul));
+        using SKCanvas g = new(canvas);
+        g.Clear(SKColors.Transparent);
 
-        using GraphicsPath borderPath = CreateRoundedRectanglePath(borderRect, borderRadius);
-        using SolidBrush backgroundBrush = new(background);
-        using Pen outlinePen = new(foreground, outlineThickness);
-
-        g.FillPath(backgroundBrush, borderPath);
-        g.DrawPath(outlinePen, borderPath);
-        g.DrawImage(qrBitmap, qrX, qrY, qrBitmap.Width, qrBitmap.Height);
-        DrawLabelPill(g, frameText, foreground, background, new System.Drawing.RectangleF(labelX, labelY, labelWidth, labelHeight), outlineThickness);
+        using SKPaint backgroundPaint = new() { Color = background, IsAntialias = true, Style = SKPaintStyle.Fill };
+        using SKPaint outlinePaint = new() { Color = foreground, IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = outlineThickness };
+        g.DrawRoundRect(borderRect, borderRadius, borderRadius, backgroundPaint);
+        g.DrawRoundRect(borderRect, borderRadius, borderRadius, outlinePaint);
+        g.DrawBitmap(qrBitmap, qrX, qrY);
+        DrawLabelPill(g, frameText, foreground, background, SKRect.Create(labelX, labelY, labelWidth, labelHeight), outlineThickness);
+        g.Flush();
 
         return canvas;
     }
 
-    private static Bitmap AddCornerCalloutFrameToBitmap(Bitmap qrBitmap, string frameText, System.Drawing.Color foreground, System.Drawing.Color background)
+    private static SKBitmap AddCornerCalloutFrameToBitmap(SKBitmap qrBitmap, string frameText, SKColor foreground, SKColor background)
     {
         int outerPadding = ScaleMetric(qrBitmap.Width, 0.11, 64);
         int bracketInset = ScaleMetric(qrBitmap.Width, 0.03, 16);
@@ -497,59 +308,48 @@ public static partial class BarcodeHelpers
         int labelY = outerPadding / 3;
         int qrX = outerPadding;
         int qrY = labelY + labelHeight + labelSpacing;
-        System.Drawing.RectangleF bracketRect = new(
+        SKRect bracketRect = SKRect.Create(
             qrX - bracketInset,
             qrY - bracketInset,
             qrBitmap.Width + (bracketInset * 2),
             qrBitmap.Height + (bracketInset * 2));
-        Bitmap canvas = new(canvasWidth, canvasHeight, PixelFormat.Format32bppArgb);
 
-        using Graphics g = Graphics.FromImage(canvas);
-        PrepareGraphics(g);
-        g.Clear(System.Drawing.Color.Transparent);
-        g.DrawImage(qrBitmap, qrX, qrY, qrBitmap.Width, qrBitmap.Height);
-        DrawLabelPill(g, frameText, foreground, background, new System.Drawing.RectangleF(labelX, labelY, labelWidth, labelHeight), outlineThickness);
+        SKBitmap canvas = new(new SKImageInfo(canvasWidth, canvasHeight, SKColorType.Bgra8888, SKAlphaType.Premul));
+        using SKCanvas g = new(canvas);
+        g.Clear(SKColors.Transparent);
+        g.DrawBitmap(qrBitmap, qrX, qrY);
+        DrawLabelPill(g, frameText, foreground, background, SKRect.Create(labelX, labelY, labelWidth, labelHeight), outlineThickness);
         DrawCornerCalloutBrackets(g, foreground, bracketRect, bracketLength, outlineThickness, labelX + (labelWidth / 2f), labelY + labelHeight);
+        g.Flush();
 
         return canvas;
     }
 
-    private static void PrepareGraphics(Graphics g)
+    private static void DrawLabelPill(SKCanvas g, string frameText, SKColor foreground, SKColor background, SKRect rect, float outlineThickness)
     {
-        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-        g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-        g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-    }
+        using SKPaint backgroundPaint = new() { Color = background, IsAntialias = true, Style = SKPaintStyle.Fill };
+        using SKPaint outlinePaint = new() { Color = foreground, IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = outlineThickness };
 
-    private static void DrawLabelPill(Graphics g, string frameText, System.Drawing.Color foreground, System.Drawing.Color background, System.Drawing.RectangleF rect, float outlineThickness)
-    {
-        using GraphicsPath labelPath = CreateRoundedRectanglePath(rect, rect.Height / 2f);
-        using SolidBrush backgroundBrush = new(background);
-        using Pen outlinePen = new(foreground, outlineThickness);
-
-        g.FillPath(backgroundBrush, labelPath);
-        g.DrawPath(outlinePen, labelPath);
+        g.DrawRoundRect(rect, rect.Height / 2f, rect.Height / 2f, backgroundPaint);
+        g.DrawRoundRect(rect, rect.Height / 2f, rect.Height / 2f, outlinePaint);
         DrawFrameText(g, frameText, foreground, rect, outlineThickness);
     }
 
-    private static void DrawFrameText(Graphics g, string frameText, System.Drawing.Color foreground, System.Drawing.RectangleF rect, float outlineThickness)
+    private static void DrawFrameText(SKCanvas g, string frameText, SKColor foreground, SKRect rect, float outlineThickness)
     {
-        System.Drawing.RectangleF textRect = GetFrameTextRect(rect, outlineThickness);
-        float fontSize = GetFittedFrameFontSize(frameText, textRect.Size);
-        using Font font = new("Segoe UI", fontSize, FontStyle.Bold, GraphicsUnit.Pixel);
-        using SolidBrush textBrush = new(foreground);
-        using StringFormat format = new()
-        {
-            Alignment = StringAlignment.Center,
-            LineAlignment = StringAlignment.Center,
-            Trimming = StringTrimming.EllipsisCharacter,
-            FormatFlags = StringFormatFlags.NoWrap,
-        };
+        System.Drawing.RectangleF textRect = GetFrameTextRect(new System.Drawing.RectangleF(rect.Left, rect.Top, rect.Width, rect.Height), outlineThickness);
+        float fontSize = GetFittedFrameFontSize(frameText, new System.Drawing.SizeF(textRect.Width, textRect.Height));
+        using SKFont font = new(GetFrameTypeface(), fontSize);
+        using SKPaint paint = new() { Color = foreground, IsAntialias = true };
 
-        g.DrawString(frameText, font, textBrush, textRect, format);
+        font.MeasureText(frameText, out SKRect bounds);
+        float x = textRect.X + (textRect.Width / 2f) - bounds.MidX;
+        float y = textRect.Y + (textRect.Height / 2f) - bounds.MidY;
+        g.DrawText(frameText, x, y, SKTextAlign.Left, font, paint);
     }
+
+    private static SKTypeface GetFrameTypeface() =>
+        SKTypeface.FromFamilyName("Segoe UI", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright);
 
     private static System.Drawing.RectangleF GetFrameTextRect(System.Drawing.RectangleF rect, float outlineThickness)
     {
@@ -569,36 +369,28 @@ public static partial class BarcodeHelpers
     {
         const float measurementFontSize = 100f;
 
-        using Bitmap measurementBitmap = new(1, 1);
-        using Graphics measurementGraphics = Graphics.FromImage(measurementBitmap);
-        PrepareGraphics(measurementGraphics);
-        using Font measurementFont = new("Segoe UI", measurementFontSize, FontStyle.Bold, GraphicsUnit.Pixel);
-        using StringFormat format = new()
-        {
-            Alignment = StringAlignment.Center,
-            LineAlignment = StringAlignment.Center,
-            Trimming = StringTrimming.EllipsisCharacter,
-            FormatFlags = StringFormatFlags.NoWrap,
-        };
-
-        System.Drawing.SizeF measuredSize = measurementGraphics.MeasureString(frameText, measurementFont, PointF.Empty, format);
-        if (measuredSize.Width <= 0 || measuredSize.Height <= 0)
+        using SKFont font = new(GetFrameTypeface(), measurementFontSize);
+        font.MeasureText(frameText, out SKRect bounds);
+        if (bounds.Width <= 0 || bounds.Height <= 0)
             return Math.Max(1f, availableSize.Height);
 
-        float scaleX = availableSize.Width / measuredSize.Width;
-        float scaleY = availableSize.Height / measuredSize.Height;
+        float scaleX = availableSize.Width / bounds.Width;
+        float scaleY = availableSize.Height / bounds.Height;
         float scale = Math.Min(scaleX, scaleY) * 0.98f;
 
         return Math.Max(1f, measurementFontSize * scale);
     }
 
-    private static void DrawCornerCalloutBrackets(Graphics g, System.Drawing.Color foreground, System.Drawing.RectangleF bracketRect, float bracketLength, float outlineThickness, float labelCenterX, float labelBottomY)
+    private static void DrawCornerCalloutBrackets(SKCanvas g, SKColor foreground, SKRect bracketRect, float bracketLength, float outlineThickness, float labelCenterX, float labelBottomY)
     {
-        using Pen outlinePen = new(foreground, outlineThickness)
+        using SKPaint outlinePaint = new()
         {
-            LineJoin = System.Drawing.Drawing2D.LineJoin.Round,
-            StartCap = System.Drawing.Drawing2D.LineCap.Round,
-            EndCap = System.Drawing.Drawing2D.LineCap.Round,
+            Color = foreground,
+            IsAntialias = true,
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = outlineThickness,
+            StrokeCap = SKStrokeCap.Round,
+            StrokeJoin = SKStrokeJoin.Round,
         };
 
         float left = bracketRect.Left;
@@ -606,55 +398,30 @@ public static partial class BarcodeHelpers
         float right = bracketRect.Right;
         float bottom = bracketRect.Bottom;
 
-        g.DrawLines(outlinePen,
-        [
-            new System.Drawing.PointF(left + bracketLength, top),
-            new System.Drawing.PointF(left, top),
-            new System.Drawing.PointF(left, top + bracketLength),
-        ]);
-        g.DrawLines(outlinePen,
-        [
-            new System.Drawing.PointF(right - bracketLength, top),
-            new System.Drawing.PointF(right, top),
-            new System.Drawing.PointF(right, top + bracketLength),
-        ]);
-        g.DrawLines(outlinePen,
-        [
-            new System.Drawing.PointF(left + bracketLength, bottom),
-            new System.Drawing.PointF(left, bottom),
-            new System.Drawing.PointF(left, bottom - bracketLength),
-        ]);
-        g.DrawLines(outlinePen,
-        [
-            new System.Drawing.PointF(right - bracketLength, bottom),
-            new System.Drawing.PointF(right, bottom),
-            new System.Drawing.PointF(right, bottom - bracketLength),
-        ]);
+        using SKPath path = new();
+        path.MoveTo(left + bracketLength, top);
+        path.LineTo(left, top);
+        path.LineTo(left, top + bracketLength);
+
+        path.MoveTo(right - bracketLength, top);
+        path.LineTo(right, top);
+        path.LineTo(right, top + bracketLength);
+
+        path.MoveTo(left + bracketLength, bottom);
+        path.LineTo(left, bottom);
+        path.LineTo(left, bottom - bracketLength);
+
+        path.MoveTo(right - bracketLength, bottom);
+        path.LineTo(right, bottom);
+        path.LineTo(right, bottom - bracketLength);
+
+        g.DrawPath(path, outlinePaint);
 
         float connectorBottom = top - (outlineThickness * 1.2f);
         if (connectorBottom > labelBottomY)
         {
-            g.DrawLine(outlinePen, labelCenterX, labelBottomY, labelCenterX, connectorBottom);
+            g.DrawLine(labelCenterX, labelBottomY, labelCenterX, connectorBottom, outlinePaint);
         }
-    }
-
-    private static GraphicsPath CreateRoundedRectanglePath(System.Drawing.RectangleF rect, float radius)
-    {
-        float diameter = Math.Min(radius * 2f, Math.Min(rect.Width, rect.Height));
-        GraphicsPath path = new();
-
-        if (diameter <= 0)
-        {
-            path.AddRectangle(rect);
-            return path;
-        }
-
-        path.AddArc(rect.X, rect.Y, diameter, diameter, 180, 90);
-        path.AddArc(rect.Right - diameter, rect.Y, diameter, diameter, 270, 90);
-        path.AddArc(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter, 0, 90);
-        path.AddArc(rect.X, rect.Bottom - diameter, diameter, diameter, 90, 90);
-        path.CloseFigure();
-        return path;
     }
 
     private static int ScaleMetric(int baseSize, double ratio, int minimum)
@@ -663,7 +430,7 @@ public static partial class BarcodeHelpers
         return Math.Max(scaledValue, minimum);
     }
 
-    private static void OverlayLogoOnQrCode(Bitmap qrCodeBitmap, Bitmap logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels, System.Drawing.Color backgroundColor)
+    private static void OverlayLogoOnQrCode(SKBitmap qrCodeBitmap, SKBitmap logo, double sizePercentage, int moduleCount, int margin, double logoPaddingPixels, SKColor backgroundColor)
     {
         // Calculate the pixel size of each QR code module
         // The total size includes the margin on both sides
@@ -723,25 +490,18 @@ public static partial class BarcodeHelpers
         int logoX = punchoutX + (punchoutSize - logoWidth) / 2;
         int logoY = punchoutY + (punchoutSize - logoHeight) / 2;
 
-        using Graphics g = Graphics.FromImage(qrCodeBitmap);
-        // Set high quality rendering
-        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-        g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+        using SKCanvas g = new(qrCodeBitmap);
 
         // Draw the punchout background with the same color as the QR code background.
-        // Use SourceCopy so a transparent background color actually clears those pixels
-        // rather than being ignored by the default SourceOver compositing.
-        g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-        using SolidBrush backgroundBrush = new(backgroundColor);
-        g.FillRectangle(backgroundBrush, punchoutX, punchoutY, punchoutSize, punchoutSize);
+        // Use the Src blend mode so a transparent background color actually clears those
+        // pixels rather than being ignored by the default SrcOver compositing.
+        using SKPaint backgroundPaint = new() { Color = backgroundColor, Style = SKPaintStyle.Fill, BlendMode = SKBlendMode.Src };
+        g.DrawRect(SKRect.Create(punchoutX, punchoutY, punchoutSize, punchoutSize), backgroundPaint);
 
-        // Reset to SourceOver so the logo composites correctly over the punchout
-        g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-
-        // Draw the logo scaled to fit within or extend beyond the punchout
-        g.DrawImage(logo, logoX, logoY, logoWidth, logoHeight);
+        // Draw the logo scaled to fit within or extend beyond the punchout, composited over the punchout.
+        using SKPaint logoPaint = new() { IsAntialias = true, BlendMode = SKBlendMode.SrcOver };
+        g.DrawBitmap(logo, SKRect.Create(logoX, logoY, logoWidth, logoHeight), logoPaint);
+        g.Flush();
     }
 
     /// <summary>
@@ -877,7 +637,7 @@ public static partial class BarcodeHelpers
             $"{smallestSideCm:F2} x {smallestSideCm:F2} cm");
     }
 
-    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
+    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, SKBitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
     {
         int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
         QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
@@ -1067,7 +827,7 @@ public static partial class BarcodeHelpers
         return value.ToString("0.###", CultureInfo.InvariantCulture);
     }
 
-    private static SvgImage EmbedLogoInSvg(SvgImage svg, Bitmap? logo, double sizePercentage, int moduleCount, int margin, int svgSize, double logoPaddingPixels, System.Drawing.Color backgroundColor, string? logoSvgContent = null)
+    private static SvgImage EmbedLogoInSvg(SvgImage svg, SKBitmap? logo, double sizePercentage, int moduleCount, int margin, int svgSize, double logoPaddingPixels, System.Drawing.Color backgroundColor, string? logoSvgContent = null)
     {
         // Calculate the pixel size of each QR code module
         int totalModules = moduleCount + (margin * 2);
@@ -1155,24 +915,13 @@ public static partial class BarcodeHelpers
             int logoY = punchoutY + (punchoutSize - logoHeight) / 2;
 
             // Resize the logo to the display size before encoding to reduce SVG file size
-            Bitmap resizedLogo = new(logoWidth, logoHeight);
-            using (Graphics g = Graphics.FromImage(resizedLogo))
-            {
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                g.DrawImage(logo, 0, 0, logoWidth, logoHeight);
-            }
-
-            string base64Logo;
-            using (MemoryStream ms = new())
-            {
-                resizedLogo.Save(ms, ImageFormat.Png);
-                byte[] imageBytes = ms.ToArray();
-                base64Logo = Convert.ToBase64String(imageBytes);
-            }
-            resizedLogo.Dispose();
+            SKBitmap resizedLogo = logo!.Resize(
+                new SKImageInfo(logoWidth, logoHeight, SKColorType.Bgra8888, SKAlphaType.Premul),
+                new SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.Linear)) ?? logo!;
+            byte[] imageBytes = SkiaImaging.EncodePng(resizedLogo);
+            string base64Logo = Convert.ToBase64String(imageBytes);
+            if (!ReferenceEquals(resizedLogo, logo))
+                resizedLogo.Dispose();
 
             logoSvgElement = $@"
   <!-- Logo punchout background -->
@@ -1222,8 +971,8 @@ public static partial class BarcodeHelpers
     {
         try
         {
-            Bitmap bitmap = new(storageFile.Path);
-            return GetStringsFromBitmap(bitmap);
+            using SKBitmap? bitmap = SKBitmap.Decode(storageFile.Path);
+            return bitmap is null ? [] : GetStringsFromBitmap(bitmap);
         }
         catch (Exception ex)
         {
@@ -1232,9 +981,9 @@ public static partial class BarcodeHelpers
         }
     }
 
-    public static IEnumerable<(string, Result)> GetStringsFromBitmap(Bitmap bitmap)
+    public static IEnumerable<(string, Result)> GetStringsFromBitmap(SKBitmap bitmap)
     {
-        BarcodeReader barcodeReader = new()
+        BarcodeReaderGeneric barcodeReader = new()
         {
             AutoRotate = true,
             Options = new DecodingOptions
@@ -1248,12 +997,13 @@ public static partial class BarcodeHelpers
 
         foreach (int decodePadding in GetDecodePaddings(bitmap))
         {
-            Bitmap? paddedBitmap = decodePadding > 0
+            SKBitmap? paddedBitmap = decodePadding > 0
                 ? AddOuterDecodePadding(bitmap, decodePadding)
                 : null;
-            Bitmap decodeBitmap = paddedBitmap ?? bitmap;
+            SKBitmap decodeBitmap = paddedBitmap ?? bitmap;
 
-            Result[] results = barcodeReader.DecodeMultiple(decodeBitmap);
+            LuminanceSource source = CreateLuminanceSource(decodeBitmap);
+            Result[] results = barcodeReader.DecodeMultiple(source);
             List<(string, Result)> strings = ConvertResultsToStrings(results, decodePadding);
             paddedBitmap?.Dispose();
 
@@ -1262,6 +1012,18 @@ public static partial class BarcodeHelpers
         }
 
         return [];
+    }
+
+    /// <summary>
+    /// Builds a ZXing luminance source from an SKBitmap's BGRA pixels (cross-platform decode).
+    /// </summary>
+    private static LuminanceSource CreateLuminanceSource(SKBitmap bitmap)
+    {
+        using SKBitmap bgra = bitmap.ColorType == SKColorType.Bgra8888
+            ? bitmap.Copy()
+            : bitmap.Copy(SKColorType.Bgra8888);
+        byte[] pixels = bgra.Bytes;
+        return new RGBLuminanceSource(pixels, bgra.Width, bgra.Height, RGBLuminanceSource.BitmapFormat.BGRA32);
     }
 
     private static List<(string, Result)> ConvertResultsToStrings(Result[]? results, int decodePadding)
@@ -1299,7 +1061,7 @@ public static partial class BarcodeHelpers
         }
     }
 
-    private static IEnumerable<int> GetDecodePaddings(Bitmap bitmap)
+    private static IEnumerable<int> GetDecodePaddings(SKBitmap bitmap)
     {
         int minDimension = Math.Min(bitmap.Width, bitmap.Height);
         int mediumPadding = Math.Clamp((int)Math.Round(minDimension * 0.03, MidpointRounding.AwayFromZero), 8, 24);
@@ -1309,12 +1071,13 @@ public static partial class BarcodeHelpers
         return paddings.Distinct().Order();
     }
 
-    private static Bitmap AddOuterDecodePadding(Bitmap source, int padding)
+    private static SKBitmap AddOuterDecodePadding(SKBitmap source, int padding)
     {
-        Bitmap padded = new(source.Width + (padding * 2), source.Height + (padding * 2), PixelFormat.Format32bppArgb);
-        using Graphics g = Graphics.FromImage(padded);
-        g.Clear(System.Drawing.Color.White);
-        g.DrawImageUnscaled(source, padding, padding);
+        SKBitmap padded = new(new SKImageInfo(source.Width + (padding * 2), source.Height + (padding * 2), SKColorType.Bgra8888, SKAlphaType.Premul));
+        using SKCanvas g = new(padded);
+        g.Clear(SKColors.White);
+        g.DrawBitmap(source, padding, padding);
+        g.Flush();
         return padded;
     }
 

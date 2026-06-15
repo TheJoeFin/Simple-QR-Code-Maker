@@ -1,4 +1,5 @@
 using ImageMagick;
+using SkiaSharp;
 using System.Drawing;
 using Windows.Storage;
 
@@ -299,29 +300,9 @@ public static class ImageProcessingHelper
         return image;
     }
 
-    public static MagickImage LoadImageFromBitmap(Bitmap bitmap)
+    public static SKBitmap ConvertToBitmap(MagickImage image)
     {
-        using var memoryStream = new MemoryStream();
-        bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-        memoryStream.Position = 0;
-        var image = new MagickImage(memoryStream);
-
-        // Apply EXIF orientation if present
-        image.AutoOrient();
-
-        System.Diagnostics.Debug.WriteLine($"Loaded image from Bitmap:");
-        System.Diagnostics.Debug.WriteLine($"  Final dimensions: {image.Width}x{image.Height}");
-        System.Diagnostics.Debug.WriteLine($"  Orientation applied: AutoOrient() called");
-
-        return image;
-    }
-
-    public static Bitmap ConvertToBitmap(MagickImage image)
-    {
-        using var memoryStream = new MemoryStream();
-        image.Write(memoryStream, MagickFormat.Png);
-        memoryStream.Position = 0;
-        return new Bitmap(memoryStream);
+        return SkiaImaging.FromMagick(image);
     }
 
     public static async Task<string> SaveToTemporaryFile(MagickImage image)

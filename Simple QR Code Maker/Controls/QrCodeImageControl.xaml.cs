@@ -31,7 +31,7 @@ public sealed partial class QrCodeImageControl : UserControl
 
     private async void QrCodeImage_DragStarting(UIElement sender, DragStartingEventArgs args)
     {
-        if (sender is not Image image || image.Source is not WriteableBitmap bitmap)
+        if (Data?.CodePngBytes is null)
             return;
 
         DragOperationDeferral deferral = args.GetDeferral();
@@ -41,7 +41,7 @@ public sealed partial class QrCodeImageControl : UserControl
         imageNameFileName = imageNameFileName.ToSafeFileName();
         imageNameFileName += ".png";
         StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
-        bool success = await bitmap.SavePngToStorageFile(file);
+        bool success = await Data.SaveCodeAsPngFile(file);
 
         if (!success)
         {

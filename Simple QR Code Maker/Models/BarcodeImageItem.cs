@@ -3,7 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Media;
+using SkiaSharp;
 using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Windows.ApplicationModel.DataTransfer;
@@ -27,7 +28,10 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public bool UrlWarning => !IsCodeUrl && IsAppShowingUrlWarnings;
 
-    public WriteableBitmap? CodeAsBitmap { get; set; }
+    public ImageSource? CodeAsBitmap { get; set; }
+
+    /// <summary>PNG bytes of the rendered QR, used for save/copy/share/drag (SkiaSharp-encoded).</summary>
+    public byte[]? CodePngBytes { get; set; }
 
     public ErrorCorrectionLevel ErrorCorrection { get; set; } = ErrorCorrectionLevel.M;
 
@@ -35,7 +39,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public Windows.UI.Color BackgroundColor { get; set; }
 
-    public System.Drawing.Bitmap? LogoImage { get; set; }
+    public SKBitmap? LogoImage { get; set; }
 
     public double LogoSizePercentage { get; set; } = 20.0;
 
@@ -92,10 +96,18 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public async Task<bool> SaveCodeAsPngFile(StorageFile file)
     {
-        if (CodeAsBitmap is null)
+        if (CodePngBytes is null)
             return false;
 
-        return await CodeAsBitmap.SavePngToStorageFile(file);
+        try
+        {
+            await FileIO.WriteBytesAsync(file, CodePngBytes);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public async Task<bool> SaveCodeAsSvgFile(StorageFile file, System.Drawing.Color foreground, System.Drawing.Color background, ErrorCorrectionLevel correctionLevel)
@@ -181,7 +193,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
         DataPackage dataPackage = new();
         dataPackage.SetText(SizeRecommendationText);
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+        ClipboardHelper.SetContent(dataPackage);
         WeakReferenceMessenger.Default.Send(new RequestShowMessage("QR Code size copied to the clipboard", string.Empty, InfoBarSeverity.Success));
     }
 
@@ -206,7 +218,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     [RelayCommand]
     private async Task CopyCodePngContext()
     {
-        if (CodeAsBitmap is null)
+        if (CodePngBytes is null)
         {
             WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to copy QR Code to the clipboard", "No QR Code to copy to the clipboard", InfoBarSeverity.Error));
             return;
@@ -217,7 +229,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
         string? imageNameFileName = $"{CodeAsText.ToSafeFileName()}.png";
         StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
-        _ = await CodeAsBitmap.SavePngToStorageFile(file);
+        _ = await SaveCodeAsPngFile(file);
 
         files.Add(file);
 
@@ -229,7 +241,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
         DataPackage dataPackage = new();
         dataPackage.SetStorageItems(files);
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+        ClipboardHelper.SetContent(dataPackage);
 
         WeakReferenceMessenger.Default.Send(new RequestShowMessage("PNG QR Code copied to the clipboard", string.Empty, InfoBarSeverity.Success));
         WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
@@ -256,7 +268,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
         DataPackage dataPackage = new();
         dataPackage.SetStorageItems(files);
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+        ClipboardHelper.SetContent(dataPackage);
 
         WeakReferenceMessenger.Default.Send(new RequestShowMessage("SVG QR Code copied to the clipboard", string.Empty, InfoBarSeverity.Success));
         WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
@@ -265,7 +277,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     [RelayCommand]
     private async Task ShareCodeContext()
     {
-        if (CodeAsBitmap is null)
+        if (CodePngBytes is null)
         {
             WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to share QR Code", "No QR Code to share", InfoBarSeverity.Error));
             return;
@@ -275,7 +287,7 @@ public partial class BarcodeImageItem : ObservableRecipient
         string imageNameFileName = $"{CodeAsText.ToSafeFileName()}.png";
         StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
 
-        if (!await CodeAsBitmap.SavePngToStorageFile(file))
+        if (!await SaveCodeAsPngFile(file))
         {
             WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to share QR Code", "Could not prepare PNG for sharing", InfoBarSeverity.Error));
             return;
@@ -313,7 +325,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
         DataPackage dataPackage = new();
         dataPackage.SetText(svgAsText);
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+        ClipboardHelper.SetContent(dataPackage);
 
         WeakReferenceMessenger.Default.Send(new RequestShowMessage("SVG Text of QR Code copied to the clipboard", string.Empty, InfoBarSeverity.Success));
         WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
@@ -349,7 +361,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
         StorageFile file = await savePicker.PickSaveFileAsync();
 
-        if (file is null || CodeAsBitmap is null)
+        if (file is null || CodePngBytes is null)
             return;
 
         switch (kindOfFile)
@@ -357,10 +369,10 @@ public partial class BarcodeImageItem : ObservableRecipient
             case FileKind.None:
                 break;
             case FileKind.PNG:
-                if (CodeAsBitmap is null)
+                if (CodePngBytes is null)
                     return;
 
-                await CodeAsBitmap.SavePngToStorageFile(file);
+                await SaveCodeAsPngFile(file);
                 WeakReferenceMessenger.Default.Send(new RequestShowMessage("PNG QR Code Saved!", string.Empty, InfoBarSeverity.Success));
                 WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
                 break;

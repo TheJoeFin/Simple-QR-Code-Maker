@@ -1,3 +1,4 @@
+using SkiaSharp;
 using ZXing.QrCode.Internal;
 
 namespace Simple_QR_Code_Maker.Models;
@@ -8,7 +9,7 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         ErrorCorrectionLevel errorCorrectionLevel,
         System.Drawing.Color foregroundColor,
         System.Drawing.Color backgroundColor,
-        System.Drawing.Bitmap? logoImage,
+        SKBitmap? logoImage,
         double logoSizePercentage,
         double logoPaddingPixels,
         string? logoSvgContent,
@@ -36,7 +37,7 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
 
     public System.Drawing.Color BackgroundColor { get; }
 
-    public System.Drawing.Bitmap? LogoImage { get; }
+    public SKBitmap? LogoImage { get; }
 
     public double LogoSizePercentage { get; }
 
@@ -56,7 +57,7 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         ErrorCorrectionLevel errorCorrectionLevel,
         System.Drawing.Color foregroundColor,
         System.Drawing.Color backgroundColor,
-        System.Drawing.Bitmap? logoImage,
+        SKBitmap? logoImage,
         double logoSizePercentage,
         double logoPaddingPixels,
         string? logoSvgContent,
@@ -69,7 +70,7 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
             errorCorrectionLevel,
             foregroundColor,
             backgroundColor,
-            logoImage is null ? null : new System.Drawing.Bitmap(logoImage),
+            logoImage?.Copy(),
             logoSizePercentage,
             logoPaddingPixels,
             logoSvgContent,

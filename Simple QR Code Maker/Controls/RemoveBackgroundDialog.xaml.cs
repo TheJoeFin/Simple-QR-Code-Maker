@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Simple_QR_Code_Maker.ViewModels;
-using System.Drawing;
+using SkiaSharp;
 
 namespace Simple_QR_Code_Maker.Controls;
 
@@ -9,9 +9,9 @@ public sealed partial class RemoveBackgroundDialog : ContentDialog
 {
     public RemoveBackgroundDialogViewModel ViewModel { get; }
 
-    public Bitmap? ResultBitmap => ViewModel.ResultBitmap;
+    public SKBitmap? ResultBitmap => ViewModel.ResultBitmap;
 
-    public RemoveBackgroundDialog(Bitmap sourceImage)
+    public RemoveBackgroundDialog(SKBitmap sourceImage)
     {
         ViewModel = App.GetService<RemoveBackgroundDialogViewModel>();
         DataContext = ViewModel;

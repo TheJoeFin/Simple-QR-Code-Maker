@@ -3,7 +3,7 @@ using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
-using System.Runtime.InteropServices.WindowsRuntime;
+using SkiaSharp;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -31,31 +31,23 @@ public class LogoService : ILogoService
 
         return new LogoImageResult
         {
-            LogoImage = new System.Drawing.Bitmap(emojiAsset.PreviewBitmap),
+            LogoImage = emojiAsset.PreviewBitmap.Copy(),
             SvgContent = emojiAsset.SvgContent,
         };
     }
 
-    public async Task<BitmapImage?> CreateBitmapImageAsync(System.Drawing.Bitmap? bitmap)
+    public async Task<BitmapImage?> CreateBitmapImageAsync(SKBitmap? bitmap)
     {
         if (bitmap is null)
             return null;
 
-        using MemoryStream ms = new();
-        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-        ms.Position = 0;
-
-        BitmapImage bitmapImage = new();
-        using InMemoryRandomAccessStream randomAccessStream = new();
-        await randomAccessStream.WriteAsync(ms.ToArray().AsBuffer());
-        randomAccessStream.Seek(0);
-        await bitmapImage.SetSourceAsync(randomAccessStream);
-        return bitmapImage;
+        byte[] png = SkiaImaging.EncodePng(bitmap);
+        return await SkiaImaging.ToBitmapImageAsync(png);
     }
 
     public async Task<BitmapImage> RenderEmojiPreviewAsync(string emoji, EmojiLogoStyle style, Windows.UI.Color foregroundColor, int pixelSize = 96)
     {
-        using System.Drawing.Bitmap bitmap = await EmojiLogoHelper.RenderEmojiToBitmapAsync(
+        using SKBitmap bitmap = await EmojiLogoHelper.RenderEmojiToBitmapAsync(
             emoji,
             style,
             foregroundColor.ToSystemDrawingColor(),
@@ -83,18 +75,19 @@ public class LogoService : ILogoService
 
     public Task<LogoImageResult> LoadRasterFromStreamAsync(IRandomAccessStreamWithContentType stream, string? logoPath)
     {
-        using System.Drawing.Bitmap temporaryBitmap = new(stream.AsStreamForRead());
+        SKBitmap bitmap = SKBitmap.Decode(stream.AsStreamForRead())
+            ?? throw new InvalidOperationException("The selected image could not be decoded.");
 
         LogoImageResult result = new()
         {
-            LogoImage = new System.Drawing.Bitmap(temporaryBitmap),
+            LogoImage = bitmap,
             LogoPath = logoPath,
         };
 
         return Task.FromResult(result);
     }
 
-    public async Task<string?> SaveLogoImageToDiskAsync(System.Drawing.Bitmap? logoImage, string? logoSvgContent)
+    public async Task<string?> SaveLogoImageToDiskAsync(SKBitmap? logoImage, string? logoSvgContent)
     {
         if (logoImage is null)
             return null;
@@ -112,13 +105,8 @@ public class LogoService : ILogoService
         string fileName = $"logo_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.png";
         StorageFile logoFile = await logoFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
 
-        using IRandomAccessStream stream = await logoFile.OpenAsync(FileAccessMode.ReadWrite);
-        using IOutputStream outputStream = stream.GetOutputStreamAt(0);
-        using DataWriter dataWriter = new(outputStream);
-        using MemoryStream ms = new();
-        logoImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-        dataWriter.WriteBytes(ms.ToArray());
-        await dataWriter.StoreAsync();
+        byte[] png = SkiaImaging.EncodePng(logoImage);
+        await FileIO.WriteBytesAsync(logoFile, png);
 
         return logoFile.Path;
     }

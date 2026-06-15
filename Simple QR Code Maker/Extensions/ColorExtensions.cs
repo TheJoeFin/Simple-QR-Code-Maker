@@ -11,4 +11,14 @@ public static class ColorExtensions
     {
         return Windows.UI.Color.FromArgb(color.A, color.R, color.G, color.B);
     }
+
+    public static SkiaSharp.SKColor ToSkColor(this Windows.UI.Color color)
+    {
+        return new SkiaSharp.SKColor(color.R, color.G, color.B, color.A);
+    }
+
+    public static SkiaSharp.SKColor ToSkColor(this System.Drawing.Color color)
+    {
+        return new SkiaSharp.SKColor(color.R, color.G, color.B, color.A);
+    }
 }

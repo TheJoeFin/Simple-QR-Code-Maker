@@ -5,9 +5,8 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.AI.Imaging;
 #endif
 using Simple_QR_Code_Maker.Helpers;
+using SkiaSharp;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Graphics;
@@ -18,7 +17,7 @@ namespace Simple_QR_Code_Maker.ViewModels;
 
 public sealed partial class RemoveBackgroundDialogViewModel : ObservableRecipient
 {
-    private Bitmap? _sourceImage;
+    private SKBitmap? _sourceImage;
 
     [ObservableProperty]
     public partial bool IsPrimaryEnabled { get; set; } = false;
@@ -41,9 +40,9 @@ public sealed partial class RemoveBackgroundDialogViewModel : ObservableRecipien
 
     public Visibility StatusVisibility => IsStatusVisible ? Visibility.Visible : Visibility.Collapsed;
 
-    public Bitmap? ResultBitmap { get; private set; }
+    public SKBitmap? ResultBitmap { get; private set; }
 
-    public void Initialize(Bitmap sourceImage)
+    public void Initialize(SKBitmap sourceImage)
     {
         _sourceImage = sourceImage;
     }
@@ -83,7 +82,7 @@ public sealed partial class RemoveBackgroundDialogViewModel : ObservableRecipien
 
             using SoftwareBitmap maskBitmap = extractor.GetSoftwareBitmapObjectMask(hint);
 
-            Bitmap result = ApplyMaskToBitmap(_sourceImage, maskBitmap);
+            SKBitmap result = ApplyMaskToBitmap(_sourceImage, maskBitmap);
             ResultBitmap = result;
             ResultImageSource = await ConvertBitmapToBitmapImageAsync(result);
 
@@ -103,44 +102,28 @@ public sealed partial class RemoveBackgroundDialogViewModel : ObservableRecipien
         }
     }
 
-    private static SoftwareBitmap ConvertToSoftwareBitmap(Bitmap bitmap)
+    private static SKBitmap ToBgra(SKBitmap bitmap) =>
+        bitmap.ColorType == SKColorType.Bgra8888 ? bitmap.Copy() : bitmap.Copy(SKColorType.Bgra8888);
+
+    private static SoftwareBitmap ConvertToSoftwareBitmap(SKBitmap bitmap)
     {
         int width = bitmap.Width;
         int height = bitmap.Height;
 
-        using Bitmap argbBitmap = new(width, height, PixelFormat.Format32bppArgb);
-        using (Graphics g = Graphics.FromImage(argbBitmap))
-        {
-            g.DrawImage(bitmap, 0, 0, width, height);
-        }
+        using SKBitmap bgra = ToBgra(bitmap);
+        byte[] pixels = bgra.Bytes;
 
-        BitmapData data = argbBitmap.LockBits(
-            new Rectangle(0, 0, width, height),
-            ImageLockMode.ReadOnly,
-            PixelFormat.Format32bppArgb);
+        SoftwareBitmap softwareBitmap = new(
+            BitmapPixelFormat.Bgra8,
+            width,
+            height,
+            BitmapAlphaMode.Premultiplied);
 
-        try
-        {
-            int stride = data.Stride;
-            byte[] pixels = new byte[stride * height];
-            Marshal.Copy(data.Scan0, pixels, 0, pixels.Length);
-
-            SoftwareBitmap softwareBitmap = new(
-                BitmapPixelFormat.Bgra8,
-                width,
-                height,
-                BitmapAlphaMode.Premultiplied);
-
-            softwareBitmap.CopyFromBuffer(pixels.AsBuffer());
-            return softwareBitmap;
-        }
-        finally
-        {
-            argbBitmap.UnlockBits(data);
-        }
+        softwareBitmap.CopyFromBuffer(pixels.AsBuffer());
+        return softwareBitmap;
     }
 
-    private static Bitmap ApplyMaskToBitmap(Bitmap source, SoftwareBitmap mask)
+    private static SKBitmap ApplyMaskToBitmap(SKBitmap source, SoftwareBitmap mask)
     {
         using SoftwareBitmap convertedMask = SoftwareBitmap.Convert(mask, BitmapPixelFormat.Gray8);
         int maskWidth = convertedMask.PixelWidth;
@@ -150,72 +133,38 @@ public sealed partial class RemoveBackgroundDialogViewModel : ObservableRecipien
 
         int srcWidth = source.Width;
         int srcHeight = source.Height;
-        Bitmap result = new(srcWidth, srcHeight, PixelFormat.Format32bppArgb);
 
-        using Bitmap argbSource = new(srcWidth, srcHeight, PixelFormat.Format32bppArgb);
-        using (Graphics g = Graphics.FromImage(argbSource))
+        using SKBitmap argbSource = ToBgra(source);
+        byte[] srcPixels = argbSource.Bytes;
+        int stride = argbSource.RowBytes;
+        byte[] dstPixels = new byte[srcPixels.Length];
+
+        for (int y = 0; y < srcHeight; y++)
         {
-            g.DrawImage(source, 0, 0, srcWidth, srcHeight);
-        }
-
-        BitmapData srcData = argbSource.LockBits(
-            new Rectangle(0, 0, srcWidth, srcHeight),
-            ImageLockMode.ReadOnly,
-            PixelFormat.Format32bppArgb);
-
-        BitmapData dstData = result.LockBits(
-            new Rectangle(0, 0, srcWidth, srcHeight),
-            ImageLockMode.WriteOnly,
-            PixelFormat.Format32bppArgb);
-
-        try
-        {
-            byte[] srcPixels = new byte[srcData.Stride * srcHeight];
-            byte[] dstPixels = new byte[dstData.Stride * srcHeight];
-            Marshal.Copy(srcData.Scan0, srcPixels, 0, srcPixels.Length);
-
-            for (int y = 0; y < srcHeight; y++)
+            for (int x = 0; x < srcWidth; x++)
             {
-                for (int x = 0; x < srcWidth; x++)
-                {
-                    int srcIdx = y * srcData.Stride + x * 4;
+                int srcIdx = y * stride + x * 4;
 
-                    int maskX = x * maskWidth / srcWidth;
-                    int maskY = y * maskHeight / srcHeight;
-                    int maskIdx = maskY * maskWidth + maskX;
+                int maskX = x * maskWidth / srcWidth;
+                int maskY = y * maskHeight / srcHeight;
+                int maskIdx = maskY * maskWidth + maskX;
 
-                    // Mask: 0 = background, 255 = foreground — invert for alpha
-                    byte alpha = (byte)(255 - maskPixels[maskIdx]);
-                    dstPixels[srcIdx + 0] = srcPixels[srcIdx + 0]; // B
-                    dstPixels[srcIdx + 1] = srcPixels[srcIdx + 1]; // G
-                    dstPixels[srcIdx + 2] = srcPixels[srcIdx + 2]; // R
-                    dstPixels[srcIdx + 3] = alpha;                  // A
-                }
+                // Mask: 0 = background, 255 = foreground — invert for alpha
+                byte alpha = (byte)(255 - maskPixels[maskIdx]);
+                dstPixels[srcIdx + 0] = srcPixels[srcIdx + 0]; // B
+                dstPixels[srcIdx + 1] = srcPixels[srcIdx + 1]; // G
+                dstPixels[srcIdx + 2] = srcPixels[srcIdx + 2]; // R
+                dstPixels[srcIdx + 3] = alpha;                  // A
             }
-
-            Marshal.Copy(dstPixels, 0, dstData.Scan0, dstPixels.Length);
-        }
-        finally
-        {
-            argbSource.UnlockBits(srcData);
-            result.UnlockBits(dstData);
         }
 
+        SKBitmap result = new(new SKImageInfo(srcWidth, srcHeight, SKColorType.Bgra8888, SKAlphaType.Unpremul));
+        Marshal.Copy(dstPixels, 0, result.GetPixels(), dstPixels.Length);
         return result;
     }
 
-    private static async Task<BitmapImage> ConvertBitmapToBitmapImageAsync(Bitmap bitmap)
+    private static async Task<BitmapImage> ConvertBitmapToBitmapImageAsync(SKBitmap bitmap)
     {
-        using MemoryStream ms = new();
-        bitmap.Save(ms, ImageFormat.Png);
-        ms.Position = 0;
-
-        BitmapImage bitmapImage = new();
-        using InMemoryRandomAccessStream stream = new();
-        await stream.WriteAsync(ms.ToArray().AsBuffer());
-        stream.Seek(0);
-        await bitmapImage.SetSourceAsync(stream);
-
-        return bitmapImage;
+        return await SkiaImaging.ToBitmapImageAsync(SkiaImaging.EncodePng(bitmap));
     }
 }

@@ -11,6 +11,7 @@ using Simple_QR_Code_Maker.Controls;
 using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
+using SkiaSharp;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -201,7 +202,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private IReadOnlyList<string> SafeRedirectorDomains = [];
     private QrContentKind currentContentKind = QrContentKind.PlainText;
     private MultiLineCodeMode? multiLineCodeModeOverride = null;
-    private readonly Dictionary<string, (System.Drawing.Bitmap? Logo, string? Svg)> _brandLogoCache = [];
+    private readonly Dictionary<string, (SKBitmap? Logo, string? Svg)> _brandLogoCache = [];
 
     [ObservableProperty]
     public partial bool ShowSaveBothButton { get; set; } = false;
@@ -286,7 +287,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     public bool CanUseTitleBarBack => ShowBackButton;
 
     [ObservableProperty]
-    public partial System.Drawing.Bitmap? LogoImage { get; set; } = null;
+    public partial SKBitmap? LogoImage { get; set; } = null;
 
     [ObservableProperty]
     public partial string? LogoSvgContent { get; set; } = null;
@@ -600,7 +601,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         _ = ApplyEmojiLogoAsync(SelectedEmojiOption, persistToDisk: true);
     }
 
-    partial void OnLogoImageChanged(System.Drawing.Bitmap? value)
+    partial void OnLogoImageChanged(SKBitmap? value)
     {
         if (!_isApplyingBrand)
             SelectedBrand = null;
@@ -641,7 +642,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             debounceTimer.Start();
     }
 
-    private async Task UpdateLogoPreviewImageAsync(System.Drawing.Bitmap? bitmap)
+    private async Task UpdateLogoPreviewImageAsync(SKBitmap? bitmap)
     {
         try
         {
@@ -982,13 +983,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     private async void OnSaveHistoryMessage(object recipient, SaveHistoryMessage message) => await SaveCurrentStateToHistory();
 
-    private void OnIgnoreAutoBrand(object recipient, IgnoreAutoBrandMessage message)
+    private async void OnIgnoreAutoBrand(object recipient, IgnoreAutoBrandMessage message)
     {
         int itemIndex = QrCodeBitmaps.IndexOf(message.Item);
         if (itemIndex < 0 || itemIndex >= requestedQrCodes.Count)
             return;
 
-        QrCodeBitmaps[itemIndex] = CreatePreviewItem(requestedQrCodes[itemIndex]);
+        QrCodeBitmaps[itemIndex] = await CreatePreviewItem(requestedQrCodes[itemIndex]);
     }
 
     private void OnRequestShowMessage(object recipient, RequestShowMessage rsm)
@@ -1198,13 +1199,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         for (int index = LoadedPreviewCount; index < targetCount; index++)
         {
             BrandItem? matchedBrand = null;
-            System.Drawing.Bitmap? brandLogo = null;
+            SKBitmap? brandLogo = null;
             string? brandLogoSvg = null;
 
             if (UseAutoBrands)
             {
                 matchedBrand = FindMatchingBrand(requestedQrCodes[index].CodeAsText);
-                if (matchedBrand is not null && _brandLogoCache.TryGetValue(matchedBrand.Name, out (System.Drawing.Bitmap? Logo, string? Svg) cachedLogo))
+                if (matchedBrand is not null && _brandLogoCache.TryGetValue(matchedBrand.Name, out (SKBitmap? Logo, string? Svg) cachedLogo))
                 {
                     brandLogo = cachedLogo.Logo;
                     brandLogoSvg = cachedLogo.Svg;
@@ -1215,7 +1216,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             // async void debounce handler) to the on-screen InfoBar so we can see what fails.
             try
             {
-                BarcodeImageItem previewItem = CreatePreviewItem(requestedQrCodes[index], matchedBrand, brandLogo, brandLogoSvg);
+                BarcodeImageItem previewItem = await CreatePreviewItem(requestedQrCodes[index], matchedBrand, brandLogo, brandLogoSvg);
                 QrCodeBitmaps.Add(previewItem);
             }
             catch (Exception ex)
@@ -1405,10 +1406,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         }
     }
 
-    private BarcodeImageItem CreatePreviewItem(
+    private async Task<BarcodeImageItem> CreatePreviewItem(
         RequestedQrCodeItem requestedCode,
         BrandItem? brandOverride = null,
-        System.Drawing.Bitmap? brandLogoOverride = null,
+        SKBitmap? brandLogoOverride = null,
         string? brandLogoSvgOverride = null)
     {
         Windows.UI.Color foreground = brandOverride?.Foreground ?? ForegroundColor;
@@ -1425,7 +1426,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
         bool brandHasLogo = brandOverride is not null
             && (brandOverride.LogoImagePath is not null || brandOverride.LogoEmoji is not null);
-        System.Drawing.Bitmap? logo = brandHasLogo ? brandLogoOverride : LogoImage;
+        SKBitmap? logo = brandHasLogo ? brandLogoOverride : LogoImage;
         string? logoSvg = brandHasLogo ? brandLogoSvgOverride : LogoSvgContent;
         double logoSize = brandOverride?.LogoSizePercentage ?? LogoSizePercentage;
         double logoPadding = brandOverride?.LogoPaddingPixels ?? LogoPaddingPixels;
@@ -1444,7 +1445,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             resolvedFrameText = ResolveFrameText(requestedCode);
         }
 
-        WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(
+        byte[] pngBytes = BarcodeHelpers.GetQrCodePngBytes(
             requestedCode.CodeAsText,
             errorCorrection.ErrorCorrectionLevel,
             foreground.ToSystemDrawingColor(),
@@ -1455,9 +1456,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             QrPaddingModules,
             framePreset,
             resolvedFrameText);
+        ImageSource bitmap = await SkiaImaging.ToBitmapImageAsync(pngBytes);
         BarcodeImageItem barcodeImageItem = new()
         {
             CodeAsBitmap = bitmap,
+            CodePngBytes = pngBytes,
             CodeAsText = requestedCode.CodeAsText,
             IsAppShowingUrlWarnings = WarnWhenNotUrl,
             SizeTextVisible = (HideMinimumSizeText
@@ -1873,7 +1876,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
             DataPackage dataPackage = new();
             dataPackage.SetStorageItems(files);
-            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+            ClipboardHelper.SetContent(dataPackage);
 
             ShowClipboardCopySuccessInfoBar(
                 requestedCodes.Length == 1
@@ -1916,7 +1919,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
             DataPackage dataPackage = new();
             dataPackage.SetStorageItems(files);
-            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+            ClipboardHelper.SetContent(dataPackage);
 
             ShowClipboardCopySuccessInfoBar(
                 requestedCodes.Length == 1
@@ -1958,7 +1961,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
             DataPackage dataPackage = new();
             dataPackage.SetText(string.Join(Environment.NewLine, textStrings));
-            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+            ClipboardHelper.SetContent(dataPackage);
 
             ShowClipboardCopySuccessInfoBar(
                 textStrings.Count == 1
@@ -1988,7 +1991,22 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         if (string.IsNullOrWhiteSpace(SavedFolderPath))
             return;
 
-        await Windows.System.Launcher.LaunchFolderPathAsync(SavedFolderPath);
+        if (RuntimeHelper.IsMSIX)
+        {
+            // LaunchFolderPathAsync is not implemented on the Uno desktop head.
+            await Windows.System.Launcher.LaunchFolderPathAsync(SavedFolderPath);
+        }
+        else
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo { FileName = SavedFolderPath, UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to open folder: {ex.Message}");
+            }
+        }
     }
 
     [RelayCommand]
@@ -2482,7 +2500,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
             DataPackage dataPackage = new();
             dataPackage.SetStorageItems(files);
-            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+            ClipboardHelper.SetContent(dataPackage);
 
             ShowClipboardCopySuccessInfoBar(
                 requestedCodes.Length == 1

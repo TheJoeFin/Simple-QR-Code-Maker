@@ -1,4 +1,4 @@
-using System.Drawing;
+using SkiaSharp;
 
 namespace Simple_QR_Code_Maker.Models;
 
@@ -11,13 +11,13 @@ public enum EmojiLogoSvgKind
 
 public sealed partial class EmojiLogoAsset : IDisposable
 {
-    public Bitmap PreviewBitmap { get; }
+    public SKBitmap PreviewBitmap { get; }
 
     public string? SvgContent { get; }
 
     public EmojiLogoSvgKind SvgKind { get; }
 
-    public EmojiLogoAsset(Bitmap previewBitmap, string? svgContent, EmojiLogoSvgKind svgKind)
+    public EmojiLogoAsset(SKBitmap previewBitmap, string? svgContent, EmojiLogoSvgKind svgKind)
     {
         PreviewBitmap = previewBitmap;
         SvgContent = svgContent;

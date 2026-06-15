@@ -2,16 +2,16 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 #endif
+using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Models;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
+using SkiaSharp;
 using System.Globalization;
+#if WINDOWS
 using System.Numerics;
-using System.Runtime.InteropServices;
+#endif
 using System.Security;
-using System.Text;
 using Windows.Storage.Streams;
+
 namespace Simple_QR_Code_Maker.Helpers;
 
 public static class EmojiLogoHelper
@@ -35,42 +35,55 @@ public static class EmojiLogoHelper
 
     public static async Task<EmojiLogoAsset> CreateEmojiLogoAssetAsync(string emoji, EmojiLogoStyle style, System.Drawing.Color monochromeColor, int pixelSize = 512)
     {
-        Bitmap previewBitmap = await RenderEmojiToBitmapAsync(emoji, style, monochromeColor, pixelSize);
+        SKBitmap previewBitmap = await RenderEmojiToBitmapAsync(emoji, style, monochromeColor, pixelSize);
         (string? svgContent, EmojiLogoSvgKind svgKind) = CreateSvgContent(emoji, style, monochromeColor);
         return new EmojiLogoAsset(previewBitmap, svgContent, svgKind);
     }
 
-    public static async Task<Bitmap> RenderEmojiToBitmapAsync(string emoji, EmojiLogoStyle style, System.Drawing.Color monochromeColor, int pixelSize = 512)
+    public static async Task<SKBitmap> RenderEmojiToBitmapAsync(string emoji, EmojiLogoStyle style, System.Drawing.Color monochromeColor, int pixelSize = 512)
     {
         if (string.IsNullOrWhiteSpace(emoji))
             throw new ArgumentException("Emoji cannot be empty.", nameof(emoji));
 
-        return await RenderEmojiWithWin2DAsync(emoji, style, monochromeColor, pixelSize);
+        return await RenderEmojiBitmapAsync(emoji, style, monochromeColor, pixelSize);
     }
 
 #if !WINDOWS
-    private static Task<Bitmap> RenderEmojiWithWin2DAsync(string emoji, EmojiLogoStyle style, System.Drawing.Color monochromeColor, int pixelSize)
+    private static Task<SKBitmap> RenderEmojiBitmapAsync(string emoji, EmojiLogoStyle style, System.Drawing.Color monochromeColor, int pixelSize)
     {
-        // Win2D isn't available outside the Windows App SDK; render the emoji glyph with GDI+ instead.
-        Bitmap bitmap = new(pixelSize, pixelSize, PixelFormat.Format32bppPArgb);
-        using Graphics graphics = Graphics.FromImage(bitmap);
-        graphics.Clear(System.Drawing.Color.Transparent);
-        graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-        graphics.SmoothingMode = SmoothingMode.HighQuality;
+        // Win2D isn't available outside the Windows App SDK; render the emoji glyph with SkiaSharp.
+        // SkiaSharp renders color-font glyphs (COLR/CBDT) automatically when the typeface is a color font.
+        SKBitmap bitmap = new(new SKImageInfo(pixelSize, pixelSize, SKColorType.Bgra8888, SKAlphaType.Premul));
+        using SKCanvas canvas = new(bitmap);
+        canvas.Clear(SKColors.Transparent);
 
-        using Font font = new(GetFontFamilyName(style), pixelSize * 0.7f, GraphicsUnit.Pixel);
-        using StringFormat stringFormat = new()
+        using SKTypeface typeface = ResolveEmojiTypeface(style, emoji);
+        float fontSize = pixelSize * 0.7f;
+        using SKFont font = new(typeface, fontSize);
+        using SKPaint paint = new()
         {
-            Alignment = StringAlignment.Center,
-            LineAlignment = StringAlignment.Center,
+            IsAntialias = true,
+            Color = style == EmojiLogoStyle.Monochrome ? monochromeColor.ToSkColor() : SKColors.Black,
         };
-        using SolidBrush brush = new(style == EmojiLogoStyle.Monochrome ? monochromeColor : System.Drawing.Color.Black);
-        graphics.DrawString(emoji, font, brush, new RectangleF(0, 0, pixelSize, pixelSize), stringFormat);
+
+        font.MeasureText(emoji, out SKRect bounds);
+        float x = (pixelSize / 2f) - bounds.MidX;
+        float y = (pixelSize / 2f) - bounds.MidY;
+        canvas.DrawText(emoji, x, y, SKTextAlign.Left, font, paint);
+        canvas.Flush();
 
         return Task.FromResult(bitmap);
     }
+
+    private static SKTypeface ResolveEmojiTypeface(EmojiLogoStyle style, string emoji)
+    {
+        int codepoint = emoji.Length > 0 ? char.ConvertToUtf32(emoji, 0) : 'a';
+        return SKFontManager.Default.MatchCharacter(GetFontFamilyName(style), codepoint)
+            ?? SKTypeface.FromFamilyName(GetFontFamilyName(style))
+            ?? SKTypeface.Default;
+    }
 #else
-    private static async Task<Bitmap> RenderEmojiWithWin2DAsync(string emoji, EmojiLogoStyle style, System.Drawing.Color monochromeColor, int pixelSize)
+    private static async Task<SKBitmap> RenderEmojiBitmapAsync(string emoji, EmojiLogoStyle style, System.Drawing.Color monochromeColor, int pixelSize)
     {
         CanvasDevice device = CanvasDevice.GetSharedDevice();
         float renderSize = pixelSize;
@@ -111,128 +124,9 @@ public static class EmojiLogoHelper
         using MemoryStream memoryStream = new();
         await randomAccessStream.AsStreamForRead().CopyToAsync(memoryStream);
         memoryStream.Position = 0;
-        using Bitmap bitmap = new(memoryStream);
-        return new Bitmap(bitmap);
+        return SKBitmap.Decode(memoryStream);
     }
 #endif
-
-    private static Bitmap NormalizeCapturedEmojiBitmap(Bitmap source, EmojiLogoStyle style, int targetSize, Rectangle contentBounds)
-    {
-        Bitmap normalizedSource = new(source.Width, source.Height, PixelFormat.Format32bppPArgb);
-
-        for (int y = 0; y < source.Height; y++)
-        {
-            for (int x = 0; x < source.Width; x++)
-            {
-                System.Drawing.Color sourcePixel = source.GetPixel(x, y);
-                int alpha = sourcePixel.A;
-
-                if (alpha == 0)
-                {
-                    normalizedSource.SetPixel(x, y, System.Drawing.Color.Transparent);
-                    continue;
-                }
-
-                System.Drawing.Color destinationPixel = style == EmojiLogoStyle.Monochrome
-                    ? System.Drawing.Color.FromArgb(alpha, 0, 0, 0)
-                    : System.Drawing.Color.FromArgb(alpha, sourcePixel.R, sourcePixel.G, sourcePixel.B);
-
-                normalizedSource.SetPixel(x, y, destinationPixel);
-            }
-        }
-
-        if (contentBounds.Width <= 0 || contentBounds.Height <= 0)
-            return normalizedSource;
-
-        Bitmap finalBitmap = new(targetSize, targetSize, PixelFormat.Format32bppPArgb);
-
-        using Graphics graphics = Graphics.FromImage(finalBitmap);
-        graphics.Clear(System.Drawing.Color.Transparent);
-        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-        graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-        graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-        graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-
-        float maxSize = targetSize * 0.84f;
-        float scale = Math.Min(maxSize / contentBounds.Width, maxSize / contentBounds.Height);
-        int destinationWidth = Math.Max(1, (int)Math.Round(contentBounds.Width * scale));
-        int destinationHeight = Math.Max(1, (int)Math.Round(contentBounds.Height * scale));
-        int destinationX = (targetSize - destinationWidth) / 2;
-        int destinationY = (targetSize - destinationHeight) / 2;
-
-        graphics.DrawImage(
-            normalizedSource,
-            new Rectangle(destinationX, destinationY, destinationWidth, destinationHeight),
-            contentBounds,
-            GraphicsUnit.Pixel);
-
-        normalizedSource.Dispose();
-        return finalBitmap;
-    }
-
-    private static bool IsLikelyIncompleteCapture(Rectangle contentBounds, int captureSize)
-    {
-        if (contentBounds.Width <= 0 || contentBounds.Height <= 0)
-            return true;
-
-        return contentBounds.Width < captureSize * 0.2
-            || contentBounds.Height < captureSize * 0.2;
-    }
-
-    private static Rectangle FindVisibleBounds(Bitmap bitmap)
-    {
-        int minX = bitmap.Width;
-        int minY = bitmap.Height;
-        int maxX = -1;
-        int maxY = -1;
-
-        for (int y = 0; y < bitmap.Height; y++)
-        {
-            for (int x = 0; x < bitmap.Width; x++)
-            {
-                if (bitmap.GetPixel(x, y).A <= 8)
-                    continue;
-
-                minX = Math.Min(minX, x);
-                minY = Math.Min(minY, y);
-                maxX = Math.Max(maxX, x);
-                maxY = Math.Max(maxY, y);
-            }
-        }
-
-        return maxX < minX || maxY < minY
-            ? Rectangle.Empty
-            : Rectangle.FromLTRB(minX, minY, maxX + 1, maxY + 1);
-    }
-
-    private static Bitmap CreateBitmapFromBgraPixels(byte[] pixels, int width, int height)
-    {
-        Bitmap bitmap = new(width, height, PixelFormat.Format32bppPArgb);
-        BitmapData bitmapData = bitmap.LockBits(
-            new Rectangle(0, 0, width, height),
-            ImageLockMode.WriteOnly,
-            PixelFormat.Format32bppPArgb);
-
-        try
-        {
-            int sourceStride = width * 4;
-
-            for (int row = 0; row < height; row++)
-            {
-                Marshal.Copy(
-                    pixels,
-                    row * sourceStride,
-                    IntPtr.Add(bitmapData.Scan0, row * bitmapData.Stride),
-                    sourceStride);
-            }
-        }
-        finally
-        {
-            bitmap.UnlockBits(bitmapData);
-        }
-
-        return bitmap;
-    }
 
     private static (string? SvgContent, EmojiLogoSvgKind SvgKind) CreateSvgContent(string emoji, EmojiLogoStyle style, System.Drawing.Color monochromeColor)
     {
@@ -251,36 +145,48 @@ public static class EmojiLogoHelper
         };
     }
 
-    private static string? TryCreateMonochromeSvgContent(string emoji, Color monochromeColor)
+    private static string? TryCreateMonochromeSvgContent(string emoji, System.Drawing.Color monochromeColor)
     {
-        using GraphicsPath glyphPath = new(FillMode.Winding);
-        using System.Drawing.FontFamily fontFamily = new(GetFontFamilyName(EmojiLogoStyle.Monochrome));
-        using StringFormat stringFormat = StringFormat.GenericTypographic;
+        using SKTypeface typeface = SKTypeface.FromFamilyName(GetFontFamilyName(EmojiLogoStyle.Monochrome)) ?? SKTypeface.Default;
+        using SKFont font = new(typeface, SvgViewportSize);
 
-        glyphPath.AddString(
-            emoji,
-            fontFamily,
-            (int)FontStyle.Regular,
-            SvgViewportSize,
-            new PointF(0, 0),
-            stringFormat);
+        ushort[] glyphs = font.GetGlyphs(emoji);
+        if (glyphs.Length == 0)
+            return null;
 
-        RectangleF bounds = glyphPath.GetBounds();
+        float[] widths = font.GetGlyphWidths(glyphs);
+        using SKPath glyphPath = new();
+        float xpos = 0;
+        for (int i = 0; i < glyphs.Length; i++)
+        {
+            using SKPath? gp = font.GetGlyphPath(glyphs[i]);
+            if (gp is not null && !gp.IsEmpty)
+            {
+                gp.Transform(SKMatrix.CreateTranslation(xpos, 0));
+                glyphPath.AddPath(gp);
+            }
 
+            if (i < widths.Length)
+                xpos += widths[i];
+        }
+
+        if (glyphPath.IsEmpty)
+            return null;
+
+        SKRect bounds = glyphPath.Bounds;
         if (bounds.Width <= 0 || bounds.Height <= 0)
             return null;
 
         float scale = Math.Min(SvgGlyphSize / bounds.Width, SvgGlyphSize / bounds.Height);
         float centerX = bounds.Left + (bounds.Width / 2f);
         float centerY = bounds.Top + (bounds.Height / 2f);
-        string fillRule = glyphPath.FillMode == FillMode.Alternate ? "evenodd" : "nonzero";
         string transform = string.Create(
             CultureInfo.InvariantCulture,
             $"translate({FormatSvgFloat(SvgViewportSize / 2f)} {FormatSvgFloat(SvgViewportSize / 2f)}) scale({FormatSvgFloat(scale)}) translate({FormatSvgFloat(-centerX)} {FormatSvgFloat(-centerY)})");
 
         return $"""
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {FormatSvgFloat(SvgViewportSize)} {FormatSvgFloat(SvgViewportSize)}" role="img" aria-label="{EscapeSvgText(emoji)}">
-  <path d="{ConvertGraphicsPathToSvgPath(glyphPath)}" fill="{ToSvgColor(monochromeColor)}" fill-rule="{fillRule}" transform="{transform}" />
+  <path d="{glyphPath.ToSvgPathData()}" fill="{ToSvgColor(monochromeColor)}" fill-rule="nonzero" transform="{transform}" />
 </svg>
 """;
     }
@@ -304,59 +210,6 @@ public static class EmojiLogoHelper
 """;
     }
 
-    private static string ConvertGraphicsPathToSvgPath(GraphicsPath path)
-    {
-        PointF[] points = path.PathPoints;
-        byte[] types = path.PathTypes;
-        StringBuilder pathBuilder = new();
-
-        int index = 0;
-        while (index < points.Length)
-        {
-            byte pointType = (byte)(types[index] & (byte)PathPointType.PathTypeMask);
-
-            switch (pointType)
-            {
-                case (byte)PathPointType.Start:
-                    AppendSvgCommand(pathBuilder, "M", points[index]);
-                    if ((types[index] & (byte)PathPointType.CloseSubpath) != 0)
-                        pathBuilder.Append(" Z");
-                    index++;
-                    break;
-                case (byte)PathPointType.Line:
-                    AppendSvgCommand(pathBuilder, "L", points[index]);
-                    if ((types[index] & (byte)PathPointType.CloseSubpath) != 0)
-                        pathBuilder.Append(" Z");
-                    index++;
-                    break;
-                case (byte)PathPointType.Bezier3:
-                    if (index + 2 >= points.Length)
-                    {
-                        index = points.Length;
-                        break;
-                    }
-
-                    pathBuilder.Append(CultureInfo.InvariantCulture, $" C {FormatSvgFloat(points[index].X)} {FormatSvgFloat(points[index].Y)} {FormatSvgFloat(points[index + 1].X)} {FormatSvgFloat(points[index + 1].Y)} {FormatSvgFloat(points[index + 2].X)} {FormatSvgFloat(points[index + 2].Y)}");
-
-                    if ((types[index + 2] & (byte)PathPointType.CloseSubpath) != 0)
-                        pathBuilder.Append(" Z");
-
-                    index += 3;
-                    break;
-                default:
-                    index++;
-                    break;
-            }
-        }
-
-        return pathBuilder.ToString().Trim();
-    }
-
-    private static void AppendSvgCommand(StringBuilder builder, string command, PointF point)
-    {
-        builder.Append(CultureInfo.InvariantCulture, $" {command} {FormatSvgFloat(point.X)} {FormatSvgFloat(point.Y)}");
-    }
-
     private static string EscapeSvgText(string value)
     {
         return SecurityElement.Escape(value) ?? value;
@@ -367,10 +220,12 @@ public static class EmojiLogoHelper
         return value.ToString("0.###", CultureInfo.InvariantCulture);
     }
 
+#if WINDOWS
     private static Windows.UI.Color ToWindowsColor(System.Drawing.Color color)
     {
         return Windows.UI.Color.FromArgb(color.A, color.R, color.G, color.B);
     }
+#endif
 
     private static string ToSvgColor(System.Drawing.Color color)
     {

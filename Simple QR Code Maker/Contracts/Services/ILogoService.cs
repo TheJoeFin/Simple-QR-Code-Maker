@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Models;
+using SkiaSharp;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -12,7 +13,7 @@ public interface ILogoService
 
     Task<LogoImageResult> CreateEmojiLogoAsync(string emoji, EmojiLogoStyle style, Windows.UI.Color foregroundColor);
 
-    Task<BitmapImage?> CreateBitmapImageAsync(System.Drawing.Bitmap? bitmap);
+    Task<BitmapImage?> CreateBitmapImageAsync(SKBitmap? bitmap);
 
     Task<BitmapImage> RenderEmojiPreviewAsync(string emoji, EmojiLogoStyle style, Windows.UI.Color foregroundColor, int pixelSize = 96);
 
@@ -20,7 +21,7 @@ public interface ILogoService
 
     Task<LogoImageResult> LoadRasterFromStreamAsync(IRandomAccessStreamWithContentType stream, string? logoPath);
 
-    Task<string?> SaveLogoImageToDiskAsync(System.Drawing.Bitmap? logoImage, string? logoSvgContent);
+    Task<string?> SaveLogoImageToDiskAsync(SKBitmap? logoImage, string? logoSvgContent);
 
     bool IsSupportedLogoFile(StorageFile file);
 

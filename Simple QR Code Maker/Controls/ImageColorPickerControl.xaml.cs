@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Helpers;
+using SkiaSharp;
 using System.Drawing;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage;
@@ -81,7 +82,7 @@ public sealed partial class ImageColorPickerControl : UserControl
     }
 
     // ── Private state ───────────────────────────────────────────────────────
-    private Bitmap? _bitmap;
+    private SKBitmap? _bitmap;
     private bool _imageLoaded;
     private int _loadRequestVersion;
     private string? _loadedImagePath;
@@ -280,8 +281,7 @@ public sealed partial class ImageColorPickerControl : UserControl
 
     private static PreparedImageData PrepareImageData(MagickImage magick)
     {
-        using Bitmap rawBitmap = ImageProcessingHelper.ConvertToBitmap(magick);
-        Bitmap bitmapCopy = new(rawBitmap);
+        SKBitmap bitmapCopy = ImageProcessingHelper.ConvertToBitmap(magick);
         using MemoryStream previewStream = new();
         magick.Write(previewStream, MagickFormat.Png);
 
@@ -344,8 +344,8 @@ public sealed partial class ImageColorPickerControl : UserControl
         System.Drawing.Point? pixel = CanvasToImagePixel(e.GetCurrentPoint(PointerOverlay).Position);
         if (!pixel.HasValue) return;
 
-        GdiColor gdi = _bitmap.GetPixel(pixel.Value.X, pixel.Value.Y);
-        Color = WinColor.FromArgb(gdi.A, gdi.R, gdi.G, gdi.B);
+        SKColor gdi = _bitmap.GetPixel(pixel.Value.X, pixel.Value.Y);
+        Color = WinColor.FromArgb(gdi.Alpha, gdi.Red, gdi.Green, gdi.Blue);
     }
 
     private void PointerOverlay_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -373,8 +373,8 @@ public sealed partial class ImageColorPickerControl : UserControl
         System.Drawing.Point? pixel = CanvasToImagePixel(pos);
         if (pixel.HasValue && _bitmap is not null)
         {
-            GdiColor gdi = _bitmap.GetPixel(pixel.Value.X, pixel.Value.Y);
-            WinColor preview = WinColor.FromArgb(gdi.A, gdi.R, gdi.G, gdi.B);
+            SKColor gdi = _bitmap.GetPixel(pixel.Value.X, pixel.Value.Y);
+            WinColor preview = WinColor.FromArgb(gdi.Alpha, gdi.Red, gdi.Green, gdi.Blue);
             ColorPreviewSwatch.Background = new SolidColorBrush(preview);
             ColorPreviewSwatch.Visibility = Visibility.Visible;
 
@@ -523,9 +523,9 @@ public sealed partial class ImageColorPickerControl : UserControl
             Color = color;
     }
 
-    private sealed class PreparedImageData(Bitmap bitmap, byte[] previewBytes, List<WinColor> dominantColors)
+    private sealed class PreparedImageData(SKBitmap bitmap, byte[] previewBytes, List<WinColor> dominantColors)
     {
-        public Bitmap Bitmap { get; } = bitmap;
+        public SKBitmap Bitmap { get; } = bitmap;
 
         public byte[] PreviewBytes { get; } = previewBytes;
 

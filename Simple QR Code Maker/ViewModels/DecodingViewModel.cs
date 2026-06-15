@@ -13,8 +13,8 @@ using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Controls;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
+using SkiaSharp;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
@@ -207,10 +207,10 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
         try
         {
-            Bitmap bitmap = ImageProcessingHelper.ConvertToBitmap(croppedImage);
+            SKBitmap bitmap = ImageProcessingHelper.ConvertToBitmap(croppedImage);
 
             string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}_cutout.png");
-            bitmap.Save(cachePath);
+            File.WriteAllBytes(cachePath, SkiaImaging.EncodePng(bitmap));
 
             Uri uri = new($"{cachePath}?tick={DateTimeOffset.Now.Ticks}");
             BitmapImage bitmapImage = new(uri) { CreateOptions = BitmapCreateOptions.IgnoreImageCache };
@@ -1033,10 +1033,10 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
         try
         {
-            Bitmap bitmap = ImageProcessingHelper.ConvertToBitmap(item.ProcessedMagickImage);
+            SKBitmap bitmap = ImageProcessingHelper.ConvertToBitmap(item.ProcessedMagickImage);
 
             string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}_processed.png");
-            bitmap.Save(cachePath);
+            File.WriteAllBytes(cachePath, SkiaImaging.EncodePng(bitmap));
 
             Uri uri = new($"{cachePath}?tick={DateTimeOffset.Now.Ticks}");
             BitmapImage processedBitmapImage = new(uri)
@@ -1471,10 +1471,10 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
         // Convert the oriented MagickImage to a Bitmap for ZXing decoding
         // so that ResultPoints are in the same coordinate space as the displayed image
-        Bitmap orientedBitmap = ImageProcessingHelper.ConvertToBitmap(magickImage);
+        SKBitmap orientedBitmap = ImageProcessingHelper.ConvertToBitmap(magickImage);
 
         string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}.png");
-        orientedBitmap.Save(cachePath);
+        File.WriteAllBytes(cachePath, SkiaImaging.EncodePng(orientedBitmap));
 
         Uri uri = new($"{cachePath}?tick={DateTimeOffset.Now.Ticks}");
         BitmapImage thisPickedImage = new(uri)
@@ -1554,10 +1554,10 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
                 // Convert the oriented MagickImage to a Bitmap for ZXing decoding
                 // so that ResultPoints are in the same coordinate space as the displayed image.
-                using Bitmap orientedBitmap = ImageProcessingHelper.ConvertToBitmap(magickImage);
+                using SKBitmap orientedBitmap = ImageProcessingHelper.ConvertToBitmap(magickImage);
 
                 string cachePath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $"{DateTimeOffset.Now.Ticks}.png");
-                orientedBitmap.Save(cachePath);
+                File.WriteAllBytes(cachePath, SkiaImaging.EncodePng(orientedBitmap));
 
                 List<(string, Result)> strings = [.. BarcodeHelpers.GetStringsFromBitmap(orientedBitmap)];
                 return (magickImage, cachePath, strings);
