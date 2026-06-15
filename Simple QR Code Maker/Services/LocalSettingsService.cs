@@ -5,7 +5,6 @@ using Simple_QR_Code_Maker.Core.Helpers;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Text.Json;
-using Windows.Storage;
 
 namespace Simple_QR_Code_Maker.Services;
 
@@ -62,7 +61,19 @@ public class LocalSettingsService : ILocalSettingsService
 
             if (_settings != null && _settings.TryGetValue(key, out object? obj))
             {
-                return await Json.ToObjectAsync<T>((string)obj);
+                // Settings are persisted as JSON strings, but System.Text.Json materializes the
+                // dictionary's object values as JsonElement when read back from disk (it is a string
+                // only for values written in the current session). Handle both.
+                string? json = obj switch
+                {
+                    null => null,
+                    string s => s,
+                    JsonElement { ValueKind: JsonValueKind.String } element => element.GetString(),
+                    JsonElement element => element.GetRawText(),
+                    _ => obj.ToString(),
+                };
+
+                return json is null ? default : await Json.ToObjectAsync<T>(json);
             }
         }
 

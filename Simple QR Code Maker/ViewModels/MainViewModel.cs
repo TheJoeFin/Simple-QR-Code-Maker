@@ -1211,8 +1211,22 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
                 }
             }
 
-            BarcodeImageItem previewItem = CreatePreviewItem(requestedQrCodes[index], matchedBrand, brandLogo, brandLogoSvg);
-            QrCodeBitmaps.Add(previewItem);
+            // TEMP DIAGNOSTIC: surface any generation exception (otherwise swallowed by the
+            // async void debounce handler) to the on-screen InfoBar so we can see what fails.
+            try
+            {
+                BarcodeImageItem previewItem = CreatePreviewItem(requestedQrCodes[index], matchedBrand, brandLogo, brandLogoSvg);
+                QrCodeBitmaps.Add(previewItem);
+            }
+            catch (Exception ex)
+            {
+                ShowCodeInfoBar = true;
+                CodeInfoBarSeverity = InfoBarSeverity.Error;
+                CodeInfoBarTitle = ex.GetType().FullName ?? "Exception";
+                CodeInfoBarMessage = $"{ex.Message}\n{ex.StackTrace}";
+                System.Diagnostics.Debug.WriteLine($"[QR PREVIEW EXCEPTION] {ex}");
+                return;
+            }
         }
 
         LoadedPreviewCount = targetCount;

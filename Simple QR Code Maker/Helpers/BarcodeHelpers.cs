@@ -4,7 +4,11 @@ using Simple_QR_Code_Maker.Models;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using SkiaSharp;
+using SkiaSharp.QrCode;
 using System.Globalization;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
 using Windows.Storage;
 using ZXing;
@@ -65,6 +69,13 @@ public static partial class BarcodeHelpers
 
     public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
     {
+        // The plain QR is rendered with SkiaSharp so the preview works on the Uno Skia head
+        // (no System.Drawing/GDI+, which is Windows-only). Logo and frame decoration still use the
+        // System.Drawing pipeline for now, so those paths remain functional on the Windows head.
+        bool hasDecoration = logoImage != null || framePreset != QrFramePreset.None;
+        if (!hasDecoration)
+            return CreateSkiaQrWriteableBitmap(text, correctionLevel, foreground, background, qrPaddingModules);
+
         using Bitmap bitmap = CreateQrCodeBitmap(
             text,
             correctionLevel,
@@ -77,14 +88,116 @@ public static partial class BarcodeHelpers
             framePreset,
             frameText,
             out _);
-        using MemoryStream ms = new();
-        bitmap.Save(ms, ImageFormat.Png);
 
-        WriteableBitmap bitmapImage = new(bitmap.Width, bitmap.Height);
-        ms.Position = 0;
-        bitmapImage.SetSource(ms.AsRandomAccessStream());
+        return CreateWriteableBitmapFromBitmap(bitmap);
+    }
 
-        return bitmapImage;
+    /// <summary>
+    /// Renders a plain QR code with SkiaSharp and copies the BGRA pixels into a WriteableBitmap.
+    /// Fully managed and cross-platform — works on the Uno Skia head where System.Drawing/GDI+ is
+    /// unavailable.
+    /// </summary>
+    private static WriteableBitmap CreateSkiaQrWriteableBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, double qrPaddingModules)
+    {
+        int normalizedMargin = NormalizeQrPaddingModules(qrPaddingModules);
+        // Reuse the existing ZXing sizing so module crispness matches the rest of the app.
+        QRCode zxingQr = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
+        int moduleCount = zxingQr.Version.DimensionForVersion;
+        int renderSize = GetQrRenderSize(moduleCount, normalizedMargin);
+
+        QRCodeData qrData = QRCodeGenerator.CreateQrCode(text, MapEccLevel(correctionLevel), quietZoneSize: normalizedMargin);
+
+        SKColor foregroundColor = new(foreground.R, foreground.G, foreground.B, foreground.A);
+        SKColor backgroundColor = new(background.R, background.G, background.B, background.A);
+
+        SKImageInfo info = new(renderSize, renderSize, SKColorType.Bgra8888, SKAlphaType.Premul);
+        using SKBitmap skBitmap = new(info);
+        using (SKCanvas canvas = new(skBitmap))
+        {
+            canvas.Render(
+                qrData,
+                renderSize,
+                renderSize,
+                clearColor: backgroundColor,
+                codeColor: foregroundColor,
+                backgroundColor: backgroundColor);
+            canvas.Flush();
+        }
+
+        // SKAlphaType.Premul + Bgra8888 matches WriteableBitmap's premultiplied BGRA PixelBuffer.
+        byte[] pixels = skBitmap.Bytes;
+        WriteableBitmap writeableBitmap = new(renderSize, renderSize);
+        using (Stream pixelStream = writeableBitmap.PixelBuffer.AsStream())
+        {
+            pixelStream.Write(pixels, 0, pixels.Length);
+        }
+        writeableBitmap.Invalidate();
+
+        return writeableBitmap;
+    }
+
+    private static ECCLevel MapEccLevel(ErrorCorrectionLevel correctionLevel) => correctionLevel.ToString() switch
+    {
+        "L" => ECCLevel.L,
+        "Q" => ECCLevel.Q,
+        "H" => ECCLevel.H,
+        _ => ECCLevel.M,
+    };
+
+    /// <summary>
+    /// Copies a System.Drawing bitmap into a WinUI/Uno <see cref="WriteableBitmap"/> by writing
+    /// BGRA pixels directly into the PixelBuffer. This avoids the synchronous SetSource and the
+    /// async stream-decode paths, both of which are unreliable on the Uno Skia head; the PixelBuffer
+    /// is the same surface <c>SavePngToStorageFile</c> reads back, so it is well supported everywhere.
+    /// </summary>
+    private static WriteableBitmap CreateWriteableBitmapFromBitmap(Bitmap source)
+    {
+        int width = source.Width;
+        int height = source.Height;
+
+        // Normalize to 32bpp ARGB (stored as B,G,R,A bytes on little-endian) so the byte layout
+        // matches WriteableBitmap's BGRA8 PixelBuffer regardless of the source pixel format.
+        using Bitmap argb = source.Clone(
+            new System.Drawing.Rectangle(0, 0, width, height),
+            PixelFormat.Format32bppArgb);
+
+        int rowBytes = width * 4;
+        byte[] pixels = new byte[rowBytes * height];
+
+        BitmapData data = argb.LockBits(
+            new System.Drawing.Rectangle(0, 0, width, height),
+            ImageLockMode.ReadOnly,
+            PixelFormat.Format32bppArgb);
+        try
+        {
+            // Copy row by row to respect a stride that may include padding.
+            for (int y = 0; y < height; y++)
+                Marshal.Copy(IntPtr.Add(data.Scan0, y * data.Stride), pixels, y * rowBytes, rowBytes);
+        }
+        finally
+        {
+            argb.UnlockBits(data);
+        }
+
+        // WriteableBitmap stores premultiplied BGRA; System.Drawing uses straight alpha.
+        for (int i = 0; i < pixels.Length; i += 4)
+        {
+            byte a = pixels[i + 3];
+            if (a == 255)
+                continue;
+            pixels[i] = (byte)(pixels[i] * a / 255);         // B
+            pixels[i + 1] = (byte)(pixels[i + 1] * a / 255); // G
+            pixels[i + 2] = (byte)(pixels[i + 2] * a / 255); // R
+        }
+
+        WriteableBitmap writeableBitmap = new(width, height);
+        using (Stream pixelStream = writeableBitmap.PixelBuffer.AsStream())
+        {
+            pixelStream.Write(pixels, 0, pixels.Length);
+        }
+        writeableBitmap.Invalidate();
+
+        return writeableBitmap;
     }
 
     public static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
