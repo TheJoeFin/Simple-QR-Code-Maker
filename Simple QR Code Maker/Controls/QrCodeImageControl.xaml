@@ -22,8 +22,6 @@
             Height="300"
             CanDrag="True"
             DragStarting="QrCodeImage_DragStarting"
-            Source="{x:Bind Data.CodeAsBitmap,
-                            Mode=OneWay}"
             ToolTipService.ToolTip="{x:Bind Data.ToolTipText,
                                             Mode=OneWay}">
             <Image.ContextFlyout>

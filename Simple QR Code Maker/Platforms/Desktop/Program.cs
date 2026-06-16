@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Uno.UI.Hosting;
 
 namespace Simple_QR_Code_Maker.Platforms.Desktop;
@@ -5,7 +6,7 @@ namespace Simple_QR_Code_Maker.Platforms.Desktop;
 internal class Program
 {
     [STAThread]
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         UnoPlatformHost host = UnoPlatformHostBuilder.Create()
             .App(() => new App())
@@ -14,6 +15,6 @@ internal class Program
             .UseMacOS()
             .Build();
 
-        host.Run();
+        await host.RunAsync();
     }
 }

@@ -70,6 +70,18 @@ public static partial class BarcodeHelpers
         return SkiaImaging.EncodePng(bitmap);
     }
 
+    /// <summary>
+    /// Renders the full QR code (with optional logo and frame) to an SKBitmap. The caller owns
+    /// the returned bitmap and must dispose it. Use this when both a display image and PNG bytes
+    /// are needed so the code is only rasterized once.
+    /// </summary>
+    public static SKBitmap CreateQrCodeBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, SKBitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
+    {
+        return CreateQrCodeSkBitmap(
+            text, correctionLevel, foreground, background, logoImage,
+            logoSizePercentage, logoPaddingPixels, qrPaddingModules, framePreset, frameText, out _);
+    }
+
     private static ECCLevel MapEccLevel(ErrorCorrectionLevel correctionLevel) => correctionLevel.ToString() switch
     {
         "L" => ECCLevel.L,

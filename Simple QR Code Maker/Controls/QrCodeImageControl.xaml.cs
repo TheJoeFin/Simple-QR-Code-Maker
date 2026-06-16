@@ -19,11 +19,52 @@ public sealed partial class QrCodeImageControl : UserControl
     }
 
     public static readonly DependencyProperty DataProperty =
-        DependencyProperty.Register("Data", typeof(BarcodeImageItem), typeof(QrCodeImageControl), new PropertyMetadata(null));
+        DependencyProperty.Register(nameof(Data), typeof(BarcodeImageItem), typeof(QrCodeImageControl), new PropertyMetadata(null, OnDataChanged));
 
     public QrCodeImageControl()
     {
         InitializeComponent();
+    }
+
+    // Assign the preview image from code-behind rather than via x:Bind. Binding the Image.Source
+    // through the Data DependencyProperty to the non-observable CodeAsBitmap leaf does not reliably
+    // re-evaluate on the Uno Skia head, leaving the preview blank even though the bitmap is valid.
+    private static void OnDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not QrCodeImageControl control)
+            return;
+
+        ImageSource? source = (e.NewValue as BarcodeImageItem)?.CodeAsBitmap;
+        control.QrCodeImage.Source = source;
+
+        // Diagnostics: surface whether the file-backed BitmapImage actually loads on the Skia head.
+        // Logged to a file (the Debug output isn't visible in all run configurations).
+        if (source is BitmapImage bitmapImage)
+        {
+            DiagLog($"OnDataChanged source set, UriSource={bitmapImage.UriSource}");
+            bitmapImage.ImageOpened += (s, _) =>
+                DiagLog($"ImageOpened {(s as BitmapImage)?.UriSource}");
+            bitmapImage.ImageFailed += (s, args) =>
+                DiagLog($"ImageFailed {(s as BitmapImage)?.UriSource}: {args.ErrorMessage}");
+        }
+        else
+        {
+            DiagLog($"OnDataChanged source is not a BitmapImage: {source?.GetType().FullName ?? "null"}");
+        }
+    }
+
+    private static void DiagLog(string message)
+    {
+        System.Diagnostics.Debug.WriteLine($"[QR PREVIEW] {message}");
+        try
+        {
+            string path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "qr-preview-log.txt");
+            System.IO.File.AppendAllText(path, $"{DateTime.Now:HH:mm:ss.fff} {message}{Environment.NewLine}");
+        }
+        catch
+        {
+            // best-effort diagnostics only
+        }
     }
 
     private Visibility BoolToVisibility(bool value) =>

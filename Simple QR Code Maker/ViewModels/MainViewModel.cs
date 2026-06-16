@@ -983,13 +983,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     private async void OnSaveHistoryMessage(object recipient, SaveHistoryMessage message) => await SaveCurrentStateToHistory();
 
-    private async void OnIgnoreAutoBrand(object recipient, IgnoreAutoBrandMessage message)
+    private void OnIgnoreAutoBrand(object recipient, IgnoreAutoBrandMessage message)
     {
         int itemIndex = QrCodeBitmaps.IndexOf(message.Item);
         if (itemIndex < 0 || itemIndex >= requestedQrCodes.Count)
             return;
 
-        QrCodeBitmaps[itemIndex] = await CreatePreviewItem(requestedQrCodes[itemIndex]);
+        QrCodeBitmaps[itemIndex] = CreatePreviewItem(requestedQrCodes[itemIndex]);
     }
 
     private void OnRequestShowMessage(object recipient, RequestShowMessage rsm)
@@ -1125,6 +1125,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private void ResetRequestedCodeState()
     {
         QrCodeBitmaps.Clear();
+        ClearPreviewCache();
         requestedQrCodes.Clear();
         RequestedCodeCount = 0;
         LoadedPreviewCount = 0;
@@ -1216,7 +1217,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             // async void debounce handler) to the on-screen InfoBar so we can see what fails.
             try
             {
-                BarcodeImageItem previewItem = await CreatePreviewItem(requestedQrCodes[index], matchedBrand, brandLogo, brandLogoSvg);
+                BarcodeImageItem previewItem = CreatePreviewItem(requestedQrCodes[index], matchedBrand, brandLogo, brandLogoSvg);
                 QrCodeBitmaps.Add(previewItem);
             }
             catch (Exception ex)
@@ -1406,7 +1407,46 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         }
     }
 
-    private async Task<BarcodeImageItem> CreatePreviewItem(
+    private const string PreviewCacheFolderName = "PreviewCache";
+
+    // Writes the rendered QR PNG to a file and returns a BitmapImage bound to it. A file-backed
+    // UriSource is the only image source that displays reliably on the Uno Skia head. Files use
+    // unique names and live in a dedicated cache folder that is purged on each new generation
+    // (see ClearPreviewCache), so stale images are never shown and the folder cannot grow forever.
+    private static ImageSource CreatePreviewImageSource(byte[] pngBytes)
+    {
+        string previewDir = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, PreviewCacheFolderName);
+        System.IO.Directory.CreateDirectory(previewDir);
+        string fileName = $"{Guid.NewGuid():N}.png";
+        string filePath = System.IO.Path.Combine(previewDir, fileName);
+        System.IO.File.WriteAllBytes(filePath, pngBytes);
+
+        // Reference the file via the ms-appdata:/// scheme, not a raw file:// path. On the Uno
+        // Skia desktop head, BitmapImage reliably resolves ms-appdata:///local/... but raw
+        // filesystem paths fail to load and render blank. LocalFolder maps to ms-appdata:///local/.
+        return new BitmapImage
+        {
+            UriSource = new Uri($"ms-appdata:///local/{PreviewCacheFolderName}/{fileName}"),
+            CreateOptions = BitmapCreateOptions.IgnoreImageCache,
+        };
+    }
+
+    private static void ClearPreviewCache()
+    {
+        try
+        {
+            string previewDir = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, PreviewCacheFolderName);
+            if (System.IO.Directory.Exists(previewDir))
+                System.IO.Directory.Delete(previewDir, recursive: true);
+        }
+        catch
+        {
+            // Files may still be loading into a discarded BitmapImage; ignore and let the next
+            // generation's unique file names avoid any collision.
+        }
+    }
+
+    private BarcodeImageItem CreatePreviewItem(
         RequestedQrCodeItem requestedCode,
         BrandItem? brandOverride = null,
         SKBitmap? brandLogoOverride = null,
@@ -1445,7 +1485,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             resolvedFrameText = ResolveFrameText(requestedCode);
         }
 
-        byte[] pngBytes = BarcodeHelpers.GetQrCodePngBytes(
+        using SKBitmap qrBitmap = BarcodeHelpers.CreateQrCodeBitmap(
             requestedCode.CodeAsText,
             errorCorrection.ErrorCorrectionLevel,
             foreground.ToSystemDrawingColor(),
@@ -1456,7 +1496,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             QrPaddingModules,
             framePreset,
             resolvedFrameText);
-        ImageSource bitmap = await SkiaImaging.ToBitmapImageAsync(pngBytes);
+        byte[] pngBytes = SkiaImaging.EncodePng(qrBitmap);
+        // Display via a file-backed BitmapImage (UriSource). On the Uno Skia head neither
+        // BitmapImage.SetSourceAsync from an in-memory stream nor a WriteableBitmap pixel-copy
+        // renders reliably, but a BitmapImage pointed at a file on disk does.
+        ImageSource bitmap = CreatePreviewImageSource(pngBytes);
         BarcodeImageItem barcodeImageItem = new()
         {
             CodeAsBitmap = bitmap,
