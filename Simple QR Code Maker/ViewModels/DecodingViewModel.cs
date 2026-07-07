@@ -1202,8 +1202,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             SuggestedStartLocation = PickerLocationId.PicturesLibrary,
         };
 
-        Window window = new();
-        IntPtr windowHandle = WindowNative.GetWindowHandle(window);
+        IntPtr windowHandle = WindowNative.GetWindowHandle(App.MainWindow);
         InitializeWithWindow.Initialize(folderPicker, windowHandle);
 
         StorageFolder? folder = await folderPicker.PickSingleFolderAsync();
