@@ -1596,6 +1596,23 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     }
 
     [RelayCommand]
+    private async Task RemoveDecodingHistoryItem(DecodingHistoryItem item)
+    {
+        if (item is null)
+            return;
+
+        if (!string.IsNullOrEmpty(item.SavedImagePath) && File.Exists(item.SavedImagePath))
+        {
+            try { File.Delete(item.SavedImagePath); }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Could not delete decoding history image: {ex.Message}"); }
+        }
+
+        DecodingHistoryItems.Remove(item);
+        await DecodingHistoryStorageHelper.SaveHistoryAsync(DecodingHistoryItems);
+        OnPropertyChanged(nameof(HasDecodingHistory));
+    }
+
+    [RelayCommand]
     private async Task OpenCurrentSourceFile()
     {
         if (!CanOpenCurrentSourceFile || string.IsNullOrEmpty(currentSourceFilePath))

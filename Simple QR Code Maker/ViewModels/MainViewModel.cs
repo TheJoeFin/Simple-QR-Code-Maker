@@ -2887,6 +2887,16 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         await historyService.AddOrReplaceAndSaveAsync(HistoryItems, historyItem);
     }
 
+    [RelayCommand]
+    private async Task RemoveHistoryItem(HistoryItem historyItem)
+    {
+        if (historyItem is null)
+            return;
+
+        HistoryItems.Remove(historyItem);
+        await historyService.SaveAsync(HistoryItems);
+    }
+
     private QrCodeDesignState CreateCurrentDesignState(string? logoImagePath = null)
     {
         return new QrCodeDesignState

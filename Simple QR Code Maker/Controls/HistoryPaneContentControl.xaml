@@ -61,7 +61,17 @@
                                 Mode=OneWay}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:HistoryItem">
-                    <local:HistoryRowItem Data="{x:Bind}" />
+                    <local:HistoryRowItem Data="{x:Bind}">
+                        <local:HistoryRowItem.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Click="RemoveHistoryItem_Click" Text="Remove">
+                                    <MenuFlyoutItem.Icon>
+                                        <SymbolIcon Symbol="Delete" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                            </MenuFlyout>
+                        </local:HistoryRowItem.ContextFlyout>
+                    </local:HistoryRowItem>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
