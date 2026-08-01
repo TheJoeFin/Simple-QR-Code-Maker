@@ -44,6 +44,15 @@ public sealed partial class MainPage : Page
         UpdateFramePresetRadioButtons();
         HookScrollToCodesEvents();
         UpdateScrollToCodesButton();
+        UpdateHistoryButtonTeachingTipTarget();
+    }
+
+    // The History button now lives in ShellPage's horizontal top nav, so the
+    // teaching tip's target must be resolved from the shell instead of this page.
+    private void UpdateHistoryButtonTeachingTipTarget()
+    {
+        if (App.MainWindow.Content is ShellPage shellPage)
+            HistoryButtonTeachingTip.Target = shellPage.HistoryNavItem;
     }
 
     private void Page_Unloaded(object sender, RoutedEventArgs e)

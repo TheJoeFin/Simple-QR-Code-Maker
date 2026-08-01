@@ -512,7 +512,7 @@
                             Closed="HistoryButtonTeachingTip_Closed"
                             IsOpen="{x:Bind ViewModel.ShowHistoryButtonTeachingTip,
                                             Mode=OneWay}"
-                            PreferredPlacement="Auto"
+                            PreferredPlacement="Bottom"
                             Subtitle="Previously generated QR codes are saved here. Tap History in the toolbar to restore a previous code." />
 
                         <TeachingTip

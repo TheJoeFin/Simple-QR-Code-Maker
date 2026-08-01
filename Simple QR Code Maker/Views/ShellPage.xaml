@@ -66,6 +66,7 @@
                 </NavigationViewItem>
                 <NavigationViewItem
                     x:Name="HistoryNavItem"
+                    x:FieldModifier="public"
                     SelectsOnInvoked="False"
                     Tag="History"
                     ToolTipService.ToolTip="History of previously generated QR Codes">
