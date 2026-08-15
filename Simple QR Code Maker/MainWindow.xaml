@@ -6,7 +6,9 @@
     xmlns:local="using:Simple_QR_Code_Maker"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:windowex="using:WinUIEx"
+    Width="980"
+    Height="820"
     MinWidth="500"
-    MinHeight="500"
+    MinHeight="620"
     PersistenceId="MainWindow"
     mc:Ignorable="d" />
