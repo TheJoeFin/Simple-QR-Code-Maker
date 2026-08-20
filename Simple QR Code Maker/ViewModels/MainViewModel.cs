@@ -254,6 +254,16 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     public partial bool ShowBrandUrlWarningTip { get; set; } = false;
 
     [ObservableProperty]
+    public partial bool ShowChangelog { get; set; } = false;
+
+    /// <summary>
+    /// The version recorded on the previous run, or null on a first run. Stays at the previous
+    /// version for the whole session so a changelog can show what changed since it.
+    /// </summary>
+    [ObservableProperty]
+    public partial string? LastRunVersion { get; set; } = null;
+
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowMarkRedirectorSafeAction))]
     [NotifyPropertyChangedFor(nameof(ShowRedirectorSettingsAction))]
     public partial bool ShowCodeInfoBar { get; set; } = false;
@@ -1348,6 +1358,33 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         ShowBrandUrlWarningTip = false;
         HasSeenBrandUrlWarningTip = true;
         await LocalSettingsService.SaveSettingAsync(nameof(HasSeenBrandUrlWarningTip), true);
+    }
+
+    private async Task LoadLastRunVersionAsync()
+    {
+        LastRunVersion = await LocalSettingsService.ReadSettingAsync<string>(nameof(LastRunVersion));
+
+        if (LastRunVersion is null)
+        {
+            // First run, or an upgrade from a build before version tracking existed. There is no
+            // changelog to dismiss, so seed the setting now instead of waiting for a dismissal
+            // that will never come and leaving the next update undetectable.
+            await LocalSettingsService.SaveSettingAsync(nameof(LastRunVersion), AppVersionHelper.GetCurrentVersionString());
+            return;
+        }
+
+        ShowChangelog = LastRunVersion != AppVersionHelper.GetCurrentVersionString();
+    }
+
+    /// <summary>
+    /// Records the running version once the user has actually seen the changelog. Deferring the
+    /// write means a crash before dismissal leaves the changelog pending for the next launch.
+    /// </summary>
+    [RelayCommand]
+    private async Task DismissChangelog()
+    {
+        ShowChangelog = false;
+        await LocalSettingsService.SaveSettingAsync(nameof(LastRunVersion), AppVersionHelper.GetCurrentVersionString());
     }
 
     private async Task PreloadBrandLogosAsync()
@@ -2742,6 +2779,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             await LocalSettingsService.ReadSettingAsync<double?>(nameof(QrPaddingModules)) ?? 2.0);
         AppLaunchCount = (await LocalSettingsService.ReadSettingAsync<int?>(nameof(AppLaunchCount)) ?? 0) + 1;
         await LocalSettingsService.SaveSettingAsync(nameof(AppLaunchCount), AppLaunchCount);
+        await LoadLastRunVersionAsync();
         HasUsedAddButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasUsedAddButton));
         ShowAddButtonTeachingTip = AppLaunchCount >= 3 && !HasUsedAddButton;
         HasUsedHistoryButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasUsedHistoryButton));

@@ -11,11 +11,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO.Compression;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Windows.Input;
-using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -557,22 +555,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     }
 
     private static string GetVersionDescription()
-    {
-        Version version;
-
-        if (RuntimeHelper.IsMSIX)
-        {
-            PackageVersion packageVersion = Package.Current.Id.Version;
-
-            version = new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
-        }
-        else
-        {
-            version = Assembly.GetExecutingAssembly().GetName().Version!;
-        }
-
-        return $"{"AppDisplayName".GetLocalized()} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
-    }
+        => $"{"AppDisplayName".GetLocalized()} - {AppVersionHelper.GetCurrentVersionString()}";
 
     [RelayCommand]
     private void GoToMoreInfo()
