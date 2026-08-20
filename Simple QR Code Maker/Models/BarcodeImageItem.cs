@@ -51,7 +51,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public bool IsAutoBranded { get; set; } = false;
 
-    public QRCode QRCodeDetails => Encoder.encode(CodeAsText, ErrorCorrection);
+    public QRCode QRCodeDetails => BarcodeHelpers.EncodeQrCode(CodeAsText, ErrorCorrection);
 
     private QrCodeSizeRecommendation SizeRecommendation => BarcodeHelpers.GetSizeRecommendation(32 * MaxSizeScaleFactor, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor, QrPaddingModules);
 

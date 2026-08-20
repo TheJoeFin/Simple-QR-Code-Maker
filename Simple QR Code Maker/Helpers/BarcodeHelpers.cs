@@ -20,6 +20,52 @@ public static partial class BarcodeHelpers
 {
     private const int MaxQrRenderSize = 1024;
 
+    private const string Utf8CharacterSet = "UTF-8";
+
+    /// <summary>
+    /// ZXing encodes byte-mode content as ISO-8859-1 unless told otherwise, which silently replaces
+    /// every character outside Latin-1 (Cyrillic, Greek, CJK, emoji, ...) with '?'. Text that fits in
+    /// ISO-8859-1 keeps the default so those codes stay byte-for-byte what they have always been.
+    /// </summary>
+    private static bool NeedsUtf8Encoding(string text)
+    {
+        foreach (char character in text)
+        {
+            // 0x00FF is the last code point ISO-8859-1 can represent
+            if (character > 'ÿ')
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Adds the UTF-8 character set hint when the text requires it. ZXing also writes an ECI header
+    /// declaring the character set so readers know how to interpret the bytes.
+    /// </summary>
+    private static void ApplyCharacterSetHint(EncodingOptions encodingOptions, string text)
+    {
+        if (NeedsUtf8Encoding(text))
+            encodingOptions.Hints[EncodeHintType.CHARACTER_SET] = Utf8CharacterSet;
+    }
+
+    /// <summary>
+    /// Encodes the text the same way the barcode writers do, so version and module counts derived from
+    /// this match the rendered code.
+    /// </summary>
+    internal static QRCode EncodeQrCode(string text, ErrorCorrectionLevel correctionLevel)
+    {
+        if (!NeedsUtf8Encoding(text))
+            return ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
+
+        Dictionary<EncodeHintType, object> hints = new()
+        {
+            { EncodeHintType.CHARACTER_SET, Utf8CharacterSet }
+        };
+
+        return ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel, hints);
+    }
+
     /// <summary>
     /// Calculate the maximum safe logo size percentage based on QR code error correction level and version
     /// </summary>
@@ -129,7 +175,7 @@ public static partial class BarcodeHelpers
         QrFramePreset framePreset = QrFramePreset.None)
     {
         int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
-        QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
+        QRCode qrCode = EncodeQrCode(text, correctionLevel);
         int moduleCount = qrCode.Version.DimensionForVersion;
         int renderSize = GetQrRenderSize(moduleCount, normalizedQrPaddingModules);
         return GetQrImageLayoutMetrics(renderSize, framePreset);
@@ -220,7 +266,7 @@ public static partial class BarcodeHelpers
         // nothing (transparent brush = SourceOver no-op) and the bitmap initializes to black, making
         // foreground and background pixels indistinguishable. ApplyAlphaToQrBitmap handles alpha.
         int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
-        QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
+        QRCode qrCode = EncodeQrCode(text, correctionLevel);
         int moduleCount = qrCode.Version.DimensionForVersion;
         qrRenderSize = GetQrRenderSize(moduleCount, normalizedQrPaddingModules);
 
@@ -243,6 +289,7 @@ public static partial class BarcodeHelpers
             Margin = normalizedQrPaddingModules,
         };
         encodingOptions.Hints.Add(EncodeHintType.ERROR_CORRECTION, correctionLevel);
+        ApplyCharacterSetHint(encodingOptions, text);
         barcodeWriter.Options = encodingOptions;
 
         Bitmap rawBitmap = barcodeWriter.Write(text);
@@ -767,7 +814,7 @@ public static partial class BarcodeHelpers
     public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
     {
         int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
-        QRCode qrCode = ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
+        QRCode qrCode = EncodeQrCode(text, correctionLevel);
         int moduleCount = qrCode.Version.DimensionForVersion;
         int renderSize = GetQrRenderSize(moduleCount, normalizedQrPaddingModules);
 
@@ -790,6 +837,7 @@ public static partial class BarcodeHelpers
             Margin = normalizedQrPaddingModules,
         };
         encodingOptions.Hints.Add(EncodeHintType.ERROR_CORRECTION, correctionLevel);
+        ApplyCharacterSetHint(encodingOptions, text);
         barcodeWriter.Options = encodingOptions;
 
         SvgImage svg = barcodeWriter.Write(text);

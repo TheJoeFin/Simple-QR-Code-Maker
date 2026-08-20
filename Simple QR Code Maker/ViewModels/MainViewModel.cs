@@ -1074,7 +1074,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         {
             try
             {
-                _ = Encoder.encode(text, SelectedOption.ErrorCorrectionLevel);
+                _ = BarcodeHelpers.EncodeQrCode(text, SelectedOption.ErrorCorrectionLevel);
                 requestedQrCodes.Add(new RequestedQrCodeItem(text, currentContentKind, multiLineCodeModeOverride));
             }
             catch (ZXing.WriterException)
