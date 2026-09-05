@@ -27,7 +27,6 @@ public sealed partial class MainPage : Page
     private bool _didSetCaretToEnd = false;
     private bool _isScrollToCodesEventsHooked = false;
 
-    private readonly string appStoreUrl = "https://apps.microsoft.com/detail/9nch56g3rqfc";
 
     public MainPage()
     {
@@ -45,6 +44,15 @@ public sealed partial class MainPage : Page
         UpdateFramePresetRadioButtons();
         HookScrollToCodesEvents();
         UpdateScrollToCodesButton();
+        UpdateHistoryButtonTeachingTipTarget();
+    }
+
+    // The History button now lives in ShellPage's horizontal top nav, so the
+    // teaching tip's target must be resolved from the shell instead of this page.
+    private void UpdateHistoryButtonTeachingTipTarget()
+    {
+        if (App.MainWindow.Content is ShellPage shellPage)
+            HistoryButtonTeachingTip.Target = shellPage.HistoryNavItem;
     }
 
     private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -67,18 +75,6 @@ public sealed partial class MainPage : Page
     private void QrCodeInputRow_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         UpdateUrlInputLayout();
-    }
-
-    private void CopyLinkButton_Click(object sender, RoutedEventArgs e)
-    {
-        DataPackage dataPackage = new();
-        dataPackage.SetText(appStoreUrl);
-        Clipboard.SetContent(dataPackage);
-    }
-
-    private async void VisitLinkButton_Click(object sender, RoutedEventArgs e)
-    {
-        _ = await Windows.System.Launcher.LaunchUriAsync(new Uri(appStoreUrl));
     }
 
     private void ErrorCorrectionItem_Click(object sender, RoutedEventArgs e)
@@ -343,11 +339,6 @@ public sealed partial class MainPage : Page
     private void AddButtonTeachingTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
     {
         ViewModel.MarkAddButtonUsedCommand.Execute(null);
-    }
-
-    private void HistoryButton_Click(object sender, RoutedEventArgs e)
-    {
-        ViewModel.MarkHistoryButtonUsedCommand.Execute(null);
     }
 
     private void HistoryButtonTeachingTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)

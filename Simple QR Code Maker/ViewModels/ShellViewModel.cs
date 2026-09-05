@@ -27,6 +27,9 @@ public partial class ShellViewModel : ObservableRecipient
 
     [ObservableProperty]
     public partial object? Selected { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsShareOpen { get; set; }
     public ObservableCollection<TitleBarSearchResult> TitleBarSearchResults { get; } = [];
 
     [RelayCommand]
@@ -190,7 +193,7 @@ public partial class ShellViewModel : ObservableRecipient
     private static object WrapMainNavigationParameter(object parameter, object? currentPageViewModel)
     {
         if (currentPageViewModel is INavigationStateProvider navigationStateProvider
-            && currentPageViewModel is not MainViewModel)
+            and not MainViewModel)
         {
             return new MainNavigationParameter
             {

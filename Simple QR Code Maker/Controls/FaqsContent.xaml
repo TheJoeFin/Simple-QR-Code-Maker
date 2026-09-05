@@ -35,8 +35,7 @@
             Margin="20,0"
             PlaceholderText="Search for content in the FAQs..."
             QueryIcon="Find"
-            Text="{x:Bind ViewModel.SearchText,
-                          Mode=TwoWay}" />
+            Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}" />
         <Grid Grid.Row="2">
             <TextBlock
                 HorizontalAlignment="Center"
@@ -46,9 +45,7 @@
                 Text="No FAQs match the search, try a different term, or send an email"
                 TextAlignment="Center"
                 TextWrapping="Wrap"
-                Visibility="{x:Bind ViewModel.FaqItems.Count,
-                                    Converter={StaticResource EmptyCollectionToVisibility},
-                                    Mode=OneWay}" />
+                Visibility="{x:Bind ViewModel.FaqItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, Mode=OneWay}" />
             <ScrollViewer Name="FaqScroller" Visibility="{x:Bind ViewModel.FaqItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
                 <ItemsRepeater Margin="20,0" ItemsSource="{x:Bind ViewModel.FaqItems, Mode=OneWay}">
                     <ItemsRepeater.ItemTemplate>
@@ -57,24 +54,19 @@
                                 <TextBlock
                                     IsTextSelectionEnabled="True"
                                     Style="{StaticResource SubtitleTextBlockStyle}"
-                                    Text="{x:Bind Title,
-                                                  Mode=OneTime}"
+                                    Text="{x:Bind Title, Mode=OneTime}"
                                     TextWrapping="WrapWholeWords" />
                                 <TextBlock
                                     IsTextSelectionEnabled="True"
-                                    Text="{x:Bind Content,
-                                                  Mode=OneTime}"
+                                    Text="{x:Bind Content, Mode=OneTime}"
                                     TextWrapping="WrapWholeWords" />
                                 <HyperlinkButton
                                     Margin="0,8,0,0"
                                     Padding="0"
                                     Click="FaqActionButton_Click"
-                                    Content="{x:Bind ActionText,
-                                                     Mode=OneWay}"
+                                    Content="{x:Bind ActionText, Mode=OneTime}"
                                     Tag="{x:Bind}"
-                                    Visibility="{x:Bind ActionText,
-                                                        Converter={StaticResource NullToVisibility},
-                                                        Mode=OneWay}" />
+                                    Visibility="{x:Bind ActionText, Converter={StaticResource NullToVisibility}, Mode=OneTime}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>

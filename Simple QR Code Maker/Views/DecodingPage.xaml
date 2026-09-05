@@ -645,42 +645,18 @@
 
                                         </Grid>
 
-                                        <!--  FAQ toggle button (top left)  -->
-                                        <StackPanel
+                                        <!--  Images panel toggle button (top left)  -->
+                                        <AppBarButton
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Top"
-                                            Orientation="Vertical"
-                                            Spacing="-20">
-                                            <AppBarButton
-                                                Command="{x:Bind ViewModel.ToggleFaqPaneOpenCommand}"
-                                                IsCompact="True"
-                                                ToolTipService.ToolTip="Frequently Asked Questions about QR Codes">
-                                                <SymbolIcon Symbol="Library" />
-                                            </AppBarButton>
-                                            <AppBarButton
-                                                Command="{x:Bind ViewModel.ToggleLeftPaneCommand}"
-                                                IsCompact="True"
-                                                ToolTipService.ToolTip="Show/hide images panel"
-                                                Visibility="{x:Bind ViewModel.HasLeftPaneContent,
-                                                                    Mode=OneWay,
-                                                                    Converter={StaticResource BoolToVisibilityConverter}}">
-                                                <SymbolIcon Symbol="Pictures" />
-                                            </AppBarButton>
-                                        </StackPanel>
-
-                                        <!--  Decoding History toggle button (top right)  -->
-                                        <StackPanel
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Top"
-                                            Orientation="Vertical"
-                                            Spacing="-20">
-                                            <AppBarButton
-                                                Command="{x:Bind ViewModel.ToggleDecodingHistoryPaneOpenCommand}"
-                                                IsCompact="True"
-                                                ToolTipService.ToolTip="Decoding history">
-                                                <controls:HistoryIcon />
-                                            </AppBarButton>
-                                        </StackPanel>
+                                            Command="{x:Bind ViewModel.ToggleLeftPaneCommand}"
+                                            IsCompact="True"
+                                            ToolTipService.ToolTip="Show/hide images panel"
+                                            Visibility="{x:Bind ViewModel.HasLeftPaneContent,
+                                                                Mode=OneWay,
+                                                                Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <SymbolIcon Symbol="Pictures" />
+                                        </AppBarButton>
                                     </Grid>
                                 </SplitView.Content>
                             </SplitView>

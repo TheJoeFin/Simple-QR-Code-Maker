@@ -57,9 +57,7 @@
                                     VerticalAlignment="Center"
                                     Orientation="Vertical"
                                     Spacing="10">
-                                    <controls:BrandPickerControl
-                                        x:Name="BrandPickerArea"
-                                        ViewModel="{x:Bind ViewModel}" />
+                                    <controls:BrandPickerControl x:Name="BrandPickerArea" ViewModel="{x:Bind ViewModel}" />
 
                                     <Grid
                                         x:Name="QrCodeInputRow"
@@ -189,9 +187,7 @@
                                                            Mode=TwoWay}">
                                             <controls:ColorPickerButton.ContextFlyout>
                                                 <MenuFlyout>
-                                                    <MenuFlyoutItem
-                                                        Text="Set as default code color"
-                                                        Command="{x:Bind ViewModel.SetForegroundAsDefaultCommand}" />
+                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.SetForegroundAsDefaultCommand}" Text="Set as default code color" />
                                                 </MenuFlyout>
                                             </controls:ColorPickerButton.ContextFlyout>
                                             <controls:ColorPickerButton.ButtonContent>
@@ -212,9 +208,7 @@
                                                            Mode=TwoWay}">
                                             <controls:ColorPickerButton.ContextFlyout>
                                                 <MenuFlyout>
-                                                    <MenuFlyoutItem
-                                                        Text="Set as default background color"
-                                                        Command="{x:Bind ViewModel.SetBackgroundAsDefaultCommand}" />
+                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.SetBackgroundAsDefaultCommand}" Text="Set as default background color" />
                                                 </MenuFlyout>
                                             </controls:ColorPickerButton.ContextFlyout>
                                         </controls:ColorPickerButton>
@@ -222,9 +216,7 @@
                                             <TextBlock Text="{x:Bind ViewModel.SelectedOption.ShortDescription, Mode=OneWay}" />
                                             <DropDownButton.ContextFlyout>
                                                 <MenuFlyout>
-                                                    <MenuFlyoutItem
-                                                        Text="Set as default error correction"
-                                                        Command="{x:Bind ViewModel.SetErrorCorrectionAsDefaultCommand}" />
+                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.SetErrorCorrectionAsDefaultCommand}" Text="Set as default error correction" />
                                                 </MenuFlyout>
                                             </DropDownButton.ContextFlyout>
                                             <DropDownButton.Flyout>
@@ -263,9 +255,7 @@
                                             </Viewbox>
                                             <DropDownButton.ContextFlyout>
                                                 <MenuFlyout>
-                                                    <MenuFlyoutItem
-                                                        Text="Set as default frame"
-                                                        Command="{x:Bind ViewModel.SetFrameAsDefaultCommand}" />
+                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.SetFrameAsDefaultCommand}" Text="Set as default frame" />
                                                 </MenuFlyout>
                                             </DropDownButton.ContextFlyout>
                                             <DropDownButton.Flyout>
@@ -458,73 +448,6 @@
                             </StackPanel>
                         </Button>
 
-                        <StackPanel
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Orientation="Vertical"
-                            Spacing="-20">
-                            <AppBarButton
-                                Command="{x:Bind ViewModel.ToggleFaqPaneOpenCommand}"
-                                IsCompact="True"
-                                ToolTipService.ToolTip="Frequently Asked Questions about QR Codes">
-                                <SymbolIcon Symbol="Library" />
-                            </AppBarButton>
-                        </StackPanel>
-
-                        <StackPanel
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            Orientation="Vertical"
-                            Spacing="-20">
-                            <AppBarButton
-                                x:Name="HistoryButton"
-                                Click="HistoryButton_Click"
-                                Command="{x:Bind ViewModel.ToggleHistoryPaneOpenCommand}"
-                                IsCompact="True"
-                                ToolTipService.ToolTip="History of previously generated QR Codes">
-                                <controls:HistoryIcon />
-                            </AppBarButton>
-                            <AppBarButton
-                                Command="{x:Bind ViewModel.ShareAppCommand}"
-                                Icon="Share"
-                                IsCompact="True"
-                                ToolTipService.ToolTip="Share Simple Icon File Maker..." />
-                        </StackPanel>
-
-                        <InfoBar
-                            x:Name="SharePane"
-                            Title="Share Simple QR Code Maker"
-                            Margin="32,20"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-                            IsOpen="{x:Bind ViewModel.CopySharePopupOpen,
-                                            Mode=TwoWay}">
-                            <StackPanel
-                                Padding="16"
-                                Orientation="Vertical"
-                                Spacing="12">
-                                <StackPanel Orientation="Horizontal" Spacing="12">
-                                    <SymbolIcon Symbol="Shop" />
-                                    <TextBlock Text="Link to the Microsoft Store" />
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Spacing="12">
-                                    <HyperlinkButton HorizontalAlignment="Center" Click="VisitLinkButton_Click">
-                                        <StackPanel Orientation="Horizontal" Spacing="12">
-                                            <SymbolIcon Symbol="Go" />
-                                            <TextBlock Text="Visit" />
-                                        </StackPanel>
-                                    </HyperlinkButton>
-                                    <HyperlinkButton HorizontalAlignment="Center" Click="CopyLinkButton_Click">
-                                        <StackPanel Orientation="Horizontal" Spacing="12">
-                                            <SymbolIcon Symbol="Copy" />
-                                            <TextBlock Text="Copy" />
-                                        </StackPanel>
-                                    </HyperlinkButton>
-                                </StackPanel>
-                            </StackPanel>
-                        </InfoBar>
-
                         <InfoBar
                             x:Name="LenghErrorInfoBar"
                             Title="{x:Bind ViewModel.CodeInfoBarTitle,
@@ -589,9 +512,8 @@
                             Closed="HistoryButtonTeachingTip_Closed"
                             IsOpen="{x:Bind ViewModel.ShowHistoryButtonTeachingTip,
                                             Mode=OneWay}"
-                            PreferredPlacement="BottomLeft"
-                            Subtitle="Previously generated QR codes are saved here. Tap one to restore its settings and colors."
-                            Target="{x:Bind HistoryButton}" />
+                            PreferredPlacement="Bottom"
+                            Subtitle="Previously generated QR codes are saved here. Tap History in the toolbar to restore a previous code." />
 
                         <TeachingTip
                             x:Name="BrandButtonTeachingTip"
