@@ -494,6 +494,23 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     private bool IsSupportedImageFileType(string fileType) =>
         imageExtensions.Contains(fileType, StringComparer.OrdinalIgnoreCase);
 
+    private async Task<StorageFile?> GetImageFileFromClipboardTextAsync(DataPackageView clipboardData)
+    {
+        if (!clipboardData.Contains(StandardDataFormats.Text))
+            return null;
+
+        string filePath = (await clipboardData.GetTextAsync()).Trim();
+        if (filePath.Length >= 2 && filePath[0] == '"' && filePath[^1] == '"')
+            filePath = filePath[1..^1];
+
+        if (!Path.IsPathFullyQualified(filePath)
+            || !IsSupportedImageFileType(Path.GetExtension(filePath))
+            || !await Task.Run(() => File.Exists(filePath)))
+            return null;
+
+        return await StorageFile.GetFileFromPathAsync(filePath);
+    }
+
     private async Task CheckIfCanPasteAsync()
     {
         int checkVersion = ++clipboardCheckVersion;
@@ -508,6 +525,9 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                 IReadOnlyList<IStorageItem> clipboardItems = await clipboardData.GetStorageItemsAsync();
                 canPasteImage = clipboardItems.OfType<StorageFile>().Any(IsSupportedImageFile);
             }
+
+            if (!canPasteImage)
+                canPasteImage = await GetImageFileFromClipboardTextAsync(clipboardData) is not null;
 
             if (checkVersion == clipboardCheckVersion)
                 CanPasteImage = canPasteImage;
@@ -1113,9 +1133,17 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                 return;
             }
 
+            StorageFile? textImageFile = await GetImageFileFromClipboardTextAsync(clipboardData);
+            if (textImageFile is not null)
+            {
+                nextSourceKind = DecodingSourceKind.File;
+                await OpenAndDecodeStorageFile(textImageFile);
+                return;
+            }
+
             CanPasteImage = false;
             DecodedContentInfoBarTitle = "No image to paste";
-            InfoBarMessage = "Copy an image or supported image file, then try again.";
+            InfoBarMessage = "Copy an image, a supported image file, or its full file path, then try again.";
             DecodedContentInfoBarSeverity = InfoBarSeverity.Warning;
             IsInfoBarShowing = true;
         }
