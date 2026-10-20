@@ -97,5 +97,5 @@ When adding new types to serialization, register them in the appropriate context
 - **Microsoft.Graphics.Win2D** — 2D graphics rendering
 - **Microsoft.Xaml.Behaviors.WinUI.Managed** — XAML behavior support
 - **WinUI.TableView** — Table/grid view control
-- **PDFsharp** — PDF generation for print layouts
+- **PdfPig** — PDF generation for print layouts
 - **Humanizer** — Human-readable string formatting

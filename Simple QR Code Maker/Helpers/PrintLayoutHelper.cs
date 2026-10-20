@@ -1,5 +1,3 @@
-using PdfSharp;
-using PdfSharp.Drawing;
 using Simple_QR_Code_Maker.Models;
 
 namespace Simple_QR_Code_Maker.Helpers;
@@ -42,8 +40,7 @@ internal static class PrintLayoutHelper
     internal static PrintLayoutMetrics CreateMetrics(PrintJobSettings settings, QrImageLayoutMetrics imageLayoutMetrics)
     {
         PrintJobSettings normalizedSettings = settings.Normalize();
-        PageSize pageSize = GetPageSize(normalizedSettings.PageType);
-        (double pageWidthPoints, double pageHeightPoints) = GetPageDimensions(pageSize, normalizedSettings.PageLayout);
+        (double pageWidthPoints, double pageHeightPoints) = GetPageDimensions(normalizedSettings.PageType, normalizedSettings.PageLayout);
         return CreateMetrics(pageWidthPoints, pageHeightPoints, normalizedSettings, imageLayoutMetrics);
     }
 
@@ -119,31 +116,24 @@ internal static class PrintLayoutHelper
 
     internal static double PointsToMillimeters(double points) => points * MillimetersPerInch / PointsPerInch;
 
-    internal static (double WidthPoints, double HeightPoints) GetPageDimensions(PageSize pageSize, PrintPageLayout pageLayout)
+    internal static (double WidthPoints, double HeightPoints) GetPageDimensions(PrintPageType pageType, PrintPageLayout pageLayout)
     {
-        XSize portraitSize = PageSizeConverter.ToSize(pageSize);
-        return pageLayout == PrintPageLayout.Landscape
-            ? (portraitSize.Height, portraitSize.Width)
-            : (portraitSize.Width, portraitSize.Height);
-    }
-
-    internal static PageSize GetPageSize(PrintPageType pageType)
-    {
-        return PrintPageTypeHelper.Resolve(pageType) switch
+        (double width, double height) = PrintPageTypeHelper.Resolve(pageType) switch
         {
-            PrintPageType.A3 => PageSize.A3,
-            PrintPageType.A4 => PageSize.A4,
-            PrintPageType.A5 => PageSize.A5,
-            PrintPageType.B4 => PageSize.B4,
-            PrintPageType.B5 => PageSize.B5,
-            PrintPageType.Letter => PageSize.Letter,
-            PrintPageType.Legal => PageSize.Legal,
-            PrintPageType.Statement => PageSize.Statement,
-            PrintPageType.Executive => PageSize.Executive,
-            PrintPageType.Tabloid => PageSize.Tabloid,
-            PrintPageType.Ledger => PageSize.Ledger,
-            _ => PageSize.Letter,
+            PrintPageType.A3 => (842, 1191),
+            PrintPageType.A4 => (595, 842),
+            PrintPageType.A5 => (420, 595),
+            PrintPageType.B4 => (709, 1001),
+            PrintPageType.B5 => (499, 709),
+            PrintPageType.Legal => (612, 1008),
+            PrintPageType.Statement => (396, 612),
+            PrintPageType.Executive => (540, 720),
+            PrintPageType.Tabloid => (792, 1224),
+            PrintPageType.Ledger => (1224, 792),
+            _ => (612, 792),
         };
+
+        return pageLayout == PrintPageLayout.Landscape ? (height, width) : (width, height);
     }
 
     private static (int Rows, int Columns) GetGridDimensions(int codesPerPage, PrintPageLayout pageLayout) => codesPerPage switch

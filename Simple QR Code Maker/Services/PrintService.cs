@@ -3,14 +3,14 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Printing;
-using PdfSharp;
-using PdfSharp.Drawing;
-using PdfSharp.Fonts;
-using PdfSharp.Pdf;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Diagnostics;
+using UglyToad.PdfPig.Content;
+using UglyToad.PdfPig.Core;
+using UglyToad.PdfPig.Writer;
+using Windows.Foundation;
 using Windows.Graphics.Printing;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -24,8 +24,6 @@ namespace Simple_QR_Code_Maker.Services;
 public class PrintService : IPrintService
 {
     private const uint PrintRenderLongEdgePixels = 2400;
-    private static readonly object FontSettingsGate = new();
-    private static bool fontSettingsInitialized;
     private readonly record struct PrintableQrCodeAsset(string Label, byte[] PngBytes, QrImageLayoutMetrics ImageLayout);
     private readonly SemaphoreSlim printStateGate = new(1, 1);
     private PrintDocument? activePrintDocument;
@@ -47,7 +45,6 @@ public class PrintService : IPrintService
         return Task.Run(() =>
         {
             cancellationToken.ThrowIfCancellationRequested();
-            EnsurePdfSharpFontSettings();
 
             List<PrintableQrCodeAsset> printableCodes = codes.Select(code =>
             {
@@ -79,11 +76,11 @@ public class PrintService : IPrintService
 
             try
             {
-                using PdfSharp.Pdf.PdfDocument document = new();
-                document.Info.Title = "QR Codes";
-                document.Info.Creator = "Simple QR Code Maker";
+                using PdfDocumentBuilder document = new();
+                document.DocumentInformation.Title = "QR Codes";
+                document.DocumentInformation.Creator = "Simple QR Code Maker";
+                PdfLabelFont? labelFont = normalizedSettings.ShowLabels ? new PdfLabelFont(document) : null;
 
-                PageSize pageSize = PrintLayoutHelper.GetPageSize(normalizedSettings.PageType);
                 QrImageLayoutMetrics maximumImageLayout = GetMaximumImageLayout(printableCodes);
                 PrintLayoutMetrics pageLayout = PrintLayoutHelper.CreateMetrics(normalizedSettings, maximumImageLayout);
                 int pageCount = (int)Math.Ceiling((double)printableCodes.Count / pageLayout.CodesPerPage);
@@ -92,15 +89,11 @@ public class PrintService : IPrintService
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    PdfPage page = document.AddPage();
-                    page.Size = pageSize;
-                    page.Orientation = normalizedSettings.PageLayout == PrintPageLayout.Landscape
-                        ? PageOrientation.Landscape
-                        : PageOrientation.Portrait;
-                    DrawPage(page, pageIndex, printableCodes, normalizedSettings, maximumImageLayout);
+                    PdfPageBuilder page = document.AddPage(pageLayout.PageWidthPoints, pageLayout.PageHeightPoints);
+                    DrawPage(page, pageIndex, printableCodes, normalizedSettings, maximumImageLayout, labelFont);
                 }
 
-                document.Save(pdfPath);
+                File.WriteAllBytes(pdfPath, document.Build());
                 return pdfPath;
             }
             catch
@@ -158,16 +151,18 @@ public class PrintService : IPrintService
     }
 
     private static void DrawPage(
-        PdfPage page,
+        PdfPageBuilder page,
         int pageIndex,
         IReadOnlyList<PrintableQrCodeAsset> printableCodes,
         PrintJobSettings settings,
-        QrImageLayoutMetrics maximumImageLayout)
+        QrImageLayoutMetrics maximumImageLayout,
+        PdfLabelFont? labelFont)
     {
-        PrintLayoutMetrics pageLayout = PrintLayoutHelper.CreateMetrics(page.Width.Point, page.Height.Point, settings, maximumImageLayout);
-
-        using XGraphics graphics = XGraphics.FromPdfPage(page);
-        graphics.DrawRectangle(XBrushes.White, 0, 0, page.Width.Point, page.Height.Point);
+        PrintLayoutMetrics pageLayout = PrintLayoutHelper.CreateMetrics(page.PageSize.Width, page.PageSize.Height, settings, maximumImageLayout);
+        page.SetStrokeColor(255, 255, 255);
+        page.SetTextAndFillColor(255, 255, 255);
+        page.DrawRectangle(new PdfPoint(0, 0), page.PageSize.Width, page.PageSize.Height, 0, fill: true);
+        page.ResetColor();
 
         int start = pageIndex * pageLayout.CodesPerPage;
         int end = Math.Min(start + pageLayout.CodesPerPage, printableCodes.Count);
@@ -175,19 +170,19 @@ public class PrintService : IPrintService
         for (int i = start; i < end; i++)
         {
             int local = i - start;
-            XRect cellRect = new(
+            Rect cellRect = new(
                 pageLayout.MarginPoints + ((local % pageLayout.Columns) * (pageLayout.CellWidth + pageLayout.SpacingPoints)),
                 pageLayout.MarginPoints + ((local / pageLayout.Columns) * (pageLayout.CellHeight + pageLayout.SpacingPoints)),
                 pageLayout.CellWidth,
                 pageLayout.CellHeight);
 
-            DrawCell(graphics, cellRect, printableCodes[i], settings);
+            DrawCell(page, cellRect, printableCodes[i], settings, labelFont);
         }
     }
 
-    private static void DrawCell(XGraphics graphics, XRect cellRect, PrintableQrCodeAsset printableCode, PrintJobSettings settings)
+    private static void DrawCell(PdfPageBuilder page, Rect cellRect, PrintableQrCodeAsset printableCode, PrintJobSettings settings, PdfLabelFont? labelFont)
     {
-        XRect paddedRect = new(
+        Rect paddedRect = new(
             cellRect.X + PrintLayoutHelper.CellPaddingPoints,
             cellRect.Y + PrintLayoutHelper.CellPaddingPoints,
             Math.Max(cellRect.Width - (PrintLayoutHelper.CellPaddingPoints * 2), 1),
@@ -203,33 +198,37 @@ public class PrintService : IPrintService
         double imageX = paddedRect.X + ((paddedRect.Width - placement.ImageWidthPoints) / 2);
         double imageY = paddedRect.Y + ((imageAreaHeight - placement.ImageHeightPoints) / 2);
 
-        using MemoryStream imageStream = new(printableCode.PngBytes, writable: false);
-        using XImage image = XImage.FromStream(imageStream);
-        graphics.DrawImage(image, imageX, imageY, placement.ImageWidthPoints, placement.ImageHeightPoints);
+        // Layout uses top-left coordinates; PDF coordinates start at the bottom-left.
+        double imageBottom = page.PageSize.Height - imageY - placement.ImageHeightPoints;
+        page.AddPng(printableCode.PngBytes, new PdfRectangle(
+            imageX,
+            imageBottom,
+            imageX + placement.ImageWidthPoints,
+            imageBottom + placement.ImageHeightPoints));
 
-        if (!settings.ShowLabels)
+        if (labelFont is null)
             return;
 
-        XRect labelRect = new(
+        Rect labelRect = new(
             paddedRect.X,
             paddedRect.Bottom - PrintLayoutHelper.LabelHeightPoints,
             paddedRect.Width,
             PrintLayoutHelper.LabelHeightPoints);
 
-        DrawWrappedLabel(graphics, printableCode.Label, labelRect);
+        DrawWrappedLabel(page, printableCode.Label, labelRect, labelFont);
     }
 
-    private static void DrawWrappedLabel(XGraphics graphics, string value, XRect labelRect)
+    private static void DrawWrappedLabel(PdfPageBuilder page, string value, Rect labelRect, PdfLabelFont labelFont)
     {
         if (string.IsNullOrWhiteSpace(value))
             return;
 
-        double fontSize = GetLabelFontSize(graphics, value, labelRect.Width);
-        XFont labelFont = new("Arial", fontSize);
+        double fontSize = GetLabelFontSize(page, value, labelFont, labelRect.Width);
         List<string> lines = WrapLabelLines(
-            graphics,
+            page,
             value,
             labelFont,
+            fontSize,
             labelRect.Width,
             PrintLayoutHelper.LabelMaxLineCount,
             out _);
@@ -239,23 +238,28 @@ public class PrintService : IPrintService
 
         foreach (string line in lines)
         {
-            XRect lineRect = new(labelRect.X, top, labelRect.Width, lineHeight);
-            graphics.DrawString(line, labelFont, XBrushes.Black, lineRect, XStringFormats.Center);
+            IReadOnlyList<Letter> letters = labelFont.MeasureText(page, line, fontSize);
+            double width = GetTextWidth(letters);
+            double glyphCenter = (letters.Max(letter => letter.BoundingBox.Top) + letters.Min(letter => letter.BoundingBox.Bottom)) / 2;
+            PdfPoint baseline = new(
+                labelRect.X + ((labelRect.Width - width) / 2),
+                page.PageSize.Height - top - (lineHeight / 2) - glyphCenter);
+            labelFont.DrawText(page, line, fontSize, baseline);
             top += lineHeight;
         }
     }
 
-    private static double GetLabelFontSize(XGraphics graphics, string value, double availableWidth)
+    private static double GetLabelFontSize(PdfPageBuilder page, string value, PdfLabelFont font, double availableWidth)
     {
         for (double fontSize = PrintLayoutHelper.LabelFontSizePoints;
              fontSize >= PrintLayoutHelper.MinimumLabelFontSizePoints;
              fontSize -= 0.5)
         {
-            XFont font = new("Arial", fontSize);
             _ = WrapLabelLines(
-                graphics,
+                page,
                 value,
                 font,
+                fontSize,
                 availableWidth,
                 PrintLayoutHelper.LabelMaxLineCount,
                 out bool fitsCompletely);
@@ -268,9 +272,10 @@ public class PrintService : IPrintService
     }
 
     private static List<string> WrapLabelLines(
-        XGraphics graphics,
+        PdfPageBuilder page,
         string value,
-        XFont font,
+        PdfLabelFont font,
+        double fontSize,
         double availableWidth,
         int maxLineCount,
         out bool fitsCompletely)
@@ -297,7 +302,7 @@ public class PrintService : IPrintService
             if (start >= normalized.Length)
                 break;
 
-            int nextBreak = FindWrapBreakIndex(graphics, normalized, start, font, availableWidth);
+            int nextBreak = FindWrapBreakIndex(page, normalized, start, font, fontSize, availableWidth);
             string line = normalized[start..nextBreak].Trim();
             if (line.Length == 0)
             {
@@ -317,10 +322,11 @@ public class PrintService : IPrintService
     }
 
     private static int FindWrapBreakIndex(
-        XGraphics graphics,
+        PdfPageBuilder page,
         string value,
         int start,
-        XFont font,
+        PdfLabelFont font,
+        double fontSize,
         double availableWidth)
     {
         int lastPreferredBreak = -1;
@@ -331,7 +337,7 @@ public class PrintService : IPrintService
             if (candidate.Length == 0)
                 continue;
 
-            if (graphics.MeasureString(candidate, font).Width <= availableWidth)
+            if (GetTextWidth(font.MeasureText(page, candidate, fontSize)) <= availableWidth)
             {
                 if (index < value.Length && IsPreferredWrapBoundary(value[index - 1]))
                     lastPreferredBreak = index;
@@ -469,22 +475,53 @@ public class PrintService : IPrintService
         return Path.Combine(previewDirectory, $"qr-print-{DateTimeOffset.UtcNow.Ticks}.pdf");
     }
 
-    private static void EnsurePdfSharpFontSettings()
+    private static double GetTextWidth(IReadOnlyList<Letter> letters)
     {
-        if (fontSettingsInitialized)
+        return letters.Count == 0 ? 0 : letters[^1].EndBaseLine.X;
+    }
+
+    private sealed class PdfLabelFont
+    {
+        private readonly PdfDocumentBuilder document;
+        private readonly byte[] fontBytes;
+        private readonly HashSet<char> characters = [];
+        private PdfDocumentBuilder.AddedFont font;
+
+        internal PdfLabelFont(PdfDocumentBuilder document)
         {
-            return;
+            this.document = document;
+            fontBytes = File.ReadAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
+            font = document.AddTrueTypeFont(fontBytes);
         }
 
-        lock (FontSettingsGate)
+        internal IReadOnlyList<Letter> MeasureText(PdfPageBuilder page, string text, double fontSize)
         {
-            if (fontSettingsInitialized)
+            return page.MeasureText(text, fontSize, new PdfPoint(0, 0), font);
+        }
+
+        internal void DrawText(PdfPageBuilder page, string text, double fontSize, PdfPoint baseline)
+        {
+            int start = 0;
+            for (int index = 0; index < text.Length; index++)
             {
-                return;
+                if (characters.Contains(text[index]))
+                    continue;
+
+                // PdfPig's simple TrueType fonts can encode only 255 distinct characters.
+                if (characters.Count == byte.MaxValue)
+                {
+                    string run = text[start..index];
+                    page.AddText(run, fontSize, baseline, font);
+                    baseline = new PdfPoint(baseline.X + GetTextWidth(MeasureText(page, run, fontSize)), baseline.Y);
+                    font = document.AddTrueTypeFont(fontBytes);
+                    characters.Clear();
+                    start = index;
+                }
+
+                characters.Add(text[index]);
             }
 
-            GlobalFontSettings.UseWindowsFontsUnderWindows = true;
-            fontSettingsInitialized = true;
+            page.AddText(text[start..], fontSize, baseline, font);
         }
     }
 

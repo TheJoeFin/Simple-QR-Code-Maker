@@ -687,8 +687,8 @@
                         <settingsControls:SettingsCard Description="MIT License" Header="Microsoft.Graphics.Win2D">
                             <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/microsoft/Win2D" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="MIT License" Header="PDFsharp">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/empira/PDFsharp" />
+                        <settingsControls:SettingsCard Description="Apache-2.0 License" Header="PdfPig">
+                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/UglyToad/PdfPig" />
                         </settingsControls:SettingsCard>
                         <settingsControls:SettingsCard Description="MIT License" Header="Windows App SDK">
                             <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/microsoft/WindowsAppSDK" />

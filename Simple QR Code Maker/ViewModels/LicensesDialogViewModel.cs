@@ -44,7 +44,7 @@ public sealed partial class LicensesDialogViewModel : ObservableRecipient
         yield return new() { Name = "Magick.NET",                   LicenseType = "Apache-2.0 License", GitHubUrl = "https://github.com/dlemstra/Magick.NET",             LicenseText = apacheText };
         yield return new() { Name = "Microsoft.Extensions.Hosting", LicenseType = "MIT License",        GitHubUrl = "https://github.com/dotnet/runtime",                  LicenseText = MitText };
         yield return new() { Name = "Microsoft.Graphics.Win2D",     LicenseType = "MIT License",        GitHubUrl = "https://github.com/microsoft/Win2D",                 LicenseText = MitText };
-        yield return new() { Name = "PDFsharp",                     LicenseType = "MIT License",        GitHubUrl = "https://github.com/empira/PDFsharp",                 LicenseText = MitText };
+        yield return new() { Name = "PdfPig",                       LicenseType = "Apache-2.0 License", GitHubUrl = "https://github.com/UglyToad/PdfPig",                 LicenseText = apacheText };
         yield return new() { Name = "Windows App SDK",              LicenseType = "MIT License",        GitHubUrl = "https://github.com/microsoft/WindowsAppSDK",         LicenseText = MitText };
         yield return new() { Name = "WinUI 3",                      LicenseType = "MIT License",        GitHubUrl = "https://github.com/Microsoft/microsoft-ui-xaml",     LicenseText = MitText };
         yield return new() { Name = "WinUI.TableView",              LicenseType = "MIT License",        GitHubUrl = "https://github.com/w-ahmad/WinUI.TableView",         LicenseText = MitText };
