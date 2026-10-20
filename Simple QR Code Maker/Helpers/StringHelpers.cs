@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Simple_QR_Code_Maker.Models;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Simple_QR_Code_Maker.Helpers;
@@ -11,7 +12,8 @@ public static partial class StringHelpers
     public static string ReplaceReservedCharacters(this string stringToClean)
     {
         StringBuilder sb = new();
-        sb.Append(stringToClean);
+        foreach (char character in stringToClean)
+            sb.Append(char.IsControl(character) ? '-' : character);
 
         foreach (char reservedChar in ReservedChars)
             sb.Replace(reservedChar, '-');
@@ -21,6 +23,9 @@ public static partial class StringHelpers
 
     public static string ToSafeFileName(this string fullString)
     {
+        if (VCardBuilderHelper.TryParse(fullString, out VCardBuilderState state))
+            fullString = $"{VCardBuilderHelper.GetDisplayName(state)}-vCard";
+
         bool userStringEndsInDash = fullString[^1] == '-';
         string fileNameContent = fullString.ReplaceReservedCharacters();
         if (fileNameContent.Length > 60)
