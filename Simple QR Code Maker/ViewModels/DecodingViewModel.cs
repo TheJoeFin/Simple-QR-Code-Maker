@@ -474,10 +474,11 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
     private bool isWaitingForSnippingTool = false;
     private uint clipboardSequenceOnSnipLaunch = 0;
+    private int clipboardCheckVersion;
 
     private async void Clipboard_ContentChanged(object? sender, object e)
     {
-        CheckIfCanPaste();
+        await CheckIfCanPasteAsync();
 
         if (isWaitingForSnippingTool && CanPasteImage)
         {
@@ -487,22 +488,35 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         }
     }
 
-    private void CheckIfCanPaste()
+    private bool IsSupportedImageFile(StorageFile file) =>
+        IsSupportedImageFileType(file.FileType);
+
+    private bool IsSupportedImageFileType(string fileType) =>
+        imageExtensions.Contains(fileType, StringComparer.OrdinalIgnoreCase);
+
+    private async Task CheckIfCanPasteAsync()
     {
+        int checkVersion = ++clipboardCheckVersion;
+
         try
         {
             DataPackageView clipboardData = Clipboard.GetContent();
+            bool canPasteImage = clipboardData.Contains(StandardDataFormats.Bitmap);
 
-            if (clipboardData.Contains(StandardDataFormats.StorageItems)
-                || clipboardData.Contains(StandardDataFormats.Bitmap))
-                CanPasteImage = true;
-            else
-                CanPasteImage = false;
+            if (!canPasteImage && clipboardData.Contains(StandardDataFormats.StorageItems))
+            {
+                IReadOnlyList<IStorageItem> clipboardItems = await clipboardData.GetStorageItemsAsync();
+                canPasteImage = clipboardItems.OfType<StorageFile>().Any(IsSupportedImageFile);
+            }
+
+            if (checkVersion == clipboardCheckVersion)
+                CanPasteImage = canPasteImage;
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Failed to check clipboard: {ex.Message}");
-            CanPasteImage = false;
+            if (checkVersion == clipboardCheckVersion)
+                CanPasteImage = false;
         }
     }
 
@@ -510,7 +524,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     {
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
         Clipboard.ContentChanged += Clipboard_ContentChanged;
-        CheckIfCanPaste();
+        _ = CheckIfCanPasteAsync();
 
         App.MainWindow.Activated -= MainWindow_Activated;
         App.MainWindow.Activated += MainWindow_Activated;
@@ -518,8 +532,14 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
     private async void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
     {
-        if (args.WindowActivationState == WindowActivationState.Deactivated || !isWaitingForSnippingTool)
+        if (args.WindowActivationState == WindowActivationState.Deactivated)
             return;
+
+        if (!isWaitingForSnippingTool)
+        {
+            await CheckIfCanPasteAsync();
+            return;
+        }
 
         // Yield briefly so Clipboard_ContentChanged can fire first if the clipboard
         // was already updated by the snipping tool before the window re-activated.
@@ -538,7 +558,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
         nextSourceKind = DecodingSourceKind.SnippingTool;
         isWaitingForSnippingTool = false;
-        CheckIfCanPaste();
+        await CheckIfCanPasteAsync();
         if (CanPasteImage)
             await OpenFileFromClipboardCommand.ExecuteAsync(null);
     }
@@ -1066,30 +1086,46 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
         try
         {
-            CurrentDecodingItem = null;
             DataPackageView clipboardData = Clipboard.GetContent();
 
             if (clipboardData.Contains(StandardDataFormats.StorageItems))
             {
                 IReadOnlyList<IStorageItem> clipboardItems = await clipboardData.GetStorageItemsAsync();
-                if (clipboardItems.Count == 0)
-                    return;
+                StorageFile? imageFile = clipboardItems.OfType<StorageFile>().FirstOrDefault(IsSupportedImageFile);
 
-                nextSourceKind = DecodingSourceKind.File;
-                await OpenAndDecodeStorageFiles(clipboardItems);
+                if (imageFile is not null)
+                {
+                    nextSourceKind = DecodingSourceKind.File;
+                    await OpenAndDecodeStorageFile(imageFile);
+                    return;
+                }
             }
-            else if (clipboardData.Contains(StandardDataFormats.Bitmap))
+
+            if (clipboardData.Contains(StandardDataFormats.Bitmap))
             {
                 if (nextSourceKind != DecodingSourceKind.SnippingTool)
                     nextSourceKind = DecodingSourceKind.Clipboard;
 
                 RandomAccessStreamReference bitmapStreamRef = await clipboardData.GetBitmapAsync();
+                using IRandomAccessStreamWithContentType stream = await bitmapStreamRef.OpenReadAsync();
 
-                IRandomAccessStreamWithContentType stream = await bitmapStreamRef.OpenReadAsync();
-
-                if (stream is not null)
-                    await OpenAndDecodeBitmapAsync(stream);
+                await OpenAndDecodeBitmapAsync(stream);
+                return;
             }
+
+            CanPasteImage = false;
+            DecodedContentInfoBarTitle = "No image to paste";
+            InfoBarMessage = "Copy an image or supported image file, then try again.";
+            DecodedContentInfoBarSeverity = InfoBarSeverity.Warning;
+            IsInfoBarShowing = true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to paste image: {ex.Message}");
+            DecodedContentInfoBarTitle = "Could not paste image";
+            InfoBarMessage = ex.Message;
+            DecodedContentInfoBarSeverity = InfoBarSeverity.Error;
+            IsInfoBarShowing = true;
         }
         finally
         {
@@ -1197,7 +1233,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             return;
 
         IReadOnlyList<StorageFile> allFiles = await folder.GetFilesAsync();
-        List<StorageFile> imageFiles = [.. allFiles.Where(f => imageExtensions.Contains(Path.GetExtension(f.Path).ToLowerInvariant()))];
+        List<StorageFile> imageFiles = [.. allFiles.Where(IsSupportedImageFile)];
 
         if (imageFiles.Count > LargeFolderThreshold)
         {
@@ -1529,7 +1565,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
     private async Task<DecodingImageItem?> GetDecodingImageItemFromStorageFileAsync(StorageFile storageFile)
     {
-        if (!imageExtensions.Contains(Path.GetExtension(storageFile.Path).ToLowerInvariant()))
+        if (!IsSupportedImageFile(storageFile))
             return null;
 
         (MagickImage MagickImage, string CachePath, List<(string, Result)> Strings) decodeResult =
@@ -1738,6 +1774,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
     public void OnNavigatedFrom()
     {
+        clipboardCheckVersion++;
         Clipboard.ContentChanged -= Clipboard_ContentChanged;
         App.MainWindow.Activated -= MainWindow_Activated;
         WeakReferenceMessenger.Default.UnregisterAll(this);
