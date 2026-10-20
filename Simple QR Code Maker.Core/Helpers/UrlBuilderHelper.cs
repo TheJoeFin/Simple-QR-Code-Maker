@@ -1,3 +1,5 @@
+#nullable enable
+
 using Simple_QR_Code_Maker.Models;
 using System.Text;
 using System.Text.RegularExpressions;

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Simple QR Code Maker.Core\Simple QR Code Maker.Core.csproj" />
+    <ProjectReference Include="..\Simple QR Code Maker.Rendering\Simple QR Code Maker.Rendering.csproj" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime;build;native;contentfiles;analyzers;buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Simple QR Code Maker\Models\QrFramePreset.cs" Link="Compatibility\QrFramePreset.cs" />
+    <Compile Include="..\Simple QR Code Maker\Models\QrFramePresetCatalog.cs" Link="Compatibility\QrFramePresetCatalog.cs" />
+    <Compile Include="..\Simple QR Code Maker\Models\QrFramePresetOption.cs" Link="Compatibility\QrFramePresetOption.cs" />
+  </ItemGroup>
+</Project>

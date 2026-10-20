@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Simple_QR_Code_Maker.Maui.ViewModels"
+             x:Class="Simple_QR_Code_Maker.Maui.MainPage"
+             x:DataType="viewModels:CreatorViewModel"
+             Title="Create">
+    <ScrollView>
+        <VerticalStackLayout Padding="24"
+                             Spacing="16">
+            <Label Text="Create a QR code"
+                   Style="{StaticResource Headline}"
+                   SemanticProperties.HeadingLevel="Level1" />
+            <Label Text="Your draft is restored automatically. Changes update the preview after you pause typing." />
+
+            <Border Stroke="{AppThemeBinding Light=#D1D1D1, Dark=#555555}"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Content type"
+                           SemanticProperties.HeadingLevel="Level2" />
+                    <Picker ItemsSource="{Binding ContentFlows}"
+                            SelectedItem="{Binding SelectedContentFlow}"
+                            Title="Choose QR content type" />
+
+                    <VerticalStackLayout IsVisible="{Binding IsPlainTextFlow}"
+                                         Spacing="8">
+                        <Label Text="Text" />
+                        <Editor Text="{Binding PlainText}"
+                                AutoSize="TextChanges"
+                                MinimumHeightRequest="120"
+                                Placeholder="Enter text to encode"
+                                SemanticProperties.Hint="Enter the exact text to encode" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout IsVisible="{Binding IsUrlFlow}"
+                                         Spacing="8">
+                        <Label Text="URL" />
+                        <Entry Text="{Binding UrlText}"
+                               Keyboard="Url"
+                               Placeholder="https://example.com/path?name=value"
+                               SemanticProperties.Hint="Enter the URL to encode" />
+                        <Label Text="The URL is normalized by the shared URL builder before encoding."
+                               FontSize="12" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout IsVisible="{Binding IsWifiFlow}"
+                                         Spacing="8">
+                        <Label Text="Network name (SSID)" />
+                        <Entry Text="{Binding WifiSsid}"
+                               Placeholder="Network name" />
+                        <Label Text="Security" />
+                        <Picker ItemsSource="{Binding WifiAuthenticationTypes}"
+                                SelectedItem="{Binding SelectedWifiAuthentication}" />
+                        <Label Text="Password" />
+                        <Entry Text="{Binding WifiPassword}"
+                               IsPassword="True"
+                               Placeholder="Network password" />
+                        <HorizontalStackLayout Spacing="8">
+                            <Switch IsToggled="{Binding IsWifiHidden}" />
+                            <Label Text="Hidden network"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout IsVisible="{Binding IsEmailFlow}"
+                                         Spacing="8">
+                        <Label Text="To" />
+                        <Entry Text="{Binding EmailTo}"
+                               Keyboard="Email"
+                               Placeholder="person@example.com" />
+                        <Label Text="Cc" />
+                        <Entry Text="{Binding EmailCc}"
+                               Keyboard="Email" />
+                        <Label Text="Bcc" />
+                        <Entry Text="{Binding EmailBcc}"
+                               Keyboard="Email" />
+                        <Label Text="Subject" />
+                        <Entry Text="{Binding EmailSubject}" />
+                        <Label Text="Message" />
+                        <Editor Text="{Binding EmailBody}"
+                                AutoSize="TextChanges"
+                                MinimumHeightRequest="100" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout IsVisible="{Binding IsVCardFlow}"
+                                         Spacing="8">
+                        <Label Text="Display name" />
+                        <Entry Text="{Binding VCardFormattedName}"
+                               Placeholder="Jane Doe" />
+                        <Label Text="First name" />
+                        <Entry Text="{Binding VCardFirstName}" />
+                        <Label Text="Last name" />
+                        <Entry Text="{Binding VCardLastName}" />
+                        <Label Text="Organization" />
+                        <Entry Text="{Binding VCardOrganization}" />
+                        <Label Text="Mobile phone" />
+                        <Entry Text="{Binding VCardMobilePhone}"
+                               Keyboard="Telephone" />
+                        <Label Text="Email" />
+                        <Entry Text="{Binding VCardEmail}"
+                               Keyboard="Email" />
+                        <Label Text="Website" />
+                        <Entry Text="{Binding VCardUrl}"
+                               Keyboard="Url" />
+                        <Label Text="Note" />
+                        <Editor Text="{Binding VCardNote}"
+                                AutoSize="TextChanges"
+                                MinimumHeightRequest="100" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Stroke="{AppThemeBinding Light=#D1D1D1, Dark=#555555}"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Appearance"
+                           SemanticProperties.HeadingLevel="Level2" />
+                    <Label Text="Error correction" />
+                    <Picker ItemsSource="{Binding CorrectionLevels}"
+                            SelectedItem="{Binding SelectedCorrection}" />
+                    <Label Text="Output size" />
+                    <Picker ItemsSource="{Binding OutputSizes}"
+                            SelectedItem="{Binding SelectedSize}" />
+                    <Label Text="{Binding QuietZoneModules, StringFormat='Margin: {0} modules'}" />
+                    <Stepper Minimum="0"
+                             Maximum="16"
+                             Increment="1"
+                             Value="{Binding QuietZoneModules}" />
+                    <Label Text="Foreground color (#RRGGBB or #RRGGBBAA)" />
+                    <Entry Text="{Binding ForegroundHex}"
+                           Keyboard="Text"
+                           Placeholder="#000000" />
+                    <Label Text="Background color (#RRGGBB or #RRGGBBAA)" />
+                    <Entry Text="{Binding BackgroundHex}"
+                           Keyboard="Text"
+                           Placeholder="#FFFFFF" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Stroke="{AppThemeBinding Light=#D1D1D1, Dark=#555555}"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Preview"
+                           SemanticProperties.HeadingLevel="Level2" />
+                    <Image Source="{Binding Preview}"
+                           Aspect="AspectFit"
+                           HeightRequest="320"
+                           SemanticProperties.Description="Live QR code preview" />
+                    <Label Text="Encoded content" />
+                    <Editor Text="{Binding Content}"
+                            IsReadOnly="True"
+                            AutoSize="TextChanges"
+                            MinimumHeightRequest="80"
+                            SemanticProperties.Description="Content generated by the selected builder" />
+                    <Button Text="Refresh preview now"
+                            Command="{Binding GenerateCommand}"
+                            SemanticProperties.Hint="Refreshes the QR code preview using the current content and appearance" />
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="12">
+                        <Button Text="Prepare PNG"
+                                Command="{Binding PreparePngCommand}"
+                                SemanticProperties.Hint="Prepares a PNG file in app cache" />
+                        <Button Grid.Column="1"
+                                Text="Prepare SVG"
+                                Command="{Binding PrepareSvgCommand}"
+                                SemanticProperties.Hint="Prepares an SVG file in app cache" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,*,*"
+                          ColumnSpacing="12">
+                        <Button Text="Save PNG"
+                                Command="{Binding SavePngCommand}"
+                                SemanticProperties.Hint="Saves the prepared PNG through the system save dialog" />
+                        <Button Grid.Column="1"
+                                Text="Share PNG"
+                                Command="{Binding SharePngCommand}"
+                                SemanticProperties.Hint="Shares the prepared PNG through the system share sheet" />
+                        <Button Grid.Column="2"
+                                Text="Share SVG"
+                                Command="{Binding ShareSvgCommand}"
+                                SemanticProperties.Hint="Shares the prepared SVG through the system share sheet" />
+                    </Grid>
+                    <Button Text="Save SVG"
+                            Command="{Binding SaveSvgCommand}"
+                            SemanticProperties.Hint="Saves the prepared SVG through the system save dialog" />
+                    <Label Text="{Binding Status}"
+                           SemanticProperties.Description="QR creation status" />
+                    <Label Text="{Binding PreparedPngPath}"
+                           LineBreakMode="TailTruncation"
+                           SemanticProperties.Description="Prepared PNG path" />
+                    <Label Text="{Binding PreparedSvgPath}"
+                           LineBreakMode="TailTruncation"
+                           SemanticProperties.Description="Prepared SVG path" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

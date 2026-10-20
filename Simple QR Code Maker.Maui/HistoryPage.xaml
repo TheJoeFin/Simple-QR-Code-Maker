@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Simple_QR_Code_Maker.Maui.ViewModels"
+             x:Class="Simple_QR_Code_Maker.Maui.HistoryPage"
+             x:DataType="viewModels:HistoryViewModel"
+             Title="History">
+    <Grid Padding="24"
+          RowDefinitions="Auto,Auto,Auto,*"
+          RowSpacing="12">
+        <Label Text="History"
+               Style="{StaticResource Headline}"
+               SemanticProperties.HeadingLevel="Level1" />
+        <Entry Grid.Row="1"
+               Text="{Binding SearchText}"
+               Placeholder="Search QR code content"
+               ClearButtonVisibility="WhileEditing"
+               SemanticProperties.Hint="Filters QR code history by content" />
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,*"
+              ColumnSpacing="12">
+            <Button Text="Refresh"
+                    Command="{Binding RefreshCommand}" />
+            <Button Grid.Column="1"
+                    Text="Clear history"
+                    Command="{Binding ClearCommand}"
+                    SemanticProperties.Hint="Removes every history entry" />
+        </Grid>
+        <Grid Grid.Row="3"
+              RowDefinitions="Auto,*"
+              RowSpacing="8">
+            <Label Text="{Binding Status}" />
+            <CollectionView Grid.Row="1"
+                            ItemsSource="{Binding FilteredEntries}"
+                            SelectionMode="None"
+                            EmptyView="No matching history entries.">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="viewModels:HistoryLibraryItem">
+                        <Border Stroke="{AppThemeBinding Light=#D1D1D1, Dark=#555555}"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12"
+                                Margin="0,0,0,8">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="{Binding Content}"
+                                       LineBreakMode="TailTruncation"
+                                       FontAttributes="Bold" />
+                                <Label Text="{Binding Summary}" />
+                                <Label Text="{Binding CreatedAt}"
+                                       FontSize="12" />
+                                <Grid ColumnDefinitions="*,*"
+                                      ColumnSpacing="12">
+                                    <Button Text="Reopen"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ReopenCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    <Button Grid.Column="1"
+                                            Text="Remove"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RemoveCommand}"
+                                            CommandParameter="{Binding .}" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </Grid>
+</ContentPage>

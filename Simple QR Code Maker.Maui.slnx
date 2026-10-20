@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Simple QR Code Maker.Core/Simple QR Code Maker.Core.csproj" />
+  <Project Path="Simple QR Code Maker.Maui/Simple QR Code Maker.Maui.csproj" />
+  <Project Path="Simple QR Code Maker.Rendering/Simple QR Code Maker.Rendering.csproj" />
+</Solution>

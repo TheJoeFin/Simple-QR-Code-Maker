@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Simple_QR_Code_Maker.Maui.ViewModels"
+             x:Class="Simple_QR_Code_Maker.Maui.DesignsPage"
+             x:DataType="viewModels:DesignsViewModel"
+             Title="Designs">
+    <Grid Padding="24"
+          RowDefinitions="Auto,Auto,Auto,Auto,*"
+          RowSpacing="12">
+        <Label Text="Saved designs"
+               Style="{StaticResource Headline}"
+               SemanticProperties.HeadingLevel="Level1" />
+        <Entry Grid.Row="1"
+               Text="{Binding SearchText}"
+               Placeholder="Search saved designs"
+               ClearButtonVisibility="WhileEditing"
+               SemanticProperties.Hint="Filters designs by name and content" />
+        <VerticalStackLayout Grid.Row="2"
+                             Spacing="8">
+            <Entry Text="{Binding DesignName}"
+                   Placeholder="Design name"
+                   SemanticProperties.Hint="Name for the current QR design" />
+            <Grid ColumnDefinitions="*,*,*"
+                  ColumnSpacing="8">
+                <Button Text="Create"
+                        Command="{Binding CreateCommand}" />
+                <Button Grid.Column="1"
+                        Text="Update selected"
+                        Command="{Binding UpdateCommand}" />
+                <Button Grid.Column="2"
+                        Text="Refresh"
+                        Command="{Binding RefreshCommand}" />
+            </Grid>
+        </VerticalStackLayout>
+        <Label Grid.Row="3"
+               Text="{Binding Status}" />
+        <CollectionView Grid.Row="4"
+                        ItemsSource="{Binding FilteredDesigns}"
+                        SelectedItem="{Binding SelectedDesign}"
+                        SelectionMode="Single"
+                        EmptyView="No matching saved designs.">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:SavedDesignLibraryItem">
+                    <Border Stroke="{AppThemeBinding Light=#D1D1D1, Dark=#555555}"
+                            StrokeShape="RoundRectangle 8"
+                            Padding="12"
+                            Margin="0,0,0,8">
+                        <VerticalStackLayout Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding Design.Name}"
+                                       FontAttributes="Bold" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding DefaultLabel}"
+                                       FontAttributes="Italic" />
+                            </Grid>
+                            <Label Text="{Binding Content}"
+                                   LineBreakMode="TailTruncation" />
+                            <Label Text="{Binding Summary}"
+                                   FontSize="12" />
+                            <Grid ColumnDefinitions="*,*,*"
+                                  ColumnSpacing="8">
+                                <Button Text="Apply"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ApplyCommand}"
+                                        CommandParameter="{Binding .}" />
+                                <Button Grid.Column="1"
+                                        Text="Set default"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SetDefaultCommand}"
+                                        CommandParameter="{Binding .}" />
+                                <Button Grid.Column="2"
+                                        Text="Delete"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCommand}"
+                                        CommandParameter="{Binding .}" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
