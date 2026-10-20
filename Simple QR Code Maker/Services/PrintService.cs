@@ -69,7 +69,14 @@ public class PrintService : IPrintService
                     renderSettings.FramePreset,
                     resolvedFrameText,
                     out QrImageLayoutMetrics imageLayout);
-                return new PrintableQrCodeAsset(code.CodeAsText, ms.ToArray(), imageLayout);
+                string label = code.ContentKind switch
+                {
+                    QrContentKind.VCard => VCardBuilderHelper.GetDisplayName(code.CodeAsText),
+                    QrContentKind.WiFi => WifiBuilderHelper.GetDisplayName(code.CodeAsText),
+                    QrContentKind.Email => EmailBuilderHelper.GetDisplayName(code.CodeAsText),
+                    _ => code.CodeAsText,
+                };
+                return new PrintableQrCodeAsset(label, ms.ToArray(), imageLayout);
             }).ToList();
 
             cancellationToken.ThrowIfCancellationRequested();

@@ -25,6 +25,10 @@ public static partial class StringHelpers
     {
         if (VCardBuilderHelper.TryParse(fullString, out VCardBuilderState state))
             fullString = $"{VCardBuilderHelper.GetDisplayName(state)}-vCard";
+        else if (WifiBuilderHelper.TryParse(fullString, out WifiBuilderState wifiState))
+            fullString = $"{WifiBuilderHelper.GetDisplayName(wifiState)}-WiFi";
+        else if (EmailBuilderHelper.TryParse(fullString, out EmailBuilderState emailState))
+            fullString = $"{EmailBuilderHelper.GetDisplayName(emailState)}-Email";
 
         bool userStringEndsInDash = fullString[^1] == '-';
         string fileNameContent = fullString.ReplaceReservedCharacters();
