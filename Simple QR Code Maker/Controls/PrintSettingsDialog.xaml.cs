@@ -25,6 +25,12 @@ public sealed partial class PrintSettingsDialog : ContentDialog
     private const double PreviewPageRenderWidth = 1440;
     private const double PreviewPageInnerPadding = 16;
     private const double PreviewViewportPadding = 32;
+    private const double PreferredContentWidth = 1100;
+    private const double PreferredContentHeight = 680;
+    private const double SideBySideContentWidth = 900;
+    private const double SettingsPaneWidth = 360;
+    private const double DialogHorizontalSpace = 96;
+    private const double DialogVerticalSpace = 220;
     private const double ScanSizeToleranceMillimeters = 0.1;
     private const float PreviewZoomStep = 0.1f;
     private static readonly TimeSpan PreviewRefreshDebounceDelay = TimeSpan.FromMilliseconds(350);
@@ -39,6 +45,7 @@ public sealed partial class PrintSettingsDialog : ContentDialog
     private readonly double lengthDisplayIncrement;
     private CancellationTokenSource? previewRefreshDebounceCts;
     private CancellationTokenSource? previewCts;
+    private XamlRoot? dialogXamlRoot;
     private bool isLoaded;
     private bool isPreviewFitToWidth = true;
     private bool suppressRefresh;
@@ -96,6 +103,9 @@ public sealed partial class PrintSettingsDialog : ContentDialog
             return;
 
         isLoaded = true;
+        dialogXamlRoot = XamlRoot;
+        dialogXamlRoot.Changed += OnXamlRootChanged;
+        UpdateDialogLayout(dialogXamlRoot);
         ResetDialogScrollPosition();
 
         try
@@ -111,6 +121,13 @@ public sealed partial class PrintSettingsDialog : ContentDialog
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
+        isLoaded = false;
+        if (dialogXamlRoot is not null)
+        {
+            dialogXamlRoot.Changed -= OnXamlRootChanged;
+            dialogXamlRoot = null;
+        }
+
         previewRefreshDebounceCts?.Cancel();
         previewRefreshDebounceCts?.Dispose();
         previewRefreshDebounceCts = null;
@@ -120,6 +137,38 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         previewCts = null;
 
         ScheduleDeferredCleanup(generatedPdfPaths);
+    }
+
+    private void OnXamlRootChanged(XamlRoot sender, XamlRootChangedEventArgs args) => UpdateDialogLayout(sender);
+
+    private void UpdateDialogLayout(XamlRoot xamlRoot)
+    {
+        // Reserve space for the standard dialog chrome and margins around the dialog.
+        double contentWidth = Math.Clamp(xamlRoot.Size.Width - DialogHorizontalSpace, 0, PreferredContentWidth);
+        double contentHeight = Math.Clamp(xamlRoot.Size.Height - DialogVerticalSpace, 0, PreferredContentHeight);
+        bool sideBySide = contentWidth >= SideBySideContentWidth;
+        bool stackedPreviewToolbar = !sideBySide && contentWidth < 400;
+
+        DialogLayoutGrid.Width = contentWidth;
+        DialogLayoutGrid.Height = contentHeight;
+        DialogLayoutGrid.ColumnSpacing = sideBySide ? 24 : 0;
+        DialogLayoutGrid.RowSpacing = sideBySide ? 0 : 16;
+
+        SettingsColumn.Width = sideBySide
+            ? new GridLength(SettingsPaneWidth)
+            : new GridLength(1, GridUnitType.Star);
+        PreviewColumn.Width = sideBySide
+            ? new GridLength(1, GridUnitType.Star)
+            : new GridLength(0);
+        PreviewRow.Height = sideBySide
+            ? new GridLength(0)
+            : new GridLength(1, GridUnitType.Star);
+
+        Grid.SetColumn(PreviewPane, sideBySide ? 1 : 0);
+        Grid.SetRow(PreviewPane, sideBySide ? 0 : 1);
+        Grid.SetColumn(PreviewZoomControls, stackedPreviewToolbar ? 0 : 1);
+        Grid.SetRow(PreviewZoomControls, stackedPreviewToolbar ? 1 : 0);
+        Grid.SetColumnSpan(PreviewZoomControls, stackedPreviewToolbar ? 2 : 1);
     }
 
     private void CodesPerPageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => QueuePreviewRefresh();
@@ -441,7 +490,7 @@ public sealed partial class PrintSettingsDialog : ContentDialog
 
     private void ResetDialogScrollPosition()
     {
-        DialogScrollViewer.ChangeView(null, 0, null, true);
+        SettingsScrollViewer.ChangeView(null, 0, null, true);
         QuickPresetCombo.Focus(FocusState.Programmatic);
     }
 
