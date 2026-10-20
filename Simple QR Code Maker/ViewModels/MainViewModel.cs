@@ -1542,7 +1542,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             XamlRoot = App.MainWindow.Content.XamlRoot
         };
 
-        ContentDialogResult result = await dialog.ShowAsync();
+        ContentDialogResult result = await dialog.ShowThemedAsync();
         if (result == ContentDialogResult.Primary && dialog.ResultText is not null)
             ApplyDocumentText(dialog.ResultText);
     }
@@ -1555,7 +1555,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             XamlRoot = App.MainWindow.Content.XamlRoot
         };
 
-        ContentDialogResult result = await dialog.ShowAsync();
+        ContentDialogResult result = await dialog.ShowThemedAsync();
         if (result == ContentDialogResult.Primary && dialog.ResultText is not null)
         {
             ApplyDocumentText(
@@ -1573,7 +1573,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             XamlRoot = App.MainWindow.Content.XamlRoot
         };
 
-        ContentDialogResult result = await dialog.ShowAsync();
+        ContentDialogResult result = await dialog.ShowThemedAsync();
         if (result == ContentDialogResult.Primary && dialog.ResultText is not null)
         {
             ApplyDocumentText(
@@ -1591,7 +1591,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             XamlRoot = App.MainWindow.Content.XamlRoot
         };
 
-        ContentDialogResult result = await dialog.ShowAsync();
+        ContentDialogResult result = await dialog.ShowThemedAsync();
         if (result == ContentDialogResult.Primary && dialog.ResultText is not null)
             ApplyDocumentText(dialog.ResultText, QrContentKind.Email);
     }
@@ -1604,7 +1604,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             XamlRoot = App.MainWindow.Content.XamlRoot
         };
 
-        ContentDialogResult result = await dialog.ShowAsync();
+        ContentDialogResult result = await dialog.ShowThemedAsync();
         if (result == ContentDialogResult.Primary && !string.IsNullOrWhiteSpace(dialog.ResultText))
             AppendDocumentText(dialog.ResultText);
     }
@@ -2220,7 +2220,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             XamlRoot = App.MainWindow.Content.XamlRoot
         };
 
-        ContentDialogResult result = await dialog.ShowAsync();
+        ContentDialogResult result = await dialog.ShowThemedAsync();
 
         if (result != ContentDialogResult.Primary || dialog.EditedItem is null)
             return;
@@ -2265,7 +2265,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             XamlRoot = App.MainWindow.Content.XamlRoot,
         };
 
-        ContentDialogResult result = await dialog.ShowAsync();
+        ContentDialogResult result = await dialog.ShowThemedAsync();
         if (result != ContentDialogResult.Primary)
             return;
 
@@ -2589,7 +2589,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             XamlRoot = App.MainWindow.Content.XamlRoot,
         };
 
-        ContentDialogResult result = await dialog.ShowAsync();
+        ContentDialogResult result = await dialog.ShowThemedAsync();
 
         if (result == ContentDialogResult.Primary && dialog.ResultBitmap is not null)
         {

@@ -14,6 +14,12 @@
     PrimaryButtonText="Print"
     mc:Ignorable="d">
 
+    <ContentDialog.Resources>
+        <Style x:Key="PreviewPageBorderStyle" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        </Style>
+    </ContentDialog.Resources>
+
     <ScrollViewer
         x:Name="DialogScrollViewer"
         HorizontalScrollBarVisibility="Disabled"

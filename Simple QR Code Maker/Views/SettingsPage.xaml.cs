@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Simple_QR_Code_Maker.Controls;
+using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.ViewModels;
 using Windows.System;
 
@@ -38,7 +39,7 @@ public sealed partial class SettingsPage : Page
             {
                 XamlRoot = XamlRoot
             };
-            await dialog.ShowAsync();
+            await dialog.ShowThemedAsync();
         }
     }
 
@@ -48,7 +49,7 @@ public sealed partial class SettingsPage : Page
         {
             XamlRoot = XamlRoot
         };
-        await dialog.ShowAsync();
+        await dialog.ShowThemedAsync();
     }
 
     private void SettingsExpander_Expanded(object sender, EventArgs e)

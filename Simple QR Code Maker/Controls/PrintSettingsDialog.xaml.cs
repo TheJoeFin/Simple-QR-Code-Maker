@@ -290,7 +290,7 @@ public sealed partial class PrintSettingsDialog : ContentDialog
             Border pageBorder = new()
             {
                 Background = new SolidColorBrush(Microsoft.UI.Colors.White),
-                BorderBrush = (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"],
+                Style = (Style)Resources["PreviewPageBorderStyle"],
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(6),
                 HorizontalAlignment = HorizontalAlignment.Center,

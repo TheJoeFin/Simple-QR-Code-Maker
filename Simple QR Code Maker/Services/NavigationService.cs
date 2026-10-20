@@ -132,7 +132,7 @@ public class NavigationService : INavigationService
 
         try
         {
-            ContentDialogResult result = await wrapper.ShowAsync();
+            ContentDialogResult result = await wrapper.ShowThemedAsync();
         }
         catch
         {

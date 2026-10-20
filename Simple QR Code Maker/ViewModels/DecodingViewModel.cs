@@ -1210,7 +1210,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                 DefaultButton = ContentDialogButton.Primary,
                 XamlRoot = App.MainWindow.Content.XamlRoot,
             };
-            ContentDialogResult result = await confirmDialog.ShowAsync();
+            ContentDialogResult result = await confirmDialog.ShowThemedAsync();
             if (result != ContentDialogResult.Primary)
                 return;
         }
