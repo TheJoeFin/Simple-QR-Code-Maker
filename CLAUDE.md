@@ -30,6 +30,10 @@ Visual Studio 2022 with the Windows App SDK workload and MSIX packaging tools is
 
 There are no unit or integration test projects. Testing is done manually using MSIX packages in `AppPackages/`.
 
+## UI Automation Testing
+
+Always ask the user and wait for explicit approval before running UI automation tests, including `winapp ui` or other tools that launch or interact with the app. UI automation can change focus, click controls, type input, and otherwise disrupt the user's desktop. A general request to implement or validate changes is not approval to run UI automation.
+
 ## Architecture
 
 The app follows **MVVM + Dependency Injection** using `CommunityToolkit.Mvvm` and `Microsoft.Extensions.Hosting`.

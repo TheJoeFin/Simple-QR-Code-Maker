@@ -19,6 +19,10 @@ dotnet msbuild "Simple QR Code Maker.slnx" /restore /p:Configuration=Release /p:
 - There is no automated test project in this repository, so there is no single-test command to run.
 - There is no dedicated lint command configured in the repository.
 
+## UI automation testing
+
+Always ask the user and wait for explicit approval before running UI automation tests, including `winapp ui` or other tools that launch or interact with the app. UI automation can change focus, click controls, type input, and otherwise disrupt the user's desktop. A general request to implement or validate changes is not approval to run UI automation.
+
 ## High-level architecture
 
 - The solution has two projects: `Simple QR Code Maker` is the WinUI 3 app, and `Simple QR Code Maker.Core` contains shared infrastructure such as `FileService`.
