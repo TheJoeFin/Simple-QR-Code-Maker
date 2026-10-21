@@ -38,6 +38,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     public partial ObservableCollection<BarcodeImageItem> QrCodeBitmaps { get; set; } = [];
 
     private readonly List<RequestedQrCodeItem> requestedQrCodes = [];
+    private readonly HashSet<string> commonBrandCodes = new(StringComparer.Ordinal);
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasRequestedCodes))]
@@ -189,6 +190,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private bool WarnWhenLikelyRedirector = RedirectorWarningSettingsHelper.DefaultWarnWhenLikelyRedirector;
     private bool HideMinimumSizeText = false;
     private bool UseAutoBrands = false;
+    private bool RecommendUsingBrandThemes = true;
     private string QuickSaveLocation = string.Empty;
     private int AppLaunchCount = 0;
     private bool HasUsedAddButton = false;
@@ -843,6 +845,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     partial void OnUrlTextChanged(string value)
     {
+        commonBrandCodes.IntersectWith(EnumerateRequestedCodeTexts());
+
         if (!_isApplyingBrand && !UrlMatchesBrand(value))
             SelectedBrand = null;
 
@@ -923,6 +927,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         WeakReferenceMessenger.Default.Register<SaveHistoryMessage>(this, OnSaveHistoryMessage);
         WeakReferenceMessenger.Default.Register<RequestPaneChange>(this, OnRequestPaneChange);
         WeakReferenceMessenger.Default.Register<IgnoreAutoBrandMessage>(this, OnIgnoreAutoBrand);
+        WeakReferenceMessenger.Default.Register<UseCommonBrandMessage>(this, OnUseCommonBrand);
     }
 
     private void BrandItems_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -994,11 +999,76 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     private void OnIgnoreAutoBrand(object recipient, IgnoreAutoBrandMessage message)
     {
+        if (message.Item.IsCommonBranded)
+        {
+            SetCommonBrandSelection(message.Item, false);
+            return;
+        }
+
         int itemIndex = QrCodeBitmaps.IndexOf(message.Item);
         if (itemIndex < 0 || itemIndex >= requestedQrCodes.Count)
             return;
 
         QrCodeBitmaps[itemIndex] = CreatePreviewItem(requestedQrCodes[itemIndex]);
+    }
+
+    private void OnUseCommonBrand(object recipient, UseCommonBrandMessage message)
+    {
+        SetCommonBrandSelection(message.Item, !message.Item.IsCommonBranded);
+    }
+
+    private void SetCommonBrandSelection(BarcodeImageItem item, bool useCommonBrand)
+    {
+        if (!QrCodeBitmaps.Contains(item))
+            return;
+
+        List<(int Index, BarcodeImageItem Preview)> replacements = [];
+        try
+        {
+            for (int index = 0; index < QrCodeBitmaps.Count; index++)
+            {
+                if (requestedQrCodes[index].CodeAsText != item.CodeAsText)
+                    continue;
+
+                RequestedQrCodeItem requestedCode = requestedQrCodes[index] with { UseCommonBrand = useCommonBrand };
+                replacements.Add((index, CreatePreviewItem(requestedCode)));
+            }
+        }
+        catch (Exception ex)
+        {
+            foreach ((int _, BarcodeImageItem preview) in replacements)
+                DisposeCommonBrandLogo(preview);
+
+            Debug.WriteLine($"Failed to change the common brand for a QR Code: {ex}");
+            CodeInfoBarTitle = "Could not change the common brand";
+            CodeInfoBarMessage = "The colors and logo could not be applied. Try a shorter URL or use your current style.";
+            CodeInfoBarSeverity = InfoBarSeverity.Error;
+            ShowCodeInfoBar = true;
+            return;
+        }
+
+        if (useCommonBrand)
+            commonBrandCodes.Add(item.CodeAsText);
+        else
+            commonBrandCodes.Remove(item.CodeAsText);
+
+        for (int index = 0; index < requestedQrCodes.Count; index++)
+        {
+            if (requestedQrCodes[index].CodeAsText == item.CodeAsText)
+                requestedQrCodes[index] = requestedQrCodes[index] with { UseCommonBrand = useCommonBrand };
+        }
+
+        foreach ((int index, BarcodeImageItem preview) in replacements)
+        {
+            DisposeCommonBrandLogo(QrCodeBitmaps[index]);
+            QrCodeBitmaps[index] = preview;
+        }
+    }
+
+    private static void DisposeCommonBrandLogo(BarcodeImageItem item)
+    {
+        if (item.IsCommonBranded)
+            item.LogoImage?.Dispose();
     }
 
     private void OnRequestShowMessage(object recipient, RequestShowMessage rsm)
@@ -1084,8 +1154,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         {
             try
             {
-                _ = BarcodeHelpers.EncodeQrCode(text, SelectedOption.ErrorCorrectionLevel);
-                requestedQrCodes.Add(new RequestedQrCodeItem(text, currentContentKind, multiLineCodeModeOverride));
+                bool useCommonBrand = commonBrandCodes.Contains(text);
+                _ = BarcodeHelpers.EncodeQrCode(text, useCommonBrand ? ErrorCorrectionLevel.H : SelectedOption.ErrorCorrectionLevel);
+                requestedQrCodes.Add(new RequestedQrCodeItem(text, currentContentKind, multiLineCodeModeOverride, useCommonBrand));
             }
             catch (ZXing.WriterException)
             {
@@ -1133,6 +1204,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     private void ResetRequestedCodeState()
     {
+        foreach (BarcodeImageItem item in QrCodeBitmaps)
+            DisposeCommonBrandLogo(item);
+
         QrCodeBitmaps.Clear();
         requestedQrCodes.Clear();
         RequestedCodeCount = 0;
@@ -1211,7 +1285,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             System.Drawing.Bitmap? brandLogo = null;
             string? brandLogoSvg = null;
 
-            if (UseAutoBrands)
+            if (UseAutoBrands && !requestedQrCodes[index].UseCommonBrand)
             {
                 matchedBrand = FindMatchingBrand(requestedQrCodes[index].CodeAsText);
                 if (matchedBrand is not null && _brandLogoCache.TryGetValue(matchedBrand.Name, out (System.Drawing.Bitmap? Logo, string? Svg) cachedLogo))
@@ -1434,8 +1508,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         System.Drawing.Bitmap? brandLogoOverride = null,
         string? brandLogoSvgOverride = null)
     {
-        Windows.UI.Color foreground = brandOverride?.Foreground ?? ForegroundColor;
-        Windows.UI.Color background = brandOverride?.Background ?? BackgroundColor;
+        using QrRenderSettingsSnapshot? currentSettings = requestedCode.UseCommonBrand ? CreateRenderSettingsSnapshot() : null;
+        using QrRenderSettingsSnapshot? commonSettings = currentSettings?.CreateCommonBrandOverride(requestedCode);
+        Windows.UI.Color foreground = commonSettings?.ForegroundColor.ToWindowsUiColor() ?? brandOverride?.Foreground ?? ForegroundColor;
+        Windows.UI.Color background = commonSettings?.BackgroundColor.ToWindowsUiColor() ?? brandOverride?.Background ?? BackgroundColor;
 
         ErrorCorrectionOptions errorCorrection = SelectedOption;
         if (brandOverride?.ErrorCorrectionLevelAsString is not null)
@@ -1448,10 +1524,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
         bool brandHasLogo = brandOverride is not null
             && (brandOverride.LogoImagePath is not null || brandOverride.LogoEmoji is not null);
-        System.Drawing.Bitmap? logo = brandHasLogo ? brandLogoOverride : LogoImage;
-        string? logoSvg = brandHasLogo ? brandLogoSvgOverride : LogoSvgContent;
-        double logoSize = brandOverride?.LogoSizePercentage ?? LogoSizePercentage;
-        double logoPadding = brandOverride?.LogoPaddingPixels ?? LogoPaddingPixels;
+        ErrorCorrectionLevel errorCorrectionLevel = commonSettings?.ErrorCorrectionLevel ?? errorCorrection.ErrorCorrectionLevel;
+        System.Drawing.Bitmap? logo = commonSettings?.LogoImage ?? (brandHasLogo ? brandLogoOverride : LogoImage);
+        string? logoSvg = commonSettings?.LogoSvgContent ?? (brandHasLogo ? brandLogoSvgOverride : LogoSvgContent);
+        double logoSize = commonSettings?.LogoSizePercentage ?? brandOverride?.LogoSizePercentage ?? LogoSizePercentage;
+        double logoPadding = commonSettings?.LogoPaddingPixels ?? brandOverride?.LogoPaddingPixels ?? LogoPaddingPixels;
 
         QrFramePreset framePreset = FramePreset;
         string? resolvedFrameText;
@@ -1469,7 +1546,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
         WriteableBitmap bitmap = BarcodeHelpers.GetQrCodeBitmapFromText(
             requestedCode.CodeAsText,
-            errorCorrection.ErrorCorrectionLevel,
+            errorCorrectionLevel,
             foreground.ToSystemDrawingColor(),
             background.ToSystemDrawingColor(),
             logo,
@@ -1491,18 +1568,20 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
                 || framePreset != QrFramePreset.None)
                 ? Visibility.Collapsed
                 : Visibility.Visible,
-            ErrorCorrection = errorCorrection.ErrorCorrectionLevel,
+            ErrorCorrection = errorCorrectionLevel,
             ForegroundColor = foreground,
             BackgroundColor = background,
             MaxSizeScaleFactor = MinSizeScanDistanceScaleFactor,
             QrPaddingModules = QrPaddingModules,
-            LogoImage = logo,
+            LogoImage = commonSettings?.LogoImage is System.Drawing.Bitmap commonLogo ? new System.Drawing.Bitmap(commonLogo) : logo,
             LogoSizePercentage = logoSize,
             LogoPaddingPixels = logoPadding,
             LogoSvgContent = logoSvg,
             FramePreset = framePreset,
             FrameText = resolvedFrameText,
             IsAutoBranded = brandOverride is not null,
+            IsCommonBranded = requestedCode.UseCommonBrand,
+            RecommendUsingBrandThemes = RecommendUsingBrandThemes,
         };
 
         double ratio = barcodeImageItem.ColorContrastRatio;
@@ -2770,6 +2849,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         WarnWhenNotUrl = await LocalSettingsService.ReadSettingAsync<bool>(nameof(WarnWhenNotUrl));
         HideMinimumSizeText = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HideMinimumSizeText));
         UseAutoBrands = await LocalSettingsService.ReadSettingAsync<bool>(nameof(UseAutoBrands));
+        RecommendUsingBrandThemes = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(RecommendUsingBrandThemes)) ?? true;
         ShowSaveBothButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(ShowSaveBothButton));
         ShowPrintButton = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowPrintButton)) ?? false;
         ShowZipSaveOptions = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowZipSaveOptions)) ?? true;
@@ -2898,6 +2978,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         }
         finally
         {
+            foreach (BarcodeImageItem item in QrCodeBitmaps)
+                DisposeCommonBrandLogo(item);
+
             LogoImage?.Dispose();
         }
     }
@@ -2942,6 +3025,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             CodesContent = UrlText,
             ContentKind = currentContentKind,
             MultiLineCodeModeOverride = multiLineCodeModeOverride,
+            CommonBrandCodes = [.. commonBrandCodes],
             Foreground = ForegroundColor,
             Background = BackgroundColor,
             ErrorCorrection = SelectedOption.ErrorCorrectionLevel,
@@ -2960,6 +3044,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     {
         SetCurrentDocumentMetadata(state.ContentKind, state.MultiLineCodeModeOverride);
         UrlText = state.CodesContent;
+        commonBrandCodes.Clear();
+        commonBrandCodes.UnionWith(state.CommonBrandCodes.Where(code => CommonBrandCatalog.FindMatching(code) is not null));
+        commonBrandCodes.IntersectWith(EnumerateRequestedCodeTexts());
         ForegroundColor = state.Foreground;
         BackgroundColor = state.Background;
         SelectedOption = ErrorCorrectionLevels.First(x => x.ErrorCorrectionLevel == state.ErrorCorrection);
@@ -2969,5 +3056,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         FramePreset = state.FramePreset;
         FrameTextSource = state.FrameTextSource;
         FrameText = state.FrameText ?? string.Empty;
+        debounceTimer.Stop();
+        debounceTimer.Start();
     }
 }

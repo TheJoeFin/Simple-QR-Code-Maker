@@ -360,7 +360,7 @@
                                                                          Mode=OneWay}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
-                                                            <WrapGrid Orientation="Horizontal" />
+                                                            <toolkitControls:WrapPanel Orientation="Horizontal" />
                                                         </ItemsPanelTemplate>
                                                     </ItemsControl.ItemsPanel>
                                                     <ItemsControl.ItemTemplate>

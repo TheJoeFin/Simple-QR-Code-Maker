@@ -208,6 +208,20 @@
                         OnContent="On" />
                 </settingsControls:SettingsCard>
 
+                <settingsControls:SettingsCard
+                    Description="Suggest colors and logos for recognized website links. Themes are only applied when you choose them."
+                    Header="Recommend using brand themes">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE8F9;" />
+                    </settingsControls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        AutomationProperties.AutomationId="RecommendUsingBrandThemesToggle"
+                        AutomationProperties.Name="Recommend using brand themes"
+                        IsOn="{x:Bind ViewModel.RecommendUsingBrandThemes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        OffContent="Off"
+                        OnContent="On" />
+                </settingsControls:SettingsCard>
+
                 <!--  Brand URL on plain-text items  -->
                 <settingsControls:SettingsExpander Description="Action when applying a brand with a URL to non-URL plain text content" Header="Brand URL on plain text items">
                     <settingsControls:SettingsExpander.HeaderIcon>
@@ -370,6 +384,7 @@
                         <FontIcon Glyph="&#xE8FF;" />
                     </settingsControls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
+                        AutomationProperties.AutomationId="HideMinimumSizeTextToggle"
                         IsOn="{x:Bind ViewModel.HideMinimumSizeText,
                                       Mode=TwoWay,
                                       UpdateSourceTrigger=PropertyChanged}"

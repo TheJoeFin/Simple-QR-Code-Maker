@@ -29,6 +29,15 @@ public sealed partial class QrCodeImageControl : UserControl
     private Visibility BoolToVisibility(bool value) =>
         value ? Visibility.Visible : Visibility.Collapsed;
 
+    private Visibility SizeTextVisibility(bool isCommonBranded, Visibility sizeTextVisible) =>
+        isCommonBranded ? Visibility.Collapsed : sizeTextVisible;
+
+    private Thickness SizeBarPadding(bool canRecommendCommonBrand) =>
+        new(8, 6, canRecommendCommonBrand ? 44 : 8, 6);
+
+    private double CommonBrandActionWidth(bool isCommonBranded) =>
+        isCommonBranded ? 300 : 32;
+
     private async void QrCodeImage_DragStarting(UIElement sender, DragStartingEventArgs args)
     {
         if (sender is not Image image || image.Source is not WriteableBitmap bitmap)

@@ -20,6 +20,14 @@ public sealed partial class LicensesDialogViewModel : ObservableRecipient
         foreach (LibraryInfo lib in BuildLibraries(apacheText))
             Libraries.Add(lib);
 
+        Libraries.Add(new LibraryInfo
+        {
+            Name = "SuperTinyIcons",
+            LicenseType = "MIT License",
+            GitHubUrl = "https://github.com/edent/SuperTinyIcons",
+            LicenseText = File.ReadAllText(Path.Combine(Package.Current.InstalledLocation.Path, "Licenses", "SuperTinyIcons.txt")),
+        });
+
         SelectedLibrary = Libraries[0];
     }
 

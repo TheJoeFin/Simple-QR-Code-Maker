@@ -1,3 +1,4 @@
+using Simple_QR_Code_Maker.Helpers;
 using ZXing.QrCode.Internal;
 
 namespace Simple_QR_Code_Maker.Models;
@@ -77,6 +78,29 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
             framePreset,
             frameTextSource,
             frameText);
+    }
+
+    public QrRenderSettingsSnapshot? CreateCommonBrandOverride(RequestedQrCodeItem requestedCode)
+    {
+        if (!requestedCode.UseCommonBrand)
+            return null;
+
+        CommonBrandPreset brand = CommonBrandCatalog.FindMatching(requestedCode.CodeAsText)
+            ?? throw new InvalidOperationException("The requested QR Code does not match a common brand.");
+        string svg = brand.LoadLogoSvg();
+
+        return new QrRenderSettingsSnapshot(
+            ErrorCorrectionLevel.H,
+            brand.Foreground,
+            System.Drawing.Color.White,
+            BarcodeHelpers.RasterizeSvgToBitmap(svg, 512, 512),
+            15,
+            4,
+            svg,
+            QrPaddingModules,
+            FramePreset,
+            FrameTextSource,
+            FrameText);
     }
 
     public void Dispose()

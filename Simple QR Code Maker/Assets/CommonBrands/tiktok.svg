@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" aria-label="TikTok" role="img" viewBox="0 0 512 512">
+  <defs>
+    <clipPath id="tiktok-overlap">
+      <path transform="translate(18 15)" d="M219 265A54 54 0 1 0 256 316V64H320A88 88 0 0 0 408 152V215A150 150 0 0 1 320 187V315A117 117 0 1 1 219 200"/>
+    </clipPath>
+  </defs>
+  <path d="M0 0H512V512H0" fill="#fff"/>
+  <path fill="#0ee" d="M219 265A54 54 0 1 0 256 316V64H320A88 88 0 0 0 408 152V215A150 150 0 0 1 320 187V315A117 117 0 1 1 219 200"/>
+  <path fill="#f05" transform="translate(18 15)" d="M219 265A54 54 0 1 0 256 316V64H320A88 88 0 0 0 408 152V215A150 150 0 0 1 320 187V315A117 117 0 1 1 219 200"/>
+  <path fill="#00004f" clip-path="url(#tiktok-overlap)" d="M219 265A54 54 0 1 0 256 316V64H320A88 88 0 0 0 408 152V215A150 150 0 0 1 320 187V315A117 117 0 1 1 219 200"/>
+</svg>

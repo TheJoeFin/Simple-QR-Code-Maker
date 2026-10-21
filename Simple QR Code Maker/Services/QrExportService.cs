@@ -145,19 +145,21 @@ public class QrExportService : IQrExportService
     {
         return await Task.Run(() =>
         {
-            string? resolvedFrameText = ResolveFrameText(requestedCode, renderSettings);
+            using QrRenderSettingsSnapshot? commonSettings = renderSettings.CreateCommonBrandOverride(requestedCode);
+            QrRenderSettingsSnapshot effectiveSettings = commonSettings ?? renderSettings;
+            string? resolvedFrameText = ResolveFrameText(requestedCode, effectiveSettings);
             using MemoryStream ms = new();
             BarcodeHelpers.SaveQrCodePngToStream(
                 ms,
                 requestedCode.CodeAsText,
-                renderSettings.ErrorCorrectionLevel,
-                renderSettings.ForegroundColor,
-                renderSettings.BackgroundColor,
-                renderSettings.LogoImage,
-                renderSettings.LogoSizePercentage,
-                renderSettings.LogoPaddingPixels,
-                renderSettings.QrPaddingModules,
-                renderSettings.FramePreset,
+                effectiveSettings.ErrorCorrectionLevel,
+                effectiveSettings.ForegroundColor,
+                effectiveSettings.BackgroundColor,
+                effectiveSettings.LogoImage,
+                effectiveSettings.LogoSizePercentage,
+                effectiveSettings.LogoPaddingPixels,
+                effectiveSettings.QrPaddingModules,
+                effectiveSettings.FramePreset,
                 resolvedFrameText);
             return ms.ToArray();
         });
@@ -165,20 +167,24 @@ public class QrExportService : IQrExportService
 
     private static async Task<string> GetRequestedCodeAsSvgTextAsync(RequestedQrCodeItem requestedCode, QrRenderSettingsSnapshot renderSettings)
     {
-        string? resolvedFrameText = ResolveFrameText(requestedCode, renderSettings);
         return await Task.Run(() =>
-            BarcodeHelpers.GetSvgQrCodeForText(
+        {
+            using QrRenderSettingsSnapshot? commonSettings = renderSettings.CreateCommonBrandOverride(requestedCode);
+            QrRenderSettingsSnapshot effectiveSettings = commonSettings ?? renderSettings;
+            string? resolvedFrameText = ResolveFrameText(requestedCode, effectiveSettings);
+            return BarcodeHelpers.GetSvgQrCodeForText(
                 requestedCode.CodeAsText,
-                renderSettings.ErrorCorrectionLevel,
-                renderSettings.ForegroundColor,
-                renderSettings.BackgroundColor,
-                renderSettings.LogoImage,
-                renderSettings.LogoSizePercentage,
-                renderSettings.LogoPaddingPixels,
-                renderSettings.LogoSvgContent,
-                renderSettings.QrPaddingModules,
-                renderSettings.FramePreset,
-                resolvedFrameText).Content);
+                effectiveSettings.ErrorCorrectionLevel,
+                effectiveSettings.ForegroundColor,
+                effectiveSettings.BackgroundColor,
+                effectiveSettings.LogoImage,
+                effectiveSettings.LogoSizePercentage,
+                effectiveSettings.LogoPaddingPixels,
+                effectiveSettings.LogoSvgContent,
+                effectiveSettings.QrPaddingModules,
+                effectiveSettings.FramePreset,
+                resolvedFrameText).Content;
+        });
     }
 
     private static string? ResolveFrameText(RequestedQrCodeItem requestedCode, QrRenderSettingsSnapshot renderSettings)

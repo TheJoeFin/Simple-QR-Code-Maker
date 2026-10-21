@@ -48,10 +48,12 @@ public class PrintService : IPrintService
 
             List<PrintableQrCodeAsset> printableCodes = codes.Select(code =>
             {
+                using QrRenderSettingsSnapshot? commonSettings = renderSettings.CreateCommonBrandOverride(code);
+                QrRenderSettingsSnapshot effectiveSettings = commonSettings ?? renderSettings;
                 string? resolvedFrameText = QrFrameTextResolver.Resolve(
-                    renderSettings.FramePreset,
-                    renderSettings.FrameTextSource,
-                    renderSettings.FrameText,
+                    effectiveSettings.FramePreset,
+                    effectiveSettings.FrameTextSource,
+                    effectiveSettings.FrameText,
                     code.CodeAsText,
                     code.ContentKind,
                     code.MultiLineCodeModeOverride);
@@ -59,14 +61,14 @@ public class PrintService : IPrintService
                 BarcodeHelpers.SaveQrCodePngToStream(
                     ms,
                     code.CodeAsText,
-                    renderSettings.ErrorCorrectionLevel,
-                    renderSettings.ForegroundColor,
-                    renderSettings.BackgroundColor,
-                    renderSettings.LogoImage,
-                    renderSettings.LogoSizePercentage,
-                    renderSettings.LogoPaddingPixels,
-                    renderSettings.QrPaddingModules,
-                    renderSettings.FramePreset,
+                    effectiveSettings.ErrorCorrectionLevel,
+                    effectiveSettings.ForegroundColor,
+                    effectiveSettings.BackgroundColor,
+                    effectiveSettings.LogoImage,
+                    effectiveSettings.LogoSizePercentage,
+                    effectiveSettings.LogoPaddingPixels,
+                    effectiveSettings.QrPaddingModules,
+                    effectiveSettings.FramePreset,
                     resolvedFrameText,
                     out QrImageLayoutMetrics imageLayout);
                 string label = code.ContentKind switch

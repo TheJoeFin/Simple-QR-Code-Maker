@@ -10,6 +10,8 @@ public sealed record QrCodeDesignState
 
     public MultiLineCodeMode? MultiLineCodeModeOverride { get; init; }
 
+    public string[] CommonBrandCodes { get; init; } = [];
+
     public required Windows.UI.Color Foreground { get; init; }
 
     public required Windows.UI.Color Background { get; init; }

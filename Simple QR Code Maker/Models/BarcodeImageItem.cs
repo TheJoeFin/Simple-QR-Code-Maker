@@ -51,6 +51,36 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public bool IsAutoBranded { get; set; } = false;
 
+    public bool IsCommonBranded { get; set; }
+
+    public bool RecommendUsingBrandThemes { get; set; } = true;
+
+    public CommonBrandPreset? CommonBrand => CommonBrandCatalog.FindMatching(CodeAsText);
+
+    public bool HasCommonBrand => CommonBrand is not null;
+
+    public bool CanApplyCommonBrand => HasCommonBrand && !IsCommonBranded;
+
+    public bool CanRecommendCommonBrand => RecommendUsingBrandThemes && CanApplyCommonBrand;
+
+    public bool ShowCommonBrandAction => IsCommonBranded || CanRecommendCommonBrand;
+
+    public bool CanUseCurrentStyle => IsAutoBranded || IsCommonBranded;
+
+    public string CommonBrandName => CommonBrand?.Name ?? string.Empty;
+
+    public Uri? CommonBrandLogoUri => CommonBrand is CommonBrandPreset brand
+        ? new Uri($"ms-appx:///Assets/CommonBrands/{brand.IconName}.svg")
+        : null;
+
+    public string CommonBrandActionName => IsCommonBranded
+        ? $"Restore current style instead of {CommonBrandName}"
+        : $"Use {CommonBrandName} brand";
+
+    public string CommonBrandToolTip => IsCommonBranded
+        ? $"{CommonBrand?.Name} colors and logo applied. Restore your current style."
+        : $"Use {CommonBrand?.Name} colors and logo for this QR Code.";
+
     public QRCode QRCodeDetails => BarcodeHelpers.EncodeQrCode(CodeAsText, ErrorCorrection);
 
     private QrCodeSizeRecommendation SizeRecommendation => BarcodeHelpers.GetSizeRecommendation(32 * MaxSizeScaleFactor, QRCodeDetails.Version.DimensionForVersion, ForegroundColor, BackgroundColor, QrPaddingModules);
@@ -127,6 +157,12 @@ public partial class BarcodeImageItem : ObservableRecipient
         {
             return string.Empty;
         }
+    }
+
+    [RelayCommand]
+    private void UseCommonBrandContext()
+    {
+        WeakReferenceMessenger.Default.Send(new UseCommonBrandMessage(this));
     }
 
     [RelayCommand]

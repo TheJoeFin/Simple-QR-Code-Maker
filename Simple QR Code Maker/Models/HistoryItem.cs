@@ -20,6 +20,8 @@ public class HistoryItem : IEquatable<HistoryItem>
 
     public MultiLineCodeMode? MultiLineCodeModeOverride { get; set; }
 
+    public string[] CommonBrandCodes { get; set; } = [];
+
     [JsonConverter(typeof(ColorJsonConverter))]
     public Color Foreground { get; set; } = Color.FromArgb(255, 0, 0, 0);
 

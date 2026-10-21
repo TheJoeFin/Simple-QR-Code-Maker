@@ -62,6 +62,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     public partial bool UseAutoBrands { get; set; } = false;
 
     [ObservableProperty]
+    public partial bool RecommendUsingBrandThemes { get; set; } = true;
+
+    [ObservableProperty]
     public partial BrandUrlMissingBehavior BrandUrlMissingBehavior { get; set; } = BrandUrlMissingBehavior.Warn;
 
     [ObservableProperty]
@@ -343,6 +346,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
         await SaveSingleSettingAsync(nameof(ShowPrintButton), ShowPrintButton);
         await SaveSingleSettingAsync(nameof(ShowZipSaveOptions), ShowZipSaveOptions);
         await SaveSingleSettingAsync(nameof(UseAutoBrands), UseAutoBrands);
+        await SaveSingleSettingAsync(nameof(RecommendUsingBrandThemes), RecommendUsingBrandThemes);
         await SaveSingleSettingAsync(nameof(BrandUrlMissingBehavior), BrandUrlMissingBehavior);
         await SaveSingleSettingAsync(nameof(BrandUrlMismatchBehavior), BrandUrlMismatchBehavior);
         await SaveSingleSettingAsync(nameof(MinSizeScanDistanceScaleFactor), MinSizeScanDistanceScaleFactor);
@@ -410,6 +414,11 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     }
 
     partial void OnUseAutoBrandsChanged(bool value)
+    {
+        RestartDebounceTimer();
+    }
+
+    partial void OnRecommendUsingBrandThemesChanged(bool value)
     {
         RestartDebounceTimer();
     }
@@ -1096,6 +1105,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
 
             await LoadSettingAsync(nameof(UseAutoBrands), async () =>
                 UseAutoBrands = await LocalSettingsService.ReadSettingAsync<bool>(nameof(UseAutoBrands)));
+
+            await LoadSettingAsync(nameof(RecommendUsingBrandThemes), async () =>
+                RecommendUsingBrandThemes = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(RecommendUsingBrandThemes)) ?? true);
 
             await LoadSettingAsync(nameof(BrandUrlMissingBehavior), async () =>
                 BrandUrlMissingBehavior = await LocalSettingsService.ReadSettingAsync<BrandUrlMissingBehavior?>(nameof(BrandUrlMissingBehavior)) ?? BrandUrlMissingBehavior.Warn);
