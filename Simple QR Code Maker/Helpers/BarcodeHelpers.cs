@@ -6,6 +6,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using Windows.Storage;
 using ZXing;
 using ZXing.Common;
@@ -1056,17 +1057,25 @@ public static partial class BarcodeHelpers
             int logoX = punchoutX + (punchoutSize - logoWidth) / 2;
             int logoY = punchoutY + (punchoutSize - logoHeight) / 2;
 
+            XElement logoElement = XElement.Parse(logoSvgContent, LoadOptions.PreserveWhitespace);
+            if (logoElement.Name.LocalName != "svg")
+                throw new InvalidDataException("The logo must have an SVG root element.");
+
             string viewBox = ExtractSvgViewBox(logoSvgContent);
-            string svgInner = ExtractSvgInnerContent(logoSvgContent);
-            string viewBoxAttr = string.IsNullOrEmpty(viewBox) ? string.Empty : $@" viewBox=""{viewBox}""";
+            if (!string.IsNullOrEmpty(viewBox))
+                logoElement.SetAttributeValue("viewBox", viewBox);
+            logoElement.SetAttributeValue("x", logoX);
+            logoElement.SetAttributeValue("y", logoY);
+            logoElement.SetAttributeValue("width", logoWidth);
+            logoElement.SetAttributeValue("height", logoHeight);
+            logoElement.SetAttributeValue("preserveAspectRatio", "xMidYMid meet");
+            logoElement.SetAttributeValue("overflow", "visible");
 
             logoSvgElement = $@"
   <!-- Logo punchout background -->
   <rect x=""{punchoutX}"" y=""{punchoutY}"" width=""{punchoutSize}"" height=""{punchoutSize}"" fill=""{backgroundColorFill}""/>
   <!-- Logo SVG (inlined) -->
-  <svg x=""{logoX}"" y=""{logoY}"" width=""{logoWidth}"" height=""{logoHeight}""{viewBoxAttr} preserveAspectRatio=""xMidYMid meet"" overflow=""visible"">
-    {svgInner}
-  </svg>";
+  {logoElement.ToString(SaveOptions.DisableFormatting)}";
         }
         else
         {
