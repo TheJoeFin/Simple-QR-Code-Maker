@@ -177,7 +177,10 @@ public sealed partial class ShellPage : Page
                 break;
 
             case NavigationViewItem { Tag: "Settings" }:
-                ViewModel.NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!);
+                if (NavigationFrame.GetPageViewModel() is MainViewModel mainViewModel)
+                    mainViewModel.GoToSettingsCommand.Execute(null);
+                else
+                    ViewModel.NavigationService.NavigateTo(typeof(SettingsViewModel).FullName!);
                 break;
         }
     }

@@ -460,13 +460,13 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     [RelayCommand]
     private void GoHome()
     {
-        if (NavigationService.CanGoBack)
+        if (NavigationService.CanGoBack && navigationHistoryItem is null)
         {
             NavigationService.GoBack();
             return;
         }
 
-        if (backNavigationState is not null)
+        if (backNavigationState is not null && navigationHistoryItem is null)
         {
             NavigationService.NavigateTo(backNavigationState.PageKey, backNavigationState.Parameter);
             return;
@@ -479,7 +479,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
                 Parameter = navigationHistoryItem,
                 BackNavigationState = backNavigationState,
             };
-        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, parameter);
+        NavigationService.NavigateTo(typeof(MainViewModel).FullName!, parameter, clearNavigation: navigationHistoryItem is not null);
     }
 
     public void NavigateBack() => GoHome();
