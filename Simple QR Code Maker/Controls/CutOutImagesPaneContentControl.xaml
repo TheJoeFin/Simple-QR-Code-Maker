@@ -32,7 +32,7 @@
                 VerticalAlignment="Center"
                 MaxLines="1"
                 Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="Cut Out Images"
+                Text="Images"
                 TextTrimming="CharacterEllipsis" />
             <Button
                 HorizontalAlignment="Right"
@@ -51,6 +51,7 @@
             IsItemClickEnabled="True"
             ItemClick="CutOutImagesListView_ItemClick"
             ItemsSource="{x:Bind ViewModel.DecodingImageItems, Mode=OneWay}"
+            SelectedItem="{x:Bind ViewModel.CurrentDecodingItem, Mode=OneWay}"
             SelectionMode="Single">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:DecodingImageItem">

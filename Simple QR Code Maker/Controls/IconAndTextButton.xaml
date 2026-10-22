@@ -9,6 +9,7 @@
     mc:Ignorable="d">
 
     <Button
+        Width="{x:Bind Width, Mode=OneWay}"
         Click="Button_Click"
         Command="{x:Bind Command, Mode=OneWay}"
         CommandParameter="{x:Bind CommandParameter, Mode=OneWay}">

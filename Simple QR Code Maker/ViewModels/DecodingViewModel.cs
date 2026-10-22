@@ -1123,12 +1123,9 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             if (clipboardData.Contains(StandardDataFormats.StorageItems))
             {
                 IReadOnlyList<IStorageItem> clipboardItems = await clipboardData.GetStorageItemsAsync();
-                StorageFile? imageFile = clipboardItems.OfType<StorageFile>().FirstOrDefault(IsSupportedImageFile);
-
-                if (imageFile is not null)
+                if (clipboardItems.OfType<StorageFile>().Any(IsSupportedImageFile))
                 {
-                    nextSourceKind = DecodingSourceKind.File;
-                    await OpenAndDecodeStorageFile(imageFile);
+                    await OpenAndDecodeStorageFiles(clipboardItems);
                     return;
                 }
             }
@@ -1219,11 +1216,6 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     [RelayCommand]
     private async Task OpenNewFile()
     {
-        nextSourceKind = DecodingSourceKind.File;
-        PickedImage = null;
-        CurrentDecodingItem = null;
-        IsInfoBarShowing = false;
-
         IsLoading = true;
         LoadingMessage = "Opening image…";
 
@@ -1241,12 +1233,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             IntPtr windowHandleSave = WindowNative.GetWindowHandle(saveWindow);
             InitializeWithWindow.Initialize(fileOpenPicker, windowHandleSave);
 
-            StorageFile? pickedFile = await fileOpenPicker.PickSingleFileAsync();
+            IReadOnlyList<StorageFile> pickedFiles = await fileOpenPicker.PickMultipleFilesAsync();
 
-            if (pickedFile is null)
+            if (pickedFiles.Count == 0)
                 return;
 
-            await OpenAndDecodeStorageFile(pickedFile);
+            await OpenAndDecodeStorageFiles(pickedFiles);
         }
         finally
         {
@@ -1567,15 +1559,94 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         DecodingImageItems.Clear();
         DecodingImageItems.Add(decodingImage);
         OnPropertyChanged(nameof(IsMultiImagePanelVisible));
+        OnPropertyChanged(nameof(HasLeftPaneContent));
+        IsCutOutImagesPaneOpen = false;
         CurrentDecodingItem = decodingImage;
     }
 
     public async Task OpenAndDecodeStorageFiles(IReadOnlyList<IStorageItem> pickedFiles)
     {
+        if (pickedFiles.Count == 0)
+            return;
+
         nextSourceKind = DecodingSourceKind.File;
-        IStorageItem? first = pickedFiles.Count > 0 ? pickedFiles[0] : null;
-        if (first is StorageFile storageFile)
-            await OpenAndDecodeStorageFile(storageFile);
+        nextSourceFilePathOverride = null;
+        IsLoading = true;
+        List<DecodingImageItem> decodedItems = [];
+        List<string> failures = [];
+
+        try
+        {
+            for (int index = 0; index < pickedFiles.Count; index++)
+            {
+                IStorageItem pickedItem = pickedFiles[index];
+                LoadingMessage = $"Opening image {index + 1} of {pickedFiles.Count}…";
+                await Task.Yield();
+
+                if (pickedItem is not StorageFile file || !IsSupportedImageFile(file))
+                {
+                    failures.Add($"{pickedItem.Name}: Not a supported image file.");
+                    continue;
+                }
+
+                DecodingImageItem? decodedItem;
+                try
+                {
+                    decodedItem = await GetDecodingImageItemFromStorageFileAsync(file);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to open image '{file.Name}': {ex.Message}");
+                    failures.Add($"{file.Name}: {ex.Message}");
+                    continue;
+                }
+
+                if (decodedItem is not null)
+                {
+                    decodedItem.Label = file.Name;
+                    decodedItems.Add(decodedItem);
+                }
+            }
+
+            if (decodedItems.Count > 0)
+            {
+                FolderFiles.Clear();
+                FolderPaneFolderName = string.Empty;
+                currentFolderPaneFolder = null;
+                currentFolderFileItem = null;
+                IsFolderPaneOpen = false;
+                PickedImage = null;
+                DecodingImageItems.Clear();
+                foreach (DecodingImageItem item in decodedItems)
+                    DecodingImageItems.Add(item);
+
+                OnPropertyChanged(nameof(HasFolderFiles));
+                OnPropertyChanged(nameof(IsMultiImagePanelVisible));
+                OnPropertyChanged(nameof(HasLeftPaneContent));
+                IsCutOutImagesPaneOpen = IsMultiImagePanelVisible;
+                suppressHistorySave = true;
+                CurrentDecodingItem = decodedItems[0];
+
+                foreach (DecodingImageItem item in decodedItems)
+                    await SaveToDecodingHistoryAsync(item);
+            }
+
+            if (failures.Count > 0)
+            {
+                ResetDecodedContentInfoBar();
+                DecodedContentInfoBarTitle = "Some files could not be opened";
+                InfoBarMessage = string.Join(Environment.NewLine, failures);
+                DecodedContentInfoBarSeverity = decodedItems.Count > 0
+                    ? InfoBarSeverity.Warning
+                    : InfoBarSeverity.Error;
+                IsInfoBarShowing = true;
+            }
+        }
+        finally
+        {
+            IsLoading = false;
+            LoadingMessage = string.Empty;
+        }
     }
 
     public async Task OpenAndDecodeStorageFile(StorageFile storageFile)
@@ -1593,6 +1664,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                 DecodingImageItems.Add(decodedItem);
                 OnPropertyChanged(nameof(IsMultiImagePanelVisible));
                 OnPropertyChanged(nameof(HasLeftPaneContent));
+                IsCutOutImagesPaneOpen = false;
                 CurrentDecodingItem = decodedItem;
             }
         }
