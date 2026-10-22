@@ -387,13 +387,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         return multiLineCodeModeOverride ?? MultiLineCodeMode;
     }
 
-    private MultiLineCodeMode? GetDefaultVCardMultiLineOverride()
-    {
-        return UseSingleCodeForVCardByDefault
-            ? MultiLineCodeMode.MultilineOneCode
-            : null;
-    }
-
     public bool UseSingleCodeForCurrentDocument
     {
         get
@@ -1640,7 +1633,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             ApplyDocumentText(
                 dialog.ResultText,
                 QrContentKind.VCard,
-                GetDefaultVCardMultiLineOverride());
+                MultiLineCodeMode.MultilineOneCode);
         }
     }
 
