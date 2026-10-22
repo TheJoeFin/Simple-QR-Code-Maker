@@ -78,10 +78,29 @@
                     x:Name="ShareNavItem"
                     SelectsOnInvoked="False"
                     Tag="Share"
-                    ToolTipService.ToolTip="Share Simple QR Code Maker">
+                    AutomationProperties.Name="Share"
+                    ToolTipService.ToolTip="Share content or Simple QR Code Maker">
                     <NavigationViewItem.Icon>
                         <SymbolIcon Symbol="Share" />
                     </NavigationViewItem.Icon>
+                    <FlyoutBase.AttachedFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem
+                                x:Name="ShareContentMenuItem"
+                                Click="ShareContentMenuItem_Click"
+                                Text="Share content"
+                                Visibility="Collapsed">
+                                <MenuFlyoutItem.Icon>
+                                    <SymbolIcon Symbol="Share" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Click="ShareAppMenuItem_Click" Text="Share app">
+                                <MenuFlyoutItem.Icon>
+                                    <SymbolIcon Symbol="Shop" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </FlyoutBase.AttachedFlyout>
                 </NavigationViewItem>
                 <NavigationViewItem
                     x:Name="SettingsNavItem"
@@ -128,6 +147,12 @@
                         </StackPanel>
                     </StackPanel>
                 </InfoBar>
+                <InfoBar
+                    x:Name="ShareErrorBar"
+                    Title="Failed to share content"
+                    Margin="32,20"
+                    VerticalAlignment="Bottom"
+                    Severity="Error" />
             </Grid>
         </NavigationView>
     </Grid>

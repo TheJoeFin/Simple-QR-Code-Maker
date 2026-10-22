@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Simple_QR_Code_Maker.Extensions;
 using Simple_QR_Code_Maker.Helpers;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -301,39 +300,16 @@ public partial class BarcodeImageItem : ObservableRecipient
     [RelayCommand]
     private async Task ShareCodeContext()
     {
-        if (CodeAsBitmap is null)
+        try
         {
-            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to share QR Code", "No QR Code to share", InfoBarSeverity.Error));
-            return;
+            await ShareHelper.ShareQrCodesAsync([this]);
+            WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
         }
-
-        StorageFolder folder = ApplicationData.Current.LocalCacheFolder;
-        string imageNameFileName = $"{CodeAsText.ToSafeFileName()}.png";
-        StorageFile file = await folder.CreateFileAsync(imageNameFileName, CreationCollisionOption.ReplaceExisting);
-
-        if (!await CodeAsBitmap.SavePngToStorageFile(file))
+        catch (Exception ex)
         {
-            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to share QR Code", "Could not prepare PNG for sharing", InfoBarSeverity.Error));
-            return;
+            System.Diagnostics.Debug.WriteLine($"Failed to share QR Code: {ex}");
+            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to share QR Code", ex.Message, InfoBarSeverity.Error));
         }
-
-        IntPtr hwnd = WindowNative.GetWindowHandle(App.MainWindow);
-        DataTransferManager dtm = ShareHelper.GetForWindow(hwnd);
-
-        TypedEventHandler<DataTransferManager, DataRequestedEventArgs>? handler = null;
-        handler = (sender, args) =>
-        {
-            DataRequest request = args.Request;
-            request.Data.Properties.Title = "QR Code";
-            request.Data.Properties.Description = CodeAsText;
-            request.Data.SetStorageItems(new[] { file });
-            request.Data.SetBitmap(RandomAccessStreamReference.CreateFromFile(file));
-            sender.DataRequested -= handler;
-        };
-        dtm.DataRequested += handler;
-
-        ShareHelper.ShowShareUIForWindow(hwnd);
-        WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
     }
 
     [RelayCommand]

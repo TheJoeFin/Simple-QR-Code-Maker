@@ -1,6 +1,8 @@
-﻿using Microsoft.UI.Windowing;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Simple_QR_Code_Maker.Contracts.ViewModels;
@@ -231,6 +233,75 @@ public sealed partial class ShellPage : Page
     }
 
     private void HandleShareToggle()
+    {
+        bool hasContent = TryGetShareContent(out _, out _);
+        ShareContentMenuItem.Visibility = hasContent ? Visibility.Visible : Visibility.Collapsed;
+        ShareErrorBar.IsOpen = false;
+
+        if (!hasContent)
+        {
+            ViewModel.IsShareOpen = !ViewModel.IsShareOpen;
+            return;
+        }
+
+        FlyoutBase.ShowAttachedFlyout(ShareNavItem);
+    }
+
+    private bool TryGetShareContent(out List<BarcodeImageItem> codes, out string decodedText)
+    {
+        codes = [];
+        decodedText = string.Empty;
+
+        switch (NavigationFrame.GetPageViewModel())
+        {
+            case MainViewModel mainVm when mainVm.CanSaveImage && mainVm.HasRequestedCodes:
+                codes = mainVm.QrCodeBitmaps.Where(ShareHelper.CanShareQrCode).ToList();
+                return codes.Count > 0;
+            case DecodingViewModel { IsLoading: false, CurrentDecodingItem: not null } decodingVm:
+                decodedText = string.Join(Environment.NewLine,
+                    decodingVm.CurrentDecodingItem.CodeBorders
+                        .Select(border => border.BorderInfo.Text)
+                        .Where(text => !string.IsNullOrWhiteSpace(text)));
+                return !string.IsNullOrWhiteSpace(decodedText);
+            default:
+                return false;
+        }
+    }
+
+    private async void ShareContentMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        ShareErrorBar.IsOpen = false;
+
+        if (!TryGetShareContent(out List<BarcodeImageItem> codes, out string decodedText))
+        {
+            ShareContentMenuItem.Visibility = Visibility.Collapsed;
+            ViewModel.IsShareOpen = true;
+            return;
+        }
+
+        ViewModel.IsShareOpen = false;
+
+        try
+        {
+            if (codes.Count > 0)
+            {
+                await ShareHelper.ShareQrCodesAsync(codes);
+                WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
+            }
+            else
+            {
+                ShareHelper.ShareDecodedText(decodedText);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to share content: {ex}");
+            ShareErrorBar.Message = ex.Message;
+            ShareErrorBar.IsOpen = true;
+        }
+    }
+
+    private void ShareAppMenuItem_Click(object sender, RoutedEventArgs e)
     {
         ViewModel.IsShareOpen = !ViewModel.IsShareOpen;
     }
