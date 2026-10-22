@@ -215,6 +215,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     public partial bool ShowZipSaveOptions { get; set; } = true;
 
     [ObservableProperty]
+    public partial bool ShowMainNavigationButtons { get; set; } = false;
+
+    [ObservableProperty]
     public partial bool CanPasteText { get; set; } = false;
 
     [ObservableProperty]
@@ -2850,7 +2853,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         MinSizeScanDistanceScaleFactor = await LocalSettingsService.ReadSettingAsync<double>(nameof(MinSizeScanDistanceScaleFactor));
         QrPaddingModules = BarcodeHelpers.NormalizeQrPaddingModules(
             await LocalSettingsService.ReadSettingAsync<double?>(nameof(QrPaddingModules)) ?? 2.0);
-        AppLaunchCount = (await LocalSettingsService.ReadSettingAsync<int?>(nameof(AppLaunchCount)) ?? 0) + 1;
+        AppLaunchCount = await LocalSettingsService.ReadSettingAsync<int?>(nameof(AppLaunchCount)) ?? 0;
+        bool? showMainNavigationButtons = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowMainNavigationButtons));
+        ShowMainNavigationButtons = showMainNavigationButtons ?? AppLaunchCount > 0;
+        if (showMainNavigationButtons is null)
+        {
+            await LocalSettingsService.SaveSettingAsync(nameof(ShowMainNavigationButtons), ShowMainNavigationButtons);
+        }
+
+        AppLaunchCount++;
         await LocalSettingsService.SaveSettingAsync(nameof(AppLaunchCount), AppLaunchCount);
         await LoadLastRunVersionAsync();
         HasUsedAddButton = await LocalSettingsService.ReadSettingAsync<bool>(nameof(HasUsedAddButton));

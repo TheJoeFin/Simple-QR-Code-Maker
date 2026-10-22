@@ -408,7 +408,10 @@
                                     <StackPanel
                                         HorizontalAlignment="Center"
                                         Orientation="Horizontal"
-                                        Spacing="10">
+                                        Spacing="10"
+                                        Visibility="{x:Bind ViewModel.ShowMainNavigationButtons,
+                                                            Converter={StaticResource BoolToVisibility},
+                                                            Mode=OneWay}">
                                         <controls:IconAndTextButton
                                             Command="{x:Bind ViewModel.OpenFileCommand}"
                                             Text="Read Codes"

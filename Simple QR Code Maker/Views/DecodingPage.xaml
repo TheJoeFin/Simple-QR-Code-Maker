@@ -488,7 +488,8 @@
                                                     <controls:IconAndTextButton
                                                         Command="{x:Bind ViewModel.GoToCreateQrCodesCommand}"
                                                         Text="Make Codes"
-                                                        ToolTipService.ToolTip="Switch to making QR Codes">
+                                                        ToolTipService.ToolTip="Switch to making QR Codes"
+                                                        Visibility="{x:Bind ViewModel.ShowMainNavigationButtons, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                                         <controls:IconAndTextButton.Icon>
                                                             <controls:QrCodeIcon />
                                                         </controls:IconAndTextButton.Icon>
@@ -496,7 +497,8 @@
                                                     <controls:IconAndTextButton
                                                         Command="{x:Bind ViewModel.GoToSettingsCommand}"
                                                         Text="Settings"
-                                                        ToolTipService.ToolTip="Simple QR Code Maker Settings">
+                                                        ToolTipService.ToolTip="Simple QR Code Maker Settings"
+                                                        Visibility="{x:Bind ViewModel.ShowMainNavigationButtons, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                                         <controls:IconAndTextButton.Icon>
                                                             <SymbolIcon Symbol="Setting" />
                                                         </controls:IconAndTextButton.Icon>

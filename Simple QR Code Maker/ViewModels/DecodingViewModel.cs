@@ -59,6 +59,9 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     public partial bool CanPasteImage { get; set; } = false;
 
     [ObservableProperty]
+    public partial bool ShowMainNavigationButtons { get; set; } = false;
+
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasImage))]
     [NotifyPropertyChangedFor(nameof(HasActivePreviewSurface))]
     public partial DecodingImageItem? CurrentDecodingItem { get; set; } = null;
@@ -689,6 +692,15 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     public async void OnNavigatedTo(object parameter)
     {
         AttachClipboardHandler();
+        bool? showMainNavigationButtons = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowMainNavigationButtons));
+        if (showMainNavigationButtons is null)
+        {
+            int appLaunchCount = await LocalSettingsService.ReadSettingAsync<int?>("AppLaunchCount") ?? 0;
+            showMainNavigationButtons = appLaunchCount > 0;
+            await LocalSettingsService.SaveSettingAsync(nameof(ShowMainNavigationButtons), showMainNavigationButtons.Value);
+        }
+
+        ShowMainNavigationButtons = showMainNavigationButtons.Value;
         warnWhenLikelyRedirector = await RedirectorWarningSettingsHelper.ReadWarningEnabledAsync(LocalSettingsService);
         safeRedirectorDomains = await RedirectorWarningSettingsHelper.ReadSafeDomainsAsync(LocalSettingsService);
         launchMode = await LocalSettingsService.ReadSettingAsync<LaunchMode?>(nameof(LaunchMode))
