@@ -146,6 +146,7 @@
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 		<AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
 		<PackageCertificateThumbprint />
+		<DefaultLanguage>en-US</DefaultLanguage>
 	</PropertyGroup>
 
     <ItemGroup>
