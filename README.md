@@ -89,11 +89,14 @@ On the reading side, v2 can decode codes from files, folders, drag-and-drop, the
 - Copy raw SVG text to the clipboard.
 - Open the folder where files were saved.
 - Print QR codes with configurable page type, layout, margins, spacing, code size, and labels.
+- Use Share in the top navigation to share generated QR codes as PNGs or the current preview's decoded text through the Windows Share UI. When the current page has codes, choose Share content or Share app. With no content, Share opens the app-sharing panel directly for the Microsoft Store link.
+- Sharing requires nonblank content and, for generated codes, a rendered PNG preview. Blank decoded results and results still loading are excluded. Content is checked again when sharing; if it has been cleared, the app-sharing panel opens instead.
 - Accept shared text and URLs into the creator from the Windows Share UI.
 
 ### Read and decode QR codes
 
 - Decode from image files.
+- Open, drop, or paste multiple image files to browse their decoded results in the Images pane.
 - Decode from drag-and-drop.
 - Decode from the clipboard.
 - Decode from the camera.
