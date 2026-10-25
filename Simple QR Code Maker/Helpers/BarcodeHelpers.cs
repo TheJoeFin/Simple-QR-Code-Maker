@@ -23,6 +23,14 @@ public static partial class BarcodeHelpers
 
     private const string Utf8CharacterSet = "UTF-8";
 
+    private static string NormalizeVCardLineEndings(string text)
+    {
+        // WinUI TextBox uses CR-only newlines, but vCard readers expect CRLF.
+        return VCardBuilderHelper.IsVCard(text)
+            ? text.ReplaceLineEndings("\r\n")
+            : text;
+    }
+
     /// <summary>
     /// ZXing encodes byte-mode content as ISO-8859-1 unless told otherwise, which silently replaces
     /// every character outside Latin-1 (Cyrillic, Greek, CJK, emoji, ...) with '?'. Text that fits in
@@ -56,6 +64,8 @@ public static partial class BarcodeHelpers
     /// </summary>
     internal static QRCode EncodeQrCode(string text, ErrorCorrectionLevel correctionLevel)
     {
+        text = NormalizeVCardLineEndings(text);
+
         if (!NeedsUtf8Encoding(text))
             return ZXing.QrCode.Internal.Encoder.encode(text, correctionLevel);
 
@@ -263,6 +273,8 @@ public static partial class BarcodeHelpers
 
     private static Bitmap CreateQrCodeBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out int qrRenderSize)
     {
+        text = NormalizeVCardLineEndings(text);
+
         // Always pass fully opaque colors to ZXing — if the background color has A=0, ZXing fills
         // nothing (transparent brush = SourceOver no-op) and the bitmap initializes to black, making
         // foreground and background pixels indistinguishable. ApplyAlphaToQrBitmap handles alpha.
@@ -814,6 +826,8 @@ public static partial class BarcodeHelpers
 
     public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
     {
+        text = NormalizeVCardLineEndings(text);
+
         int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
         QRCode qrCode = EncodeQrCode(text, correctionLevel);
         int moduleCount = qrCode.Version.DimensionForVersion;
