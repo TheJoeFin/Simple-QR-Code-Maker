@@ -1,16 +1,19 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Simple_QR_Code_Maker.Activation;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Core.Contracts.Services;
 using Simple_QR_Code_Maker.Core.Services;
+using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.Services;
 using Simple_QR_Code_Maker.ViewModels;
 using Simple_QR_Code_Maker.Views;
 using System.Diagnostics;
+using Windows.Storage;
 
 namespace Simple_QR_Code_Maker;
 
@@ -57,7 +60,44 @@ public partial class App : Application
 
             // Services
             services.AddTransient<IWebViewService, WebViewService>();
-            services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
+            services.AddSingleton<IRuntimeEnvironment, RuntimeEnvironment>();
+            services.AddSingleton<PackagedSettingsStore>();
+            services.AddSingleton<FileSettingsStore>(provider =>
+            {
+                LocalSettingsOptions options = provider.GetRequiredService<IOptions<LocalSettingsOptions>>().Value;
+                string folder = SettingsStoragePaths.GetFolder(provider.GetRequiredService<IRuntimeEnvironment>().LocalApplicationDataPath, options);
+                return new FileSettingsStore(new AtomicJsonFileStore(folder), options.LocalSettingsFile ?? SettingsStoragePaths.DefaultFileName);
+            });
+            services.AddSingleton<ILocalSettingsService>(provider => new LocalSettingsService(
+                provider.GetRequiredService<IRuntimeEnvironment>(),
+                provider.GetRequiredService<PackagedSettingsStore>(),
+                provider.GetRequiredService<FileSettingsStore>()));
+            services.AddSingleton<IJsonFileStore>(_ => new AtomicJsonFileStore(ApplicationData.Current.LocalFolder.Path));
+            services.AddSingleton<IBrandStore, BrandStore>();
+            services.AddSingleton<IHistoryStore>(provider =>
+            {
+                IRuntimeEnvironment runtime = provider.GetRequiredService<IRuntimeEnvironment>();
+                ISettingsStore legacySettings;
+                if (runtime.IsPackaged)
+                {
+                    legacySettings = provider.GetRequiredService<PackagedSettingsStore>();
+                }
+                else
+                {
+                    LocalSettingsOptions options = provider.GetRequiredService<IOptions<LocalSettingsOptions>>().Value;
+                    string legacyFolder = SettingsStoragePaths.GetLegacyHistoryFolder(runtime.LocalApplicationDataPath);
+                    string settingsFolder = SettingsStoragePaths.GetFolder(runtime.LocalApplicationDataPath, options);
+                    bool isSameSettingsFile = string.Equals(Path.GetFullPath(settingsFolder), Path.GetFullPath(legacyFolder), StringComparison.OrdinalIgnoreCase)
+                        && string.Equals(options.LocalSettingsFile ?? SettingsStoragePaths.DefaultFileName, SettingsStoragePaths.DefaultFileName, StringComparison.OrdinalIgnoreCase);
+                    legacySettings = isSameSettingsFile
+                        ? provider.GetRequiredService<FileSettingsStore>()
+                        : new FileSettingsStore(new AtomicJsonFileStore(legacyFolder));
+                }
+                return new HistoryStore(provider.GetRequiredService<IJsonFileStore>(), legacySettings, TimeProvider.System);
+            });
+            services.AddSingleton<IHistoryImageStore>(_ => new HistoryImageStore(
+                Path.Combine(ApplicationData.Current.LocalFolder.Path, "DecodingHistoryImages"), TimeProvider.System));
+            services.AddSingleton<IDecodingHistoryStore, DecodingHistoryStore>();
             services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();

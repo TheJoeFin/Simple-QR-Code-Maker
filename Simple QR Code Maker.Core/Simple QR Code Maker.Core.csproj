@@ -4,9 +4,16 @@
     <RootNamespace>Simple_QR_Code_Maker.Core</RootNamespace>
     <Platforms>x64;arm64</Platforms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="Models\" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <InternalsVisibleTo Include="Simple QR Code Maker" />
+    <InternalsVisibleTo Include="Simple QR Code Maker.Windows" />
+    <InternalsVisibleTo Include="Simple QR Code Maker.Core.Tests" />
+    <InternalsVisibleTo Include="Simple QR Code Maker.Windows.Tests" />
   </ItemGroup>
 </Project>

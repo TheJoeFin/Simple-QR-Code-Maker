@@ -7,6 +7,10 @@
     <Platform Solution="*|arm64" Project="arm64" />
     <Platform Solution="*|x64" Project="x64" />
   </Project>
+  <Project Path="Simple QR Code Maker.Windows/Simple QR Code Maker.Windows.csproj">
+    <Platform Solution="*|arm64" Project="arm64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
   <Project Path="Simple QR Code Maker/Simple QR Code Maker.csproj">
     <Platform Solution="*|arm64" Project="arm64" />
     <Platform Solution="*|x64" Project="x64" />

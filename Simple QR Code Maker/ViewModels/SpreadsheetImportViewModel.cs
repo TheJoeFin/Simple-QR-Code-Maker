@@ -312,10 +312,9 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
             return;
         }
 
-        int columnCount = _allRows.Max(row => row.Cells.Count);
         _dataRows = firstRowIsHeader ? [.. _allRows.Skip(1)] : [.. _allRows];
 
-        List<string> headers = CreateBaseHeaders(columnCount, firstRowIsHeader);
+        List<string> headers = SpreadsheetImportPolicy.CreateHeaders(_allRows, firstRowIsHeader);
         int existingIdColumnIndex = firstRowIsHeader ? FindIdColumnIndex(headers) : -1;
         _idColumnIndex = -1;
         _willCreateIdColumn = false;
@@ -383,38 +382,8 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
 
     private List<string> GetSelectedValues()
     {
-        int columnIndex = SelectedColumnIndex;
-        if (columnIndex < 0)
-            return [];
-
-        IEnumerable<string> values = _displayRows
-            .Select(row => columnIndex < row.Count ? row[columnIndex] : string.Empty)
-            .Where(value => !string.IsNullOrWhiteSpace(value))
-            .Select(value => $"{TextBeforeImportedLine}{value}{TextAfterImportedLine}");
-
-        if (RemoveDuplicates)
-            values = values.Distinct(StringComparer.Ordinal);
-
-        return [.. values];
-    }
-
-    private List<string> CreateBaseHeaders(int columnCount, bool firstRowIsHeader)
-    {
-        if (firstRowIsHeader && _allRows.Count > 0)
-        {
-            SpreadsheetSourceRow headerRow = _allRows[0];
-            List<string> headers = new(columnCount);
-            for (int index = 0; index < columnCount; index++)
-            {
-                headers.Add(index < headerRow.Cells.Count && !string.IsNullOrWhiteSpace(headerRow.Cells[index])
-                    ? headerRow.Cells[index]
-                    : $"Column {index + 1}");
-            }
-
-            return headers;
-        }
-
-        return [.. Enumerable.Range(1, columnCount).Select(index => $"Column {index}")];
+        return SpreadsheetImportPolicy.SelectValues(
+            _displayRows, SelectedColumnIndex, TextBeforeImportedLine, TextAfterImportedLine, RemoveDuplicates);
     }
 
     private void BuildDisplayRows()
@@ -425,7 +394,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
 
         foreach (SpreadsheetSourceRow row in _dataRows)
         {
-            List<string> currentRow = CreateNormalizedRow(row.Cells, _headers.Length);
+            List<string> currentRow = SpreadsheetImportPolicy.NormalizeRow(row.Cells, _headers.Length);
             if (GenerateIdsToSpreadsheet && _idColumnIndex >= 0)
             {
                 string existingId = GetCellValue(row.Cells, _idColumnIndex);
@@ -467,15 +436,6 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         collection.Clear();
         foreach (T item in items)
             collection.Add(item);
-    }
-
-    private static List<string> CreateNormalizedRow(IReadOnlyList<string> values, int columnCount)
-    {
-        List<string> row = new(columnCount);
-        for (int index = 0; index < columnCount; index++)
-            row.Add(index < values.Count ? values[index] : string.Empty);
-
-        return row;
     }
 
     private string BuildIdGenerationDescription(int missingIdCount, string? generatedIdValidationMessage)
@@ -570,35 +530,13 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     }
 
     private bool ShouldGenerateIdForRow(SpreadsheetSourceRow row)
-    {
-        for (int index = 0; index < row.Cells.Count; index++)
-        {
-            if (index == _idColumnIndex)
-                continue;
-            if (!string.IsNullOrWhiteSpace(row.Cells[index]))
-                return true;
-        }
-
-        return false;
-    }
+        => SpreadsheetImportPolicy.ShouldGenerateId(row.Cells, _idColumnIndex);
 
     private static string GetCellValue(IReadOnlyList<string> values, int index)
-    {
-        return index >= 0 && index < values.Count
-            ? values[index]
-            : string.Empty;
-    }
+        => SpreadsheetImportPolicy.GetCellValue(values, index);
 
     private static int FindIdColumnIndex(IReadOnlyList<string> headers)
-    {
-        for (int index = 0; index < headers.Count; index++)
-        {
-            if (string.Equals(headers[index].Trim(), IdColumnName, StringComparison.OrdinalIgnoreCase))
-                return index;
-        }
-
-        return -1;
-    }
+        => SpreadsheetImportPolicy.FindIdColumnIndex(headers);
 
     private void ShowStatus(string message, string title, InfoBarSeverity severity)
     {
@@ -616,20 +554,5 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     }
 
     private static HistoryItem CloneHistoryItem(HistoryItem source)
-    {
-        return new HistoryItem
-        {
-            CodesContent = source.CodesContent,
-            ContentKind = source.ContentKind,
-            MultiLineCodeModeOverride = source.MultiLineCodeModeOverride,
-            Foreground = source.Foreground,
-            Background = source.Background,
-            ErrorCorrection = source.ErrorCorrection,
-            LogoImagePath = source.LogoImagePath,
-            LogoEmoji = source.LogoEmoji,
-            LogoEmojiStyle = source.LogoEmojiStyle,
-            LogoSizePercentage = source.LogoSizePercentage,
-            LogoPaddingPixels = source.LogoPaddingPixels,
-        };
-    }
+        => QrCodeDesignStateMapper.ToHistoryItem(QrCodeDesignStateMapper.FromHistoryItem(source));
 }
