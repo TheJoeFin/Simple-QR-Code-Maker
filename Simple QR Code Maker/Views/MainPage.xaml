@@ -2,9 +2,11 @@
     x:Class="Simple_QR_Code_Maker.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:Simple_QR_Code_Maker.Behaviors"
     xmlns:controls="using:Simple_QR_Code_Maker.Controls"
     xmlns:converters="using:Simple_QR_Code_Maker.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
     xmlns:toolkitControls="using:CommunityToolkit.WinUI.Controls"
@@ -175,6 +177,9 @@
                                         Visibility="{x:Bind ViewModel.CanSaveImage,
                                                             Mode=OneWay,
                                                             Converter={StaticResource BoolToVisibility}}">
+                                        <interactivity:Interaction.Behaviors>
+                                            <behaviors:ImplicitVisibilityAnimationBehavior />
+                                        </interactivity:Interaction.Behaviors>
                                         <controls:ColorPickerButton
                                             BrandColorItems="{x:Bind ViewModel.ForegroundBrandColorItems,
                                                                      Mode=OneWay}"
@@ -358,6 +363,12 @@
                                                     HorizontalAlignment="Stretch"
                                                     ItemsSource="{x:Bind ViewModel.QrCodeBitmaps,
                                                                          Mode=OneWay}">
+                                                    <ItemsControl.ItemContainerTransitions>
+                                                        <TransitionCollection>
+                                                            <AddDeleteThemeTransition />
+                                                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                                                        </TransitionCollection>
+                                                    </ItemsControl.ItemContainerTransitions>
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
                                                             <toolkitControls:WrapPanel Orientation="Horizontal" />
@@ -374,6 +385,9 @@
 
                                         <!--  If there are more than 24 codes show this UI below  -->
                                         <StackPanel Orientation="Vertical" Visibility="{x:Bind ViewModel.CanLoadMorePreviews, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
+                                            <interactivity:Interaction.Behaviors>
+                                                <behaviors:ImplicitVisibilityAnimationBehavior />
+                                            </interactivity:Interaction.Behaviors>
                                             <TextBlock
                                                 HorizontalAlignment="Center"
                                                 FontWeight="SemiBold"
@@ -403,7 +417,11 @@
                                         ViewModel="{x:Bind ViewModel}"
                                         Visibility="{x:Bind ViewModel.HasRequestedCodes,
                                                             Converter={StaticResource BoolToVisibility},
-                                                            Mode=OneWay}" />
+                                                            Mode=OneWay}">
+                                        <interactivity:Interaction.Behaviors>
+                                            <behaviors:ImplicitVisibilityAnimationBehavior />
+                                        </interactivity:Interaction.Behaviors>
+                                    </controls:QrExportActionsControl>
 
                                     <StackPanel
                                         HorizontalAlignment="Center"
@@ -445,6 +463,9 @@
                             Style="{StaticResource AccentButtonStyle}"
                             ToolTipService.ToolTip="Scroll to the QR Code preview"
                             Visibility="Collapsed">
+                            <interactivity:Interaction.Behaviors>
+                                <behaviors:ImplicitVisibilityAnimationBehavior />
+                            </interactivity:Interaction.Behaviors>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <FontIcon Glyph="&#xE74B;" />
                                 <TextBlock Text="Scroll to codes" />
