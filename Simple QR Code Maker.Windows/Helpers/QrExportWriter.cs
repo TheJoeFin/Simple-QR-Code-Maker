@@ -17,7 +17,8 @@ internal static class QrExportWriter
                 effectiveSettings.ForegroundColor, effectiveSettings.BackgroundColor,
                 effectiveSettings.LogoImage, effectiveSettings.LogoSizePercentage,
                 effectiveSettings.LogoPaddingPixels, effectiveSettings.QrPaddingModules,
-                effectiveSettings.FramePreset, ResolveFrameText(code, effectiveSettings));
+                effectiveSettings.FramePreset, ResolveFrameText(code, effectiveSettings),
+                effectiveSettings.Appearance);
             return output.ToArray();
         });
 
@@ -32,7 +33,7 @@ internal static class QrExportWriter
                 effectiveSettings.LogoImage, effectiveSettings.LogoSizePercentage,
                 effectiveSettings.LogoPaddingPixels, effectiveSettings.LogoSvgContent,
                 effectiveSettings.QrPaddingModules, effectiveSettings.FramePreset,
-                ResolveFrameText(code, effectiveSettings)).Content;
+                ResolveFrameText(code, effectiveSettings), effectiveSettings.Appearance).Content;
         });
 
     internal static async Task WriteAsync(

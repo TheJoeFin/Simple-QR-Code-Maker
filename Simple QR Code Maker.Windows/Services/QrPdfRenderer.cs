@@ -48,7 +48,8 @@ public static class QrPdfRenderer
                     effectiveSettings.QrPaddingModules,
                     effectiveSettings.FramePreset,
                     resolvedFrameText,
-                    out QrImageLayoutMetrics imageLayout);
+                    out QrImageLayoutMetrics imageLayout,
+                    effectiveSettings.Appearance);
                 string label = code.ContentKind switch
                 {
                     QrContentKind.VCard => VCardBuilderHelper.GetDisplayName(code.CodeAsText),

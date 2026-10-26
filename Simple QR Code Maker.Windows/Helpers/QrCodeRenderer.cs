@@ -120,7 +120,7 @@ public static partial class QrCodeRenderer
         return new Bitmap(decoded);
     }
 
-    public static Bitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
+    public static Bitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null, QrCodeAppearance? appearance = null)
     {
         return CreateQrCodeBitmap(
             text,
@@ -133,10 +133,11 @@ public static partial class QrCodeRenderer
             qrPaddingModules,
             framePreset,
             frameText,
-            out _);
+            out _,
+            appearance);
     }
 
-    public static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
+    public static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null, QrCodeAppearance? appearance = null)
     {
         using Bitmap bitmap = CreateQrCodeBitmap(
             text,
@@ -149,11 +150,12 @@ public static partial class QrCodeRenderer
             qrPaddingModules,
             framePreset,
             frameText,
-            out _);
+            out _,
+            appearance);
         bitmap.Save(outputStream, ImageFormat.Png);
     }
 
-    internal static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out QrImageLayoutMetrics imageLayout)
+    internal static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out QrImageLayoutMetrics imageLayout, QrCodeAppearance? appearance = null)
     {
         using Bitmap bitmap = CreateQrCodeBitmap(
             text,
@@ -166,7 +168,8 @@ public static partial class QrCodeRenderer
             qrPaddingModules,
             framePreset,
             frameText,
-            out int qrRenderSize);
+            out int qrRenderSize,
+            appearance);
         imageLayout = GetQrImageLayoutMetrics(qrRenderSize, framePreset);
         bitmap.Save(outputStream, ImageFormat.Png);
     }
@@ -186,6 +189,12 @@ public static partial class QrCodeRenderer
 
     private static QrImageLayoutMetrics GetQrImageLayoutMetrics(int qrRenderSize, QrFramePreset framePreset)
     {
+        if (IsDecorativeFrame(framePreset))
+        {
+            FrameLayout layout = GetDecorativeFrameLayout(qrRenderSize, framePreset);
+            return new QrImageLayoutMetrics(layout.Width, layout.Height, qrRenderSize, qrRenderSize);
+        }
+
         switch (framePreset)
         {
             case QrFramePreset.BottomLabel:
@@ -263,7 +272,7 @@ public static partial class QrCodeRenderer
         return result;
     }
 
-    private static Bitmap CreateQrCodeBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out int qrRenderSize)
+    private static Bitmap CreateQrCodeBitmap(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out int qrRenderSize, QrCodeAppearance? appearance)
     {
         text = NormalizeVCardLineEndings(text);
 
@@ -297,8 +306,11 @@ public static partial class QrCodeRenderer
         ApplyCharacterSetHint(encodingOptions, text);
         barcodeWriter.Options = encodingOptions;
 
-        Bitmap rawBitmap = barcodeWriter.Write(text);
-        bool needsAlpha = foreground.A < 255 || background.A < 255;
+        bool styledModules = HasStyledModules(appearance);
+        Bitmap rawBitmap = styledModules
+            ? CreateStyledQrBitmap(qrCode, qrRenderSize, normalizedQrPaddingModules, foreground, background, appearance!)
+            : barcodeWriter.Write(text);
+        bool needsAlpha = !styledModules && (foreground.A < 255 || background.A < 255);
         Bitmap bitmap = rawBitmap;
 
         if (needsAlpha)
@@ -314,7 +326,9 @@ public static partial class QrCodeRenderer
                 OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
             }
 
-            Bitmap framedBitmap = AddFrameToBitmap(bitmap, foreground, background, framePreset, frameText);
+            Bitmap framedBitmap = UsesAppearanceFrame(framePreset, appearance)
+                ? AddAppearanceFrameToBitmap(bitmap, foreground, background, framePreset, frameText, appearance)
+                : AddFrameToBitmap(bitmap, foreground, background, framePreset, frameText);
             if (!ReferenceEquals(framedBitmap, bitmap))
             {
                 bitmap.Dispose();
@@ -819,7 +833,7 @@ public static partial class QrCodeRenderer
             $"{smallestSideCm:F2} x {smallestSideCm:F2} cm");
     }
 
-    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
+    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null, QrCodeAppearance? appearance = null)
     {
         text = NormalizeVCardLineEndings(text);
 
@@ -850,7 +864,10 @@ public static partial class QrCodeRenderer
         ApplyCharacterSetHint(encodingOptions, text);
         barcodeWriter.Options = encodingOptions;
 
-        SvgImage svg = barcodeWriter.Write(text);
+        // Framed SVGs need explicit background and ink instead of ZXing's root-only viewport styles.
+        SvgImage svg = HasStyledModules(appearance) || UsesAppearanceFrame(framePreset, appearance)
+            ? CreateStyledQrSvg(qrCode, renderSize, normalizedQrPaddingModules, foreground, background, appearance ?? new QrCodeAppearance())
+            : barcodeWriter.Write(text);
 
         // If a logo is provided, embed it in the SVG
         if (logoImage != null || logoSvgContent != null)
@@ -858,7 +875,9 @@ public static partial class QrCodeRenderer
             svg = EmbedLogoInSvg(svg, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, renderSize, logoPaddingPixels, background, logoSvgContent);
         }
 
-        svg = ApplyFrameToSvg(svg, renderSize, foreground, background, framePreset, frameText);
+        svg = UsesAppearanceFrame(framePreset, appearance)
+            ? ApplyAppearanceFrameToSvg(svg, renderSize, foreground, background, framePreset, frameText, appearance)
+            : ApplyFrameToSvg(svg, renderSize, foreground, background, framePreset, frameText);
 
         return svg;
     }
@@ -1106,7 +1125,7 @@ public static partial class QrCodeRenderer
             int logoY = punchoutY + (punchoutSize - logoHeight) / 2;
 
             // Resize the logo to the display size before encoding to reduce SVG file size
-            Bitmap resizedLogo = new(logoWidth, logoHeight);
+            using Bitmap resizedLogo = new(logoWidth, logoHeight);
             using (Graphics g = Graphics.FromImage(resizedLogo))
             {
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
@@ -1123,8 +1142,6 @@ public static partial class QrCodeRenderer
                 byte[] imageBytes = ms.ToArray();
                 base64Logo = Convert.ToBase64String(imageBytes);
             }
-            resizedLogo.Dispose();
-
             logoSvgElement = $@"
   <!-- Logo punchout background -->
   <rect x=""{punchoutX}"" y=""{punchoutY}"" width=""{punchoutSize}"" height=""{punchoutSize}"" fill=""{backgroundColorFill}""/>

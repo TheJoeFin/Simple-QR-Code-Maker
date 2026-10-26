@@ -21,9 +21,9 @@ public static class BarcodeHelpers
     public static Bitmap RasterizeSvgToBitmap(string svgContent, int width, int height)
         => QrCodeRenderer.RasterizeSvgToBitmap(svgContent, width, height);
 
-    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, Color foreground, Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
+    public static WriteableBitmap GetQrCodeBitmapFromText(string text, ErrorCorrectionLevel correctionLevel, Color foreground, Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null, QrCodeAppearance? appearance = null)
     {
-        using Bitmap bitmap = QrCodeRenderer.GetQrCodeBitmapFromText(text, correctionLevel, foreground, background, logoImage, logoSizePercentage, logoPaddingPixels, qrPaddingModules, framePreset, frameText);
+        using Bitmap bitmap = QrCodeRenderer.GetQrCodeBitmapFromText(text, correctionLevel, foreground, background, logoImage, logoSizePercentage, logoPaddingPixels, qrPaddingModules, framePreset, frameText, appearance);
         using MemoryStream stream = new();
         bitmap.Save(stream, ImageFormat.Png);
         stream.Position = 0;
@@ -32,11 +32,11 @@ public static class BarcodeHelpers
         return result;
     }
 
-    public static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, Color foreground, Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
-        => QrCodeRenderer.SaveQrCodePngToStream(outputStream, text, correctionLevel, foreground, background, logoImage, logoSizePercentage, logoPaddingPixels, qrPaddingModules, framePreset, frameText);
+    public static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, Color foreground, Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null, QrCodeAppearance? appearance = null)
+        => QrCodeRenderer.SaveQrCodePngToStream(outputStream, text, correctionLevel, foreground, background, logoImage, logoSizePercentage, logoPaddingPixels, qrPaddingModules, framePreset, frameText, appearance);
 
-    internal static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, Color foreground, Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out QrImageLayoutMetrics imageLayout)
-        => QrCodeRenderer.SaveQrCodePngToStream(outputStream, text, correctionLevel, foreground, background, logoImage, logoSizePercentage, logoPaddingPixels, qrPaddingModules, framePreset, frameText, out imageLayout);
+    internal static void SaveQrCodePngToStream(Stream outputStream, string text, ErrorCorrectionLevel correctionLevel, Color foreground, Color background, Bitmap? logoImage, double logoSizePercentage, double logoPaddingPixels, double qrPaddingModules, QrFramePreset framePreset, string? frameText, out QrImageLayoutMetrics imageLayout, QrCodeAppearance? appearance = null)
+        => QrCodeRenderer.SaveQrCodePngToStream(outputStream, text, correctionLevel, foreground, background, logoImage, logoSizePercentage, logoPaddingPixels, qrPaddingModules, framePreset, frameText, out imageLayout, appearance);
 
     internal static QrImageLayoutMetrics GetQrImageLayoutMetrics(string text, ErrorCorrectionLevel correctionLevel, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None)
         => QrCodeRenderer.GetQrImageLayoutMetrics(text, correctionLevel, qrPaddingModules, framePreset);
@@ -56,8 +56,8 @@ public static class BarcodeHelpers
     public static QrCodeSizeRecommendation GetSizeRecommendation(double distance, int numberOfBlocks, Windows.UI.Color foreground, Windows.UI.Color background, double qrPaddingModules = 2.0)
         => QrCodeRenderer.GetSizeRecommendation(distance, numberOfBlocks, foreground, background, qrPaddingModules);
 
-    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, Color foreground, Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null)
-        => QrCodeRenderer.GetSvgQrCodeForText(text, correctionLevel, foreground, background, logoImage, logoSizePercentage, logoPaddingPixels, logoSvgContent, qrPaddingModules, framePreset, frameText);
+    public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, Color foreground, Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null, QrCodeAppearance? appearance = null)
+        => QrCodeRenderer.GetSvgQrCodeForText(text, correctionLevel, foreground, background, logoImage, logoSizePercentage, logoPaddingPixels, logoSvgContent, qrPaddingModules, framePreset, frameText, appearance);
 
     public static IEnumerable<(string, Result)> GetStringsFromImageFile(StorageFile storageFile)
         => QrCodeRenderer.GetStringsFromImageFile(storageFile);

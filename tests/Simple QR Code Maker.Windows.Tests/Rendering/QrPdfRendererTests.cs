@@ -143,6 +143,12 @@ public sealed class QrPdfRendererTests
     [DataRow(QrFramePreset.BottomLabel)]
     [DataRow(QrFramePreset.RoundedFrame)]
     [DataRow(QrFramePreset.CornerCallout)]
+    [DataRow(QrFramePreset.SpeechBubble)]
+    [DataRow(QrFramePreset.Ticket)]
+    [DataRow(QrFramePreset.Sticker)]
+    [DataRow(QrFramePreset.ScallopedBadge)]
+    [DataRow(QrFramePreset.Polaroid)]
+    [DataRow(QrFramePreset.Burst)]
     public async Task PdfPreservesFramedImageAspectRatioAndQrPayloadAsync(QrFramePreset frame)
     {
         using QrRenderSettingsSnapshot renderSettings = CreateRenderSettings(frame);
@@ -173,6 +179,29 @@ public sealed class QrPdfRendererTests
         using PdfDocument pdf = PdfDocument.Open(await QrPdfRenderer.GenerateQrPdfBytesAsync(codes, renderSettings, settings));
         Assert.AreEqual((int)Math.Ceiling(9.0 / layout.CodesPerPage), pdf.NumberOfPages);
         Assert.AreEqual(9, pdf.GetPages().Sum(page => page.GetImages().Count()));
+    }
+
+    [TestMethod]
+    public async Task PdfCarriesTheCompleteStyledDesignAsync()
+    {
+        QrDesignPreset preset = QrDesignPresetCatalog.All[4];
+        using QrRenderSettingsSnapshot renderSettings = QrRenderSettingsSnapshot.Create(
+            ErrorCorrectionLevel.H, Color.FromArgb(preset.Foreground.A, preset.Foreground.R, preset.Foreground.G, preset.Foreground.B),
+            Color.White, null, 15, 4, null, 4, preset.Frame, QrFrameTextSource.Manual, preset.Caption, preset.Appearance);
+        PrintJobSettings settings = new() { CodesPerPage = 1, FitAsManyAsPossible = false, ShowLabels = false, CodeSizeMm = 35 };
+        using PdfDocument pdf = PdfDocument.Open(await QrPdfRenderer.GenerateQrPdfBytesAsync([new("styled PDF")], renderSettings, settings));
+        var image = pdf.GetPage(1).GetImages().Single();
+        Assert.IsTrue(image.TryGetPng(out byte[]? bytes));
+        using MemoryStream stream = new(bytes!);
+        using Bitmap actual = new(stream);
+        using Bitmap expected = QrCodeRenderer.GetQrCodeBitmapFromText("styled PDF", ErrorCorrectionLevel.H,
+            renderSettings.ForegroundColor, Color.White, qrPaddingModules: 4, framePreset: preset.Frame,
+            frameText: preset.Caption, appearance: preset.Appearance);
+        Assert.AreEqual(expected.Size, actual.Size);
+        for (int y = 0; y < expected.Height; y += 13)
+        for (int x = 0; x < expected.Width; x += 13)
+            Assert.AreEqual(expected.GetPixel(x, y).ToArgb(), actual.GetPixel(x, y).ToArgb());
+        Assert.AreEqual("styled PDF", QrCodeRenderer.GetStringsFromBitmap(actual).Single().Item1);
     }
 
     [TestMethod]

@@ -69,6 +69,29 @@ public sealed class QrExportWriterTests
         Assert.IsEmpty(archive.Entries);
     }
 
+    [TestMethod]
+    public async Task PngAndSvgExportsCarryPatternsEyesFrameAccentsAndIcons()
+    {
+        QrDesignPreset preset = QrDesignPresetCatalog.All[1];
+        using QrRenderSettingsSnapshot settings = QrRenderSettingsSnapshot.Create(
+            ErrorCorrectionLevel.M, Color.FromArgb(preset.Foreground.A, preset.Foreground.R, preset.Foreground.G, preset.Foreground.B),
+            Color.White, null, 15, 4, null, 4, preset.Frame, QrFrameTextSource.Manual, preset.Caption, preset.Appearance);
+        RequestedQrCodeItem code = new("https://example.com/export");
+        byte[] actualPng = await QrExportWriter.RenderPngAsync(code, settings);
+        using MemoryStream expectedPng = new();
+        QrCodeRenderer.SaveQrCodePngToStream(expectedPng, code.CodeAsText, settings.ErrorCorrectionLevel,
+            settings.ForegroundColor, settings.BackgroundColor, qrPaddingModules: 4, framePreset: preset.Frame,
+            frameText: preset.Caption, appearance: preset.Appearance);
+        CollectionAssert.AreEqual(expectedPng.ToArray(), actualPng);
+        string expectedSvg = QrCodeRenderer.GetSvgQrCodeForText(code.CodeAsText, settings.ErrorCorrectionLevel,
+            settings.ForegroundColor, settings.BackgroundColor, qrPaddingModules: 4, framePreset: preset.Frame,
+            frameText: preset.Caption, appearance: preset.Appearance).Content;
+        Assert.AreEqual(expectedSvg, await QrExportWriter.RenderSvgAsync(code, settings));
+        using MemoryStream stream = new(actualPng);
+        using Bitmap bitmap = new(stream);
+        Assert.AreEqual(code.CodeAsText, QrCodeRenderer.GetStringsFromBitmap(bitmap).Single().Item1);
+    }
+
     private static QrRenderSettingsSnapshot CreateSettings()
         => QrRenderSettingsSnapshot.Create(
             ErrorCorrectionLevel.M, Color.Black, Color.White,
