@@ -58,6 +58,7 @@
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinApp" Version="0.7.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinUIAnalyzer" Version="0.7.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.5.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
     <PackageReference Include="PdfPig" Version="0.1.16" />
@@ -69,6 +70,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Simple QR Code Maker.Core\Simple QR Code Maker.Core.csproj" />
+    <ProjectReference Include="..\Simple QR Code Maker.Windows\Simple QR Code Maker.Windows.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Licenses\Apache-2.0.txt">
@@ -77,11 +79,6 @@
     <Content Include="Licenses\SuperTinyIcons.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <!-- SuperTinyIcons revision d532b8a9e8a96ed5462f3813106f0b1e230249dc; see Licenses\SuperTinyIcons.txt. -->
-    <!-- Path commands use explicit arc flags for Magick.NET compatibility. -->
-    <EmbeddedResource Include="Assets\CommonBrands\*.svg">
-      <LogicalName>CommonBrands.%(Filename)%(Extension)</LogicalName>
-    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

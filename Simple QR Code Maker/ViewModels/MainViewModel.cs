@@ -1248,23 +1248,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     }
 
     private IEnumerable<string> EnumerateRequestedCodeTexts()
-    {
-        if (GetEffectiveMultiLineCodeMode() != MultiLineCodeMode.OneLineOneCode)
-        {
-            string singleCode = UrlText.Trim();
-            if (!string.IsNullOrWhiteSpace(singleCode))
-                yield return singleCode;
-
-            yield break;
-        }
-
-        foreach (string line in UrlText.Split(["\r\n", "\r", "\n"], StringSplitOptions.None))
-        {
-            string textToUse = line.Trim();
-            if (!string.IsNullOrWhiteSpace(textToUse))
-                yield return textToUse;
-        }
-    }
+        => QrDocumentHelper.EnumerateTexts(UrlText, GetEffectiveMultiLineCodeMode());
 
     private async Task MaterializePreviewBatchAsync(int additionalCount)
     {
@@ -1299,51 +1283,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     }
 
     private BrandItem? FindMatchingBrand(string content)
-    {
-        string normalizedContent = NormalizeUrlForBrandMatching(content);
-        if (string.IsNullOrEmpty(normalizedContent))
-            return null;
-
-        foreach (BrandItem brand in BrandItems)
-        {
-            if (string.IsNullOrWhiteSpace(brand.UrlContent))
-                continue;
-
-            // Strip trailing slashes so "example.com/" and "example.com" are equivalent patterns
-            string brandPattern = NormalizeUrlForBrandMatching(brand.UrlContent).TrimEnd('/');
-            if (string.IsNullOrEmpty(brandPattern))
-                continue;
-
-            if (!normalizedContent.StartsWith(brandPattern, StringComparison.Ordinal))
-                continue;
-
-            // Require a URL boundary after the pattern so "pexample.com" cannot match brand "example.com",
-            // and "example.com.evil.com" cannot match "example.com" (next char would be '.').
-            if (normalizedContent.Length == brandPattern.Length)
-                return brand;
-
-            char next = normalizedContent[brandPattern.Length];
-            if (next is '/' or '?' or '#' or ':' or '@')
-                return brand;
-        }
-
-        return null;
-    }
-
-    private static string NormalizeUrlForBrandMatching(string url)
-    {
-        string s = url.Trim().ToLowerInvariant();
-
-        if (s.StartsWith("https://", StringComparison.Ordinal))
-            s = s[8..];
-        else if (s.StartsWith("http://", StringComparison.Ordinal))
-            s = s[7..];
-
-        if (s.StartsWith("www.", StringComparison.Ordinal))
-            s = s[4..];
-
-        return s;
-    }
+        => BrandItems.FirstOrDefault(brand => !string.IsNullOrWhiteSpace(brand.UrlContent)
+            && QrDocumentHelper.MatchesBrandUrl(content, brand.UrlContent));
 
     private static bool IsUrlLike(string line)
         => line.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
@@ -1351,22 +1292,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         || line.StartsWith("ftp://", StringComparison.OrdinalIgnoreCase);
 
     private bool LineMatchesBrandUrl(string line, string brandUrl)
-    {
-        string normalizedLine = NormalizeUrlForBrandMatching(line);
-        string normalizedBrand = NormalizeUrlForBrandMatching(brandUrl).TrimEnd('/');
-
-        if (string.IsNullOrEmpty(normalizedBrand))
-            return false;
-
-        if (!normalizedLine.StartsWith(normalizedBrand, StringComparison.Ordinal))
-            return false;
-
-        if (normalizedLine.Length == normalizedBrand.Length)
-            return true;
-
-        char next = normalizedLine[normalizedBrand.Length];
-        return next is '/' or '?' or '#' or ':' or '@';
-    }
+        => QrDocumentHelper.MatchesBrandUrl(line, brandUrl);
 
     private bool ApplyBrandUrlToExistingContent(BrandItem brand)
     {

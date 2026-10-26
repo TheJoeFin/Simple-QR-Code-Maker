@@ -10,15 +10,15 @@ public static class Json
         TypeInfoResolver = new DefaultJsonTypeInfoResolver()
     };
 
-    public static async Task<T> ToObjectAsync<T>(string value)
+    public static async Task<T?> ToObjectAsync<T>(string value)
     {
-        return await Task.Run<T>(() =>
+        return await Task.Run<T?>(() =>
         {
             return JsonSerializer.Deserialize<T>(value, _options);
         });
     }
 
-    public static async Task<string> StringifyAsync(object value)
+    public static async Task<string> StringifyAsync(object? value)
     {
         return await Task.Run<string>(() =>
         {

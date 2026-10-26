@@ -52,8 +52,8 @@ public static class ExcelSpreadsheetHelper
 
         return extension.ToLowerInvariant() switch
         {
-            ".csv" => await ReadDelimitedRowsAsync(filePath, ','),
-            ".tsv" => await ReadDelimitedRowsAsync(filePath, '\t'),
+            ".csv" => await DelimitedSpreadsheetHelper.ReadAsync(filePath, ','),
+            ".tsv" => await DelimitedSpreadsheetHelper.ReadAsync(filePath, '\t'),
             ".xlsx" or ".xls" => await ReadWorkbookRowsAsync(filePath),
             _ => throw new NotSupportedException($"Unsupported spreadsheet file type: {extension}"),
         };
@@ -71,10 +71,10 @@ public static class ExcelSpreadsheetHelper
         switch (extension.ToLowerInvariant())
         {
             case ".csv":
-                await WriteDelimitedGeneratedIdsAsync(filePath, ',', request);
+                await DelimitedSpreadsheetHelper.WriteGeneratedIdsAsync(filePath, ',', request);
                 break;
             case ".tsv":
-                await WriteDelimitedGeneratedIdsAsync(filePath, '\t', request);
+                await DelimitedSpreadsheetHelper.WriteGeneratedIdsAsync(filePath, '\t', request);
                 break;
             case ".xlsx":
             case ".xls":
@@ -85,39 +85,12 @@ public static class ExcelSpreadsheetHelper
         }
     }
 
-    private static async Task<SpreadsheetReadResult> ReadDelimitedRowsAsync(string filePath, char delimiter)
-    {
-        string contents = await File.ReadAllTextAsync(filePath);
-        List<List<string>> rows = CsvParser.Parse(contents, delimiter);
-        List<SpreadsheetSourceRow> sourceRows = [.. rows
-            .Select((row, index) => new SpreadsheetSourceRow
-            {
-                SourceRowIndex = index,
-                Cells = [.. row],
-            })];
-
-        return new SpreadsheetReadResult
-        {
-            Rows = sourceRows,
-        };
-    }
-
     private static async Task<SpreadsheetReadResult> ReadWorkbookRowsAsync(string filePath)
     {
         if (!await CheckIsAvailableAsync())
             throw new InvalidOperationException("Microsoft Excel is not installed.");
 
         return await RunStaAsync(() => ReadWorkbookRowsInternal(filePath));
-    }
-
-    private static async Task WriteDelimitedGeneratedIdsAsync(string filePath, char delimiter, SpreadsheetIdWriteRequest request)
-    {
-        string contents = await File.ReadAllTextAsync(filePath);
-        List<List<string>> rows = CsvParser.Parse(contents, delimiter);
-        ApplyGeneratedIds(rows, request);
-
-        string updatedContents = CsvParser.Serialize(rows, delimiter);
-        await WriteTextFileAtomicallyAsync(filePath, updatedContents);
     }
 
     private static async Task WriteWorkbookGeneratedIdsAsync(string filePath, SpreadsheetIdWriteRequest request)
@@ -428,50 +401,6 @@ public static class ExcelSpreadsheetHelper
         finally
         {
             ReleaseComObject(cell);
-        }
-    }
-
-    private static void ApplyGeneratedIds(List<List<string>> rows, SpreadsheetIdWriteRequest request)
-    {
-        if (request.CreateIdColumn && request.FirstRowIsHeader)
-        {
-            EnsureRowAndColumn(rows, 0, request.IdColumnIndex);
-            rows[0][request.IdColumnIndex] = "id";
-        }
-
-        foreach (SpreadsheetIdWriteRow row in request.Rows)
-        {
-            EnsureRowAndColumn(rows, row.SourceRowIndex, request.IdColumnIndex);
-            rows[row.SourceRowIndex][request.IdColumnIndex] = row.Value;
-        }
-    }
-
-    private static void EnsureRowAndColumn(List<List<string>> rows, int rowIndex, int columnIndex)
-    {
-        while (rows.Count <= rowIndex)
-            rows.Add([]);
-
-        List<string> row = rows[rowIndex];
-        while (row.Count <= columnIndex)
-            row.Add(string.Empty);
-    }
-
-    private static async Task WriteTextFileAtomicallyAsync(string filePath, string contents)
-    {
-        string directory = Path.GetDirectoryName(filePath)
-            ?? throw new InvalidOperationException("Unable to determine the spreadsheet file directory.");
-        string tempFilePath = Path.Combine(directory, $"{Path.GetFileName(filePath)}.{Guid.NewGuid():N}.tmp");
-
-        await File.WriteAllTextAsync(tempFilePath, contents);
-
-        try
-        {
-            File.Replace(tempFilePath, filePath, destinationBackupFileName: null, ignoreMetadataErrors: true);
-        }
-        finally
-        {
-            if (File.Exists(tempFilePath))
-                File.Delete(tempFilePath);
         }
     }
 
