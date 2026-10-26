@@ -131,14 +131,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
         _ => "System default — M (Medium 15%)"
     };
 
-    public string DefaultFramePresetText => DefaultFramePresetValue switch
-    {
-        QrFramePreset.None => "None (no frame)",
-        QrFramePreset.BottomLabel => "Bottom label",
-        QrFramePreset.RoundedFrame => "Rounded frame",
-        QrFramePreset.CornerCallout => "Corner callout",
-        _ => "System default — none"
-    };
+    public string DefaultFramePresetText => DefaultFramePresetValue.HasValue
+        ? QrFramePresetCatalog.GetOption(DefaultFramePresetValue.Value).Description
+        : "System default — classic, no frame";
 
     public Brush DefaultForegroundColorBrush => DefaultForegroundColor.HasValue
         ? new SolidColorBrush(DefaultForegroundColor.Value)
@@ -262,6 +257,10 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     {
         DefaultFramePresetValue = null;
         await LocalSettingsService.SaveSettingAsync("DefaultFramePreset", (QrFramePreset?)null);
+        await LocalSettingsService.SaveSettingAsync("DefaultFrameTextSource", (QrFrameTextSource?)null);
+        await LocalSettingsService.SaveSettingAsync("DefaultFrameText", (string?)null);
+        await LocalSettingsService.SaveSettingAsync("DefaultAppearance", (QrCodeAppearance?)null);
+        await LocalSettingsService.SaveSettingAsync("DefaultDesignPadding", (double?)null);
     }
 
     [RelayCommand]
