@@ -140,7 +140,7 @@ public sealed class DecodingHistoryStoreTests
     }
 
     [TestMethod]
-    public async Task SaveRemovalPreservesSharedImagesAndClearDeletesRemainingImages()
+    public async Task RemovalPreservesSharedImagesAndClearDeletesRemainingImages()
     {
         DecodingHistoryStore store = CreateStore();
         ObservableCollection<DecodingHistoryItem> items =
@@ -150,12 +150,14 @@ public sealed class DecodingHistoryStoreTests
             new() { SavedImagePath = "removed.png" }
         ];
         await store.SaveAsync(items);
-        items.RemoveAt(0);
-        items.RemoveAt(1);
-        await store.SaveAsync(items);
+        await store.RemoveAndSaveAsync(items, items[0]);
+        Assert.IsEmpty(_images.DeletedPaths);
+        await store.RemoveAndSaveAsync(items, items[1]);
+        Assert.HasCount(1, items);
         CollectionAssert.AreEqual(new[] { "removed.png" }, _images.DeletedPaths);
-        items.Clear();
-        await store.SaveAsync(items);
+        await store.ClearAndSaveAsync(items);
+        Assert.IsEmpty(items);
+        Assert.IsEmpty(await store.LoadAsync());
         CollectionAssert.AreEqual(new[] { "removed.png", "SHARED.PNG" }, _images.DeletedPaths);
     }
 
@@ -193,6 +195,78 @@ public sealed class DecodingHistoryStoreTests
         await Task.WhenAll(first, second);
         CollectionAssert.AreEqual(new[] { "second", "first" }, items.Select(item => item.DecodedTexts[0]).ToArray());
         Assert.HasCount(2, await store.LoadAsync());
+    }
+
+    [TestMethod]
+    public async Task ClearDuringPendingAddKeepsLiveAndPersistedHistoryEmpty()
+    {
+        DecodingHistoryStore store = CreateStore();
+        ObservableCollection<DecodingHistoryItem> items = [new() { SavedImagePath = "old.png" }];
+        await store.SaveAsync(items);
+        _files.WriteEntered = new();
+        _files.ReleaseWrite = new();
+
+        Task add = store.AddAndSaveAsync(items, new() { SavedImagePath = "new.png" });
+        await _files.WriteEntered.Task;
+        Task clear = store.ClearAndSaveAsync(items);
+        _files.ReleaseWrite.SetResult();
+        await Task.WhenAll(add, clear);
+
+        Assert.IsEmpty(items);
+        Assert.IsEmpty(await store.LoadAsync());
+        CollectionAssert.AreEquivalent(new[] { "old.png", "new.png" }, _images.DeletedPaths);
+    }
+
+    [TestMethod]
+    public async Task RemoveDuringPendingAddPreservesNewAndUnremovedEntries()
+    {
+        DecodingHistoryStore store = CreateStore();
+        DecodingHistoryItem removed = new() { SavedImagePath = "removed.png" };
+        DecodingHistoryItem retained = new() { SavedImagePath = "retained.png" };
+        DecodingHistoryItem added = new() { SavedImagePath = "new.png" };
+        ObservableCollection<DecodingHistoryItem> items = [removed, retained];
+        await store.SaveAsync(items);
+        _files.WriteEntered = new();
+        _files.ReleaseWrite = new();
+
+        Task add = store.AddAndSaveAsync(items, added);
+        await _files.WriteEntered.Task;
+        Task remove = store.RemoveAndSaveAsync(items, removed);
+        _files.ReleaseWrite.SetResult();
+        await Task.WhenAll(add, remove);
+
+        CollectionAssert.AreEqual(new[] { added, retained }, items);
+        CollectionAssert.AreEqual(new[] { "new.png", "retained.png" },
+            (await store.LoadAsync()).Select(item => item.SavedImagePath).ToArray());
+        CollectionAssert.AreEqual(new[] { "removed.png" }, _images.DeletedPaths);
+    }
+
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public async Task FailedClearOrRemovalPreservesLiveAndPersistedHistoryAndImages(bool clear)
+    {
+        DecodingHistoryStore store = CreateStore();
+        DecodingHistoryItem item = new() { SavedImagePath = "old.png" };
+        ObservableCollection<DecodingHistoryItem> items = [item];
+        await store.SaveAsync(items);
+        string previous = _files.Files["DecodingHistory.json"];
+        _files.WriteFailure = new IOException("Write failed.");
+
+        await Assert.ThrowsExactlyAsync<IOException>(() => clear
+            ? store.ClearAndSaveAsync(items)
+            : store.RemoveAndSaveAsync(items, item));
+
+        Assert.HasCount(1, items);
+        Assert.AreSame(item, items[0]);
+        Assert.AreEqual(previous, _files.Files["DecodingHistory.json"]);
+        Assert.IsEmpty(_images.DeletedPaths);
+
+        _files.WriteFailure = null;
+        await (clear ? store.ClearAndSaveAsync(items) : store.RemoveAndSaveAsync(items, item));
+        Assert.IsEmpty(items);
+        Assert.IsEmpty(await store.LoadAsync());
+        CollectionAssert.AreEqual(new[] { "old.png" }, _images.DeletedPaths);
     }
 
     [TestMethod]

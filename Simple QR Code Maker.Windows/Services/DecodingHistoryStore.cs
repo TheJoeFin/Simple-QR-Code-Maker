@@ -69,6 +69,36 @@ public sealed class DecodingHistoryStore(IJsonFileStore files, IHistoryImageStor
         }
     }
 
+    public async Task ClearAndSaveAsync(ObservableCollection<DecodingHistoryItem> items)
+    {
+        await _gate.WaitAsync();
+        try
+        {
+            await SaveCoreAsync(Serialize([]));
+            items.Clear();
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
+    public async Task RemoveAndSaveAsync(ObservableCollection<DecodingHistoryItem> items, DecodingHistoryItem item)
+    {
+        await _gate.WaitAsync();
+        try
+        {
+            ObservableCollection<DecodingHistoryItem> candidate = new(items);
+            candidate.Remove(item);
+            await SaveCoreAsync(Serialize(candidate));
+            items.Remove(item);
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
     public async Task UpdateLatestAndSaveAsync(ObservableCollection<DecodingHistoryItem> items, string sourcePath, List<string> decodedTexts)
     {
         await _gate.WaitAsync();

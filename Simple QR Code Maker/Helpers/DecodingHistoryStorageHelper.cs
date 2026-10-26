@@ -18,6 +18,12 @@ public static class DecodingHistoryStorageHelper
     public static Task AddAndSaveAsync(ObservableCollection<DecodingHistoryItem> items, DecodingHistoryItem newItem) =>
         App.GetService<IDecodingHistoryStore>().AddAndSaveAsync(items, newItem);
 
+    public static Task ClearAndSaveAsync(ObservableCollection<DecodingHistoryItem> items) =>
+        App.GetService<IDecodingHistoryStore>().ClearAndSaveAsync(items);
+
+    public static Task RemoveAndSaveAsync(ObservableCollection<DecodingHistoryItem> items, DecodingHistoryItem item) =>
+        App.GetService<IDecodingHistoryStore>().RemoveAndSaveAsync(items, item);
+
     public static Task UpdateLatestAndSaveAsync(ObservableCollection<DecodingHistoryItem> items, string newImageSourcePath, List<string> newDecodedTexts) =>
         App.GetService<IDecodingHistoryStore>().UpdateLatestAndSaveAsync(items, newImageSourcePath, newDecodedTexts);
 }

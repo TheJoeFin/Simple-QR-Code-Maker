@@ -1714,8 +1714,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     [RelayCommand]
     private async Task ClearDecodingHistory()
     {
-        DecodingHistoryItems.Clear();
-        await DecodingHistoryStorageHelper.SaveHistoryAsync(DecodingHistoryItems);
+        await DecodingHistoryStorageHelper.ClearAndSaveAsync(DecodingHistoryItems);
         OnPropertyChanged(nameof(HasDecodingHistory));
     }
 
@@ -1725,8 +1724,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         if (item is null)
             return;
 
-        DecodingHistoryItems.Remove(item);
-        await DecodingHistoryStorageHelper.SaveHistoryAsync(DecodingHistoryItems);
+        await DecodingHistoryStorageHelper.RemoveAndSaveAsync(DecodingHistoryItems, item);
         OnPropertyChanged(nameof(HasDecodingHistory));
     }
 

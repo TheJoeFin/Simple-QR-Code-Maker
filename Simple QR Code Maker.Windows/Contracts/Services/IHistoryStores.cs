@@ -27,5 +27,9 @@ public interface IDecodingHistoryStore
 
     Task AddAndSaveAsync(ObservableCollection<DecodingHistoryItem> items, DecodingHistoryItem newItem);
 
+    Task ClearAndSaveAsync(ObservableCollection<DecodingHistoryItem> items);
+
+    Task RemoveAndSaveAsync(ObservableCollection<DecodingHistoryItem> items, DecodingHistoryItem item);
+
     Task UpdateLatestAndSaveAsync(ObservableCollection<DecodingHistoryItem> items, string sourcePath, List<string> decodedTexts);
 }
