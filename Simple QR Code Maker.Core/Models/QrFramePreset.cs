@@ -6,4 +6,10 @@ public enum QrFramePreset
     BottomLabel,
     RoundedFrame,
     CornerCallout,
+    SpeechBubble,
+    Ticket,
+    Sticker,
+    ScallopedBadge,
+    Polaroid,
+    Burst,
 }

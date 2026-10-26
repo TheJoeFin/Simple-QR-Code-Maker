@@ -23,6 +23,8 @@ public static class QrCodeDesignStateMapper
             FramePreset = historyItem.FramePreset,
             FrameTextSource = historyItem.FrameTextSource,
             FrameText = historyItem.FrameText,
+            Appearance = historyItem.Appearance ?? new(),
+            QrPaddingModules = historyItem.QrPaddingModules,
         };
     }
 
@@ -45,6 +47,8 @@ public static class QrCodeDesignStateMapper
             FramePreset = state.FramePreset,
             FrameTextSource = state.FrameTextSource,
             FrameText = state.FrameText,
+            Appearance = state.Appearance,
+            QrPaddingModules = state.QrPaddingModules,
         };
     }
 
@@ -65,6 +69,8 @@ public static class QrCodeDesignStateMapper
             LogoSizePercentage = options.IncludeCenterImage ? state.LogoSizePercentage : null,
             LogoPaddingPixels = options.IncludeCenterImage ? state.LogoPaddingPixels : null,
             FramePreset = options.IncludeFrame ? state.FramePreset : null,
+            Appearance = options.IncludeFrame ? state.Appearance : null,
+            QrPaddingModules = options.IncludeFrame ? state.QrPaddingModules : null,
             FrameTextSource = state.FrameTextSource,
             FrameText = options.IncludeFrame && state.FramePreset != QrFramePreset.None
                 ? state.FrameText?.Trim()

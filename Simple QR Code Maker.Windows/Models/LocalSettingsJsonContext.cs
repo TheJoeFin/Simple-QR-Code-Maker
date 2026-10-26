@@ -18,6 +18,7 @@ namespace Simple_QR_Code_Maker.Models;
 [JsonSerializable(typeof(QrFramePreset?))]
 [JsonSerializable(typeof(QrFrameTextSource))]
 [JsonSerializable(typeof(QrFrameTextSource?))]
+[JsonSerializable(typeof(QrCodeAppearance))]
 [JsonSerializable(typeof(PrintPageType))]
 [JsonSerializable(typeof(PrintPageType?))]
 [JsonSerializable(typeof(PrintPageLayout))]

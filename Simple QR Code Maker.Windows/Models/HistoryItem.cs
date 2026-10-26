@@ -71,6 +71,10 @@ public class HistoryItem : IEquatable<HistoryItem>
 
     public string? FrameText { get; set; }
 
+    public QrCodeAppearance Appearance { get; set; } = new();
+
+    public double? QrPaddingModules { get; set; }
+
     [JsonIgnore]
     public string DisplayText => ContentKind switch
     {

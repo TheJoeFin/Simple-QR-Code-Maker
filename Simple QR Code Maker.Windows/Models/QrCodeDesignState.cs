@@ -33,4 +33,8 @@ public sealed record QrCodeDesignState
     public QrFrameTextSource FrameTextSource { get; init; } = QrFrameTextSource.Manual;
 
     public string? FrameText { get; init; }
+
+    public QrCodeAppearance Appearance { get; init; } = new();
+
+    public double? QrPaddingModules { get; init; }
 }

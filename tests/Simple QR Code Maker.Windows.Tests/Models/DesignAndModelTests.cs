@@ -96,6 +96,8 @@ public sealed class DesignAndModelTests
         Assert.AreEqual(state.LogoPaddingPixels, brand.LogoPaddingPixels);
         Assert.AreEqual(state.FramePreset, brand.FramePreset);
         Assert.AreEqual(state.FrameTextSource, brand.FrameTextSource);
+        Assert.AreEqual(state.Appearance, brand.Appearance);
+        Assert.AreEqual(state.QrPaddingModules, brand.QrPaddingModules);
         Assert.AreEqual("Scan me", brand.FrameText);
         BrandItem withoutFrame = QrCodeDesignStateMapper.ToBrandItem(state with { FramePreset = QrFramePreset.None }, "name", new());
         Assert.IsNull(withoutFrame.FrameText);
@@ -131,6 +133,8 @@ public sealed class DesignAndModelTests
         Assert.AreEqual(excluded == "logo", brand.LogoPaddingPixels is null);
         Assert.AreEqual(excluded == "frame", brand.FramePreset is null);
         Assert.AreEqual(excluded == "frame", brand.FrameText is null);
+        Assert.AreEqual(excluded == "frame", brand.Appearance is null);
+        Assert.AreEqual(excluded == "frame", brand.QrPaddingModules is null);
     }
 
     [TestMethod]
@@ -178,7 +182,8 @@ public sealed class DesignAndModelTests
         foreach (CommonBrandPreset brand in CommonBrandCatalog.All)
             Assert.AreEqual("svg", XElement.Parse(brand.LoadLogoSvg()).Name.LocalName);
 
-        using QrRenderSettingsSnapshot source = QrRenderSettingsSnapshot.Create(ErrorCorrectionLevel.L, Color.Red, Color.Blue, null, 30, -2, null, 4, QrFramePreset.BottomLabel, QrFrameTextSource.ContentSummary, "existing");
+        QrCodeAppearance appearance = new() { ModuleStyle = QrModuleStyle.Dots, EyeStyle = QrEyeStyle.Rounded };
+        using QrRenderSettingsSnapshot source = QrRenderSettingsSnapshot.Create(ErrorCorrectionLevel.L, Color.Red, Color.Blue, null, 30, -2, null, 4, QrFramePreset.BottomLabel, QrFrameTextSource.ContentSummary, "existing", appearance);
         using QrRenderSettingsSnapshot common = source.CreateCommonBrandOverride(new("https://github.com/example", UseCommonBrand: true))!;
         Assert.AreEqual(ErrorCorrectionLevel.H, common.ErrorCorrectionLevel);
         Assert.AreEqual(CommonBrandCatalog.FindMatching("github.com")!.Foreground, common.ForegroundColor);
@@ -191,6 +196,8 @@ public sealed class DesignAndModelTests
         Assert.AreEqual(source.FramePreset, common.FramePreset);
         Assert.AreEqual(source.FrameTextSource, common.FrameTextSource);
         Assert.AreEqual(source.FrameText, common.FrameText);
+        Assert.AreEqual(appearance, source.Appearance);
+        Assert.AreEqual(source.Appearance, common.Appearance);
     }
 
     [TestMethod]
@@ -230,5 +237,14 @@ public sealed class DesignAndModelTests
         FramePreset = QrFramePreset.BottomLabel,
         FrameTextSource = QrFrameTextSource.Manual,
         FrameText = "  Scan me  ",
+        Appearance = new()
+        {
+            ModuleStyle = QrModuleStyle.Dots,
+            EyeStyle = QrEyeStyle.Rounded,
+            FrameAccent = WinColor.FromArgb(255, 230, 100, 170),
+            FrameGradientEnd = WinColor.FromArgb(255, 250, 190, 70),
+            CaptionIcon = QrCaptionIcon.WiFi,
+        },
+        QrPaddingModules = 4,
     };
 }

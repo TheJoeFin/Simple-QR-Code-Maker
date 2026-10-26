@@ -14,6 +14,7 @@ namespace Simple_QR_Code_Maker.Models;
 [JsonSerializable(typeof(QrFramePreset))]
 [JsonSerializable(typeof(QrFramePreset?))]
 [JsonSerializable(typeof(QrFrameTextSource))]
+[JsonSerializable(typeof(QrCodeAppearance))]
 internal partial class BrandJsonContext : JsonSerializerContext
 {
 }

@@ -46,6 +46,10 @@ public class BrandItem : IEquatable<BrandItem>
 
     public string? FrameText { get; set; }
 
+    public QrCodeAppearance? Appearance { get; set; }
+
+    public double? QrPaddingModules { get; set; }
+
     [JsonIgnore]
     public string? FrameDescription => FramePreset.HasValue
         ? QrFramePresetCatalog.GetOption(FramePreset.Value).Description

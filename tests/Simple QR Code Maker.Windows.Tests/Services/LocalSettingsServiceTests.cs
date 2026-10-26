@@ -54,6 +54,20 @@ public sealed class LocalSettingsServiceTests
     }
 
     [TestMethod]
+    public async Task DesignDefaultsRoundTripThroughGeneratedMetadata()
+    {
+        MemorySettingsStore store = new();
+        LocalSettingsService service = new(new FakeRuntime(false), store, store);
+        QrCodeAppearance appearance = QrDesignPresetCatalog.All[1].Appearance;
+        await service.SaveSettingAsync("DefaultAppearance", appearance);
+        await service.SaveSettingAsync("DefaultDesignPadding", 4.0);
+        Assert.AreEqual(appearance, await service.ReadSettingAsync<QrCodeAppearance>("DefaultAppearance"));
+        Assert.AreEqual(4.0, await service.ReadSettingAsync<double?>("DefaultDesignPadding"));
+        await service.SaveSettingAsync("DefaultAppearance", (QrCodeAppearance?)null);
+        Assert.IsNull(await service.ReadSettingAsync<QrCodeAppearance>("DefaultAppearance"));
+    }
+
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public async Task MalformedTypedDataIsObservableAndDoesNotFallBackToOtherPolicy(bool packaged)

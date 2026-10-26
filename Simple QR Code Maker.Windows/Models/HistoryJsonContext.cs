@@ -17,6 +17,7 @@ namespace Simple_QR_Code_Maker.Models;
 [JsonSerializable(typeof(EmojiLogoStyle?))]
 [JsonSerializable(typeof(QrFramePreset))]
 [JsonSerializable(typeof(QrFrameTextSource))]
+[JsonSerializable(typeof(QrCodeAppearance))]
 internal partial class HistoryJsonContext : JsonSerializerContext
 {
 }

@@ -16,7 +16,8 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         double qrPaddingModules,
         QrFramePreset framePreset,
         QrFrameTextSource frameTextSource,
-        string? frameText)
+        string? frameText,
+        QrCodeAppearance? appearance)
     {
         ErrorCorrectionLevel = errorCorrectionLevel;
         ForegroundColor = foregroundColor;
@@ -29,6 +30,7 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         FramePreset = framePreset;
         FrameTextSource = frameTextSource;
         FrameText = frameText;
+        Appearance = appearance ?? new();
     }
 
     public ErrorCorrectionLevel ErrorCorrectionLevel { get; }
@@ -53,6 +55,8 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
 
     public string? FrameText { get; }
 
+    public QrCodeAppearance Appearance { get; }
+
     public static QrRenderSettingsSnapshot Create(
         ErrorCorrectionLevel errorCorrectionLevel,
         System.Drawing.Color foregroundColor,
@@ -64,7 +68,8 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         double qrPaddingModules,
         QrFramePreset framePreset,
         QrFrameTextSource frameTextSource,
-        string? frameText)
+        string? frameText,
+        QrCodeAppearance? appearance = null)
     {
         return new QrRenderSettingsSnapshot(
             errorCorrectionLevel,
@@ -77,7 +82,8 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
             qrPaddingModules,
             framePreset,
             frameTextSource,
-            frameText);
+            frameText,
+            appearance);
     }
 
     public QrRenderSettingsSnapshot? CreateCommonBrandOverride(RequestedQrCodeItem requestedCode)
@@ -100,7 +106,8 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
             QrPaddingModules,
             FramePreset,
             FrameTextSource,
-            FrameText);
+            FrameText,
+            Appearance);
     }
 
     public void Dispose()
