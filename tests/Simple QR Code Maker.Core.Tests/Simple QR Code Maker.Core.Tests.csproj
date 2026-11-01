@@ -1,0 +1,9 @@
+<Project Sdk="MSTest.Sdk/4.5.1">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Simple_QR_Code_Maker.Core.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Simple QR Code Maker.Core\Simple QR Code Maker.Core.csproj" />
+  </ItemGroup>
+</Project>

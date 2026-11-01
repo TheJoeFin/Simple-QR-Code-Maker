@@ -48,6 +48,8 @@ public partial class BarcodeImageItem : ObservableRecipient
 
     public string? FrameText { get; set; }
 
+    public QrCodeAppearance Appearance { get; set; } = new();
+
     public bool IsAutoBranded { get; set; } = false;
 
     public bool IsCommonBranded { get; set; }
@@ -90,7 +92,9 @@ public partial class BarcodeImageItem : ObservableRecipient
         {
             QrCodeSizeRecommendation sizeRecommendation = SizeRecommendation;
 
-            if (!BarcodeHelpers.IsSizeRecommendationAvailableForPadding(QrPaddingModules))
+            if (!BarcodeHelpers.IsSizeRecommendationAvailableForPadding(QrPaddingModules)
+                || Appearance.ModuleStyle != QrModuleStyle.Square
+                || Appearance.EyeStyle != QrEyeStyle.Square)
                 return CodeAsText;
 
             if (sizeRecommendation.Kind == QrCodeSizeRecommendationKind.TransparencyDependent)
@@ -131,7 +135,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     {
         try
         {
-            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent, QrPaddingModules, FramePreset, FrameText);
+            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent, QrPaddingModules, FramePreset, FrameText, Appearance);
             using IRandomAccessStream randomAccessStream = await file.OpenAsync(FileAccessMode.ReadWrite);
             DataWriter dataWriter = new(randomAccessStream);
             dataWriter.WriteString(svgImage.Content);
@@ -149,7 +153,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     {
         try
         {
-            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent, QrPaddingModules, FramePreset, FrameText);
+            SvgImage svgImage = BarcodeHelpers.GetSvgQrCodeForText(CodeAsText, correctionLevel, foreground, background, LogoImage, LogoSizePercentage, LogoPaddingPixels, LogoSvgContent, QrPaddingModules, FramePreset, FrameText, Appearance);
             return svgImage.Content;
         }
         catch

@@ -16,7 +16,9 @@ dotnet msbuild "Simple QR Code Maker.slnx" /restore /p:Configuration=Release /p:
 ```
 
 - Visual Studio 2022 with the Windows App SDK workload and MSIX tooling is required; see `.vsconfig`.
-- There is no automated test project in this repository, so there is no single-test command to run.
+- Run headless tests with `.\scripts\Test.ps1 -Platform ARM64` (or `x64` on x64 hosts); add `-Coverage` for TRX and Cobertura reports.
+- Run a single suite with `dotnet test --project "tests\Simple QR Code Maker.Core.Tests\Simple QR Code Maker.Core.Tests.csproj" -p:Platform=ARM64`. Use MTP filtering options shown by that project's `--help` to select tests.
+- Core tests are portable; Windows tests require Windows and run without launching the app. Filesystem integration tests use isolated temporary directories.
 - There is no dedicated lint command configured in the repository.
 
 ## UI automation testing
@@ -25,7 +27,7 @@ Always ask the user and wait for explicit approval before running UI automation 
 
 ## High-level architecture
 
-- The solution has two projects: `Simple QR Code Maker` is the WinUI 3 app, and `Simple QR Code Maker.Core` contains shared infrastructure such as `FileService`.
+- The app references portable `Simple QR Code Maker.Core` (builders, parsing, workflow/print policies, infrastructure) and headless `Simple QR Code Maker.Windows` (rendering, persistence, Windows models). Each library has an MSTest/MTP project under `tests`.
 - `App.xaml.cs` is the composition root. It builds a `Microsoft.Extensions.Hosting` host, registers services/view models/views, and routes startup through `IActivationService`.
 - Activation is split between `DefaultActivationHandler` and `ShareTargetActivationHandler`. Shared images route into `DecodingViewModel`; shared text and URIs route into `MainViewModel`.
 - `ShellPage` hosts navigation. `PageService` maps view-model keys to pages, and `NavigationService` performs frame navigation and forwards `INavigationAware` lifecycle calls.

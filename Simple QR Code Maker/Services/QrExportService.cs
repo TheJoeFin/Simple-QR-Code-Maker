@@ -1,7 +1,6 @@
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
-using System.IO.Compression;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -67,39 +66,20 @@ public class QrExportService : IQrExportService
         if (folder is null)
             return null;
 
-        int completedItemCount = 0;
         int maxConcurrency = renderSettings.LogoImage is null ? MaxBulkSaveConcurrency : 1;
-        using SemaphoreSlim semaphore = new(maxConcurrency, maxConcurrency);
-        List<Task> tasks = [];
-
-        foreach (RequestedQrCodeItem requestedCode in requestedCodes)
+        await AsyncBatchProcessor.RunAsync(requestedCodes, maxConcurrency, async requestedCode =>
         {
-            await semaphore.WaitAsync();
-            tasks.Add(Task.Run(async () =>
+            if (!string.IsNullOrWhiteSpace(requestedCode.SafeFileNameBase))
             {
-                try
+                foreach (FileKind kindOfFile in fileKinds)
                 {
-                    if (!string.IsNullOrWhiteSpace(requestedCode.SafeFileNameBase))
-                    {
-                        foreach (FileKind kindOfFile in fileKinds)
-                        {
-                            StorageFile file = await folder.CreateFileAsync(
-                                requestedCode.SafeFileNameBase + GetFileExtension(kindOfFile),
-                                CreationCollisionOption.ReplaceExisting);
-                            await WriteRequestedCodeToFileAsync(requestedCode, file, kindOfFile, renderSettings);
-                        }
-                    }
+                    StorageFile file = await folder.CreateFileAsync(
+                        requestedCode.SafeFileNameBase + GetFileExtension(kindOfFile),
+                        CreationCollisionOption.ReplaceExisting);
+                    await WriteRequestedCodeToFileAsync(requestedCode, file, kindOfFile, renderSettings);
                 }
-                finally
-                {
-                    int completed = Interlocked.Increment(ref completedItemCount);
-                    updateProgress?.Invoke(completed);
-                    semaphore.Release();
-                }
-            }));
-        }
-
-        await Task.WhenAll(tasks);
+            }
+        }, updateProgress);
         return folder.Path;
     }
 
@@ -116,87 +96,15 @@ public class QrExportService : IQrExportService
         using IRandomAccessStream outputStream = await zipFile.OpenAsync(FileAccessMode.ReadWrite);
         outputStream.Size = 0;
         using Stream output = outputStream.AsStreamForWrite();
-        using ZipArchive archive = new(output, ZipArchiveMode.Create, leaveOpen: true);
-
-        for (int index = 0; index < requestedCodes.Count; index++)
-        {
-            RequestedQrCodeItem requestedCode = requestedCodes[index];
-
-            if (!string.IsNullOrWhiteSpace(requestedCode.SafeFileNameBase))
-            {
-                foreach (FileKind kindOfFile in fileKinds)
-                {
-                    ZipArchiveEntry entry = archive.CreateEntry(
-                        requestedCode.SafeFileNameBase + GetFileExtension(kindOfFile),
-                        CompressionLevel.Optimal);
-                    using Stream entryStream = entry.Open();
-                    await WriteRequestedCodeToZipEntryAsync(requestedCode, entryStream, kindOfFile, renderSettings);
-                }
-            }
-
-            updateProgress?.Invoke(index + 1);
-        }
-
-        await output.FlushAsync();
+        await QrExportWriter.WriteZipAsync(output, requestedCodes, renderSettings, updateProgress, fileKinds);
         return true;
     }
 
     private static async Task<byte[]> RenderRequestedCodePngBytesAsync(RequestedQrCodeItem requestedCode, QrRenderSettingsSnapshot renderSettings)
-    {
-        return await Task.Run(() =>
-        {
-            using QrRenderSettingsSnapshot? commonSettings = renderSettings.CreateCommonBrandOverride(requestedCode);
-            QrRenderSettingsSnapshot effectiveSettings = commonSettings ?? renderSettings;
-            string? resolvedFrameText = ResolveFrameText(requestedCode, effectiveSettings);
-            using MemoryStream ms = new();
-            BarcodeHelpers.SaveQrCodePngToStream(
-                ms,
-                requestedCode.CodeAsText,
-                effectiveSettings.ErrorCorrectionLevel,
-                effectiveSettings.ForegroundColor,
-                effectiveSettings.BackgroundColor,
-                effectiveSettings.LogoImage,
-                effectiveSettings.LogoSizePercentage,
-                effectiveSettings.LogoPaddingPixels,
-                effectiveSettings.QrPaddingModules,
-                effectiveSettings.FramePreset,
-                resolvedFrameText);
-            return ms.ToArray();
-        });
-    }
+        => await QrExportWriter.RenderPngAsync(requestedCode, renderSettings);
 
     private static async Task<string> GetRequestedCodeAsSvgTextAsync(RequestedQrCodeItem requestedCode, QrRenderSettingsSnapshot renderSettings)
-    {
-        return await Task.Run(() =>
-        {
-            using QrRenderSettingsSnapshot? commonSettings = renderSettings.CreateCommonBrandOverride(requestedCode);
-            QrRenderSettingsSnapshot effectiveSettings = commonSettings ?? renderSettings;
-            string? resolvedFrameText = ResolveFrameText(requestedCode, effectiveSettings);
-            return BarcodeHelpers.GetSvgQrCodeForText(
-                requestedCode.CodeAsText,
-                effectiveSettings.ErrorCorrectionLevel,
-                effectiveSettings.ForegroundColor,
-                effectiveSettings.BackgroundColor,
-                effectiveSettings.LogoImage,
-                effectiveSettings.LogoSizePercentage,
-                effectiveSettings.LogoPaddingPixels,
-                effectiveSettings.LogoSvgContent,
-                effectiveSettings.QrPaddingModules,
-                effectiveSettings.FramePreset,
-                resolvedFrameText).Content;
-        });
-    }
-
-    private static string? ResolveFrameText(RequestedQrCodeItem requestedCode, QrRenderSettingsSnapshot renderSettings)
-    {
-        return QrFrameTextResolver.Resolve(
-            renderSettings.FramePreset,
-            renderSettings.FrameTextSource,
-            renderSettings.FrameText,
-            requestedCode.CodeAsText,
-            requestedCode.ContentKind,
-            requestedCode.MultiLineCodeModeOverride);
-    }
+        => await QrExportWriter.RenderSvgAsync(requestedCode, renderSettings);
 
     private static async Task WriteRequestedCodeToFileAsync(RequestedQrCodeItem requestedCode, StorageFile file, FileKind kindOfFile, QrRenderSettingsSnapshot renderSettings)
     {
@@ -221,32 +129,6 @@ public class QrExportService : IQrExportService
                     outputStream.Size = 0;
                     using Stream output = outputStream.AsStreamForWrite();
                     using StreamWriter writer = new(output, new System.Text.UTF8Encoding(false), 1024, leaveOpen: true);
-                    await writer.WriteAsync(svgText);
-                    await writer.FlushAsync();
-                    break;
-                }
-            default:
-                return;
-        }
-    }
-
-    private static async Task WriteRequestedCodeToZipEntryAsync(RequestedQrCodeItem requestedCode, Stream entryStream, FileKind kindOfFile, QrRenderSettingsSnapshot renderSettings)
-    {
-        switch (kindOfFile)
-        {
-            case FileKind.None:
-                return;
-            case FileKind.PNG:
-                {
-                    byte[] pngBytes = await RenderRequestedCodePngBytesAsync(requestedCode, renderSettings);
-                    await entryStream.WriteAsync(pngBytes);
-                    await entryStream.FlushAsync();
-                    break;
-                }
-            case FileKind.SVG:
-                {
-                    string svgText = await GetRequestedCodeAsSvgTextAsync(requestedCode, renderSettings);
-                    using StreamWriter writer = new(entryStream, new System.Text.UTF8Encoding(false), 1024, leaveOpen: true);
                     await writer.WriteAsync(svgText);
                     await writer.FlushAsync();
                     break;
@@ -287,7 +169,5 @@ public class QrExportService : IQrExportService
     }
 
     private static string GetFileExtension(FileKind kindOfFile)
-    {
-        return $".{kindOfFile.ToString().ToLowerInvariant()}";
-    }
+        => QrExportWriter.GetFileExtension(kindOfFile);
 }

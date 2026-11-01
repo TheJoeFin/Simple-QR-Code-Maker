@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <RootNamespace>Simple_QR_Code_Maker</RootNamespace>
+    <Platforms>x64;ARM64</Platforms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Simple QR Code Maker.Core\Simple QR Code Maker.Core.csproj" />
+    <PackageReference Include="Humanizer" Version="3.0.10" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="15.0.0" />
+    <PackageReference Include="ZXing.Net" Version="0.16.11" />
+    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.16" />
+    <PackageReference Include="PdfPig" Version="0.1.16" />
+    <InternalsVisibleTo Include="Simple QR Code Maker" />
+    <InternalsVisibleTo Include="Simple QR Code Maker.Windows.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- SuperTinyIcons revision d532b8a9e8a96ed5462f3813106f0b1e230249dc; see the app's Licenses\SuperTinyIcons.txt. -->
+    <EmbeddedResource Include="..\Simple QR Code Maker\Assets\CommonBrands\*.svg">
+      <LogicalName>CommonBrands.%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

@@ -108,6 +108,9 @@
                                         CornerRadius="4"
                                         IsHitTestVisible="False"
                                         Opacity="0">
+                                        <Border.OpacityTransition>
+                                            <ScalarTransition Duration="0:0:0.2" />
+                                        </Border.OpacityTransition>
                                         <StackPanel
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"

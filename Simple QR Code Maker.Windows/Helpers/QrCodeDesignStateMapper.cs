@@ -1,0 +1,80 @@
+using Simple_QR_Code_Maker.Models;
+
+namespace Simple_QR_Code_Maker.Helpers;
+
+public static class QrCodeDesignStateMapper
+{
+    public static QrCodeDesignState FromHistoryItem(HistoryItem historyItem)
+    {
+        return new QrCodeDesignState
+        {
+            CodesContent = historyItem.CodesContent,
+            ContentKind = historyItem.ContentKind,
+            MultiLineCodeModeOverride = historyItem.MultiLineCodeModeOverride,
+            CommonBrandCodes = [.. (historyItem.CommonBrandCodes ?? [])],
+            Foreground = historyItem.Foreground,
+            Background = historyItem.Background,
+            ErrorCorrection = historyItem.ErrorCorrection,
+            LogoImagePath = historyItem.LogoImagePath,
+            LogoEmoji = historyItem.LogoEmoji,
+            LogoEmojiStyle = historyItem.LogoEmojiStyle,
+            LogoSizePercentage = historyItem.LogoSizePercentage,
+            LogoPaddingPixels = historyItem.LogoPaddingPixels,
+            FramePreset = historyItem.FramePreset,
+            FrameTextSource = historyItem.FrameTextSource,
+            FrameText = historyItem.FrameText,
+            Appearance = historyItem.Appearance ?? new(),
+            QrPaddingModules = historyItem.QrPaddingModules,
+        };
+    }
+
+    public static HistoryItem ToHistoryItem(QrCodeDesignState state)
+    {
+        return new HistoryItem
+        {
+            CodesContent = state.CodesContent,
+            ContentKind = state.ContentKind,
+            MultiLineCodeModeOverride = state.MultiLineCodeModeOverride,
+            CommonBrandCodes = [.. state.CommonBrandCodes],
+            Foreground = state.Foreground,
+            Background = state.Background,
+            ErrorCorrection = state.ErrorCorrection,
+            LogoImagePath = state.LogoImagePath,
+            LogoEmoji = state.LogoEmoji,
+            LogoEmojiStyle = state.LogoEmojiStyle,
+            LogoSizePercentage = state.LogoSizePercentage,
+            LogoPaddingPixels = state.LogoPaddingPixels,
+            FramePreset = state.FramePreset,
+            FrameTextSource = state.FrameTextSource,
+            FrameText = state.FrameText,
+            Appearance = state.Appearance,
+            QrPaddingModules = state.QrPaddingModules,
+        };
+    }
+
+    public static BrandItem ToBrandItem(QrCodeDesignState state, string name, BrandCreationOptions options)
+    {
+        return new BrandItem
+        {
+            Name = name.Trim(),
+            Foreground = options.IncludeForeground ? state.Foreground : null,
+            Background = options.IncludeBackground ? state.Background : null,
+            UrlContent = options.IncludeUrl ? state.CodesContent : null,
+            ContentKind = state.ContentKind,
+            MultiLineCodeModeOverride = state.MultiLineCodeModeOverride,
+            ErrorCorrectionLevelAsString = options.IncludeErrorCorrection ? state.ErrorCorrection.ToString() : null,
+            LogoImagePath = options.IncludeCenterImage ? state.LogoImagePath : null,
+            LogoEmoji = options.IncludeCenterImage ? state.LogoEmoji : null,
+            LogoEmojiStyle = options.IncludeCenterImage ? state.LogoEmojiStyle : null,
+            LogoSizePercentage = options.IncludeCenterImage ? state.LogoSizePercentage : null,
+            LogoPaddingPixels = options.IncludeCenterImage ? state.LogoPaddingPixels : null,
+            FramePreset = options.IncludeFrame ? state.FramePreset : null,
+            Appearance = options.IncludeFrame ? state.Appearance : null,
+            QrPaddingModules = options.IncludeFrame ? state.QrPaddingModules : null,
+            FrameTextSource = state.FrameTextSource,
+            FrameText = options.IncludeFrame && state.FramePreset != QrFramePreset.None
+                ? state.FrameText?.Trim()
+                : null,
+        };
+    }
+}

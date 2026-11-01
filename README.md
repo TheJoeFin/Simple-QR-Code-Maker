@@ -137,6 +137,29 @@ On the reading side, v2 can decode codes from files, folders, drag-and-drop, the
 - Export settings, brands, and history to a ZIP backup.
 - Import settings, brands, and history from a ZIP backup.
 
+## Development and testing
+
+The app targets .NET 10 and uses WinUI 3/MSIX. Build it with Visual Studio's Windows App SDK/MSIX tooling and `dotnet msbuild "Simple QR Code Maker.slnx" /restore /p:Configuration=Debug /p:Platform=ARM64 /nologo` (or `x64`). Existing app sources use preview collection-expression arguments, so the app build currently needs the .NET 11 preview SDK as well as the .NET 10 runtime.
+
+The production logic lives in two libraries: portable `Simple QR Code Maker.Core`, and headless Windows-specific `Simple QR Code Maker.Windows`. Both are referenced by the app and by MSTest/Microsoft.Testing.Platform test projects. Tests do not launch the app or touch its settings.
+
+```powershell
+# Run both headless suites on Windows; Core only on other platforms.
+.\scripts\Test.ps1 -Platform ARM64
+
+# Run one suite, including coverage and TRX results in TestResults.
+.\scripts\Test.ps1 -Platform ARM64 -Suite Core -Coverage
+
+# Direct runner invocation (use x64 on x64 hosts).
+dotnet test --project "tests\Simple QR Code Maker.Windows.Tests\Simple QR Code Maker.Windows.Tests.csproj" -p:Platform=ARM64
+```
+
+The test projects require .NET 10. Use `-Suite Core` on Linux/macOS. Real filesystem checks are marked `Integration`, operate only in unique temporary directories, and clean up after themselves. Native image processing is exercised on matching x64/ARM64 hosts. CI runs portable tests on Linux and both suites on Windows x64/ARM64, and publishes results and coverage even when a suite fails.
+
+Coverage runs enforce the measured production-library floors in `tests\thresholds.json`. Keep these ratcheting upward; generated code is excluded, but entire helper/service classes are not. Core requires 95% line and 90% branch coverage; Windows requires 85% line and 80% branch coverage.
+
+Keep tests deterministic: use synthetic data, fixed timestamps/cultures where relevant, controllable tasks instead of sleeps, and structural image/PDF assertions instead of whole-file snapshots. Regression tests should cover success, invalid input, boundaries, failures, and legacy compatibility. XAML bindings, actual pickers, clipboard, camera, Windows AI availability, Excel COM integration, and printing remain platform/UI checks; **running anything that launches or interacts with the app requires explicit user approval**.
+
 ---
 
 Made with ❤️ in Milwaukee by Joe Finney.

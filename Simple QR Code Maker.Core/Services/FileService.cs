@@ -6,7 +6,7 @@ namespace Simple_QR_Code_Maker.Core.Services;
 
 public class FileService : IFileService
 {
-    public T Read<T>(string folderPath, string fileName)
+    public T? Read<T>(string folderPath, string fileName)
     {
         string path = Path.Combine(folderPath, fileName);
         if (File.Exists(path))
@@ -29,7 +29,7 @@ public class FileService : IFileService
         File.WriteAllText(Path.Combine(folderPath, fileName), fileContent, Encoding.UTF8);
     }
 
-    public void Delete(string folderPath, string fileName)
+    public void Delete(string folderPath, string? fileName)
     {
         if (fileName != null && File.Exists(Path.Combine(folderPath, fileName)))
         {

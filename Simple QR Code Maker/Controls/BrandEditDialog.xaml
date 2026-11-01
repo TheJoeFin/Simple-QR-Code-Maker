@@ -126,8 +126,8 @@
 
             <!--  Frame  -->
             <settingsControls:SettingsExpander
-                Description="Include a frame style and frame text"
-                Header="Frame"
+                Description="Include the frame, caption, pattern, and accent colors"
+                Header="Design"
                 IsExpanded="{x:Bind ViewModel.IncludeFrame,
                                     Mode=OneWay}">
                 <settingsControls:SettingsExpander.HeaderIcon>

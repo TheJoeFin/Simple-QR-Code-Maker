@@ -110,6 +110,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CurrentEmojiPreviewForegroundBrush))]
+    [NotifyPropertyChangedFor(nameof(FrameAccentColor))]
     public partial Windows.UI.Color ForegroundColor { get; set; } = Windows.UI.Color.FromArgb(255, 0, 0, 0);
 
     [ObservableProperty]
@@ -1248,23 +1249,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     }
 
     private IEnumerable<string> EnumerateRequestedCodeTexts()
-    {
-        if (GetEffectiveMultiLineCodeMode() != MultiLineCodeMode.OneLineOneCode)
-        {
-            string singleCode = UrlText.Trim();
-            if (!string.IsNullOrWhiteSpace(singleCode))
-                yield return singleCode;
-
-            yield break;
-        }
-
-        foreach (string line in UrlText.Split(["\r\n", "\r", "\n"], StringSplitOptions.None))
-        {
-            string textToUse = line.Trim();
-            if (!string.IsNullOrWhiteSpace(textToUse))
-                yield return textToUse;
-        }
-    }
+        => QrDocumentHelper.EnumerateTexts(UrlText, GetEffectiveMultiLineCodeMode());
 
     private async Task MaterializePreviewBatchAsync(int additionalCount)
     {
@@ -1299,51 +1284,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     }
 
     private BrandItem? FindMatchingBrand(string content)
-    {
-        string normalizedContent = NormalizeUrlForBrandMatching(content);
-        if (string.IsNullOrEmpty(normalizedContent))
-            return null;
-
-        foreach (BrandItem brand in BrandItems)
-        {
-            if (string.IsNullOrWhiteSpace(brand.UrlContent))
-                continue;
-
-            // Strip trailing slashes so "example.com/" and "example.com" are equivalent patterns
-            string brandPattern = NormalizeUrlForBrandMatching(brand.UrlContent).TrimEnd('/');
-            if (string.IsNullOrEmpty(brandPattern))
-                continue;
-
-            if (!normalizedContent.StartsWith(brandPattern, StringComparison.Ordinal))
-                continue;
-
-            // Require a URL boundary after the pattern so "pexample.com" cannot match brand "example.com",
-            // and "example.com.evil.com" cannot match "example.com" (next char would be '.').
-            if (normalizedContent.Length == brandPattern.Length)
-                return brand;
-
-            char next = normalizedContent[brandPattern.Length];
-            if (next is '/' or '?' or '#' or ':' or '@')
-                return brand;
-        }
-
-        return null;
-    }
-
-    private static string NormalizeUrlForBrandMatching(string url)
-    {
-        string s = url.Trim().ToLowerInvariant();
-
-        if (s.StartsWith("https://", StringComparison.Ordinal))
-            s = s[8..];
-        else if (s.StartsWith("http://", StringComparison.Ordinal))
-            s = s[7..];
-
-        if (s.StartsWith("www.", StringComparison.Ordinal))
-            s = s[4..];
-
-        return s;
-    }
+        => BrandItems.FirstOrDefault(brand => !string.IsNullOrWhiteSpace(brand.UrlContent)
+            && QrDocumentHelper.MatchesBrandUrl(content, brand.UrlContent));
 
     private static bool IsUrlLike(string line)
         => line.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
@@ -1351,22 +1293,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         || line.StartsWith("ftp://", StringComparison.OrdinalIgnoreCase);
 
     private bool LineMatchesBrandUrl(string line, string brandUrl)
-    {
-        string normalizedLine = NormalizeUrlForBrandMatching(line);
-        string normalizedBrand = NormalizeUrlForBrandMatching(brandUrl).TrimEnd('/');
-
-        if (string.IsNullOrEmpty(normalizedBrand))
-            return false;
-
-        if (!normalizedLine.StartsWith(normalizedBrand, StringComparison.Ordinal))
-            return false;
-
-        if (normalizedLine.Length == normalizedBrand.Length)
-            return true;
-
-        char next = normalizedLine[normalizedBrand.Length];
-        return next is '/' or '?' or '#' or ':' or '@';
-    }
+        => QrDocumentHelper.MatchesBrandUrl(line, brandUrl);
 
     private bool ApplyBrandUrlToExistingContent(BrandItem brand)
     {
@@ -1527,6 +1454,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         double logoPadding = commonSettings?.LogoPaddingPixels ?? brandOverride?.LogoPaddingPixels ?? LogoPaddingPixels;
 
         QrFramePreset framePreset = FramePreset;
+        QrCodeAppearance appearance = brandOverride?.Appearance ?? Appearance;
+        double qrPaddingModules = brandOverride?.QrPaddingModules ?? QrPaddingModules;
         string? resolvedFrameText;
         if (brandOverride?.FramePreset.HasValue == true)
         {
@@ -1548,9 +1477,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             logo,
             logoSize,
             logoPadding,
-            QrPaddingModules,
+            qrPaddingModules,
             framePreset,
-            resolvedFrameText);
+            resolvedFrameText,
+            appearance);
         BarcodeImageItem barcodeImageItem = new()
         {
             CodeAsBitmap = bitmap,
@@ -1560,7 +1490,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
                 || logo != null
                 || foreground.A < 255
                 || background.A < 255
-                || !BarcodeHelpers.IsSizeRecommendationAvailableForPadding(QrPaddingModules)
+                || !BarcodeHelpers.IsSizeRecommendationAvailableForPadding(qrPaddingModules)
+                || appearance.ModuleStyle != QrModuleStyle.Square
+                || appearance.EyeStyle != QrEyeStyle.Square
                 || framePreset != QrFramePreset.None)
                 ? Visibility.Collapsed
                 : Visibility.Visible,
@@ -1568,13 +1500,14 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             ForegroundColor = foreground,
             BackgroundColor = background,
             MaxSizeScaleFactor = MinSizeScanDistanceScaleFactor,
-            QrPaddingModules = QrPaddingModules,
+            QrPaddingModules = qrPaddingModules,
             LogoImage = commonSettings?.LogoImage is System.Drawing.Bitmap commonLogo ? new System.Drawing.Bitmap(commonLogo) : logo,
             LogoSizePercentage = logoSize,
             LogoPaddingPixels = logoPadding,
             LogoSvgContent = logoSvg,
             FramePreset = framePreset,
             FrameText = resolvedFrameText,
+            Appearance = appearance,
             IsAutoBranded = brandOverride is not null,
             IsCommonBranded = requestedCode.UseCommonBrand,
             RecommendUsingBrandThemes = RecommendUsingBrandThemes,
@@ -1895,7 +1828,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             QrPaddingModules,
             FramePreset,
             FrameTextSource,
-            FrameText);
+            FrameText,
+            Appearance);
     }
 
     private string? ResolveFrameText(RequestedQrCodeItem requestedCode)
@@ -2117,6 +2051,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         await LocalSettingsService.SaveSettingAsync("DefaultFramePreset", FramePreset);
         await LocalSettingsService.SaveSettingAsync("DefaultFrameTextSource", FrameTextSource);
         await LocalSettingsService.SaveSettingAsync("DefaultFrameText", FrameText);
+        await LocalSettingsService.SaveSettingAsync("DefaultAppearance", Appearance);
+        await LocalSettingsService.SaveSettingAsync("DefaultDesignPadding", QrPaddingModules);
+        await SetForegroundAsDefaultAsync();
+        await SetBackgroundAsDefaultAsync();
     }
 
     private static string ColorToHex(Windows.UI.Color c)
@@ -2141,6 +2079,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             || (FramePreset != QrFramePreset.None && string.Equals(normalizedFrameText, currentDefaultText, StringComparison.Ordinal));
 
         FramePreset = option.Preset;
+        if (option.Preset is QrFramePreset.SpeechBubble or QrFramePreset.Ticket or QrFramePreset.Sticker
+            or QrFramePreset.ScallopedBadge or QrFramePreset.Polaroid or QrFramePreset.Burst)
+            QrPaddingModules = Math.Max(4, QrPaddingModules);
 
         if (option.Preset != QrFramePreset.None && shouldReplaceFrameText)
             FrameText = option.DefaultText;
@@ -2234,6 +2175,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
                     ? string.Empty
                     : QrFramePresetCatalog.ResolveText(brand.FramePreset.Value, brand.FrameText) ?? string.Empty;
             }
+
+            if (brand.Appearance is not null)
+                Appearance = brand.Appearance;
+
+            if (brand.QrPaddingModules.HasValue)
+                QrPaddingModules = brand.QrPaddingModules.Value;
 
             SelectedBrand = brand;
         }
@@ -2919,6 +2866,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             string? defaultFt = await LocalSettingsService.ReadSettingAsync<string>("DefaultFrameText");
             if (defaultFt is not null) FrameText = defaultFt;
 
+            QrCodeAppearance? defaultAppearance = await LocalSettingsService.ReadSettingAsync<QrCodeAppearance>("DefaultAppearance");
+            if (defaultAppearance is not null) Appearance = defaultAppearance;
+
+            double? defaultDesignPadding = await LocalSettingsService.ReadSettingAsync<double?>("DefaultDesignPadding");
+            if (defaultDesignPadding.HasValue) QrPaddingModules = defaultDesignPadding.Value;
+
             // Apply default brand last, after all settings are loaded
             BrandItem? defaultBrand = BrandItems.FirstOrDefault(b => b.IsDefault);
             if (defaultBrand is not null)
@@ -3041,11 +2994,15 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             FramePreset = FramePreset,
             FrameTextSource = FrameTextSource,
             FrameText = FrameText,
+            Appearance = Appearance,
+            QrPaddingModules = QrPaddingModules,
         };
     }
 
     private void ApplyDesignState(QrCodeDesignState state)
     {
+        designBeforePreset = null;
+        UndoDesignPresetCommand.NotifyCanExecuteChanged();
         SetCurrentDocumentMetadata(state.ContentKind, state.MultiLineCodeModeOverride);
         UrlText = state.CodesContent;
         commonBrandCodes.Clear();
@@ -3060,6 +3017,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         FramePreset = state.FramePreset;
         FrameTextSource = state.FrameTextSource;
         FrameText = state.FrameText ?? string.Empty;
+        Appearance = state.Appearance;
+        if (state.QrPaddingModules.HasValue)
+            QrPaddingModules = state.QrPaddingModules.Value;
         debounceTimer.Stop();
         debounceTimer.Start();
     }

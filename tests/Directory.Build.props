@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
+    <Platforms>x64;ARM64</Platforms>
+    <IsPackable>false</IsPackable>
+    <TestingExtensionsProfile>Default</TestingExtensionsProfile>
+    <EnableMicrosoftTestingExtensionsCodeCoverage>true</EnableMicrosoftTestingExtensionsCodeCoverage>
+  </PropertyGroup>
+</Project>
