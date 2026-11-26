@@ -92,6 +92,34 @@ public sealed class QrExportWriterTests
         Assert.AreEqual(code.CodeAsText, QrCodeRenderer.GetStringsFromBitmap(bitmap).Single().Item1);
     }
 
+    [TestMethod]
+    [DataRow(25.0, 4.0)]
+    [DataRow(15.0, -5.0)]
+    public async Task CommonBrandExportsUseTheCurrentLogoSizeAndPadding(double logoSize, double logoPadding)
+    {
+        RequestedQrCodeItem code = new("https://www.youtube.com/watch?v=pOSSpd8mb4Y", UseCommonBrand: true);
+        using QrRenderSettingsSnapshot settings = QrRenderSettingsSnapshot.Create(
+            ErrorCorrectionLevel.Q, Color.Black, Color.Beige, null, logoSize, logoPadding,
+            null, 2, QrFramePreset.None, QrFrameTextSource.Manual, null);
+
+        CommonBrandPreset brand = CommonBrandCatalog.FindMatching(code.CodeAsText)!;
+        string logoSvg = brand.LoadLogoSvg();
+        using Bitmap logo = QrCodeRenderer.RasterizeSvgToBitmap(logoSvg, 512, 512);
+        using MemoryStream expectedPng = new();
+        QrCodeRenderer.SaveQrCodePngToStream(expectedPng, code.CodeAsText, ErrorCorrectionLevel.H,
+            brand.Foreground, Color.White, logo, logoSize, logoPadding);
+        byte[] actualPng = await QrExportWriter.RenderPngAsync(code, settings);
+        CollectionAssert.AreEqual(expectedPng.ToArray(), actualPng);
+
+        string expectedSvg = QrCodeRenderer.GetSvgQrCodeForText(code.CodeAsText, ErrorCorrectionLevel.H,
+            brand.Foreground, Color.White, logo, logoSize, logoPadding, logoSvg).Content;
+        Assert.AreEqual(expectedSvg, await QrExportWriter.RenderSvgAsync(code, settings));
+
+        using MemoryStream stream = new(actualPng);
+        using Bitmap bitmap = new(stream);
+        Assert.AreEqual(code.CodeAsText, QrCodeRenderer.GetStringsFromBitmap(bitmap).Single().Item1);
+    }
+
     private static QrRenderSettingsSnapshot CreateSettings()
         => QrRenderSettingsSnapshot.Create(
             ErrorCorrectionLevel.M, Color.Black, Color.White,

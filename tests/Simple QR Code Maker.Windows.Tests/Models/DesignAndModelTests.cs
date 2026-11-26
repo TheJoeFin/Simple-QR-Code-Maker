@@ -190,8 +190,8 @@ public sealed class DesignAndModelTests
         Assert.AreEqual(Color.White, common.BackgroundColor);
         Assert.IsNotNull(common.LogoImage);
         Assert.IsFalse(string.IsNullOrEmpty(common.LogoSvgContent));
-        Assert.AreEqual(15, common.LogoSizePercentage);
-        Assert.AreEqual(4, common.LogoPaddingPixels);
+        Assert.AreEqual(source.LogoSizePercentage, common.LogoSizePercentage);
+        Assert.AreEqual(source.LogoPaddingPixels, common.LogoPaddingPixels);
         Assert.AreEqual(source.QrPaddingModules, common.QrPaddingModules);
         Assert.AreEqual(source.FramePreset, common.FramePreset);
         Assert.AreEqual(source.FrameTextSource, common.FrameTextSource);
