@@ -200,14 +200,14 @@ public static partial class QrCodeRenderer
     private static byte BlendModuleChannel(byte foreground, byte background, int foregroundAlpha, int backgroundAlpha, int alpha)
         => alpha == 0 ? background : (byte)((foreground * foregroundAlpha + background * backgroundAlpha + alpha / 2) / alpha);
 
-    private static SvgImage CreateStyledQrSvg(QRCode qrCode, int renderSize, int margin, Color foreground, Color background, QrCodeAppearance appearance)
+    private static SvgImage CreateStyledQrSvg(QRCode qrCode, int renderSize, int margin, Color foreground, Color? background, QrCodeAppearance appearance)
     {
         using GraphicsPath path = CreateQrModulePath(qrCode, renderSize, margin, appearance);
         string modulePath = GetSvgPathData(path);
         // Translucent modules replace their background pixels, matching the bitmap coverage mask.
-        string backgroundShape = foreground.A == 255
-            ? $"<rect width=\"{renderSize}\" height=\"{renderSize}\" fill=\"{ToSvgColor(background)}\"/>"
-            : $"<path d=\"M 0 0 L {renderSize} 0 L {renderSize} {renderSize} L 0 {renderSize} Z {modulePath}\" fill=\"{ToSvgColor(background)}\" fill-rule=\"evenodd\"/>";
+        string backgroundShape = background is not Color fill ? string.Empty : foreground.A == 255
+            ? $"<rect width=\"{renderSize}\" height=\"{renderSize}\" fill=\"{ToSvgColor(fill)}\"/>"
+            : $"<path d=\"M 0 0 L {renderSize} 0 L {renderSize} {renderSize} L 0 {renderSize} Z {modulePath}\" fill=\"{ToSvgColor(fill)}\" fill-rule=\"evenodd\"/>";
         return new SvgImage($"""
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {renderSize} {renderSize}" width="{renderSize}" height="{renderSize}">
 {backgroundShape}

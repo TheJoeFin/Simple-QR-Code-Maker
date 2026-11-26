@@ -134,6 +134,119 @@ public sealed class AppearanceRendererTests
     }
 
     [TestMethod]
+    public void NoBackgroundLetsTheOceanGradientShowThroughTheQrCode()
+    {
+        const string payload = "https://example.test/ocean";
+        QrDesignPreset ocean = QrDesignPresetCatalog.All.Single(preset => preset.Frame == QrFramePreset.ScallopedBadge);
+        Color ink = ToDrawingColor(ocean.Foreground);
+        Color background = ToDrawingColor(ocean.Background);
+        QrCodeAppearance appearance = ocean.Appearance with { UseFrameAsQrBackground = true };
+        using Bitmap png = QrCodeRenderer.GetQrCodeBitmapFromText(payload, ErrorCorrectionLevel.H, ink, background,
+            qrPaddingModules: 4, framePreset: ocean.Frame, frameText: ocean.Caption, appearance: appearance);
+        string svg = QrCodeRenderer.GetSvgQrCodeForText(payload, ErrorCorrectionLevel.H, ink, background,
+            qrPaddingModules: 4, framePreset: ocean.Frame, frameText: ocean.Caption, appearance: appearance).Content;
+        XElement root = XElement.Parse(svg);
+        Assert.IsFalse(root.Descendants().Any(e => e.Attribute("data-qr-panel") is not null));
+        Assert.AreEqual(ocean.Caption, root.Descendants().Single(e => e.Name.LocalName == "text").Value);
+        using Bitmap rasterized = QrCodeRenderer.RasterizeSvgToBitmap(svg, png.Width, png.Height);
+        (int x, int y) = GetQrOrigin(root);
+        int side = (int)QrCodeRenderer.GetQrImageLayoutMetrics(payload, ErrorCorrectionLevel.H, 4, ocean.Frame).QrWidth;
+        int scale = side / (QrCodeRenderer.EncodeQrCode(payload, ErrorCorrectionLevel.H).Matrix.Width + 8);
+        foreach (Bitmap image in new[] { png, rasterized })
+        {
+            Color left = image.GetPixel(x + side / 4, y + scale / 2);
+            Color right = image.GetPixel(x + 3 * side / 4, y + scale / 2);
+            Color lightModule = image.GetPixel(x + 7 * scale + scale / 2, y + 5 * scale + scale / 2);
+            Assert.AreEqual(255, (int)left.A);
+            Assert.AreEqual(255, (int)right.A);
+            Assert.IsGreaterThan(left.R, right.R, "The gradient continues across the quiet zone.");
+            Assert.AreEqual(255, (int)lightModule.A);
+            Assert.AreNotEqual(background.ToArgb(), lightModule.ToArgb(), "The frame shows through the finder ring.");
+            AssertPixel(image, x + 7 * scale + scale / 2, y + 7 * scale + scale / 2, ink);
+            AssertTransparentEdges(image);
+            AssertPayload(image, payload);
+        }
+    }
+
+    [TestMethod]
+    public void NoBackgroundRevealsTheSolidFrameInLogoPadding()
+    {
+        const string payload = "https://example.test/sticker";
+        const QrFramePreset frame = QrFramePreset.Sticker;
+        Color fill = Color.LightSkyBlue;
+        QrCodeAppearance appearance = new()
+        {
+            FrameAccent = WindowsColor.FromArgb(fill.A, fill.R, fill.G, fill.B),
+            UseFrameAsQrBackground = true,
+        };
+        using Bitmap logo = new(24, 12);
+        using (Graphics graphics = Graphics.FromImage(logo))
+            graphics.Clear(Color.Red);
+        using Bitmap png = QrCodeRenderer.GetQrCodeBitmapFromText(payload, ErrorCorrectionLevel.H, Color.Black, Color.White,
+            logo, 12, 8, 4, frame, appearance: appearance);
+        string svg = QrCodeRenderer.GetSvgQrCodeForText(payload, ErrorCorrectionLevel.H, Color.Black, Color.White,
+            logo, 12, 8, qrPaddingModules: 4, framePreset: frame, appearance: appearance).Content;
+        using Bitmap rasterized = QrCodeRenderer.RasterizeSvgToBitmap(svg, png.Width, png.Height);
+        XElement root = XElement.Parse(svg);
+        // The SVG rasterizer doesn't draw SVG 2 image hrefs; verify the actual embedded logo separately.
+        string logoUri = root.Descendants().Single(e => e.Name.LocalName == "image").Attribute("href")!.Value;
+        using MemoryStream logoBytes = new(Convert.FromBase64String(logoUri["data:image/png;base64,".Length..]));
+        using Bitmap svgLogo = new(logoBytes);
+        AssertPixel(svgLogo, svgLogo.Width / 2, svgLogo.Height / 2, Color.Red);
+        (int x, int y) = GetQrOrigin(root);
+        int side = (int)QrCodeRenderer.GetQrImageLayoutMetrics(payload, ErrorCorrectionLevel.H, 4, frame).QrWidth;
+        int centerX = x + side / 2;
+        int centerY = y + side / 2;
+        AssertPixel(png, centerX, centerY, Color.Red);
+        foreach (Bitmap image in new[] { png, rasterized })
+        {
+            AssertPixel(image, centerX, centerY + side / 25, fill);
+            AssertPayload(image, payload);
+        }
+    }
+
+    [TestMethod]
+    public void NoBackgroundHasNoEffectWithoutAFrame()
+    {
+        const string payload = "unframed";
+        Color background = Color.Honeydew;
+        QrCodeAppearance appearance = new() { UseFrameAsQrBackground = true };
+        using Bitmap png = QrCodeRenderer.GetQrCodeBitmapFromText(payload, ErrorCorrectionLevel.H, Color.Black, background,
+            appearance: appearance);
+        AssertPixel(png, 0, 0, background);
+        string svg = QrCodeRenderer.GetSvgQrCodeForText(payload, ErrorCorrectionLevel.H, Color.Black, background, appearance: appearance).Content;
+        Assert.AreEqual(QrCodeRenderer.GetSvgQrCodeForText(payload, ErrorCorrectionLevel.H, Color.Black, background).Content, svg);
+    }
+
+    [TestMethod]
+    [DataRow(QrFramePreset.BottomLabel, 0)]
+    [DataRow(QrFramePreset.CornerCallout, 0)]
+    [DataRow(QrFramePreset.RoundedFrame, 255)]
+    public void NoBackgroundDoesNotAddOrRemoveFillFromLegacyFrameArt(QrFramePreset frame, int expectedAlpha)
+    {
+        const string payload = "legacy frame";
+        Color background = Color.Honeydew;
+        QrCodeAppearance appearance = new() { UseFrameAsQrBackground = true };
+        using Bitmap png = QrCodeRenderer.GetQrCodeBitmapFromText(payload, ErrorCorrectionLevel.H, Color.Black, background,
+            qrPaddingModules: 4, framePreset: frame, appearance: appearance);
+        string svg = QrCodeRenderer.GetSvgQrCodeForText(payload, ErrorCorrectionLevel.H, Color.Black, background,
+            qrPaddingModules: 4, framePreset: frame, appearance: appearance).Content;
+        XElement root = XElement.Parse(svg);
+        (int x, int y) = GetQrOrigin(root);
+        int side = (int)QrCodeRenderer.GetQrImageLayoutMetrics(payload, ErrorCorrectionLevel.H, 4, frame).QrWidth;
+        using Bitmap rasterized = QrCodeRenderer.RasterizeSvgToBitmap(svg, png.Width, png.Height);
+        foreach (Bitmap image in new[] { png, rasterized })
+        {
+            Color quietZone = image.GetPixel(x + side / 2, y + 5);
+            Assert.AreEqual(expectedAlpha, (int)quietZone.A);
+            if (expectedAlpha > 0)
+                Assert.AreEqual(background.ToArgb(), quietZone.ToArgb());
+        }
+        Assert.IsTrue(root.Elements().Any(e => e.Name.LocalName == "rect" && e.Attribute("fill")?.Value == "rgb(240,255,240)"),
+            "The legacy caption retains its own fill.");
+    }
+
+    [TestMethod]
     [DataRow(0)]
     [DataRow(128)]
     [DataRow(255)]

@@ -58,7 +58,7 @@ public sealed class LocalSettingsServiceTests
     {
         MemorySettingsStore store = new();
         LocalSettingsService service = new(new FakeRuntime(false), store, store);
-        QrCodeAppearance appearance = QrDesignPresetCatalog.All[1].Appearance;
+        QrCodeAppearance appearance = QrDesignPresetCatalog.All[1].Appearance with { UseFrameAsQrBackground = true };
         await service.SaveSettingAsync("DefaultAppearance", appearance);
         await service.SaveSettingAsync("DefaultDesignPadding", 4.0);
         Assert.AreEqual(appearance, await service.ReadSettingAsync<QrCodeAppearance>("DefaultAppearance"));

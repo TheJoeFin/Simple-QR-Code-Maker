@@ -55,7 +55,9 @@ public sealed class QrDesignPresetTests
     }
 
     [TestMethod]
-    public void EveryPresetSurvivesHistoryAndOptionalBrandSerialization()
+    [DataRow(false)]
+    [DataRow(true)]
+    public void EveryPresetSurvivesHistoryAndOptionalBrandSerialization(bool useFrameAsQrBackground)
     {
         foreach (QrDesignPreset preset in QrDesignPresetCatalog.All)
         {
@@ -66,7 +68,7 @@ public sealed class QrDesignPresetTests
                 Background = preset.Background,
                 FramePreset = preset.Frame,
                 FrameText = preset.Caption,
-                Appearance = preset.Appearance,
+                Appearance = preset.Appearance with { UseFrameAsQrBackground = useFrameAsQrBackground },
                 QrPaddingModules = 4,
             };
             string json = JsonSerializer.Serialize(history, HistoryJsonContext.Default.HistoryItem);
@@ -78,7 +80,7 @@ public sealed class QrDesignPresetTests
             BrandItem brand = QrCodeDesignStateMapper.ToBrandItem(QrCodeDesignStateMapper.FromHistoryItem(restored), preset.Name, new());
             json = JsonSerializer.Serialize(brand, BrandJsonContext.Default.BrandItem);
             BrandItem restoredBrand = JsonSerializer.Deserialize(json, BrandJsonContext.Default.BrandItem)!;
-            Assert.AreEqual(preset.Appearance, restoredBrand.Appearance);
+            Assert.AreEqual(history.Appearance, restoredBrand.Appearance);
             Assert.AreEqual(4, restoredBrand.QrPaddingModules);
         }
     }

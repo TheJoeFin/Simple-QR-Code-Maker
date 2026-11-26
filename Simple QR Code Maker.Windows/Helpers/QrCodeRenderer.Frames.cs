@@ -37,6 +37,9 @@ public static partial class QrCodeRenderer
         => IsDecorativeFrame(preset) || (preset != QrFramePreset.None && appearance is not null
             && (appearance.FrameAccent.HasValue || appearance.FrameGradientEnd.HasValue || appearance.CaptionIcon != QrCaptionIcon.None));
 
+    private static bool UsesFrameAsQrBackground(QrFramePreset preset, QrCodeAppearance? appearance)
+        => appearance?.UseFrameAsQrBackground == true && preset != QrFramePreset.None && Enum.IsDefined(preset);
+
     private static FrameLayout GetDecorativeFrameLayout(int size, QrFramePreset preset)
     {
         double paddingRatio = preset switch
@@ -287,6 +290,7 @@ public static partial class QrCodeRenderer
     {
         using FrameScene scene = CreateFrameScene(qrBitmap.Width, preset);
         FrameLayout layout = scene.Layout;
+        bool showPanel = appearance?.UseFrameAsQrBackground != true;
         Color accent = appearance?.FrameAccent is { } start ? ConvertFrameColor(start) : foreground;
         Color? gradientEnd = appearance?.FrameGradientEnd is { } end ? ConvertFrameColor(end) : null;
         Bitmap canvas = new(layout.Width, layout.Height, PixelFormat.Format32bppArgb);
@@ -296,8 +300,11 @@ public static partial class QrCodeRenderer
             PrepareGraphics(graphics);
             graphics.Clear(Color.Transparent);
             GraphicsState frameState = graphics.Save();
-            using (Region panelRegion = new(scene.Panel))
+            if (showPanel)
+            {
+                using Region panelRegion = new(scene.Panel);
                 graphics.ExcludeClip(panelRegion);
+            }
             foreach (FrameLayer layer in scene.Layers)
             {
                 if (layer.Fill != FramePaint.None)
@@ -313,12 +320,14 @@ public static partial class QrCodeRenderer
                 }
             }
             graphics.Restore(frameState);
-            // The bitmap already owns its background. Paint only the added rounded padding,
-            // with no frame underneath, so translucent backgrounds are not applied twice.
-            graphics.CompositingMode = CompositingMode.SourceCopy;
-            using (GraphicsPath panelExtension = CreatePanelExtension(scene))
-            using (SolidBrush panelBrush = new(background))
+            // Copy the panel's own pixels when present; otherwise blend the modules over the frame.
+            if (showPanel)
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                using GraphicsPath panelExtension = CreatePanelExtension(scene);
+                using SolidBrush panelBrush = new(background);
                 graphics.FillPath(panelBrush, panelExtension);
+            }
             // No interpolation or fractional placement of the already integer-scaled QR.
             graphics.DrawImageUnscaled(qrBitmap, layout.Qr.Location);
             graphics.CompositingMode = CompositingMode.SourceOver;
@@ -336,15 +345,21 @@ public static partial class QrCodeRenderer
     {
         using FrameScene scene = CreateFrameScene(qrRenderSize, preset);
         FrameLayout layout = scene.Layout;
+        bool showPanel = appearance?.UseFrameAsQrBackground != true;
         Color accent = appearance?.FrameAccent is { } start ? ConvertFrameColor(start) : foreground;
         Color? gradientEnd = appearance?.FrameGradientEnd is { } end ? ConvertFrameColor(end) : null;
         StringBuilder markup = new();
-        using GraphicsPath frameClip = new(FillMode.Alternate);
-        frameClip.AddRectangle(new Rectangle(0, 0, layout.Width, layout.Height));
-        frameClip.AddPath(scene.Panel, false);
-        markup.Append($"""
+        string frameClipAttribute = string.Empty;
+        if (showPanel)
+        {
+            using GraphicsPath frameClip = new(FillMode.Alternate);
+            frameClip.AddRectangle(new Rectangle(0, 0, layout.Width, layout.Height));
+            frameClip.AddPath(scene.Panel, false);
+            markup.Append($"""
 <defs><clipPath id="frame-artwork-clip"><path d="{GetSvgPathData(frameClip)}" clip-rule="evenodd"/></clipPath></defs>
 """);
+            frameClipAttribute = " clip-path=\"url(#frame-artwork-clip)\"";
+        }
         if (gradientEnd.HasValue)
         {
             markup.Append($"""
@@ -361,10 +376,13 @@ public static partial class QrCodeRenderer
         {
             markup.Append("<path d=\"").Append(GetSvgPathData(layer.Path)).Append("\" fill=\"").Append(Paint(layer.Fill))
                 .Append("\" stroke=\"").Append(Paint(layer.Stroke)).Append("\" stroke-width=\"").Append(SvgValue(layer.StrokeWidth))
-                .Append("\" stroke-linejoin=\"round\" stroke-linecap=\"round\" clip-path=\"url(#frame-artwork-clip)\"/>");
+                .Append("\" stroke-linejoin=\"round\" stroke-linecap=\"round\"").Append(frameClipAttribute).Append("/>");
         }
-        using GraphicsPath panelExtension = CreatePanelExtension(scene);
-        markup.Append($"<path data-qr-panel=\"true\" d=\"{GetSvgPathData(panelExtension)}\" fill=\"{ToSvgColor(background)}\" fill-rule=\"evenodd\"/>");
+        if (showPanel)
+        {
+            using GraphicsPath panelExtension = CreatePanelExtension(scene);
+            markup.Append($"<path data-qr-panel=\"true\" d=\"{GetSvgPathData(panelExtension)}\" fill=\"{ToSvgColor(background)}\" fill-rule=\"evenodd\"/>");
+        }
         markup.Append(CreateTranslatedSvgGroup(ExtractSvgInnerContent(svg.Content), layout.Qr.X, layout.Qr.Y));
         markup.Append(CreateAppearanceCaptionSvg(QrFramePresetCatalog.ResolveText(preset, frameText)!, layout, accent, gradientEnd, appearance?.CaptionIcon ?? QrCaptionIcon.None));
         return new SvgImage($"""

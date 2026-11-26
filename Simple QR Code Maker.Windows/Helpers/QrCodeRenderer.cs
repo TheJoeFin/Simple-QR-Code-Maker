@@ -306,11 +306,13 @@ public static partial class QrCodeRenderer
         ApplyCharacterSetHint(encodingOptions, text);
         barcodeWriter.Options = encodingOptions;
 
-        bool styledModules = HasStyledModules(appearance);
-        Bitmap rawBitmap = styledModules
-            ? CreateStyledQrBitmap(qrCode, qrRenderSize, normalizedQrPaddingModules, foreground, background, appearance!)
+        bool useFrameAsQrBackground = UsesFrameAsQrBackground(framePreset, appearance);
+        System.Drawing.Color qrBackground = useFrameAsQrBackground ? System.Drawing.Color.Transparent : background;
+        bool renderWithModuleCoverage = HasStyledModules(appearance) || useFrameAsQrBackground;
+        Bitmap rawBitmap = renderWithModuleCoverage
+            ? CreateStyledQrBitmap(qrCode, qrRenderSize, normalizedQrPaddingModules, foreground, qrBackground, appearance!)
             : barcodeWriter.Write(text);
-        bool needsAlpha = !styledModules && (foreground.A < 255 || background.A < 255);
+        bool needsAlpha = !renderWithModuleCoverage && (foreground.A < 255 || background.A < 255);
         Bitmap bitmap = rawBitmap;
 
         if (needsAlpha)
@@ -323,7 +325,7 @@ public static partial class QrCodeRenderer
         {
             if (logoImage != null)
             {
-                OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, background);
+                OverlayLogoOnQrCode(bitmap, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, logoPaddingPixels, qrBackground);
             }
 
             Bitmap framedBitmap = UsesAppearanceFrame(framePreset, appearance)
@@ -864,18 +866,21 @@ public static partial class QrCodeRenderer
         ApplyCharacterSetHint(encodingOptions, text);
         barcodeWriter.Options = encodingOptions;
 
-        // Framed SVGs need explicit background and ink instead of ZXing's root-only viewport styles.
-        SvgImage svg = HasStyledModules(appearance) || UsesAppearanceFrame(framePreset, appearance)
-            ? CreateStyledQrSvg(qrCode, renderSize, normalizedQrPaddingModules, foreground, background, appearance ?? new QrCodeAppearance())
+        bool usesAppearanceFrame = UsesAppearanceFrame(framePreset, appearance);
+        bool useFrameAsQrBackground = UsesFrameAsQrBackground(framePreset, appearance);
+        // Appearance frames need explicit QR paths instead of ZXing's root-only viewport styles.
+        SvgImage svg = HasStyledModules(appearance) || usesAppearanceFrame || useFrameAsQrBackground
+            ? CreateStyledQrSvg(qrCode, renderSize, normalizedQrPaddingModules, foreground, useFrameAsQrBackground ? null : background, appearance ?? new QrCodeAppearance())
             : barcodeWriter.Write(text);
 
         // If a logo is provided, embed it in the SVG
         if (logoImage != null || logoSvgContent != null)
         {
-            svg = EmbedLogoInSvg(svg, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, renderSize, logoPaddingPixels, background, logoSvgContent);
+            svg = EmbedLogoInSvg(svg, logoImage, logoSizePercentage, moduleCount, encodingOptions.Margin, renderSize, logoPaddingPixels,
+                useFrameAsQrBackground ? System.Drawing.Color.Transparent : background, logoSvgContent);
         }
 
-        svg = UsesAppearanceFrame(framePreset, appearance)
+        svg = usesAppearanceFrame
             ? ApplyAppearanceFrameToSvg(svg, renderSize, foreground, background, framePreset, frameText, appearance)
             : ApplyFrameToSvg(svg, renderSize, foreground, background, framePreset, frameText);
 

@@ -11,6 +11,9 @@ public sealed record QrCodeAppearance
     [JsonConverter(typeof(JsonStringEnumConverter<QrEyeStyle>))]
     public QrEyeStyle EyeStyle { get; init; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool UseFrameAsQrBackground { get; init; }
+
     [JsonConverter(typeof(NullableColorJsonConverter))]
     public Color? FrameAccent { get; init; }
 
