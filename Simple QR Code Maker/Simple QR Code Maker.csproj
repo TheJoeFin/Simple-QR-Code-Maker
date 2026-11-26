@@ -22,6 +22,10 @@
     <PublishAot>false</PublishAot>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
   </PropertyGroup>
+  <PropertyGroup>
+    <GitHubIdentityName>40087JoeFinApps.SimpleQRCodeMaker</GitHubIdentityName>
+    <GitHubIdentityPublisher>CN=Joseph Finney, O=Joseph Finney, L=Milwaukee, S=Wisconsin, C=US, PostalCode=53212</GitHubIdentityPublisher>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\AdvancedToolsControl.xaml" />
     <None Remove="Controls\AdvancedToolsUserControl.xaml" />
