@@ -255,7 +255,68 @@ public sealed class QrCodeRendererTests
         using Bitmap blank = new(64, 64);
         using (Graphics graphics = Graphics.FromImage(blank))
             graphics.Clear(Color.White);
-        Assert.IsFalse(QrCodeRenderer.GetStringsFromBitmap(blank).Any());
+        Assert.IsEmpty(QrCodeRenderer.GetStringsFromBitmap(blank));
+    }
+
+    [TestMethod]
+    [DataRow(235, 195, 210)]
+    [DataRow(255, 234, 225)]
+    public void DecoderRecoversFadedDottedCodeAndPreservesFinderPositions(int background, int ring, int dot)
+    {
+        const string payload = "synthetic faint finder QR";
+        const int moduleSize = 5;
+        const int left = 80;
+        const int top = 40;
+        ByteMatrix modules = QrCodeRenderer.EncodeQrCode(payload, ErrorCorrectionLevel.H).Matrix;
+        using Bitmap fixture = new(340, 290);
+        using (Graphics graphics = Graphics.FromImage(fixture))
+        using (SolidBrush finderRing = new(Color.FromArgb(ring, ring, ring)))
+        using (SolidBrush fadedDot = new(Color.FromArgb(dot, dot, dot)))
+        {
+            graphics.Clear(Color.FromArgb(background, background, background));
+            graphics.FillRectangle(Brushes.DimGray, 30, 230, 270, 25);
+            for (int y = 0; y < modules.Height; y++)
+            {
+                for (int x = 0; x < modules.Width; x++)
+                {
+                    if (modules[x, y] != 1)
+                        continue;
+
+                    int finderX = x >= modules.Width - 7 ? x - (modules.Width - 7) : x;
+                    int finderY = y >= modules.Height - 7 ? y - (modules.Height - 7) : y;
+                    bool isFinder = (x < 7 && finderY < 7) || (finderX < 7 && y < 7);
+                    int pixelX = left + (x * moduleSize);
+                    int pixelY = top + (y * moduleSize);
+                    if (isFinder)
+                    {
+                        bool isRing = (finderX is 0 or 6) || (finderY is 0 or 6);
+                        graphics.FillRectangle(isRing ? finderRing : Brushes.Black, pixelX, pixelY, moduleSize, moduleSize);
+                    }
+                    else
+                    {
+                        graphics.FillRectangle(fadedDot, pixelX + 1, pixelY + 1, moduleSize - 2, moduleSize - 2);
+                    }
+                }
+            }
+        }
+
+        (string, Result)[] results = [.. QrCodeRenderer.GetStringsFromBitmap(fixture)];
+        Assert.HasCount(1, results);
+        (string text, Result result) = results[0];
+        Assert.AreEqual(payload, text);
+        Assert.AreEqual(BarcodeFormat.QR_CODE, result.BarcodeFormat);
+
+        float center = 3.5f * moduleSize;
+        float spacing = (modules.Width - 7) * moduleSize;
+        foreach ((float x, float y) in new (float, float)[]
+        {
+            (left + center, top + center),
+            (left + center + spacing, top + center),
+            (left + center, top + center + spacing),
+        })
+        {
+            Assert.Contains(p => Math.Abs(p.X - x) <= 1 && Math.Abs(p.Y - y) <= 1, result.ResultPoints);
+        }
     }
 
     private static void AssertVersion(string payload, int expected)

@@ -1221,15 +1221,43 @@ public static partial class QrCodeRenderer
 
         foreach (int decodePadding in GetDecodePaddings(bitmap))
         {
-            Bitmap? paddedBitmap = decodePadding > 0
+            using Bitmap? paddedBitmap = decodePadding > 0
                 ? AddOuterDecodePadding(bitmap, decodePadding)
                 : null;
             Bitmap decodeBitmap = paddedBitmap ?? bitmap;
 
             Result[] results = barcodeReader.DecodeMultiple(decodeBitmap);
             List<(string, Result)> strings = ConvertResultsToStrings(results, decodePadding);
-            paddedBitmap?.Dispose();
 
+            if (strings.Count > 0)
+                return strings;
+        }
+
+        return DecodeFadedQrCodes(bitmap);
+    }
+
+    private static List<(string, Result)> DecodeFadedQrCodes(Bitmap bitmap)
+    {
+        BarcodeReaderGeneric reader = new()
+        {
+            Options = new DecodingOptions
+            {
+                TryHarder = true,
+                PossibleFormats = [BarcodeFormat.QR_CODE],
+            },
+        };
+
+        ReadOnlySpan<byte> luminance = new BitmapLuminanceSource(bitmap).Matrix;
+        byte[] binary = new byte[luminance.Length];
+        // Local thresholding can erase faint dots and finder rings near darker artwork.
+        ReadOnlySpan<byte> thresholds = [224, 240];
+        foreach (byte threshold in thresholds)
+        {
+            for (int i = 0; i < binary.Length; i++)
+                binary[i] = luminance[i] < threshold ? (byte)0 : (byte)255;
+
+            Result[]? results = reader.DecodeMultiple(binary, bitmap.Width, bitmap.Height, RGBLuminanceSource.BitmapFormat.Gray8);
+            List<(string, Result)> strings = ConvertResultsToStrings(results, decodePadding: 0);
             if (strings.Count > 0)
                 return strings;
         }
