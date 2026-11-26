@@ -1,6 +1,6 @@
-using System.Text.Json;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Models;
+using System.Text.Json;
 using Windows.Storage;
 
 namespace Simple_QR_Code_Maker.Services;
@@ -67,7 +67,7 @@ public sealed class FileSettingsStore(IJsonFileStore files, string fileName = "L
         await _gate.WaitAsync().ConfigureAwait(false);
         try
         {
-            Dictionary<string, string> candidate = new(await LoadAsync().ConfigureAwait(false));
+            Dictionary<string, string> candidate = [with(await LoadAsync().ConfigureAwait(false))];
             if (value is null)
                 candidate.Remove(key);
             else

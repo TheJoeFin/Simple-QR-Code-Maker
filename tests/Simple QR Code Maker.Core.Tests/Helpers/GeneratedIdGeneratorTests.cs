@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 
@@ -29,14 +28,14 @@ public sealed class GeneratedIdGeneratorTests
     {
         string value = GeneratedIdGenerator.Create(new GeneratedIdOptions { Format = SpreadsheetGeneratedIdFormat.NanoId, NanoIdLength = length });
         Assert.AreEqual(length, value.Length);
-        Assert.IsTrue(value.All(static character => character is >= '0' and <= '9' or >= 'A' and <= 'Z' or >= 'a' and <= 'z'));
+        Assert.IsTrue(value.All(static character => character is (>= '0' and <= '9') or (>= 'A' and <= 'Z') or (>= 'a' and <= 'z')));
     }
 
     [TestMethod]
     public void CreatesRequestedCountWithoutDependingOnRandomValues()
     {
         IReadOnlyList<string> values = GeneratedIdGenerator.CreateMany(3, new GeneratedIdOptions { Prefix = "id-" });
-        Assert.AreEqual(3, values.Count);
+        Assert.HasCount(3, values);
         Assert.IsTrue(values.All(static value => value.Length == 39 && Guid.TryParseExact(value[3..], "D", out _)));
     }
 

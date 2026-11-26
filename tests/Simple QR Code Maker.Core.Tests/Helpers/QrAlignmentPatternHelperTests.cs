@@ -1,6 +1,5 @@
-using System.Drawing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
+using System.Drawing;
 
 namespace Simple_QR_Code_Maker.Core.Tests.Helpers;
 
@@ -19,7 +18,7 @@ public sealed class QrAlignmentPatternHelperTests
     [TestMethod]
     public void MatchesIndependentSmallVersionCenters()
     {
-        Assert.AreEqual(0, QrAlignmentPatternHelper.GetAlignmentPatternCenters(1).Count);
+        Assert.IsEmpty(QrAlignmentPatternHelper.GetAlignmentPatternCenters(1));
         CollectionAssert.AreEqual(new[] { (18, 18) }, QrAlignmentPatternHelper.GetAlignmentPatternCenters(2));
         CollectionAssert.AreEqual(new[] { (6, 22), (22, 6), (22, 22), (22, 38), (38, 22), (38, 38) },
             QrAlignmentPatternHelper.GetAlignmentPatternCenters(7));
@@ -33,8 +32,8 @@ public sealed class QrAlignmentPatternHelperTests
     [DataRow(40, "6,30,58,86,114,142,170")]
     public void HighVersionCoordinatesMatchIsoAlignmentPositions(int version, string expectedPositions)
     {
-        int[] expected = expectedPositions.Split(',').Select(int.Parse).ToArray();
-        int[] actual = QrAlignmentPatternHelper.GetAlignmentPatternCenters(version).Select(static point => point.Row).Distinct().Order().ToArray();
+        int[] expected = [.. expectedPositions.Split(',').Select(int.Parse)];
+        int[] actual = [.. QrAlignmentPatternHelper.GetAlignmentPatternCenters(version).Select(static point => point.Row).Distinct().Order()];
         CollectionAssert.AreEqual(expected, actual);
     }
 
@@ -45,7 +44,7 @@ public sealed class QrAlignmentPatternHelperTests
         {
             int dimension = QrAlignmentPatternHelper.GetDimension(version);
             List<(int Row, int Col)> centers = QrAlignmentPatternHelper.GetAlignmentPatternCenters(version);
-            Assert.AreEqual(centers.Count, centers.Distinct().Count());
+            Assert.HasCount(centers.Count, centers.Distinct());
             foreach ((int row, int column) in centers)
             {
                 Assert.IsTrue(row >= 2 && row < dimension - 2 && column >= 2 && column < dimension - 2, $"Version {version}: ({row}, {column})");
@@ -78,7 +77,7 @@ public sealed class QrAlignmentPatternHelperTests
     [DataRow(41)]
     public void InvalidVersionsAreRejectedByGeometryAndHaveNoCenters(int version)
     {
-        Assert.AreEqual(0, QrAlignmentPatternHelper.GetAlignmentPatternCenters(version).Count);
+        Assert.IsEmpty(QrAlignmentPatternHelper.GetAlignmentPatternCenters(version));
         Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => QrAlignmentPatternHelper.GetDimension(version));
     }
 

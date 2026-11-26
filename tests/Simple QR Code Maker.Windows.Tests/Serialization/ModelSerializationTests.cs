@@ -1,8 +1,6 @@
-using System;
+using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
 using System.Text.Json;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Simple_QR_Code_Maker.Models;
 using Windows.UI;
 using ZXing;
 
@@ -63,7 +61,7 @@ public sealed class ModelSerializationTests
         Assert.AreEqual("old payload", history.CodesContent);
         Assert.AreEqual(QrContentKind.PlainText, history.ContentKind);
         Assert.IsNull(history.MultiLineCodeModeOverride);
-        Assert.HasCount(0, history.CommonBrandCodes);
+        Assert.IsEmpty(history.CommonBrandCodes);
         Assert.AreEqual(Color.FromArgb(255, 255, 255, 255), history.Background);
         Assert.AreEqual("M", history.ErrorCorrection.ToString());
         Assert.AreEqual(15, history.LogoSizePercentage);
@@ -184,7 +182,7 @@ public sealed class ModelSerializationTests
         Assert.IsNull(brand.Background);
         ObservableCollection<BrandItem> brands = [brand, new() { Name = "second", Foreground = Color.FromArgb(255, 5, 6, 7) }];
         string json = JsonSerializer.Serialize(brands, BrandJsonContext.Default.ObservableCollectionBrandItem);
-        var brandCopy = JsonSerializer.Deserialize(json, BrandJsonContext.Default.ObservableCollectionBrandItem)!;
+        ObservableCollection<BrandItem> brandCopy = JsonSerializer.Deserialize(json, BrandJsonContext.Default.ObservableCollectionBrandItem)!;
         Assert.HasCount(2, brandCopy);
         Assert.IsNull(brandCopy[0].Foreground);
         ObservableCollection<HistoryItem> histories = [new() { CodesContent = "one" }, new() { CodesContent = "two" }];
@@ -248,7 +246,7 @@ public sealed class ModelSerializationTests
         }
         DecodingHistoryItem legacy = JsonSerializer.Deserialize("{}", DecodingHistoryJsonContext.Default.DecodingHistoryItem)!;
         Assert.AreEqual(DecodingSourceKind.File, legacy.SourceKind);
-        Assert.HasCount(0, legacy.DecodedTexts);
+        Assert.IsEmpty(legacy.DecodedTexts);
         Assert.AreEqual(string.Empty, legacy.SavedImagePath);
         Assert.IsNull(legacy.SourceFilePath);
         ObservableCollection<DecodingHistoryItem> items = [legacy];

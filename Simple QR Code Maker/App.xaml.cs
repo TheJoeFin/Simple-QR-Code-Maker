@@ -176,7 +176,7 @@ public partial class App : Application
 
         // Check if the app was activated via share target or other non-launch activation.
         AppInstance appInstance = Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent();
-        var activatedArgs = appInstance.GetActivatedEventArgs();
+        AppActivationArguments activatedArgs = appInstance.GetActivatedEventArgs();
 
         if (activatedArgs?.Kind == Microsoft.Windows.AppLifecycle.ExtendedActivationKind.ShareTarget
             && activatedArgs.Data is Windows.ApplicationModel.Activation.ShareTargetActivatedEventArgs shareArgs)

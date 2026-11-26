@@ -1,8 +1,7 @@
-using System.Collections.ObjectModel;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.Services;
+using System.Collections.ObjectModel;
 
 namespace Simple_QR_Code_Maker.Windows.Tests.Services;
 
@@ -58,7 +57,7 @@ public sealed class BrandServiceTests
         Assert.IsTrue(second.IsDefault);
         CollectionAssert.AreEqual(new[] { first, second }, items.ToArray());
         await service.SetDefaultAndSaveAsync(items, second);
-        Assert.IsFalse(items.Any(item => item.IsDefault));
+        Assert.DoesNotContain(item => item.IsDefault, items);
         Assert.AreEqual(2, store.SaveCount);
     }
 

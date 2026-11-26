@@ -11,7 +11,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO.Compression;
-using System.Text;
 using System.Text.Json;
 using System.Windows.Input;
 using Windows.Storage;

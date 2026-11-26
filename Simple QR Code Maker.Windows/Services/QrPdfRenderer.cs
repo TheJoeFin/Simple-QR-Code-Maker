@@ -23,7 +23,7 @@ public static class QrPdfRenderer
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            List<PrintableQrCodeAsset> printableCodes = codes.Select(code =>
+            List<PrintableQrCodeAsset> printableCodes = [.. codes.Select(code =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 using QrRenderSettingsSnapshot? commonSettings = renderSettings.CreateCommonBrandOverride(code);
@@ -58,7 +58,7 @@ public static class QrPdfRenderer
                     _ => code.CodeAsText,
                 };
                 return new PrintableQrCodeAsset(label, ms.ToArray(), imageLayout);
-            }).ToList();
+            })];
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -105,8 +105,8 @@ public static class QrPdfRenderer
         {
             int local = i - start;
             Rect cellRect = new(
-                pageLayout.MarginPoints + ((local % pageLayout.Columns) * (pageLayout.CellWidth + pageLayout.SpacingPoints)),
-                pageLayout.MarginPoints + ((local / pageLayout.Columns) * (pageLayout.CellHeight + pageLayout.SpacingPoints)),
+                pageLayout.MarginPoints + (local % pageLayout.Columns * (pageLayout.CellWidth + pageLayout.SpacingPoints)),
+                pageLayout.MarginPoints + (local / pageLayout.Columns * (pageLayout.CellHeight + pageLayout.SpacingPoints)),
                 pageLayout.CellWidth,
                 pageLayout.CellHeight);
 
@@ -294,7 +294,6 @@ public static class QrPdfRenderer
             || character is '-' or '_' or '/' or '\\' or '.' or '?' or '&' or '=';
     }
 
-
     private static double GetTextWidth(IReadOnlyList<Letter> letters)
     {
         return letters.Count == 0 ? 0 : letters[^1].EndBaseLine.X;
@@ -344,7 +343,6 @@ public static class QrPdfRenderer
             page.AddText(text[start..], fontSize, baseline, _font);
         }
     }
-
 
     private static QrImageLayoutMetrics GetMaximumImageLayout(IReadOnlyList<PrintableQrCodeAsset> printableCodes)
     {

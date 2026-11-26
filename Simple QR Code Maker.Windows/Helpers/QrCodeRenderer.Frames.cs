@@ -55,8 +55,8 @@ public static partial class QrCodeRenderer
         int captionHeight = ScaleMetric(size, preset == QrFramePreset.Polaroid ? 0.23 : 0.16, 32);
         int gap = ScaleMetric(size, 0.03, 8);
         int tail = preset == QrFramePreset.SpeechBubble ? ScaleMetric(size, 0.08, 20) : 0;
-        int width = size + 2 * padding;
-        int height = size + 2 * padding + gap + captionHeight + tail;
+        int width = size + (2 * padding);
+        int height = size + (2 * padding) + gap + captionHeight + tail;
         Rectangle qr = new(padding, padding, size, size);
         RectangleF caption = new(padding, qr.Bottom + gap, size, captionHeight);
         return new FrameLayout(width, height, qr, caption, Math.Max(3, size * 0.007f));
@@ -83,7 +83,7 @@ public static partial class QrCodeRenderer
         {
             int padding = ScaleMetric(size, 0.1, 56);
             int inset = ScaleMetric(size, 0.032, 18);
-            int labelWidth = (int)Math.Round((size + 2 * inset) * 0.72, MidpointRounding.AwayFromZero);
+            int labelWidth = (int)Math.Round((size + (2 * inset)) * 0.72, MidpointRounding.AwayFromZero);
             return new FrameLayout(width, height, new Rectangle(padding, padding, size, size),
                 new RectangleF((width - labelWidth) / 2, padding + size + inset + ScaleMetric(size, 0.03, 18),
                     labelWidth, ScaleMetric(size, 0.14, 80)), ScaleMetric(size, 0.022, 14));
@@ -112,7 +112,7 @@ public static partial class QrCodeRenderer
         try
         {
             float inset = size * 0.022f;
-            RectangleF body = new(inset, inset, layout.Width - 2 * inset, layout.Height - 2 * inset);
+            RectangleF body = new(inset, inset, layout.Width - (2 * inset), layout.Height - (2 * inset));
             switch (preset)
             {
                 case QrFramePreset.SpeechBubble:
@@ -121,14 +121,14 @@ public static partial class QrCodeRenderer
                         FramePaint.Accent, FramePaint.Outline, layout.Stroke));
                     break;
                 case QrFramePreset.Ticket:
-                    scene.Layers.Add(new FrameLayer(CreateTicketPath(body, layout.Qr.Bottom + size * 0.015f, size * 0.045f),
+                    scene.Layers.Add(new FrameLayer(CreateTicketPath(body, layout.Qr.Bottom + (size * 0.015f), size * 0.045f),
                         FramePaint.Accent, FramePaint.Outline, layout.Stroke));
                     GraphicsPath perforations = new();
-                    float perforationY = layout.Qr.Bottom + size * 0.015f;
-                    for (float x = body.Left + size * 0.10f; x < body.Right - size * 0.10f; x += size * 0.035f)
+                    float perforationY = layout.Qr.Bottom + (size * 0.015f);
+                    for (float x = body.Left + (size * 0.10f); x < body.Right - (size * 0.10f); x += size * 0.035f)
                     {
                         perforations.StartFigure();
-                        perforations.AddLine(x, perforationY, x + size * 0.014f, perforationY);
+                        perforations.AddLine(x, perforationY, x + (size * 0.014f), perforationY);
                     }
                     scene.Layers.Add(new FrameLayer(perforations, FramePaint.None, FramePaint.Panel, size * 0.004f));
                     break;
@@ -149,8 +149,8 @@ public static partial class QrCodeRenderer
                 case QrFramePreset.Polaroid:
                     scene.Layers.Add(new FrameLayer(CreateRoundedRectanglePath(body, size * 0.008f),
                         FramePaint.Paper, FramePaint.Accent, layout.Stroke));
-                    RectangleF band = new(body.X + layout.Stroke, layout.Qr.Bottom + size * 0.03f,
-                        body.Width - 2 * layout.Stroke, body.Bottom - layout.Qr.Bottom - size * 0.03f - layout.Stroke);
+                    RectangleF band = new(body.X + layout.Stroke, layout.Qr.Bottom + (size * 0.03f),
+                        body.Width - (2 * layout.Stroke), body.Bottom - layout.Qr.Bottom - (size * 0.03f) - layout.Stroke);
                     scene.Layers.Add(new FrameLayer(CreateRoundedRectanglePath(band, size * 0.008f), FramePaint.Accent));
                     break;
                 case QrFramePreset.Burst:
@@ -162,7 +162,7 @@ public static partial class QrCodeRenderer
                         FramePaint.Accent, FramePaint.Accent, layout.Stroke));
                     float accentWidth = Math.Max(layout.Caption.Width / 4, ScaleMetric(size, 0.18, 120));
                     float accentHeight = ScaleMetric(size, 0.014, 8);
-                    float accentY = layout.Caption.Y - ScaleMetric(size, 0.035, 20) / 2;
+                    float accentY = layout.Caption.Y - (ScaleMetric(size, 0.035, 20) / 2);
                     scene.Layers.Add(new FrameLayer(CreateRoundedRectanglePath(
                         new RectangleF((layout.Width - accentWidth) / 2, accentY, accentWidth, accentHeight), accentHeight / 2), FramePaint.Accent));
                     break;
@@ -197,8 +197,8 @@ public static partial class QrCodeRenderer
         path.AddArc(rect.Left, rect.Top, diameter, diameter, 180, 90);
         path.AddArc(rect.Right - diameter, rect.Top, diameter, diameter, 270, 90);
         path.AddArc(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter, 0, 90);
-        path.AddLine(rect.Left + rect.Width * 0.72f, rect.Bottom, rect.Left + rect.Width * 0.68f, rect.Bottom + tail);
-        path.AddLine(rect.Left + rect.Width * 0.68f, rect.Bottom + tail, rect.Left + rect.Width * 0.54f, rect.Bottom);
+        path.AddLine(rect.Left + (rect.Width * 0.72f), rect.Bottom, rect.Left + (rect.Width * 0.68f), rect.Bottom + tail);
+        path.AddLine(rect.Left + (rect.Width * 0.68f), rect.Bottom + tail, rect.Left + (rect.Width * 0.54f), rect.Bottom);
         path.AddArc(rect.Left, rect.Bottom - diameter, diameter, diameter, 90, 90);
         path.CloseFigure();
         return path;
@@ -220,18 +220,18 @@ public static partial class QrCodeRenderer
         int count = burst ? 40 : 240;
         PointF[] points = new PointF[count];
         float amplitude = size * (burst ? 0.055f : 0.015f);
-        double radiusX = rect.Width / 2 - amplitude;
-        double radiusY = rect.Height / 2 - amplitude;
+        double radiusX = (rect.Width / 2) - amplitude;
+        double radiusY = (rect.Height / 2) - amplitude;
         for (int i = 0; i < count; i++)
         {
-            double angle = -Math.PI / 2 + i * Math.Tau / count;
+            double angle = (-Math.PI / 2) + (i * Math.Tau / count);
             double cosine = Math.Cos(angle);
             double sine = Math.Sin(angle);
             double squareness = Math.Pow(Math.Pow(Math.Abs(cosine), 4) + Math.Pow(Math.Abs(sine), 4), -0.25);
             double wave = burst ? (i % 2 == 0 ? amplitude : -amplitude) : amplitude * Math.Cos(angle * 24);
             points[i] = new PointF(
-                (float)(rect.Left + rect.Width / 2 + (radiusX * squareness + wave) * cosine),
-                (float)(rect.Top + rect.Height / 2 + (radiusY * squareness + wave) * sine));
+                (float)(rect.Left + (rect.Width / 2) + (((radiusX * squareness) + wave) * cosine)),
+                (float)(rect.Top + (rect.Height / 2) + (((radiusY * squareness) + wave) * sine)));
         }
         GraphicsPath path = new();
         if (burst)
@@ -257,7 +257,7 @@ public static partial class QrCodeRenderer
             path.AddLines([new PointF(x + dx, y), new PointF(x, y), new PointF(x, y + dy)]);
         }
         path.StartFigure();
-        path.AddLine(layout.Width / 2f, layout.Caption.Bottom, layout.Width / 2f, bounds.Top - layout.Stroke * 1.2f);
+        path.AddLine(layout.Width / 2f, layout.Caption.Bottom, layout.Width / 2f, bounds.Top - (layout.Stroke * 1.2f));
         return path;
     }
 

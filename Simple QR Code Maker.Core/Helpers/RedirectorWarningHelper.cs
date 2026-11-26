@@ -4,8 +4,9 @@ namespace Simple_QR_Code_Maker.Helpers;
 
 public static class RedirectorWarningHelper
 {
-    private static readonly HashSet<string> knownRedirectorHosts = new(StringComparer.OrdinalIgnoreCase)
-    {
+    private static readonly HashSet<string> knownRedirectorHosts =
+    [
+        with(StringComparer.OrdinalIgnoreCase),
         "adf.ly",
         "bit.ly",
         "bl.ink",
@@ -20,7 +21,7 @@ public static class RedirectorWarningHelper
         "scnv.io",
         "t2mio.com",
         "tinyurl.com",
-    };
+    ];
 
     public static RedirectorUrlClassification Classify(string? text, IEnumerable<string>? safeDomains = null)
     {
@@ -42,7 +43,7 @@ public static class RedirectorWarningHelper
         if (hosts is null)
             return [];
 
-        HashSet<string> normalizedHosts = new(StringComparer.OrdinalIgnoreCase);
+        HashSet<string> normalizedHosts = [with(StringComparer.OrdinalIgnoreCase)];
         foreach (string host in hosts)
         {
             string normalizedHost = NormalizeHost(host);

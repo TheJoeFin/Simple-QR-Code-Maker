@@ -37,7 +37,7 @@ public class HistoryService(IHistoryStore store) : IHistoryService
     {
         try
         {
-            ObservableCollection<HistoryItem> snapshot = new(historyItems.Where(item => !item.Equals(historyItem)));
+            ObservableCollection<HistoryItem> snapshot = [with(historyItems.Where(item => !item.Equals(historyItem)))];
             snapshot.Insert(0, historyItem);
             // Freeze mutable items and arrays before any asynchronous work can yield.
             string json = JsonSerializer.Serialize(snapshot, HistoryJsonContext.Default.ObservableCollectionHistoryItem);

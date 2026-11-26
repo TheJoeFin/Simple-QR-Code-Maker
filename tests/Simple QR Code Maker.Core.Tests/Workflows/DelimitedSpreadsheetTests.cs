@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Core.Tests.Infrastructure;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;

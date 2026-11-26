@@ -67,7 +67,7 @@ internal static class BackupArchiveHelper
     internal static ObservableCollection<HistoryItem> MergeHistory(
         IEnumerable<HistoryItem> existing, IReadOnlyList<HistoryItem> imported)
     {
-        ObservableCollection<HistoryItem> merged = new(existing);
+        ObservableCollection<HistoryItem> merged = [with(existing)];
         for (int index = imported.Count - 1; index >= 0; index--)
         {
             merged.Remove(imported[index]);
@@ -80,7 +80,7 @@ internal static class BackupArchiveHelper
     internal static ObservableCollection<BrandItem> MergeBrands(
         IEnumerable<BrandItem> existing, IReadOnlyList<BrandItem> imported)
     {
-        ObservableCollection<BrandItem> merged = new(existing);
+        ObservableCollection<BrandItem> merged = [with(existing)];
         BrandItem? preferredDefault = null;
         for (int index = imported.Count - 1; index >= 0; index--)
         {

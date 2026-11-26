@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
 
 namespace Simple_QR_Code_Maker.Core.Tests.Workflows;

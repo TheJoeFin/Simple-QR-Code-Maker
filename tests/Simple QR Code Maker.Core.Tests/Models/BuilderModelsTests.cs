@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Models;
 
 namespace Simple_QR_Code_Maker.Core.Tests.Models;
@@ -30,7 +29,7 @@ public sealed class BuilderModelsTests
         clone.QueryParameters[0].Value = "changed";
         clone.QueryParameters.Add(new("new", "parameter"));
         Assert.AreEqual("value", original.QueryParameters[0].Value);
-        Assert.AreEqual(1, original.QueryParameters.Count);
+        Assert.HasCount(1, original.QueryParameters);
     }
 
     [TestMethod]

@@ -14,10 +14,10 @@ public static partial class QrCodeRenderer
     {
         static double Luminance(Color color)
         {
-            int Composite(byte channel) => (channel * color.A + 255 * (255 - color.A) + 127) / 255;
+            int Composite(byte channel) => ((channel * color.A) + (255 * (255 - color.A)) + 127) / 255;
             Color opaque = Color.FromArgb(255, Composite(color.R), Composite(color.G), Composite(color.B));
-            static double Linear(byte value) => value <= 10 ? value / 3294.6 : Math.Pow((value / 255.0 + 0.055) / 1.055, 2.4);
-            return Linear(opaque.R) * 0.2126 + Linear(opaque.G) * 0.7152 + Linear(opaque.B) * 0.0722;
+            static double Linear(byte value) => value <= 10 ? value / 3294.6 : Math.Pow(((value / 255.0) + 0.055) / 1.055, 2.4);
+            return (Linear(opaque.R) * 0.2126) + (Linear(opaque.G) * 0.7152) + (Linear(opaque.B) * 0.0722);
         }
         double start = Luminance(accent);
         double end = Luminance(gradientEnd ?? accent);
@@ -43,8 +43,8 @@ public static partial class QrCodeRenderer
         float fontSize = Math.Max(0.001f, 100 * scale);
         float fittedWidth = Math.Min(textWidth, measured.Width * fontSize / 100);
         float combinedWidth = fittedWidth + iconSize + gap;
-        float left = available.Left + (available.Width - combinedWidth) / 2;
-        RectangleF iconBounds = new(left, available.Top + (available.Height - iconSize) / 2, iconSize, iconSize);
+        float left = available.Left + ((available.Width - combinedWidth) / 2);
+        RectangleF iconBounds = new(left, available.Top + ((available.Height - iconSize) / 2), iconSize, iconSize);
         RectangleF textBounds = new(left + iconSize + gap, available.Top, fittedWidth, available.Height);
         return new CaptionLayout(text, fontSize, textBounds, iconBounds);
     }
@@ -84,7 +84,7 @@ public static partial class QrCodeRenderer
             markup.Append($"<path data-caption-icon=\"{icon}\" d=\"{GetSvgPathData(path)}\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"{SvgValue(layout.IconBounds.Width * 0.085f)}\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>");
         }
         // textLength also bounds fallback fonts in SVG viewers with different font metrics.
-        markup.Append($"<text xml:space=\"preserve\" x=\"{SvgValue(layout.TextBounds.Left + layout.TextBounds.Width / 2)}\" y=\"{SvgValue(layout.TextBounds.Top + layout.TextBounds.Height / 2)}\" fill=\"{ink}\" font-family=\"Segoe UI, Arial, sans-serif\" font-size=\"{SvgValue(layout.FontSize)}\" font-weight=\"700\" text-anchor=\"middle\" dominant-baseline=\"middle\" textLength=\"{SvgValue(layout.TextBounds.Width)}\" lengthAdjust=\"spacingAndGlyphs\">{SecurityElement.Escape(layout.Text)}</text>");
+        markup.Append($"<text xml:space=\"preserve\" x=\"{SvgValue(layout.TextBounds.Left + (layout.TextBounds.Width / 2))}\" y=\"{SvgValue(layout.TextBounds.Top + (layout.TextBounds.Height / 2))}\" fill=\"{ink}\" font-family=\"Segoe UI, Arial, sans-serif\" font-size=\"{SvgValue(layout.FontSize)}\" font-weight=\"700\" text-anchor=\"middle\" dominant-baseline=\"middle\" textLength=\"{SvgValue(layout.TextBounds.Width)}\" lengthAdjust=\"spacingAndGlyphs\">{SecurityElement.Escape(layout.Text)}</text>");
         return markup.ToString();
     }
 

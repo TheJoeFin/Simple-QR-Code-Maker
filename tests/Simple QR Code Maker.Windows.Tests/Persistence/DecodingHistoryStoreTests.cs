@@ -1,8 +1,7 @@
-using System.Collections.ObjectModel;
-using System.Text.Json;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.Services;
+using System.Collections.ObjectModel;
+using System.Text.Json;
 
 namespace Simple_QR_Code_Maker.Windows.Tests.Persistence;
 
@@ -32,12 +31,12 @@ public sealed class DecodingHistoryStoreTests
     [TestMethod]
     public async Task AddLimitsHistoryToFiftyAndDeletesOnlyPrunedUnreferencedImages()
     {
-        ObservableCollection<DecodingHistoryItem> items = new(Enumerable.Range(0, 50).Select(index => new DecodingHistoryItem
+        ObservableCollection<DecodingHistoryItem> items = [with(Enumerable.Range(0, 50).Select(index => new DecodingHistoryItem
         {
             SavedImagePath = $"image-{index}.png",
             DecodedTexts = [$"text-{index}"],
             SavedDateTime = FixedTimeProvider.Now.DateTime
-        }));
+        }))];
         DecodingHistoryStore store = CreateStore();
         await store.SaveAsync(items);
         DecodingHistoryItem added = new() { SavedImagePath = "new.png", DecodedTexts = ["new"] };

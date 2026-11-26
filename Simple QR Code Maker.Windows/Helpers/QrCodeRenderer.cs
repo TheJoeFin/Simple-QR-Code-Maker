@@ -675,8 +675,8 @@ public static partial class QrCodeRenderer
         }
 
         // Center the logo within the punchout area (or offset if larger)
-        int logoX = punchoutX + (punchoutSize - logoWidth) / 2;
-        int logoY = punchoutY + (punchoutSize - logoHeight) / 2;
+        int logoX = punchoutX + ((punchoutSize - logoWidth) / 2);
+        int logoY = punchoutY + ((punchoutSize - logoHeight) / 2);
 
         using Graphics g = Graphics.FromImage(qrCodeBitmap);
         // Set high quality rendering
@@ -774,7 +774,7 @@ public static partial class QrCodeRenderer
         }
 
         double fractionalLoss = ContrastRatioLossFrac(contrastRatio);
-        minimumSideMillimeters = (smallestSideInches / fractionalLoss) * 25.4;
+        minimumSideMillimeters = smallestSideInches / fractionalLoss * 25.4;
         return true;
     }
 
@@ -1085,8 +1085,8 @@ public static partial class QrCodeRenderer
             // SVG logo: inline as a nested <svg> element so all viewers render it correctly
             int logoWidth = logoDisplayWidth;
             int logoHeight = logoDisplayHeight;
-            int logoX = punchoutX + (punchoutSize - logoWidth) / 2;
-            int logoY = punchoutY + (punchoutSize - logoHeight) / 2;
+            int logoX = punchoutX + ((punchoutSize - logoWidth) / 2);
+            int logoY = punchoutY + ((punchoutSize - logoHeight) / 2);
 
             XElement logoElement = XElement.Parse(logoSvgContent, LoadOptions.PreserveWhitespace);
             if (logoElement.Name.LocalName != "svg")
@@ -1126,8 +1126,8 @@ public static partial class QrCodeRenderer
             }
 
             // Center the logo within the punchout area (or offset if larger)
-            int logoX = punchoutX + (punchoutSize - logoWidth) / 2;
-            int logoY = punchoutY + (punchoutSize - logoHeight) / 2;
+            int logoX = punchoutX + ((punchoutSize - logoWidth) / 2);
+            int logoY = punchoutY + ((punchoutSize - logoHeight) / 2);
 
             // Resize the logo to the display size before encoding to reduce SVG file size
             using Bitmap resizedLogo = new(logoWidth, logoHeight);

@@ -29,7 +29,7 @@ public static class GeneratedIdGenerator
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(count);
         ArgumentNullException.ThrowIfNull(options);
 
-        List<string> values = new(count);
+        List<string> values = [with(count)];
         for (int index = 0; index < count; index++)
             values.Add(Create(options));
 
@@ -43,7 +43,7 @@ public static class GeneratedIdGenerator
         if (double.IsNaN(value) || double.IsInfinity(value))
             return false;
 
-        if (value < 1 || value > int.MaxValue)
+        if (value is < 1 or > int.MaxValue)
             return false;
 
         if (Math.Floor(value) != value)

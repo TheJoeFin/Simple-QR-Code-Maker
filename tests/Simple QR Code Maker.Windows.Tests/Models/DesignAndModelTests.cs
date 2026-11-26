@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Xml.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
+using System.Drawing;
+using System.Xml.Linq;
 using ZXing.QrCode.Internal;
 using WinColor = Windows.UI.Color;
 
@@ -74,7 +71,7 @@ public sealed class DesignAndModelTests
         Assert.AreEqual("https://example.test", state.CommonBrandCodes[0]);
         Assert.AreEqual("https://example.test", restored.CommonBrandCodes[0]);
         history.CommonBrandCodes = null!;
-        Assert.HasCount(0, QrCodeDesignStateMapper.FromHistoryItem(history).CommonBrandCodes);
+        Assert.IsEmpty(QrCodeDesignStateMapper.FromHistoryItem(history).CommonBrandCodes);
     }
 
     [TestMethod]

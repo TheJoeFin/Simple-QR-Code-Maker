@@ -16,7 +16,7 @@ public sealed partial class FeedbackDialog : ContentDialog
 
     private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
-        var deferral = args.GetDeferral();
+        ContentDialogButtonClickDeferral deferral = args.GetDeferral();
         try
         {
             string subject = Uri.EscapeDataString("Simple QR Code Maker Feedback");

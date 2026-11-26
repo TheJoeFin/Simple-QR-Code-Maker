@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 
@@ -73,7 +72,7 @@ public sealed class RedirectorWarningHelperTests
     {
         CollectionAssert.AreEqual(new[] { "a.test", "b.test" }, RedirectorWarningHelper.NormalizeHosts(
             [" WWW.B.Test. ", "b.test", "", "A.TEST", "  "]).ToArray());
-        Assert.AreEqual(0, RedirectorWarningHelper.NormalizeHosts(null).Count);
+        Assert.IsEmpty(RedirectorWarningHelper.NormalizeHosts(null));
         Assert.AreEqual(string.Empty, RedirectorWarningHelper.NormalizeHost(null));
         Assert.AreEqual("sub.example.com", RedirectorWarningHelper.NormalizeHost(" Sub.Example.Com... "));
     }

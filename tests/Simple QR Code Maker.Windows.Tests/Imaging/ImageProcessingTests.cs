@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using ImageMagick;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
+using System.Drawing;
 
 namespace Simple_QR_Code_Maker.Windows.Tests.Imaging;
 
@@ -23,9 +20,9 @@ public sealed class ImageProcessingTests
         Assert.AreEqual(gray.R, gray.G);
         Assert.AreEqual(gray.G, gray.B);
         Color inverse = Pixel(inverted, 2, 2);
-        Assert.AreEqual(235, (int)inverse.R);
-        Assert.AreEqual(175, (int)inverse.G);
-        Assert.AreEqual(95, (int)inverse.B);
+        Assert.AreEqual(235, inverse.R);
+        Assert.AreEqual(175, inverse.G);
+        Assert.AreEqual(95, inverse.B);
         Assert.AreEqual(Color.FromArgb(255, 20, 80, 160).ToArgb(), Pixel(source, 2, 2).ToArgb());
         Assert.AreNotSame(source, grayscale);
         Assert.AreNotSame(source, inverted);
@@ -38,13 +35,13 @@ public sealed class ImageProcessingTests
         using MagickImage neutral = ImageProcessingHelper.AdjustContrast(source, 0);
         Assert.AreEqual(Pixel(source, 1, 1).ToArgb(), Pixel(neutral, 1, 1).ToArgb());
         using MagickImage contrast = ImageProcessingHelper.AdjustContrast(source, 30);
-        Assert.IsTrue(Pixel(contrast, 1, 1).R < Pixel(source, 1, 1).R);
-        Assert.IsTrue(Pixel(contrast, 13, 1).R > Pixel(source, 13, 1).R);
+        Assert.IsLessThan(Pixel(source, 1, 1).R, Pixel(contrast, 1, 1).R);
+        Assert.IsGreaterThan(Pixel(source, 13, 1).R, Pixel(contrast, 13, 1).R);
         using MagickImage levels = ImageProcessingHelper.AdjustLevels(source, 25, 75);
-        Assert.AreEqual(0, (int)Pixel(levels, 1, 1).R);
-        Assert.AreEqual(255, (int)Pixel(levels, 13, 1).R);
-        Assert.AreEqual(32, (int)Pixel(source, 1, 1).R);
-        Assert.AreEqual(224, (int)Pixel(source, 13, 1).R);
+        Assert.AreEqual(0, Pixel(levels, 1, 1).R);
+        Assert.AreEqual(255, Pixel(levels, 13, 1).R);
+        Assert.AreEqual(32, Pixel(source, 1, 1).R);
+        Assert.AreEqual(224, Pixel(source, 13, 1).R);
     }
 
     [TestMethod]
@@ -53,11 +50,11 @@ public sealed class ImageProcessingTests
         using MagickImage source = CreateGrayRamp();
         using MagickImage black = ImageProcessingHelper.SetBlackPoint(source, new MagickColor("#404040"));
         using MagickImage white = ImageProcessingHelper.SetWhitePoint(source, new MagickColor("#C0C0C0"));
-        Assert.AreEqual(0, (int)Pixel(black, 1, 1).R);
-        Assert.AreEqual(255, (int)Pixel(white, 13, 1).R);
+        Assert.AreEqual(0, Pixel(black, 1, 1).R);
+        Assert.AreEqual(255, Pixel(white, 13, 1).R);
         Assert.IsTrue(Pixel(black, 9, 1).R is > 150 and < 200, "A 25% black point should retain mid/high range detail.");
         Assert.IsTrue(Pixel(white, 1, 1).R is > 35 and < 50, "A 75% white point must not crush the full image to black.");
-        Assert.AreEqual(32, (int)Pixel(source, 1, 1).R);
+        Assert.AreEqual(32, Pixel(source, 1, 1).R);
     }
 
     [TestMethod]
@@ -128,7 +125,7 @@ public sealed class ImageProcessingTests
             converted.SetPixel(3, 2, Color.Red);
             using System.IO.MemoryStream stream = new();
             converted.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-            Assert.IsTrue(stream.Length > 0);
+            Assert.IsGreaterThan(0, stream.Length);
         }
     }
 

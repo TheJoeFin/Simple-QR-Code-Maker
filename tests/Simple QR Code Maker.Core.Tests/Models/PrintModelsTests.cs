@@ -1,6 +1,5 @@
-using System.Globalization;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Models;
+using System.Globalization;
 
 namespace Simple_QR_Code_Maker.Core.Tests.Models;
 
@@ -82,8 +81,8 @@ public sealed class PrintModelsTests
     [TestMethod]
     public void SelectablePagesAreDefinedDistinctAndExcludeAuto()
     {
-        Assert.AreEqual(11, PrintPageTypeHelper.SelectablePageTypes.Length);
-        Assert.AreEqual(11, PrintPageTypeHelper.SelectablePageTypes.Distinct().Count());
+        Assert.HasCount(11, PrintPageTypeHelper.SelectablePageTypes);
+        Assert.HasCount(11, PrintPageTypeHelper.SelectablePageTypes.Distinct());
         Assert.IsTrue(PrintPageTypeHelper.SelectablePageTypes.All(static type => Enum.IsDefined(type) && type != PrintPageType.Auto));
     }
 

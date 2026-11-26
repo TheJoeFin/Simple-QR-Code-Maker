@@ -1,8 +1,7 @@
-using System.Text.Json;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.Services;
+using System.Text.Json;
 
 namespace Simple_QR_Code_Maker.Windows.Tests.Persistence;
 

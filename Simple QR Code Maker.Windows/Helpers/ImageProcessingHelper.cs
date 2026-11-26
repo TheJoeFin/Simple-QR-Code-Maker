@@ -8,37 +8,37 @@ public static class ImageProcessingHelper
 {
     public static MagickImage ApplyGrayscale(MagickImage image)
     {
-        var result = (MagickImage)image.Clone();
+        MagickImage result = (MagickImage)image.Clone();
         result.Grayscale();
         return result;
     }
 
     public static MagickImage InvertColors(MagickImage image)
     {
-        var result = (MagickImage)image.Clone();
+        MagickImage result = (MagickImage)image.Clone();
         result.Negate(Channels.RGB);
         return result;
     }
 
     public static MagickImage AdjustContrast(MagickImage image, double contrastValue)
     {
-        var result = (MagickImage)image.Clone();
+        MagickImage result = (MagickImage)image.Clone();
         result.BrightnessContrast(new Percentage(0), new Percentage(contrastValue));
         return result;
     }
 
     public static MagickImage AdjustLevels(MagickImage image, double blackPoint, double whitePoint, double gamma = 1.0)
     {
-        var result = (MagickImage)image.Clone();
-        var blackPercentage = new Percentage(blackPoint);
-        var whitePercentage = new Percentage(whitePoint);
+        MagickImage result = (MagickImage)image.Clone();
+        Percentage blackPercentage = new(blackPoint);
+        Percentage whitePercentage = new(whitePoint);
         result.Level(blackPercentage, whitePercentage, gamma);
         return result;
     }
 
     public static MagickImage CropRegion(MagickImage image, int x, int y, int width, int height)
     {
-        var result = (MagickImage)image.Clone();
+        MagickImage result = (MagickImage)image.Clone();
         result.Crop(new MagickGeometry(x, y, (uint)width, (uint)height));
         result.ResetPage();
         return result;
@@ -46,7 +46,7 @@ public static class ImageProcessingHelper
 
     public static MagickImage SetBlackPoint(MagickImage image, MagickColor blackPointColor)
     {
-        var result = (MagickImage)image.Clone();
+        MagickImage result = (MagickImage)image.Clone();
 
         double threshold = (blackPointColor.R + blackPointColor.G + blackPointColor.B) / (3.0 * Quantum.Max);
         result.Level(new Percentage(threshold * 100), new Percentage(100), 1.0);
@@ -56,7 +56,7 @@ public static class ImageProcessingHelper
 
     public static MagickImage SetWhitePoint(MagickImage image, MagickColor whitePointColor)
     {
-        var result = (MagickImage)image.Clone();
+        MagickImage result = (MagickImage)image.Clone();
 
         double threshold = (whitePointColor.R + whitePointColor.G + whitePointColor.B) / (3.0 * Quantum.Max);
         result.Level(new Percentage(0), new Percentage(threshold * 100), 1.0);
@@ -66,7 +66,7 @@ public static class ImageProcessingHelper
 
     public static MagickImage AddWhiteBorder(MagickImage image, double borderPercent)
     {
-        var result = (MagickImage)image.Clone();
+        MagickImage result = (MagickImage)image.Clone();
         int borderPixels = (int)(result.Width * borderPercent / 100.0);
         result.BorderColor = MagickColors.White;
         result.Border((uint)borderPixels);
@@ -81,7 +81,7 @@ public static class ImageProcessingHelper
         Point bottomLeft,
         int borderPixels = 20)
     {
-        var result = (MagickImage)image.Clone();
+        MagickImage result = (MagickImage)image.Clone();
 
         // CRITICAL: Ensure EXIF orientation is applied before perspective correction
         // This prevents coordinate misalignment when the image has rotation metadata
@@ -192,7 +192,7 @@ public static class ImageProcessingHelper
         int outputHeight,
         int borderPixels = 20)
     {
-        var result = (MagickImage)image.Clone();
+        MagickImage result = (MagickImage)image.Clone();
         result.AutoOrient();
 
         if (controlPoints.Count < 3)
@@ -200,7 +200,8 @@ public static class ImageProcessingHelper
 
         int polynomialOrder = controlPoints.Count >= 6 ? 2 : 1;
 
-        var distortArgs = new List<double> { polynomialOrder };
+        List<double> distortArgs = new()
+        { polynomialOrder };
         foreach (var (src, dst) in controlPoints)
         {
             distortArgs.Add(src.X);
@@ -272,7 +273,7 @@ public static class ImageProcessingHelper
     }
 
     private static long CrossProduct(Point p1, Point p2, Point p3)
-        => (long)(p2.X - p1.X) * (p3.Y - p1.Y) - (long)(p2.Y - p1.Y) * (p3.X - p1.X);
+        => ((long)(p2.X - p1.X) * (p3.Y - p1.Y)) - ((long)(p2.Y - p1.Y) * (p3.X - p1.X));
 
     public static async Task<MagickImage> LoadImageFromStorageFile(StorageFile file)
     {
@@ -283,14 +284,16 @@ public static class ImageProcessingHelper
 
         if (isSvg)
         {
-            var settings = new MagickReadSettings
+            MagickReadSettings settings = new()
             {
                 Format = MagickFormat.Svg,
                 Density = new Density(300, DensityUnit.PixelsPerInch),
                 BackgroundColor = MagickColors.White,
             };
-            image = new MagickImage(stream, settings);
-            image.Format = MagickFormat.Png;
+            image = new MagickImage(stream, settings)
+            {
+                Format = MagickFormat.Png
+            };
         }
         else
         {
@@ -306,10 +309,10 @@ public static class ImageProcessingHelper
 
     public static MagickImage LoadImageFromBitmap(Bitmap bitmap)
     {
-        using var memoryStream = new MemoryStream();
+        using MemoryStream memoryStream = new();
         bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
         memoryStream.Position = 0;
-        var image = new MagickImage(memoryStream);
+        MagickImage image = new(memoryStream);
 
         // Apply EXIF orientation if present
         image.AutoOrient();
@@ -323,7 +326,7 @@ public static class ImageProcessingHelper
 
     public static Bitmap ConvertToBitmap(MagickImage image)
     {
-        using var memoryStream = new MemoryStream();
+        using MemoryStream memoryStream = new();
         image.Write(memoryStream, MagickFormat.Png);
         memoryStream.Position = 0;
         using Bitmap decoded = new(memoryStream);
@@ -341,6 +344,6 @@ public static class ImageProcessingHelper
     {
         double dx = p2.X - p1.X;
         double dy = p2.Y - p1.Y;
-        return Math.Sqrt(dx * dx + dy * dy);
+        return Math.Sqrt((dx * dx) + (dy * dy));
     }
 }

@@ -1,8 +1,8 @@
+using Simple_QR_Code_Maker.Contracts.Services;
+using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json;
-using Simple_QR_Code_Maker.Contracts.Services;
-using Simple_QR_Code_Maker.Models;
 
 namespace Simple_QR_Code_Maker.Services;
 

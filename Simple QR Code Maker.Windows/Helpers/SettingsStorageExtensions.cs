@@ -1,5 +1,5 @@
-﻿using Simple_QR_Code_Maker.Core.Helpers;
-using Simple_QR_Code_Maker.Contracts.Services;
+﻿using Simple_QR_Code_Maker.Contracts.Services;
+using Simple_QR_Code_Maker.Core.Helpers;
 using Simple_QR_Code_Maker.Services;
 using Windows.Storage;
 using Windows.Storage.Streams;

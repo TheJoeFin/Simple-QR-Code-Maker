@@ -1,8 +1,8 @@
+using Simple_QR_Code_Maker.Contracts.Services;
+using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json;
-using Simple_QR_Code_Maker.Contracts.Services;
-using Simple_QR_Code_Maker.Models;
 
 namespace Simple_QR_Code_Maker.Services;
 
@@ -57,7 +57,7 @@ public sealed class DecodingHistoryStore(IJsonFileStore files, IHistoryImageStor
         await _gate.WaitAsync();
         try
         {
-            ObservableCollection<DecodingHistoryItem> candidate = new(items.Prepend(newItem).Take(MaximumItems));
+            ObservableCollection<DecodingHistoryItem> candidate = [with(items.Prepend(newItem).Take(MaximumItems))];
             await SaveCoreAsync(Serialize(candidate));
             items.Clear();
             foreach (DecodingHistoryItem item in candidate)
@@ -88,7 +88,7 @@ public sealed class DecodingHistoryStore(IJsonFileStore files, IHistoryImageStor
         await _gate.WaitAsync();
         try
         {
-            ObservableCollection<DecodingHistoryItem> candidate = new(items);
+            ObservableCollection<DecodingHistoryItem> candidate = [with(items)];
             candidate.Remove(item);
             await SaveCoreAsync(Serialize(candidate));
             items.Remove(item);

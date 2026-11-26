@@ -38,7 +38,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     public partial ObservableCollection<BarcodeImageItem> QrCodeBitmaps { get; set; } = [];
 
     private readonly List<RequestedQrCodeItem> requestedQrCodes = [];
-    private readonly HashSet<string> commonBrandCodes = new(StringComparer.Ordinal);
+    private readonly HashSet<string> commonBrandCodes = [with(StringComparer.Ordinal)];
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasRequestedCodes))]
@@ -2029,7 +2029,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     [RelayCommand]
     private void ToggleHistoryPaneOpen() => IsHistoryPaneOpen = !IsHistoryPaneOpen;
 
-
     [RelayCommand]
     private void SelectErrorCorrectionLevel(ErrorCorrectionOptions option) => SelectedOption = option;
 
@@ -2802,7 +2801,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             await LocalSettingsService.ReadSettingAsync<double?>(nameof(QrPaddingModules)) ?? 2.0);
         AppLaunchCount = await LocalSettingsService.ReadSettingAsync<int?>(nameof(AppLaunchCount)) ?? 0;
         bool? showMainNavigationButtons = await LocalSettingsService.ReadSettingAsync<bool?>(nameof(ShowMainNavigationButtons));
-        ShowMainNavigationButtons = showMainNavigationButtons ?? AppLaunchCount > 0;
+        ShowMainNavigationButtons = showMainNavigationButtons ?? (AppLaunchCount > 0);
         if (showMainNavigationButtons is null)
         {
             await LocalSettingsService.SaveSettingAsync(nameof(ShowMainNavigationButtons), ShowMainNavigationButtons);

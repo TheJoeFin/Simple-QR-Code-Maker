@@ -27,7 +27,7 @@ public sealed partial class DecodingHistoryPaneContentControl : UserControl
 
     private static void OnViewModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        var control = (DecodingHistoryPaneContentControl)d;
+        DecodingHistoryPaneContentControl control = (DecodingHistoryPaneContentControl)d;
         control.Bindings.Update();
 
         if (e.NewValue is DecodingViewModel vm)

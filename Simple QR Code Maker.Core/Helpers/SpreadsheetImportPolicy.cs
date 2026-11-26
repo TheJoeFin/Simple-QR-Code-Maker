@@ -7,7 +7,7 @@ public static class SpreadsheetImportPolicy
     public static List<string> CreateHeaders(IReadOnlyList<SpreadsheetSourceRow> rows, bool firstRowIsHeader)
     {
         int columnCount = rows.Count == 0 ? 0 : rows.Max(row => row.Cells.Count);
-        List<string> headers = new(columnCount);
+        List<string> headers = [with(columnCount)];
         for (int index = 0; index < columnCount; index++)
         {
             headers.Add(firstRowIsHeader && index < rows[0].Cells.Count && !string.IsNullOrWhiteSpace(rows[0].Cells[index])

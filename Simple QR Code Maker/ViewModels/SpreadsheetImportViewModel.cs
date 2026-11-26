@@ -388,7 +388,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
 
     private void BuildDisplayRows()
     {
-        List<IReadOnlyList<string>> displayRows = new(_dataRows.Count);
+        List<IReadOnlyList<string>> displayRows = [with(_dataRows.Count)];
         int missingIdCount = 0;
         bool hasGeneratedIdOptions = TryBuildGeneratedIdOptions(out GeneratedIdOptions generatedIdOptions, out string? generatedIdValidationMessage);
 

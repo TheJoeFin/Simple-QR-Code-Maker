@@ -53,14 +53,14 @@ public static class QrAlignmentPatternHelper
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(version, 1);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(version, 40);
-        return version * 4 + 17;
+        return (version * 4) + 17;
     }
 
     // Returns all alignment pattern centers (moduleRow, moduleCol) for the given version,
     // excluding positions that overlap the three finder pattern + separator zones.
     public static List<(int Row, int Col)> GetAlignmentPatternCenters(int version)
     {
-        if (version < 1 || version > 40)
+        if (version is < 1 or > 40)
             return [];
 
         int[] positions = AlignmentPositions[version - 1];
@@ -113,16 +113,16 @@ public static class QrAlignmentPatternHelper
         double v = (moduleRow + 0.5) / dim;
 
         float x = (float)(
-            (1 - u) * (1 - v) * topLeft.X +
-            u * (1 - v) * topRight.X +
-            (1 - u) * v * bottomLeft.X +
-            u * v * bottomRight.X);
+            ((1 - u) * (1 - v) * topLeft.X) +
+            (u * (1 - v) * topRight.X) +
+            ((1 - u) * v * bottomLeft.X) +
+            (u * v * bottomRight.X));
 
         float y = (float)(
-            (1 - u) * (1 - v) * topLeft.Y +
-            u * (1 - v) * topRight.Y +
-            (1 - u) * v * bottomLeft.Y +
-            u * v * bottomRight.Y);
+            ((1 - u) * (1 - v) * topLeft.Y) +
+            (u * (1 - v) * topRight.Y) +
+            ((1 - u) * v * bottomLeft.Y) +
+            (u * v * bottomRight.Y));
 
         return new PointF(x, y);
     }

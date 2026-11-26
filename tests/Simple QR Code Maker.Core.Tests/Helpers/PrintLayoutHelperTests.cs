@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 
@@ -153,11 +152,11 @@ public sealed class PrintLayoutHelperTests
                     SpacingMm = 4,
                 };
                 PrintLayoutMetrics metrics = PrintLayoutHelper.CreateMetrics(settings);
-                Assert.AreEqual(metrics.PageWidthPoints, metrics.CellWidth * metrics.Columns + metrics.SpacingPoints * (metrics.Columns - 1) + metrics.MarginPoints * 2, 1e-9);
-                Assert.AreEqual(metrics.PageHeightPoints, metrics.CellHeight * metrics.Rows + metrics.SpacingPoints * (metrics.Rows - 1) + metrics.MarginPoints * 2, 1e-9);
+                Assert.AreEqual(metrics.PageWidthPoints, (metrics.CellWidth * metrics.Columns) + (metrics.SpacingPoints * (metrics.Columns - 1)) + (metrics.MarginPoints * 2), 1e-9);
+                Assert.AreEqual(metrics.PageHeightPoints, (metrics.CellHeight * metrics.Rows) + (metrics.SpacingPoints * (metrics.Rows - 1)) + (metrics.MarginPoints * 2), 1e-9);
                 Assert.IsTrue(metrics.ActualCodeSizePoints > 0 && metrics.ActualCodeSizePoints <= metrics.RequestedCodeSizePoints);
-                Assert.IsTrue(metrics.ActualCodeSizePoints <= metrics.CellWidth - 24);
-                Assert.IsTrue(metrics.ActualCodeSizePoints <= metrics.CellHeight - 54);
+                Assert.IsLessThanOrEqualTo(metrics.CellWidth - 24, metrics.ActualCodeSizePoints);
+                Assert.IsLessThanOrEqualTo(metrics.CellHeight - 54, metrics.ActualCodeSizePoints);
             }
         }
     }

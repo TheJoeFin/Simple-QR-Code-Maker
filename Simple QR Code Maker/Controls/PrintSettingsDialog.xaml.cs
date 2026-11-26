@@ -702,10 +702,9 @@ public sealed partial class PrintSettingsDialog : ContentDialog
 
     private static void ScheduleDeferredCleanup(IEnumerable<string> paths)
     {
-        string[] files = paths
+        string[] files = [.. paths
             .Where(path => !string.IsNullOrWhiteSpace(path))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+            .Distinct(StringComparer.OrdinalIgnoreCase)];
 
         if (files.Length == 0)
         {

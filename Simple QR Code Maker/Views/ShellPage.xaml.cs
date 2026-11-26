@@ -255,7 +255,7 @@ public sealed partial class ShellPage : Page
         switch (NavigationFrame.GetPageViewModel())
         {
             case MainViewModel mainVm when mainVm.CanSaveImage && mainVm.HasRequestedCodes:
-                codes = mainVm.QrCodeBitmaps.Where(ShareHelper.CanShareQrCode).ToList();
+                codes = [.. mainVm.QrCodeBitmaps.Where(ShareHelper.CanShareQrCode)];
                 return codes.Count > 0;
             case DecodingViewModel { IsLoading: false, CurrentDecodingItem: not null } decodingVm:
                 decodedText = string.Join(Environment.NewLine,

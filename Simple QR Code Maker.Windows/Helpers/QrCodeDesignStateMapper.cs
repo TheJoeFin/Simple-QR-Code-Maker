@@ -11,7 +11,7 @@ public static class QrCodeDesignStateMapper
             CodesContent = historyItem.CodesContent,
             ContentKind = historyItem.ContentKind,
             MultiLineCodeModeOverride = historyItem.MultiLineCodeModeOverride,
-            CommonBrandCodes = [.. (historyItem.CommonBrandCodes ?? [])],
+            CommonBrandCodes = [.. historyItem.CommonBrandCodes ?? []],
             Foreground = historyItem.Foreground,
             Background = historyItem.Background,
             ErrorCorrection = historyItem.ErrorCorrection,

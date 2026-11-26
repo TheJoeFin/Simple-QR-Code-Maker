@@ -40,7 +40,7 @@ public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAw
         if (parameter is FolderSummaryNavigationParameter navParam)
         {
             FolderName = navParam.FolderName;
-            SummaryItems = new ObservableCollection<FolderSummaryItem>(navParam.Items);
+            SummaryItems = [with(navParam.Items)];
             _backNavigationState = navParam.BackNavigationState;
         }
     }

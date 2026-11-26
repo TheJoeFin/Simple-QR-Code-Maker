@@ -1,5 +1,5 @@
-using System.Collections.ObjectModel;
 using Simple_QR_Code_Maker.Models;
+using System.Collections.ObjectModel;
 
 namespace Simple_QR_Code_Maker.Contracts.Services;
 

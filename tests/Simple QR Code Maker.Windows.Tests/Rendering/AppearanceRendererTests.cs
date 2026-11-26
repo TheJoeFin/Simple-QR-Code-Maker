@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Drawing;
@@ -42,8 +41,8 @@ public sealed class AppearanceRendererTests
         Assert.IsTrue(stream.CanWrite);
         stream.Position = 0;
         using Bitmap png = new(stream);
-        Assert.AreEqual(metrics.CanvasWidth, (double)png.Width);
-        Assert.AreEqual(metrics.CanvasHeight, (double)png.Height);
+        Assert.AreEqual(metrics.CanvasWidth, png.Width);
+        Assert.AreEqual(metrics.CanvasHeight, png.Height);
         AssertPayload(png, payload);
 
         string svg = QrCodeRenderer.GetSvgQrCodeForText(payload, ErrorCorrectionLevel.H, Color.Black, Color.White,
@@ -51,7 +50,7 @@ public sealed class AppearanceRendererTests
         XElement root = XElement.Parse(svg);
         Assert.AreEqual($"0 0 {png.Width} {png.Height}", root.Attribute("viewBox")!.Value);
         Assert.AreEqual(caption, root.Descendants().Single(e => e.Name.LocalName == "text").Value);
-        Assert.IsFalse(root.Descendants().Any(e => e.Name.LocalName == "image"), "A QR without a logo must be entirely vector.");
+        Assert.DoesNotContain(e => e.Name.LocalName == "image", root.Descendants(), "A QR without a logo must be entirely vector.");
         Assert.HasCount(1, root.Descendants().Where(e => e.Name.LocalName == "linearGradient"));
         Assert.HasCount(1, root.Descendants().Where(e => e.Attribute("data-caption-icon")?.Value == "Link"));
         using Bitmap rasterized = QrCodeRenderer.RasterizeSvgToBitmap(svg, png.Width, png.Height);
@@ -63,12 +62,12 @@ public sealed class AppearanceRendererTests
         // Rounding preserves the entire original square quiet zone.
         for (int offset = scale / 2; offset < qrSide; offset += scale)
         {
-            AssertPixel(png, qrX + offset, qrY + scale / 2, Color.White);
-            AssertPixel(png, qrX + scale / 2, qrY + offset, Color.White);
-            AssertPixel(rasterized, qrX + offset, qrY + scale / 2, Color.White);
-            AssertPixel(rasterized, qrX + scale / 2, qrY + offset, Color.White);
-            AssertPixel(png, qrX + offset, qrY + qrSide - scale / 2, Color.White);
-            AssertPixel(rasterized, qrX + offset, qrY + qrSide - scale / 2, Color.White);
+            AssertPixel(png, qrX + offset, qrY + (scale / 2), Color.White);
+            AssertPixel(png, qrX + (scale / 2), qrY + offset, Color.White);
+            AssertPixel(rasterized, qrX + offset, qrY + (scale / 2), Color.White);
+            AssertPixel(rasterized, qrX + (scale / 2), qrY + offset, Color.White);
+            AssertPixel(png, qrX + offset, qrY + qrSide - (scale / 2), Color.White);
+            AssertPixel(rasterized, qrX + offset, qrY + qrSide - (scale / 2), Color.White);
         }
         AssertTransparentEdges(png);
         AssertTransparentEdges(rasterized);
@@ -110,12 +109,12 @@ public sealed class AppearanceRendererTests
                 foreach (Point point in new[]
                 {
                     new Point(x, y), new Point(x + side - 1, y), new Point(x, y + side - 1),
-                    new Point(x + side - 1, y + side - 1), new Point(x + side / 2, y + 1),
-                    new Point(x - padding / 2, y + side / 2),
+                    new Point(x + side - 1, y + side - 1), new Point(x + (side / 2), y + 1),
+                    new Point(x - (padding / 2), y + (side / 2)),
                 })
                 {
                     Color actual = image.GetPixel(point.X, point.Y);
-                    Assert.AreEqual(alpha, (int)actual.A, $"{preset} {(ReferenceEquals(image, png) ? "PNG" : "SVG")} at {point}");
+                    Assert.AreEqual(alpha, actual.A, $"{preset} {(ReferenceEquals(image, png) ? "PNG" : "SVG")} at {point}");
                     if (alpha > 0)
                     {
                         Assert.AreEqual((double)background.R, actual.R, 1, $"{preset} red at {point}");
@@ -127,7 +126,7 @@ public sealed class AppearanceRendererTests
             if (preset == QrFramePreset.ScallopedBadge)
             {
                 Color outsideCorner = png.GetPixel(x - padding + 1, y - padding + 1);
-                Assert.AreEqual(255, (int)outsideCorner.A);
+                Assert.AreEqual(255, outsideCorner.A);
                 Assert.AreNotEqual(background.ToArgb(), outsideCorner.ToArgb(), "The colored frame must show outside the rounded panel.");
             }
         }
@@ -146,7 +145,7 @@ public sealed class AppearanceRendererTests
         string svg = QrCodeRenderer.GetSvgQrCodeForText(payload, ErrorCorrectionLevel.H, ink, background,
             qrPaddingModules: 4, framePreset: ocean.Frame, frameText: ocean.Caption, appearance: appearance).Content;
         XElement root = XElement.Parse(svg);
-        Assert.IsFalse(root.Descendants().Any(e => e.Attribute("data-qr-panel") is not null));
+        Assert.DoesNotContain(e => e.Attribute("data-qr-panel") is not null, root.Descendants());
         Assert.AreEqual(ocean.Caption, root.Descendants().Single(e => e.Name.LocalName == "text").Value);
         using Bitmap rasterized = QrCodeRenderer.RasterizeSvgToBitmap(svg, png.Width, png.Height);
         (int x, int y) = GetQrOrigin(root);
@@ -154,15 +153,15 @@ public sealed class AppearanceRendererTests
         int scale = side / (QrCodeRenderer.EncodeQrCode(payload, ErrorCorrectionLevel.H).Matrix.Width + 8);
         foreach (Bitmap image in new[] { png, rasterized })
         {
-            Color left = image.GetPixel(x + side / 4, y + scale / 2);
-            Color right = image.GetPixel(x + 3 * side / 4, y + scale / 2);
-            Color lightModule = image.GetPixel(x + 7 * scale + scale / 2, y + 5 * scale + scale / 2);
-            Assert.AreEqual(255, (int)left.A);
-            Assert.AreEqual(255, (int)right.A);
+            Color left = image.GetPixel(x + (side / 4), y + (scale / 2));
+            Color right = image.GetPixel(x + (3 * side / 4), y + (scale / 2));
+            Color lightModule = image.GetPixel(x + (7 * scale) + (scale / 2), y + (5 * scale) + (scale / 2));
+            Assert.AreEqual(255, left.A);
+            Assert.AreEqual(255, right.A);
             Assert.IsGreaterThan(left.R, right.R, "The gradient continues across the quiet zone.");
-            Assert.AreEqual(255, (int)lightModule.A);
+            Assert.AreEqual(255, lightModule.A);
             Assert.AreNotEqual(background.ToArgb(), lightModule.ToArgb(), "The frame shows through the finder ring.");
-            AssertPixel(image, x + 7 * scale + scale / 2, y + 7 * scale + scale / 2, ink);
+            AssertPixel(image, x + (7 * scale) + (scale / 2), y + (7 * scale) + (scale / 2), ink);
             AssertTransparentEdges(image);
             AssertPayload(image, payload);
         }
@@ -195,12 +194,12 @@ public sealed class AppearanceRendererTests
         AssertPixel(svgLogo, svgLogo.Width / 2, svgLogo.Height / 2, Color.Red);
         (int x, int y) = GetQrOrigin(root);
         int side = (int)QrCodeRenderer.GetQrImageLayoutMetrics(payload, ErrorCorrectionLevel.H, 4, frame).QrWidth;
-        int centerX = x + side / 2;
-        int centerY = y + side / 2;
+        int centerX = x + (side / 2);
+        int centerY = y + (side / 2);
         AssertPixel(png, centerX, centerY, Color.Red);
         foreach (Bitmap image in new[] { png, rasterized })
         {
-            AssertPixel(image, centerX, centerY + side / 25, fill);
+            AssertPixel(image, centerX, centerY + (side / 25), fill);
             AssertPayload(image, payload);
         }
     }
@@ -237,12 +236,12 @@ public sealed class AppearanceRendererTests
         using Bitmap rasterized = QrCodeRenderer.RasterizeSvgToBitmap(svg, png.Width, png.Height);
         foreach (Bitmap image in new[] { png, rasterized })
         {
-            Color quietZone = image.GetPixel(x + side / 2, y + 5);
-            Assert.AreEqual(expectedAlpha, (int)quietZone.A);
+            Color quietZone = image.GetPixel(x + (side / 2), y + 5);
+            Assert.AreEqual(expectedAlpha, quietZone.A);
             if (expectedAlpha > 0)
                 Assert.AreEqual(background.ToArgb(), quietZone.ToArgb());
         }
-        Assert.IsTrue(root.Elements().Any(e => e.Name.LocalName == "rect" && e.Attribute("fill")?.Value == "rgb(240,255,240)"),
+        Assert.Contains(e => e.Name.LocalName == "rect" && e.Attribute("fill")?.Value == "rgb(240,255,240)", root.Elements(),
             "The legacy caption retains its own fill.");
     }
 
@@ -268,8 +267,8 @@ public sealed class AppearanceRendererTests
             int scale = side / 29;
             foreach (Bitmap image in new[] { png, rasterized })
             {
-                Color actual = image.GetPixel(x + 7 * scale + scale / 2, y + 7 * scale + scale / 2);
-                Assert.AreEqual((int)foreground.A, (int)actual.A);
+                Color actual = image.GetPixel(x + (7 * scale) + (scale / 2), y + (7 * scale) + (scale / 2));
+                Assert.AreEqual(foreground.A, (int)actual.A);
                 Assert.AreEqual((double)foreground.R, actual.R, 1);
                 Assert.AreEqual((double)foreground.G, actual.G, 1);
                 Assert.AreEqual((double)foreground.B, actual.B, 1);
@@ -303,7 +302,7 @@ public sealed class AppearanceRendererTests
             AssertProtectedPatterns(png, payload, eyes, 4);
             AssertProtectedPatterns(rasterized, payload, eyes, 4);
             if (modules != QrModuleStyle.Square || eyes != QrEyeStyle.Square)
-                Assert.IsTrue(XElement.Parse(svg).Descendants().Any(e => e.Name.LocalName == "path" && e.Attribute("d")!.Value.Contains('C')));
+                Assert.Contains(e => e.Name.LocalName == "path" && e.Attribute("d")!.Value.Contains('C'), XElement.Parse(svg).Descendants());
         }
     }
 
@@ -312,7 +311,7 @@ public sealed class AppearanceRendererTests
     {
         string payload = string.Concat(Enumerable.Repeat(DensePayload, 3));
         QRCode code = QrCodeRenderer.EncodeQrCode(payload, ErrorCorrectionLevel.H);
-        Assert.IsTrue(code.Version.VersionNumber >= 7);
+        Assert.IsGreaterThanOrEqualTo(7, code.Version.VersionNumber);
         QrCodeAppearance appearance = new() { ModuleStyle = QrModuleStyle.Dots, EyeStyle = QrEyeStyle.Rounded };
         using Bitmap png = QrCodeRenderer.GetQrCodeBitmapFromText(payload, ErrorCorrectionLevel.H,
             Color.Black, Color.White, qrPaddingModules: 4, appearance: appearance);
@@ -372,13 +371,13 @@ public sealed class AppearanceRendererTests
             XElement text = root.Descendants().Single(e => e.Name.LocalName == "text");
             Assert.AreEqual(caption, text.Value);
             Assert.AreEqual("rgb(0,0,0)", text.Attribute("fill")!.Value, "Bright filled captions use dark ink.");
-            Assert.IsTrue(double.Parse(text.Attribute("textLength")!.Value, CultureInfo.InvariantCulture) > 0);
+            Assert.IsGreaterThan(0, double.Parse(text.Attribute("textLength")!.Value, CultureInfo.InvariantCulture));
             Assert.HasCount(1, root.Descendants().Where(e => e.Attribute("data-caption-icon")?.Value == icon.ToString()));
             QrImageLayoutMetrics metrics = QrCodeRenderer.GetQrImageLayoutMetrics("icons", ErrorCorrectionLevel.H, framePreset: preset);
             using Bitmap png = QrCodeRenderer.GetQrCodeBitmapFromText("icons", ErrorCorrectionLevel.H,
                 Color.Black, Color.White, framePreset: preset, frameText: caption, appearance: appearance);
-            Assert.AreEqual(metrics.CanvasWidth, (double)png.Width);
-            Assert.AreEqual(metrics.CanvasHeight, (double)png.Height);
+            Assert.AreEqual(metrics.CanvasWidth, png.Width);
+            Assert.AreEqual(metrics.CanvasHeight, png.Height);
             AssertPayload(png, "icons");
             using Bitmap rasterized = QrCodeRenderer.RasterizeSvgToBitmap(svg, png.Width, png.Height);
             AssertPayload(rasterized, "icons");
@@ -393,11 +392,11 @@ public sealed class AppearanceRendererTests
         using Bitmap image = QrCodeRenderer.GetQrCodeBitmapFromText("alpha", ErrorCorrectionLevel.L,
             foreground, Color.Transparent, qrPaddingModules: 4, appearance: appearance);
         int scale = image.Width / 29;
-        Assert.AreEqual(0, (int)image.GetPixel(0, 0).A);
-        Assert.AreEqual(foreground.ToArgb(), image.GetPixel(7 * scale + scale / 2, 7 * scale + scale / 2).ToArgb());
+        Assert.AreEqual(0, image.GetPixel(0, 0).A);
+        Assert.AreEqual(foreground.ToArgb(), image.GetPixel((7 * scale) + (scale / 2), (7 * scale) + (scale / 2)).ToArgb());
         XElement svg = XElement.Parse(QrCodeRenderer.GetSvgQrCodeForText("alpha", ErrorCorrectionLevel.L,
             foreground, Color.Transparent, appearance: appearance).Content);
-        Assert.IsTrue(svg.Descendants().Any(e => e.Attribute("fill")?.Value == "rgba(24,80,120,0.502)"));
+        Assert.Contains(e => e.Attribute("fill")?.Value == "rgba(24,80,120,0.502)", svg.Descendants());
     }
 
     [TestMethod]
@@ -524,10 +523,10 @@ public sealed class AppearanceRendererTests
             float scale = Math.Min((tileWidth - 40f) / image.Width, (tileHeight - 80f) / image.Height);
             float width = image.Width * scale;
             float height = image.Height * scale;
-            float x = i % 4 * tileWidth + (tileWidth - width) / 2;
-            float y = i / 4 * tileHeight + 48 + (tileHeight - 80 - height) / 2;
+            float x = (i % 4 * tileWidth) + ((tileWidth - width) / 2);
+            float y = (i / 4 * tileHeight) + 48 + ((tileHeight - 80 - height) / 2);
             graphics.DrawString(name, font, Brushes.Black,
-                new RectangleF(i % 4 * tileWidth, i / 4 * tileHeight + 12, tileWidth, 32), format);
+                new RectangleF(i % 4 * tileWidth, (i / 4 * tileHeight) + 12, tileWidth, 32), format);
             graphics.DrawImage(image, new RectangleF(x, y, width, height));
         }
         sheet.Save(Path.Combine(directory, "contact-sheet.png"), ImageFormat.Png);
@@ -549,8 +548,8 @@ public sealed class AppearanceRendererTests
         QRCode code = QrCodeRenderer.EncodeQrCode(payload, ErrorCorrectionLevel.H);
         bool[,] protectedModules = QrCodeRenderer.GetProtectedQrModules(code);
         int size = code.Matrix.Width;
-        int scale = bitmap.Width / (size + 2 * padding);
-        Assert.AreEqual(0, bitmap.Width % (size + 2 * padding));
+        int scale = bitmap.Width / (size + (2 * padding));
+        Assert.AreEqual(0, bitmap.Width % (size + (2 * padding)));
         for (int y = 0; y < size; y++)
         {
             for (int x = 0; x < size; x++)
@@ -561,7 +560,7 @@ public sealed class AppearanceRendererTests
                 Color expected = code.Matrix[x, y] == 1 ? Color.Black : Color.White;
                 // Off-center samples detect dots/rounded corners accidentally applied to function modules.
                 foreach ((int dx, int dy) in new[] { (2, 2), (scale - 3, 2), (2, scale - 3), (scale / 2, scale / 2) })
-                    AssertPixel(bitmap, (x + padding) * scale + dx, (y + padding) * scale + dy, expected);
+                    AssertPixel(bitmap, ((x + padding) * scale) + dx, ((y + padding) * scale) + dy, expected);
             }
         }
         // Independent checks of the protected mask catch accidental omissions in the renderer mask itself.
@@ -585,13 +584,13 @@ public sealed class AppearanceRendererTests
     {
         for (int x = 0; x < bitmap.Width; x++)
         {
-            Assert.AreEqual(0, (int)bitmap.GetPixel(x, 0).A, $"Top edge at {x}");
-            Assert.AreEqual(0, (int)bitmap.GetPixel(x, bitmap.Height - 1).A, $"Bottom edge at {x}");
+            Assert.AreEqual(0, bitmap.GetPixel(x, 0).A, $"Top edge at {x}");
+            Assert.AreEqual(0, bitmap.GetPixel(x, bitmap.Height - 1).A, $"Bottom edge at {x}");
         }
         for (int y = 0; y < bitmap.Height; y++)
         {
-            Assert.AreEqual(0, (int)bitmap.GetPixel(0, y).A, $"Left edge at {y}");
-            Assert.AreEqual(0, (int)bitmap.GetPixel(bitmap.Width - 1, y).A, $"Right edge at {y}");
+            Assert.AreEqual(0, bitmap.GetPixel(0, y).A, $"Left edge at {y}");
+            Assert.AreEqual(0, bitmap.GetPixel(bitmap.Width - 1, y).A, $"Right edge at {y}");
         }
     }
 
@@ -600,7 +599,7 @@ public sealed class AppearanceRendererTests
 
     private static void AssertPayload(Bitmap image, string expected)
     {
-        (string, ZXing.Result)[] results = QrCodeRenderer.GetStringsFromBitmap(image).ToArray();
+        (string, ZXing.Result)[] results = [.. QrCodeRenderer.GetStringsFromBitmap(image)];
         Assert.HasCount(1, results);
         Assert.AreEqual(expected, results[0].Item1);
     }

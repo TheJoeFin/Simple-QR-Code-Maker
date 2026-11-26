@@ -1,7 +1,7 @@
+using Simple_QR_Code_Maker.Contracts.Services;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text;
-using Simple_QR_Code_Maker.Contracts.Services;
 
 namespace Simple_QR_Code_Maker.Services;
 

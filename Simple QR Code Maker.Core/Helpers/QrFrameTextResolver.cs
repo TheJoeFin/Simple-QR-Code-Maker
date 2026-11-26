@@ -104,11 +104,10 @@ public static partial class QrFrameTextResolver
         if (string.IsNullOrWhiteSpace(path))
             return null;
 
-        string[] segments = path
+        string[] segments = [.. path
             .Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Select(NormalizePathSegment)
-            .Where(static segment => !string.IsNullOrWhiteSpace(segment))
-            .ToArray();
+            .Where(static segment => !string.IsNullOrWhiteSpace(segment))];
 
         if (segments.Length == 0)
             return null;

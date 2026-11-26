@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 
@@ -16,7 +15,7 @@ public sealed class UrlBuilderHelperTests
         Assert.AreEqual("/a b/雪", line.Path);
         Assert.AreEqual("hello world", line.Fragment);
         Assert.IsTrue(line.UsesAuthorityDelimiter);
-        Assert.AreEqual(2, line.QueryParameters.Count);
+        Assert.HasCount(2, line.QueryParameters);
         Assert.AreEqual("x", line.QueryParameters[0].Name);
         Assert.AreEqual("one&two", line.QueryParameters[0].Value);
         Assert.AreEqual(string.Empty, line.QueryParameters[1].Value);
@@ -61,7 +60,7 @@ public sealed class UrlBuilderHelperTests
     public void EmptyTextProvidesOneEditableBlankLine(string? text)
     {
         IReadOnlyList<UrlBuilderLine> lines = UrlBuilderHelper.ParseText(text);
-        Assert.AreEqual(1, lines.Count);
+        Assert.HasCount(1, lines);
         Assert.AreEqual(string.Empty, UrlBuilderHelper.SerializeText(lines));
     }
 
@@ -69,7 +68,7 @@ public sealed class UrlBuilderHelperTests
     public void SplitsAllNewlineFormsAndOmitsBlankLines()
     {
         IReadOnlyList<UrlBuilderLine> lines = UrlBuilderHelper.ParseText("https://a.test\r\n \rhttps://b.test\nhttps://c.test\n");
-        Assert.AreEqual(3, lines.Count);
+        Assert.HasCount(3, lines);
         Assert.AreEqual("https://a.test\r\nhttps://b.test\r\nhttps://c.test", UrlBuilderHelper.SerializeText(lines));
     }
 }

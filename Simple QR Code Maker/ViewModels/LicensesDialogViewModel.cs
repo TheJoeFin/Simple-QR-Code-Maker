@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
-using System.IO;
 using Windows.ApplicationModel;
 
 namespace Simple_QR_Code_Maker.ViewModels;
@@ -46,19 +45,19 @@ public sealed partial class LicensesDialogViewModel : ObservableRecipient
 
     private static IEnumerable<LibraryInfo> BuildLibraries(string apacheText)
     {
-        yield return new() { Name = "CommunityToolkit.Mvvm",       LicenseType = "MIT License",        GitHubUrl = "https://github.com/CommunityToolkit/dotnet",        LicenseText = MitText };
-        yield return new() { Name = "CommunityToolkit WinUI",       LicenseType = "MIT License",        GitHubUrl = "https://github.com/CommunityToolkit/Windows",        LicenseText = MitText };
-        yield return new() { Name = "Humanizer",                    LicenseType = "MIT License",        GitHubUrl = "https://github.com/Humanizr/Humanizer",              LicenseText = MitText };
-        yield return new() { Name = "Magick.NET",                   LicenseType = "Apache-2.0 License", GitHubUrl = "https://github.com/dlemstra/Magick.NET",             LicenseText = apacheText };
-        yield return new() { Name = "Microsoft.Extensions.Hosting", LicenseType = "MIT License",        GitHubUrl = "https://github.com/dotnet/runtime",                  LicenseText = MitText };
-        yield return new() { Name = "Microsoft.Graphics.Win2D",     LicenseType = "MIT License",        GitHubUrl = "https://github.com/microsoft/Win2D",                 LicenseText = MitText };
-        yield return new() { Name = "PdfPig",                       LicenseType = "Apache-2.0 License", GitHubUrl = "https://github.com/UglyToad/PdfPig",                 LicenseText = apacheText };
-        yield return new() { Name = "Windows App SDK",              LicenseType = "MIT License",        GitHubUrl = "https://github.com/microsoft/WindowsAppSDK",         LicenseText = MitText };
-        yield return new() { Name = "WinUI 3",                      LicenseType = "MIT License",        GitHubUrl = "https://github.com/Microsoft/microsoft-ui-xaml",     LicenseText = MitText };
-        yield return new() { Name = "WinUI.TableView",              LicenseType = "MIT License",        GitHubUrl = "https://github.com/w-ahmad/WinUI.TableView",         LicenseText = MitText };
-        yield return new() { Name = "WinUIEx",                      LicenseType = "MIT License",        GitHubUrl = "https://github.com/dotMorten/WinUIEx",               LicenseText = MitText };
-        yield return new() { Name = "XAML Behaviors",               LicenseType = "MIT License",        GitHubUrl = "https://github.com/microsoft/XamlBehaviors",         LicenseText = MitText };
-        yield return new() { Name = "ZXing.NET",                    LicenseType = "Apache-2.0 License", GitHubUrl = "https://github.com/micjahn/ZXing.Net",               LicenseText = apacheText };
+        yield return new() { Name = "CommunityToolkit.Mvvm", LicenseType = "MIT License", GitHubUrl = "https://github.com/CommunityToolkit/dotnet", LicenseText = MitText };
+        yield return new() { Name = "CommunityToolkit WinUI", LicenseType = "MIT License", GitHubUrl = "https://github.com/CommunityToolkit/Windows", LicenseText = MitText };
+        yield return new() { Name = "Humanizer", LicenseType = "MIT License", GitHubUrl = "https://github.com/Humanizr/Humanizer", LicenseText = MitText };
+        yield return new() { Name = "Magick.NET", LicenseType = "Apache-2.0 License", GitHubUrl = "https://github.com/dlemstra/Magick.NET", LicenseText = apacheText };
+        yield return new() { Name = "Microsoft.Extensions.Hosting", LicenseType = "MIT License", GitHubUrl = "https://github.com/dotnet/runtime", LicenseText = MitText };
+        yield return new() { Name = "Microsoft.Graphics.Win2D", LicenseType = "MIT License", GitHubUrl = "https://github.com/microsoft/Win2D", LicenseText = MitText };
+        yield return new() { Name = "PdfPig", LicenseType = "Apache-2.0 License", GitHubUrl = "https://github.com/UglyToad/PdfPig", LicenseText = apacheText };
+        yield return new() { Name = "Windows App SDK", LicenseType = "MIT License", GitHubUrl = "https://github.com/microsoft/WindowsAppSDK", LicenseText = MitText };
+        yield return new() { Name = "WinUI 3", LicenseType = "MIT License", GitHubUrl = "https://github.com/Microsoft/microsoft-ui-xaml", LicenseText = MitText };
+        yield return new() { Name = "WinUI.TableView", LicenseType = "MIT License", GitHubUrl = "https://github.com/w-ahmad/WinUI.TableView", LicenseText = MitText };
+        yield return new() { Name = "WinUIEx", LicenseType = "MIT License", GitHubUrl = "https://github.com/dotMorten/WinUIEx", LicenseText = MitText };
+        yield return new() { Name = "XAML Behaviors", LicenseType = "MIT License", GitHubUrl = "https://github.com/microsoft/XamlBehaviors", LicenseText = MitText };
+        yield return new() { Name = "ZXing.NET", LicenseType = "Apache-2.0 License", GitHubUrl = "https://github.com/micjahn/ZXing.Net", LicenseText = apacheText };
     }
 
     private const string MitText =

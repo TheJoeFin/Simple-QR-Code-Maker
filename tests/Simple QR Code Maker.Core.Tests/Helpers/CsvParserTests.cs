@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
 
 namespace Simple_QR_Code_Maker.Core.Tests.Helpers;
@@ -11,7 +10,7 @@ public sealed class CsvParserTests
     [DataRow(null)]
     public void EmptyInputHasNoRows(string? text)
     {
-        Assert.AreEqual(0, CsvParser.Parse(text!).Count);
+        Assert.IsEmpty(CsvParser.Parse(text!));
     }
 
     [TestMethod]
@@ -21,7 +20,7 @@ public sealed class CsvParserTests
     public void ParsesRowSeparatorsWithoutPhantomTrailingRow(string newline)
     {
         List<List<string>> rows = CsvParser.Parse("a,b" + newline + "c,d" + newline);
-        Assert.AreEqual(2, rows.Count);
+        Assert.HasCount(2, rows);
         CollectionAssert.AreEqual(new[] { "a", "b" }, rows[0]);
         CollectionAssert.AreEqual(new[] { "c", "d" }, rows[1]);
     }
@@ -30,7 +29,7 @@ public sealed class CsvParserTests
     public void ParsesIndependentQuotedExample()
     {
         List<List<string>> rows = CsvParser.Parse("name,note,empty\r\n\"雪,😊\",\"say \"\"hi\"\"\r\nnext\",");
-        Assert.AreEqual(2, rows.Count);
+        Assert.HasCount(2, rows);
         CollectionAssert.AreEqual(new[] { "name", "note", "empty" }, rows[0]);
         CollectionAssert.AreEqual(new[] { "雪,😊", "say \"hi\"\r\nnext", "" }, rows[1]);
     }
@@ -55,7 +54,7 @@ public sealed class CsvParserTests
             new[] { "", "" },
         ];
         List<List<string>> actual = CsvParser.Parse(CsvParser.Serialize(expected, delimiter), delimiter);
-        Assert.AreEqual(expected.Length, actual.Count);
+        Assert.HasCount(expected.Length, actual);
         for (int index = 0; index < expected.Length; index++)
             CollectionAssert.AreEqual(expected[index].ToArray(), actual[index]);
     }
@@ -63,8 +62,8 @@ public sealed class CsvParserTests
     [TestMethod]
     public void PreservesQuotedEmptyRowAndIntentionalBlankRows()
     {
-        Assert.AreEqual(1, CsvParser.Parse("\"\"").Count);
-        Assert.AreEqual(2, CsvParser.Parse("\r\n\r\n").Count);
+        Assert.HasCount(1, CsvParser.Parse("\"\""));
+        Assert.HasCount(2, CsvParser.Parse("\r\n\r\n"));
         CollectionAssert.AreEqual(new[] { "", "", "" }, CsvParser.Parse(",,")[0]);
         Assert.AreEqual(string.Empty, CsvParser.Serialize([]));
     }

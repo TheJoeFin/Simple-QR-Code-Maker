@@ -1,6 +1,6 @@
-using System.Text.Json;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Models;
+using System.Text.Json;
 
 namespace Simple_QR_Code_Maker.Services;
 

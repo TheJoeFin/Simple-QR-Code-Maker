@@ -79,7 +79,7 @@ public static class WifiBuilderHelper
 
     private static Dictionary<string, string> ParseFields(string payload)
     {
-        Dictionary<string, string> fields = new(StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, string> fields = [with(StringComparer.OrdinalIgnoreCase)];
 
         foreach (string field in SplitUnescaped(payload, ';'))
         {

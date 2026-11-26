@@ -1,16 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.Services;
+using System.Collections;
+using System.Drawing;
 using UglyToad.PdfPig;
+using UglyToad.PdfPig.Content;
 using ZXing.QrCode.Internal;
 
 namespace Simple_QR_Code_Maker.Windows.Tests.Rendering;
@@ -28,11 +22,17 @@ public sealed class QrPdfRendererTests
     public async Task PdfPageCountsDimensionsImagesAndMetadataMatchPrintSettingsAsync(PrintPageType type, PrintPageLayout orientation, double width, double height)
     {
         using QrRenderSettingsSnapshot renderSettings = CreateRenderSettings();
-        RequestedQrCodeItem[] codes = Enumerable.Range(0, 5).Select(i => new RequestedQrCodeItem($"PDF item {i}")).ToArray();
+        RequestedQrCodeItem[] codes = [.. Enumerable.Range(0, 5).Select(i => new RequestedQrCodeItem($"PDF item {i}"))];
         PrintJobSettings settings = new()
         {
-            PageType = type, PageLayout = orientation, CodesPerPage = 2, FitAsManyAsPossible = false,
-            ShowLabels = false, CodeSizeMm = 30, MarginMm = 10, SpacingMm = 4,
+            PageType = type,
+            PageLayout = orientation,
+            CodesPerPage = 2,
+            FitAsManyAsPossible = false,
+            ShowLabels = false,
+            CodeSizeMm = 30,
+            MarginMm = 10,
+            SpacingMm = 4,
         };
         byte[] bytes = await QrPdfRenderer.GenerateQrPdfBytesAsync(codes, renderSettings, settings);
         using PdfDocument document = PdfDocument.Open(bytes);
@@ -40,21 +40,21 @@ public sealed class QrPdfRendererTests
         Assert.AreEqual("QR Codes", document.Information.Title);
         Assert.AreEqual("Simple QR Code Maker", document.Information.Creator);
         int index = 0;
-        foreach (var page in document.GetPages())
+        foreach (Page page in document.GetPages())
         {
             Assert.AreEqual(width, (double)page.Width, 0.01);
             Assert.AreEqual(height, (double)page.Height, 0.01);
-            var images = page.GetImages().ToArray();
+            IPdfImage[] images = page.GetImages().ToArray();
             Assert.HasCount(page.Number == 3 ? 1 : 2, images);
             Assert.AreEqual(string.Empty, page.Text);
-            foreach (var image in images)
+            foreach (IPdfImage? image in images)
             {
                 Assert.AreEqual(30 * 72 / 25.4, image.BoundingBox.Width, 0.02);
                 Assert.AreEqual(image.BoundingBox.Width, image.BoundingBox.Height, 0.02);
-                Assert.IsTrue(image.BoundingBox.Left >= 10 * 72 / 25.4);
-                Assert.IsTrue(image.BoundingBox.Right <= width - 10 * 72 / 25.4);
-                Assert.IsTrue(image.BoundingBox.Bottom >= 10 * 72 / 25.4);
-                Assert.IsTrue(image.BoundingBox.Top <= height - 10 * 72 / 25.4);
+                Assert.IsGreaterThanOrEqualTo(10 * 72 / 25.4, image.BoundingBox.Left);
+                Assert.IsLessThanOrEqualTo(width - (10 * 72 / 25.4), image.BoundingBox.Right);
+                Assert.IsGreaterThanOrEqualTo(10 * 72 / 25.4, image.BoundingBox.Bottom);
+                Assert.IsLessThanOrEqualTo(height - (10 * 72 / 25.4), image.BoundingBox.Top);
                 Assert.IsTrue(image.TryGetPng(out byte[]? png));
                 using MemoryStream stream = new(png!);
                 using Bitmap bitmap = new(stream);
@@ -70,26 +70,31 @@ public sealed class QrPdfRendererTests
         using QrRenderSettingsSnapshot renderSettings = CreateRenderSettings();
         PrintJobSettings settings = new()
         {
-            PageType = PrintPageType.Letter, PageLayout = PrintPageLayout.Portrait,
-            CodesPerPage = 4, FitAsManyAsPossible = false, ShowLabels = false,
-            MarginMm = 10, SpacingMm = 4, CodeSizeMm = 35,
+            PageType = PrintPageType.Letter,
+            PageLayout = PrintPageLayout.Portrait,
+            CodesPerPage = 4,
+            FitAsManyAsPossible = false,
+            ShowLabels = false,
+            MarginMm = 10,
+            SpacingMm = 4,
+            CodeSizeMm = 35,
         };
         RequestedQrCodeItem[] codes = [new("northwest"), new("northeast"), new("southwest"), new("southeast")];
         using PdfDocument pdf = PdfDocument.Open(await QrPdfRenderer.GenerateQrPdfBytesAsync(codes, renderSettings, settings));
-        var images = pdf.GetPage(1).GetImages().ToArray();
+        IPdfImage[] images = pdf.GetPage(1).GetImages().ToArray();
         Assert.HasCount(4, images);
-        Assert.IsTrue(images[0].BoundingBox.Right < images[1].BoundingBox.Left);
-        Assert.IsTrue(images[2].BoundingBox.Right < images[3].BoundingBox.Left);
-        Assert.IsTrue(images[0].BoundingBox.Bottom > images[2].BoundingBox.Top, "Top-left layout must be converted to bottom-left PDF coordinates.");
+        Assert.IsLessThan(images[1].BoundingBox.Left, images[0].BoundingBox.Right);
+        Assert.IsLessThan(images[3].BoundingBox.Left, images[2].BoundingBox.Right);
+        Assert.IsGreaterThan(images[2].BoundingBox.Top, images[0].BoundingBox.Bottom, "Top-left layout must be converted to bottom-left PDF coordinates.");
         Assert.AreEqual(images[0].BoundingBox.Left, images[2].BoundingBox.Left, 0.01);
         Assert.AreEqual(images[1].BoundingBox.Top, images[0].BoundingBox.Top, 0.01);
         double margin = 10 * 72 / 25.4;
         double spacing = 4 * 72 / 25.4;
-        double cellWidth = (612 - 2 * margin - spacing) / 2;
-        double cellHeight = (792 - 2 * margin - spacing) / 2;
+        double cellWidth = (612 - (2 * margin) - spacing) / 2;
+        double cellHeight = (792 - (2 * margin) - spacing) / 2;
         double imageSide = 35 * 72 / 25.4;
-        Assert.AreEqual(margin + (cellWidth - imageSide) / 2, images[0].BoundingBox.Left, 0.02);
-        Assert.AreEqual(792 - margin - (cellHeight - imageSide) / 2, images[0].BoundingBox.Top, 0.02);
+        Assert.AreEqual(margin + ((cellWidth - imageSide) / 2), images[0].BoundingBox.Left, 0.02);
+        Assert.AreEqual(792 - margin - ((cellHeight - imageSide) / 2), images[0].BoundingBox.Top, 0.02);
     }
 
     [TestMethod]
@@ -105,8 +110,11 @@ public sealed class QrPdfRendererTests
         ];
         PrintJobSettings settings = new()
         {
-            PageType = PrintPageType.Letter, CodesPerPage = 4, FitAsManyAsPossible = false,
-            ShowLabels = true, CodeSizeMm = 30,
+            PageType = PrintPageType.Letter,
+            CodesPerPage = 4,
+            FitAsManyAsPossible = false,
+            ShowLabels = true,
+            CodeSizeMm = 30,
         };
         using PdfDocument pdf = PdfDocument.Open(await QrPdfRenderer.GenerateQrPdfBytesAsync(codes, renderSettings, settings));
         string text = pdf.GetPage(1).Text;
@@ -127,15 +135,18 @@ public sealed class QrPdfRendererTests
         string label = string.Join(" / ", Enumerable.Repeat("long synthetic label segment", 8));
         PrintJobSettings settings = new()
         {
-            PageType = PrintPageType.A5, CodesPerPage = 16, FitAsManyAsPossible = false,
-            ShowLabels = true, CodeSizeMm = 20,
+            PageType = PrintPageType.A5,
+            CodesPerPage = 16,
+            FitAsManyAsPossible = false,
+            ShowLabels = true,
+            CodeSizeMm = 20,
         };
         using PdfDocument pdf = PdfDocument.Open(await QrPdfRenderer.GenerateQrPdfBytesAsync([new(label)], renderSettings, settings));
-        var page = pdf.GetPage(1);
-        Assert.IsTrue(page.Letters.Count > 0);
-        Assert.IsTrue(page.Text.Length < label.Length);
-        Assert.IsTrue(page.Letters.All(letter => letter.FontSize >= 6 && letter.FontSize <= 10));
-        Assert.IsTrue(page.Letters.Select(letter => Math.Round(letter.StartBaseLine.Y, 1)).Distinct().Count() <= 2);
+        Page page = pdf.GetPage(1);
+        Assert.IsNotEmpty(page.Letters);
+        Assert.IsLessThan(label.Length, page.Text.Length);
+        Assert.IsTrue(page.Letters.All(letter => letter.FontSize is >= 6 and <= 10));
+        Assert.IsLessThanOrEqualTo(2, page.Letters.Select(letter => Math.Round(letter.StartBaseLine.Y, 1)).Distinct().Count());
         Assert.IsTrue(page.Letters.All(letter => letter.BoundingBox.Left >= 0 && letter.BoundingBox.Right <= (double)page.Width));
     }
 
@@ -154,8 +165,8 @@ public sealed class QrPdfRendererTests
         using QrRenderSettingsSnapshot renderSettings = CreateRenderSettings(frame);
         PrintJobSettings settings = new() { PageType = PrintPageType.Letter, CodesPerPage = 1, FitAsManyAsPossible = false, ShowLabels = false, CodeSizeMm = 35 };
         using PdfDocument pdf = PdfDocument.Open(await QrPdfRenderer.GenerateQrPdfBytesAsync([new("framed PDF")], renderSettings, settings));
-        var image = pdf.GetPage(1).GetImages().Single();
-        var metrics = QrCodeRenderer.GetQrImageLayoutMetrics("framed PDF", ErrorCorrectionLevel.H, 2, frame);
+        IPdfImage image = pdf.GetPage(1).GetImages().Single();
+        QrImageLayoutMetrics metrics = QrCodeRenderer.GetQrImageLayoutMetrics("framed PDF", ErrorCorrectionLevel.H, 2, frame);
         Assert.AreEqual(metrics.CanvasWidth / metrics.CanvasHeight, image.BoundingBox.Width / image.BoundingBox.Height, 0.001);
         Assert.AreEqual(35 * 72 / 25.4 * metrics.WidthPerQrSize, image.BoundingBox.Width, 0.02);
         Assert.IsTrue(image.TryGetPng(out byte[]? bytes));
@@ -170,12 +181,16 @@ public sealed class QrPdfRendererTests
         using QrRenderSettingsSnapshot renderSettings = CreateRenderSettings(QrFramePreset.CornerCallout);
         PrintJobSettings settings = new()
         {
-            PageType = PrintPageType.A5, FitAsManyAsPossible = true, ShowLabels = true,
-            MarginMm = 10, CodeSizeMm = 40, SpacingMm = 4,
+            PageType = PrintPageType.A5,
+            FitAsManyAsPossible = true,
+            ShowLabels = true,
+            MarginMm = 10,
+            CodeSizeMm = 40,
+            SpacingMm = 4,
         };
-        RequestedQrCodeItem[] codes = Enumerable.Range(0, 9).Select(i => new RequestedQrCodeItem($"Auto-fit {i}")).ToArray();
-        var metrics = QrCodeRenderer.GetQrImageLayoutMetrics(codes[0].CodeAsText, ErrorCorrectionLevel.H, 2, QrFramePreset.CornerCallout);
-        var layout = PrintLayoutHelper.CreateMetrics(settings, metrics);
+        RequestedQrCodeItem[] codes = [.. Enumerable.Range(0, 9).Select(i => new RequestedQrCodeItem($"Auto-fit {i}"))];
+        QrImageLayoutMetrics metrics = QrCodeRenderer.GetQrImageLayoutMetrics(codes[0].CodeAsText, ErrorCorrectionLevel.H, 2, QrFramePreset.CornerCallout);
+        PrintLayoutMetrics layout = PrintLayoutHelper.CreateMetrics(settings, metrics);
         using PdfDocument pdf = PdfDocument.Open(await QrPdfRenderer.GenerateQrPdfBytesAsync(codes, renderSettings, settings));
         Assert.AreEqual((int)Math.Ceiling(9.0 / layout.CodesPerPage), pdf.NumberOfPages);
         Assert.AreEqual(9, pdf.GetPages().Sum(page => page.GetImages().Count()));
@@ -190,7 +205,7 @@ public sealed class QrPdfRendererTests
             Color.White, null, 15, 4, null, 4, preset.Frame, QrFrameTextSource.Manual, preset.Caption, preset.Appearance);
         PrintJobSettings settings = new() { CodesPerPage = 1, FitAsManyAsPossible = false, ShowLabels = false, CodeSizeMm = 35 };
         using PdfDocument pdf = PdfDocument.Open(await QrPdfRenderer.GenerateQrPdfBytesAsync([new("styled PDF")], renderSettings, settings));
-        var image = pdf.GetPage(1).GetImages().Single();
+        IPdfImage image = pdf.GetPage(1).GetImages().Single();
         Assert.IsTrue(image.TryGetPng(out byte[]? bytes));
         using MemoryStream stream = new(bytes!);
         using Bitmap actual = new(stream);
@@ -199,8 +214,8 @@ public sealed class QrPdfRendererTests
             frameText: preset.Caption, appearance: preset.Appearance);
         Assert.AreEqual(expected.Size, actual.Size);
         for (int y = 0; y < expected.Height; y += 13)
-        for (int x = 0; x < expected.Width; x += 13)
-            Assert.AreEqual(expected.GetPixel(x, y).ToArgb(), actual.GetPixel(x, y).ToArgb());
+            for (int x = 0; x < expected.Width; x += 13)
+                Assert.AreEqual(expected.GetPixel(x, y).ToArgb(), actual.GetPixel(x, y).ToArgb());
         Assert.AreEqual("styled PDF", QrCodeRenderer.GetStringsFromBitmap(actual).Single().Item1);
     }
 
@@ -220,7 +235,7 @@ public sealed class QrPdfRendererTests
         using QrRenderSettingsSnapshot renderSettings = CreateRenderSettings();
         using CancellationTokenSource cancellation = new();
         Task<byte[]> operation = QrPdfRenderer.GenerateQrPdfBytesAsync(new CancellingCodes(cancellation), renderSettings, new() { ShowLabels = false }, cancellation.Token);
-        var exception = await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => operation);
+        OperationCanceledException exception = await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => operation);
         Assert.AreEqual(cancellation.Token, exception.CancellationToken);
         Assert.IsTrue(operation.IsCanceled);
     }
@@ -228,8 +243,8 @@ public sealed class QrPdfRendererTests
     [TestMethod]
     public void RendererAssemblyDoesNotDependOnWinUi()
     {
-        Assert.IsFalse(typeof(QrPdfRenderer).Assembly.GetReferencedAssemblies().Any(reference =>
-            reference.Name is "Microsoft.WinUI" or "Microsoft.WindowsAppSDK" or "Microsoft.UI.Xaml"));
+        Assert.DoesNotContain(reference =>
+            reference.Name is "Microsoft.WinUI" or "Microsoft.WindowsAppSDK" or "Microsoft.UI.Xaml", typeof(QrPdfRenderer).Assembly.GetReferencedAssemblies());
     }
 
     private static QrRenderSettingsSnapshot CreateRenderSettings(QrFramePreset frame = QrFramePreset.None)

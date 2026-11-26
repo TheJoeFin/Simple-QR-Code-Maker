@@ -68,7 +68,7 @@ public static partial class QrCodeRenderer
         try
         {
             int size = qrCode.Matrix.Width;
-            int scale = renderSize / (size + 2 * margin);
+            int scale = renderSize / (size + (2 * margin));
             bool[,] protectedModules = GetProtectedQrModules(qrCode);
             for (int y = 0; y < size; y++)
             {
@@ -117,7 +117,7 @@ public static partial class QrCodeRenderer
         // Winding holes are reversed so the light ring remains genuinely transparent.
         using GraphicsPath outer = CreateEyeContour(new RectangleF(x, y, 7 * scale, 7 * scale), scale, style);
         using GraphicsPath hole = CreateEyeContour(new RectangleF(x + scale, y + scale, 5 * scale, 5 * scale), scale * 0.65f, style);
-        using GraphicsPath center = CreateEyeContour(new RectangleF(x + 2 * scale, y + 2 * scale, 3 * scale, 3 * scale), scale * 0.6f, style);
+        using GraphicsPath center = CreateEyeContour(new RectangleF(x + (2 * scale), y + (2 * scale), 3 * scale, 3 * scale), scale * 0.6f, style);
         hole.Reverse();
         path.AddPath(outer, false);
         path.AddPath(hole, false);
@@ -170,8 +170,8 @@ public static partial class QrCodeRenderer
             {
                 for (int y = 0; y < bounds.Height; y++)
                 {
-                    byte* source = (byte*)mask.Scan0 + y * mask.Stride;
-                    byte* destination = (byte*)pixels.Scan0 + y * pixels.Stride;
+                    byte* source = (byte*)mask.Scan0 + (y * mask.Stride);
+                    byte* destination = (byte*)pixels.Scan0 + (y * pixels.Stride);
                     for (int x = 0; x < bounds.Width; x++, source += 4, destination += 4)
                     {
                         int weight = source[0];
@@ -198,7 +198,7 @@ public static partial class QrCodeRenderer
     }
 
     private static byte BlendModuleChannel(byte foreground, byte background, int foregroundAlpha, int backgroundAlpha, int alpha)
-        => alpha == 0 ? background : (byte)((foreground * foregroundAlpha + background * backgroundAlpha + alpha / 2) / alpha);
+        => alpha == 0 ? background : (byte)(((foreground * foregroundAlpha) + (background * backgroundAlpha) + (alpha / 2)) / alpha);
 
     private static SvgImage CreateStyledQrSvg(QRCode qrCode, int renderSize, int margin, Color foreground, Color? background, QrCodeAppearance appearance)
     {

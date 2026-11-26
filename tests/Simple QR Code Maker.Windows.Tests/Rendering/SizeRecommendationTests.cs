@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using Windows.UI;
@@ -44,13 +43,13 @@ public sealed class SizeRecommendationTests
         Assert.IsTrue(QrCodeRenderer.TryGetMinimumRecommendedSideMillimeters(distance, 21, Black, White, out double minimum));
         Assert.AreEqual(expectedInches * 25.4, minimum, 1e-10);
         Assert.IsTrue(QrCodeRenderer.TryGetMinimumRecommendedSideMillimeters(128, 21, Black, White, out double farther));
-        Assert.IsTrue(farther > minimum);
+        Assert.IsGreaterThan(minimum, farther);
         Assert.IsTrue(QrCodeRenderer.TryGetMinimumRecommendedSideMillimeters(distance, 41, Black, White, out double denser));
-        Assert.IsTrue(denser > minimum);
+        Assert.IsGreaterThan(minimum, denser);
         Assert.IsTrue(QrCodeRenderer.TryGetMinimumRecommendedSideMillimeters(distance, 21, Black, White, out double padded, 4));
-        Assert.IsTrue(padded > minimum);
+        Assert.IsGreaterThan(minimum, padded);
         Assert.IsTrue(QrCodeRenderer.TryGetMinimumRecommendedSideMillimeters(distance, 21, Color.FromArgb(255, 100, 100, 100), White, out double reducedContrast));
-        Assert.IsTrue(reducedContrast > minimum);
+        Assert.IsGreaterThan(minimum, reducedContrast);
         Assert.IsTrue(QrCodeRenderer.GetSizeRecommendation(distance, 21, Black, White).IsExact);
     }
 
@@ -81,7 +80,7 @@ public sealed class SizeRecommendationTests
 
     private static void AssertKind(QrCodeSizeRecommendationKind expected, Color foreground, Color background, double padding, double distance)
     {
-        var recommendation = QrCodeRenderer.GetSizeRecommendation(distance, 21, foreground, background, padding);
+        QrCodeSizeRecommendation recommendation = QrCodeRenderer.GetSizeRecommendation(distance, 21, foreground, background, padding);
         Assert.AreEqual(expected, recommendation.Kind);
         Assert.IsFalse(recommendation.IsExact);
         Assert.IsFalse(string.IsNullOrWhiteSpace(recommendation.Text));

@@ -1,7 +1,6 @@
-using System.Text.Json;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
+using System.Text.Json;
 using Windows.UI;
 using ZXing.QrCode.Internal;
 
@@ -46,10 +45,10 @@ public sealed class QrDesignPresetTests
             Assert.AreEqual(preset.Caption, styled.FrameText);
             Assert.AreEqual(QrFrameTextSource.Manual, styled.FrameTextSource);
             Assert.AreEqual(4, styled.QrPaddingModules);
-            Assert.AreEqual(255, (int)styled.Background.A);
-            Assert.IsTrue(ColorHelpers.GetContrastRatio(styled.Foreground, styled.Background) >= 7, preset.Name);
+            Assert.AreEqual(255, styled.Background.A);
+            Assert.IsGreaterThanOrEqualTo(7, ColorHelpers.GetContrastRatio(styled.Foreground, styled.Background), preset.Name);
         }
-        Assert.AreEqual(QrDesignPresetCatalog.All.Count, QrDesignPresetCatalog.All.Select(preset => preset.Name).Distinct().Count());
+        Assert.HasCount(QrDesignPresetCatalog.All.Count, QrDesignPresetCatalog.All.Select(preset => preset.Name).Distinct());
         Assert.AreEqual(new QrCodeAppearance(), original.Appearance);
         Assert.IsNull(original.QrPaddingModules);
     }
@@ -89,13 +88,13 @@ public sealed class QrDesignPresetTests
     public void EveryPatternEyeAndIconRoundTripsWithOptionalColors()
     {
         foreach (QrModuleStyle module in Enum.GetValues<QrModuleStyle>())
-        foreach (QrEyeStyle eye in Enum.GetValues<QrEyeStyle>())
-        foreach (QrCaptionIcon icon in Enum.GetValues<QrCaptionIcon>())
-        {
-            QrCodeAppearance appearance = new() { ModuleStyle = module, EyeStyle = eye, CaptionIcon = icon };
-            string json = JsonSerializer.Serialize(appearance, HistoryJsonContext.Default.QrCodeAppearance);
-            Assert.AreEqual(appearance, JsonSerializer.Deserialize(json, HistoryJsonContext.Default.QrCodeAppearance));
-        }
+            foreach (QrEyeStyle eye in Enum.GetValues<QrEyeStyle>())
+                foreach (QrCaptionIcon icon in Enum.GetValues<QrCaptionIcon>())
+                {
+                    QrCodeAppearance appearance = new() { ModuleStyle = module, EyeStyle = eye, CaptionIcon = icon };
+                    string json = JsonSerializer.Serialize(appearance, HistoryJsonContext.Default.QrCodeAppearance);
+                    Assert.AreEqual(appearance, JsonSerializer.Deserialize(json, HistoryJsonContext.Default.QrCodeAppearance));
+                }
     }
 
     [TestMethod]

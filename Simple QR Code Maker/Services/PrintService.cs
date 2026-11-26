@@ -197,7 +197,7 @@ public class PrintService : IPrintService
 
     private static List<UIElement> CreatePrintPages(IReadOnlyList<BitmapImage> pageBitmaps, PrintPageDescription description)
     {
-        List<UIElement> pages = new(pageBitmaps.Count);
+        List<UIElement> pages = [with(pageBitmaps.Count)];
         foreach (BitmapImage bitmap in pageBitmaps)
         {
             Grid root = new()

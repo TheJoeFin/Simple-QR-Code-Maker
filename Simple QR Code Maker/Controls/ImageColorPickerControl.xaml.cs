@@ -391,7 +391,7 @@ public sealed partial class ImageColorPickerControl : UserControl
 
     private void SetCrosshairVisible(bool visible)
     {
-        var v = visible ? Visibility.Visible : Visibility.Collapsed;
+        Visibility v = visible ? Visibility.Visible : Visibility.Collapsed;
         CrosshairH.Visibility = v;
         CrosshairV.Visibility = v;
         CrosshairHShadow.Visibility = v;
@@ -417,24 +417,22 @@ public sealed partial class ImageColorPickerControl : UserControl
         });
 
         // Build candidates sorted by frequency; skip transparent pixels
-        List<WinColor> candidates = img.Histogram()
+        List<WinColor> candidates = [.. img.Histogram()
             .OrderByDescending(kv => kv.Value)
             .Select(kv => WinColor.FromArgb(
                 (byte)(kv.Key.A / 257),
                 (byte)(kv.Key.R / 257),
                 (byte)(kv.Key.G / 257),
                 (byte)(kv.Key.B / 257)))
-            .Where(c => c.A >= 200)
-            .ToList();
+            .Where(c => c.A >= 200)];
 
         // Prefer saturated mid-tone colors (brand-like); skip whites, blacks, grays
-        List<WinColor> pool = candidates
+        List<WinColor> pool = [.. candidates
             .Where(c =>
             {
                 (_, double s, double l) = ToHsl(c);
                 return s >= 0.12 && l >= 0.07 && l <= 0.90;
-            })
-            .ToList();
+            })];
 
         // Fall back to all opaque candidates if the image is desaturated/monochrome
         if (pool.Count < 2)
@@ -477,9 +475,9 @@ public sealed partial class ImageColorPickerControl : UserControl
         {
             double d = max - min;
             s = l > 0.5 ? d / (2.0 - max - min) : d / (max + min);
-            if (max == r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6.0;
-            else if (max == g) h = ((b - r) / d + 2) / 6.0;
-            else h = ((r - g) / d + 4) / 6.0;
+            if (max == r) h = (((g - b) / d) + (g < b ? 6 : 0)) / 6.0;
+            else if (max == g) h = (((b - r) / d) + 2) / 6.0;
+            else h = (((r - g) / d) + 4) / 6.0;
         }
 
         return (h, s, l);
@@ -488,7 +486,7 @@ public sealed partial class ImageColorPickerControl : UserControl
     private static double ColorDistSq(WinColor a, WinColor b)
     {
         double dr = a.R - b.R, dg = a.G - b.G, db = a.B - b.B;
-        return dr * dr + dg * dg + db * db;
+        return (dr * dr) + (dg * dg) + (db * db);
     }
 
     // ── Swatch row ──────────────────────────────────────────────────────────

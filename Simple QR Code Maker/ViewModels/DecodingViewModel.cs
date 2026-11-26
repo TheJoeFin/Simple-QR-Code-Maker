@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -1012,7 +1013,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
             // Start the async operation then yield so the dispatcher renders
             // "Opening camera…" before we synchronously overwrite the message.
-            var captureOperation = dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
+            IAsyncOperation<StorageFile> captureOperation = dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
             await Task.Yield();
             LoadingMessage = "Taking picture…";
 

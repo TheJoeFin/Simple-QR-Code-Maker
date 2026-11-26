@@ -5,7 +5,6 @@ using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 
 namespace Simple_QR_Code_Maker.Views;
@@ -26,7 +25,6 @@ public sealed partial class MainPage : Page
 
     private bool _didSetCaretToEnd = false;
     private bool _isScrollToCodesEventsHooked = false;
-
 
     public MainPage()
     {
@@ -154,8 +152,8 @@ public sealed partial class MainPage : Page
 
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(MainViewModel.HasRequestedCodes) ||
-            e.PropertyName == nameof(MainViewModel.ShowCodeInfoBar))
+        if (e.PropertyName is (nameof(MainViewModel.HasRequestedCodes)) or
+            (nameof(MainViewModel.ShowCodeInfoBar)))
         {
             UpdateScrollToCodesButton();
         }
