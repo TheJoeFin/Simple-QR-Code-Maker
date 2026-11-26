@@ -120,6 +120,12 @@
                         </GridView.ItemsPanel>
                     </GridView>
                     <StackPanel Spacing="12" Visibility="{x:Bind ViewModel.IsFrameTextVisible, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
+                        <StackPanel Spacing="2">
+                            <CheckBox x:Uid="QrDesign_NoBackground" AutomationProperties.AutomationId="FrameNoBackground"
+                                      IsChecked="{x:Bind ViewModel.UseFrameAsQrBackground, Mode=TwoWay}" />
+                            <TextBlock x:Uid="QrDesign_NoBackgroundHelp" Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                        </StackPanel>
                         <TextBox AutomationProperties.AutomationId="FrameCaption" Header="{x:Bind ViewModel.FrameTextHeader, Mode=OneWay}"
                                  PlaceholderText="{x:Bind ViewModel.FrameTextPlaceholder, Mode=OneWay}"
                                  Text="{x:Bind ViewModel.FrameText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

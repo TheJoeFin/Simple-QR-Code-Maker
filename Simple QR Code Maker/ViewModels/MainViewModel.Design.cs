@@ -13,6 +13,7 @@ public partial class MainViewModel
     [NotifyPropertyChangedFor(nameof(ModuleStyle))]
     [NotifyPropertyChangedFor(nameof(EyeStyle))]
     [NotifyPropertyChangedFor(nameof(CaptionIcon))]
+    [NotifyPropertyChangedFor(nameof(UseFrameAsQrBackground))]
     [NotifyPropertyChangedFor(nameof(UseCustomFrameAccent))]
     [NotifyPropertyChangedFor(nameof(FrameAccentColor))]
     [NotifyPropertyChangedFor(nameof(UseFrameGradient))]
@@ -45,6 +46,12 @@ public partial class MainViewModel
     {
         get => Appearance.CaptionIcon;
         set => Appearance = Appearance with { CaptionIcon = value };
+    }
+
+    public bool UseFrameAsQrBackground
+    {
+        get => Appearance.UseFrameAsQrBackground;
+        set => Appearance = Appearance with { UseFrameAsQrBackground = value };
     }
 
     public bool UseCustomFrameAccent
