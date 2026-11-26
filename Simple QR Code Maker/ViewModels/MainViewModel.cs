@@ -1152,7 +1152,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             try
             {
                 bool useCommonBrand = commonBrandCodes.Contains(text);
-                _ = BarcodeHelpers.EncodeQrCode(text, useCommonBrand ? ErrorCorrectionLevel.H : SelectedOption.ErrorCorrectionLevel);
+                _ = BarcodeHelpers.EncodeQrCode(text, useCommonBrand ? CommonBrandPreset.ErrorCorrection : SelectedOption.ErrorCorrectionLevel);
                 requestedQrCodes.Add(new RequestedQrCodeItem(text, currentContentKind, multiLineCodeModeOverride, useCommonBrand));
             }
             catch (ZXing.WriterException)

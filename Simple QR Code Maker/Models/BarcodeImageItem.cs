@@ -71,7 +71,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     public string CommonBrandName => CommonBrand?.Name ?? string.Empty;
 
     public Uri? CommonBrandLogoUri => CommonBrand is CommonBrandPreset brand
-        ? new Uri($"ms-appx:///Assets/CommonBrands/{brand.IconName}.svg")
+        ? new Uri(brand.LogoPath)
         : null;
 
     public string CommonBrandActionName => IsCommonBranded

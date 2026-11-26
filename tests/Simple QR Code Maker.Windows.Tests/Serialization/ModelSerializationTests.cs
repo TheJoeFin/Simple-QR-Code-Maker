@@ -81,6 +81,53 @@ public sealed class ModelSerializationTests
     }
 
     [TestMethod]
+    public void ExistingBrandedHistoryUsesTheSavedThemeWithoutChangingTheStoredDesign()
+    {
+        const string json = """
+            {"CodesContent":"  https://youtu.be/video  ","CommonBrandCodes":["https://youtu.be/video"],"Foreground":"#FF000000","ErrorCorrectionLevelAsString":"M","LogoImagePath":"custom.png"}
+            """;
+        HistoryItem history = JsonSerializer.Deserialize(json, HistoryJsonContext.Default.HistoryItem)!;
+
+        Assert.AreEqual("YouTube", history.CommonBrandLabel);
+        Assert.AreEqual("YouTube", history.SingleCodeCommonBrand?.Name);
+        Assert.AreEqual("ms-appx:///Assets/CommonBrands/youtube.svg", history.DisplayLogoPath);
+        Assert.AreEqual("custom.png", history.LogoImagePath);
+        Assert.AreEqual(Color.FromArgb(255, 0, 0, 0), history.Foreground);
+        Assert.AreEqual("M", history.ErrorCorrectionLevelAsString);
+
+        using JsonDocument saved = JsonDocument.Parse(JsonSerializer.Serialize(history, HistoryJsonContext.Default.HistoryItem));
+        Assert.IsFalse(saved.RootElement.TryGetProperty(nameof(HistoryItem.CommonBrandLabel), out _));
+        Assert.IsFalse(saved.RootElement.TryGetProperty(nameof(HistoryItem.SingleCodeCommonBrand), out _));
+        Assert.IsFalse(saved.RootElement.TryGetProperty(nameof(HistoryItem.DisplayLogoPath), out _));
+    }
+
+    [TestMethod]
+    [DataRow("""{"CodesContent":"https://youtu.be/video"}""")]
+    [DataRow("""{"CodesContent":"https://youtu.be/video","CommonBrandCodes":null}""")]
+    public void RecognizedHistoryUrlsWithoutAnAppliedThemeRemainUnbranded(string json)
+    {
+        HistoryItem history = JsonSerializer.Deserialize(json, HistoryJsonContext.Default.HistoryItem)!;
+
+        Assert.AreEqual(string.Empty, history.CommonBrandLabel);
+        Assert.IsNull(history.SingleCodeCommonBrand);
+    }
+
+    [TestMethod]
+    public void HistoryBatchesListDistinctAppliedThemesWithoutPickingOneStyle()
+    {
+        HistoryItem history = new()
+        {
+            CodesContent = "https://youtu.be/first\rhttps://youtube.com/second\rhttps://github.com/GitHub\rhttps://spotify.com/",
+            CommonBrandCodes = ["https://youtu.be/first", "https://youtube.com/second", "https://github.com/GitHub", "unknown"],
+            LogoImagePath = "custom.png",
+        };
+
+        Assert.AreEqual("YouTube, GitHub", history.CommonBrandLabel);
+        Assert.IsNull(history.SingleCodeCommonBrand);
+        Assert.AreEqual(history.LogoImagePath, history.DisplayLogoPath);
+    }
+
+    [TestMethod]
     public void BrandPreservesNullsAlphaEnumsAndOptionalValuesThroughGeneratedContext()
     {
         BrandItem original = new()

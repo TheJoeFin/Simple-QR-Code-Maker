@@ -11,7 +11,6 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <converters:ColorToBrushConverter x:Key="ColorToBrush" />
         <converters:EmptyStringToCollapsedConverter x:Key="EmptyStringToCollapsed" />
         <converters:FilePathToImageSourceConverter x:Key="FilePathToImage" />
         <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
@@ -33,25 +32,39 @@
             Text="{x:Bind Data.DisplayText,
                           Mode=OneWay}"
             TextTrimming="CharacterEllipsis" />
-        <StackPanel
-            Grid.Row="1"
-            Orientation="Horizontal"
-            Spacing="8">
-            <StackPanel.Resources>
-                <Style TargetType="Rectangle">
-                    <Setter Property="Width" Value="16" />
-                    <Setter Property="Height" Value="10" />
-                </Style>
-            </StackPanel.Resources>
-            <Rectangle Fill="{x:Bind Data.Foreground, Converter={StaticResource ColorToBrush}, Mode=OneWay}" />
-            <Rectangle Fill="{x:Bind Data.Background, Converter={StaticResource ColorToBrush}, Mode=OneWay}" />
-            <TextBlock Text="{x:Bind Data.ErrorCorrectionLevelAsString}" />
+        <Grid Grid.Row="1" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <StackPanel.Resources>
+                    <Style TargetType="Rectangle">
+                        <Setter Property="Width" Value="16" />
+                        <Setter Property="Height" Value="10" />
+                    </Style>
+                </StackPanel.Resources>
+                <Rectangle Fill="{x:Bind DisplayForeground(Data.Foreground, Data.SingleCodeCommonBrand), Mode=OneWay}" />
+                <Rectangle Fill="{x:Bind DisplayBackground(Data.Background, Data.SingleCodeCommonBrand), Mode=OneWay}" />
+                <TextBlock Text="{x:Bind DisplayErrorCorrection(Data.ErrorCorrectionLevelAsString, Data.SingleCodeCommonBrand), Mode=OneWay}" />
+                <TextBlock
+                    Text="{x:Bind Data.ContentKindLabel, Mode=OneWay}"
+                    Visibility="{x:Bind Data.ContentKindLabel,
+                                         Converter={StaticResource EmptyStringToCollapsed},
+                                         Mode=OneWay}" />
+            </StackPanel>
             <TextBlock
-                Text="{x:Bind Data.ContentKindLabel}"
-                Visibility="{x:Bind Data.ContentKindLabel,
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Text="{x:Bind Data.CommonBrandLabel, Mode=OneWay}"
+                TextTrimming="CharacterEllipsis"
+                ToolTipService.ToolTip="{x:Bind Data.CommonBrandLabel, Mode=OneWay}"
+                Visibility="{x:Bind Data.CommonBrandLabel,
                                      Converter={StaticResource EmptyStringToCollapsed},
                                      Mode=OneWay}" />
-        </StackPanel>
+        </Grid>
         <TextBlock
             Grid.Row="2"
             Style="{StaticResource CaptionTextBlockStyle}"
@@ -65,11 +78,12 @@
             Height="32"
             Margin="8,0,0,0"
             VerticalAlignment="Center"
-            Source="{x:Bind Data.LogoImagePath,
+            AutomationProperties.AccessibilityView="Raw"
+            Source="{x:Bind Data.DisplayLogoPath,
                             Converter={StaticResource FilePathToImage},
                             Mode=OneWay}"
             Stretch="Uniform"
-            Visibility="{x:Bind Data.LogoImagePath,
+            Visibility="{x:Bind Data.DisplayLogoPath,
                                 Converter={StaticResource NullToVisibility},
                                 Mode=OneWay}" />
     </Grid>

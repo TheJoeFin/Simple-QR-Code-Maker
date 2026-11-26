@@ -96,9 +96,9 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
         string svg = brand.LoadLogoSvg();
 
         return new QrRenderSettingsSnapshot(
-            ErrorCorrectionLevel.H,
+            CommonBrandPreset.ErrorCorrection,
             brand.Foreground,
-            System.Drawing.Color.White,
+            CommonBrandPreset.Background,
             QrCodeRenderer.RasterizeSvgToBitmap(svg, 512, 512),
             LogoSizePercentage,
             LogoPaddingPixels,

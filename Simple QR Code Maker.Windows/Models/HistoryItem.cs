@@ -22,6 +22,23 @@ public class HistoryItem : IEquatable<HistoryItem>
 
     public string[] CommonBrandCodes { get; set; } = [];
 
+    [JsonIgnore]
+    public string CommonBrandLabel => string.Join(", ", (CommonBrandCodes ?? [])
+        .Where(code => !string.IsNullOrWhiteSpace(code))
+        .Select(CommonBrandCatalog.FindMatching)
+        .OfType<CommonBrandPreset>()
+        .Select(brand => brand.Name)
+        .Distinct(StringComparer.Ordinal));
+
+    [JsonIgnore]
+    public CommonBrandPreset? SingleCodeCommonBrand => CommonBrandCodes is [string code]
+        && string.Equals(CodesContent?.Trim(), code, StringComparison.Ordinal)
+        ? CommonBrandCatalog.FindMatching(code)
+        : null;
+
+    [JsonIgnore]
+    public string? DisplayLogoPath => SingleCodeCommonBrand?.LogoPath ?? LogoImagePath;
+
     [JsonConverter(typeof(ColorJsonConverter))]
     public Color Foreground { get; set; } = Color.FromArgb(255, 0, 0, 0);
 
