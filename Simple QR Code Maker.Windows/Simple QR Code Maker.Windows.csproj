@@ -12,9 +12,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Simple QR Code Maker.Core\Simple QR Code Maker.Core.csproj" />
     <PackageReference Include="Humanizer" Version="3.0.10" />
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="15.0.0" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="15.1.1" />
     <PackageReference Include="ZXing.Net" Version="0.16.11" />
-    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.16" />
+    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.17" />
     <PackageReference Include="PdfPig" Version="0.1.16" />
     <InternalsVisibleTo Include="Simple QR Code Maker" />
     <InternalsVisibleTo Include="Simple QR Code Maker.Windows.Tests" />
