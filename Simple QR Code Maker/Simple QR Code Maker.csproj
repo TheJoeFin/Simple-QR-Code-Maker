@@ -78,6 +78,11 @@
     <Content Include="Licenses\SuperTinyIcons.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="$(ReleaseAppInstallerPath)" Condition="'$(ReleaseAppInstallerPath)' != ''">
+      <Link>Update.appinstaller</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
