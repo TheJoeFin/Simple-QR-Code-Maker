@@ -485,6 +485,10 @@ function Test-ReleaseBundle {
 
             $inner = $zip.GetEntry($entry.FileName)
             if (-not $inner) {
+                # MakeAppx can URI-escape ZIP entry names while leaving FileName unescaped.
+                $inner = $zip.GetEntry([uri]::EscapeDataString($entry.FileName))
+            }
+            if (-not $inner) {
                 throw "Missing bundled package: $($entry.FileName)."
             }
             $stream = New-Object System.IO.MemoryStream
