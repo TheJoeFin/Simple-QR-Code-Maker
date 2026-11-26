@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Simple QR Code Maker is a WinUI 3 Windows desktop application (.NET 10, C#) for generating and decoding QR codes. It is published on the Microsoft Store and targets x64 and ARM64.
+Simple QR Code Maker is a WinUI 3 Windows desktop application (.NET 11, C#) for generating and decoding QR codes. It is published on the Microsoft Store and targets x64 and ARM64.
 
 ## Build Commands
 
@@ -24,7 +24,7 @@ dotnet msbuild "Simple QR Code Maker.slnx" -p:Configuration=Release -p:Platform=
 dotnet msbuild "Simple QR Code Maker.slnx" -p:Configuration=Release -p:Platform=x64
 ```
 
-Visual Studio 2022 with the Windows App SDK workload and MSIX packaging tools is required. See `.vsconfig` for the exact required components.
+The .NET 11 SDK and Visual Studio 2026 (18.12 or later) with the Windows App SDK workload and MSIX packaging tools are required. See `.vsconfig` for the exact required components.
 
 ## Automated Tests
 

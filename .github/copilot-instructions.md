@@ -15,7 +15,7 @@ dotnet msbuild "Simple QR Code Maker.slnx" /restore /p:Configuration=Debug /p:Pl
 dotnet msbuild "Simple QR Code Maker.slnx" /restore /p:Configuration=Release /p:Platform=x64 /nologo
 ```
 
-- Visual Studio 2022 with the Windows App SDK workload and MSIX tooling is required; see `.vsconfig`.
+- Use the .NET 11 SDK and Visual Studio 2026 (18.12 or later) with the Windows App SDK workload and MSIX tooling; see `.vsconfig`.
 - Run headless tests with `.\scripts\Test.ps1 -Platform ARM64` (or `x64` on x64 hosts); add `-Coverage` for TRX and Cobertura reports.
 - Run a single suite with `dotnet test --project "tests\Simple QR Code Maker.Core.Tests\Simple QR Code Maker.Core.Tests.csproj" -p:Platform=ARM64`. Use MTP filtering options shown by that project's `--help` to select tests.
 - Core tests are portable; Windows tests require Windows and run without launching the app. Filesystem integration tests use isolated temporary directories.

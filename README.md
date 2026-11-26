@@ -139,7 +139,9 @@ On the reading side, v2 can decode codes from files, folders, drag-and-drop, the
 
 ## Development and testing
 
-The app targets .NET 10 and uses WinUI 3/MSIX. Build it with Visual Studio's Windows App SDK/MSIX tooling and `dotnet msbuild "Simple QR Code Maker.slnx" /restore /p:Configuration=Debug /p:Platform=ARM64 /nologo` (or `x64`). Existing app sources use preview collection-expression arguments, so the app build currently needs the .NET 11 preview SDK as well as the .NET 10 runtime.
+The app targets .NET 11 and uses WinUI 3/MSIX. Build it with the .NET 11 SDK, Visual Studio 2026 (18.12 or later) with Windows App SDK/MSIX tooling, and `dotnet msbuild "Simple QR Code Maker.slnx" /restore /p:Configuration=Debug /p:Platform=ARM64 /nologo` (or `x64`).
+
+For Release builds with Store packaging enabled, use a Visual Studio Developer Command Prompt with the MSVC tools available so MSIX can find its PDB converter.
 
 The production logic lives in two libraries: portable `Simple QR Code Maker.Core`, and headless Windows-specific `Simple QR Code Maker.Windows`. Both are referenced by the app and by MSTest/Microsoft.Testing.Platform test projects. Tests do not launch the app or touch its settings.
 
@@ -154,7 +156,7 @@ The production logic lives in two libraries: portable `Simple QR Code Maker.Core
 dotnet test --project "tests\Simple QR Code Maker.Windows.Tests\Simple QR Code Maker.Windows.Tests.csproj" -p:Platform=ARM64
 ```
 
-The test projects require .NET 10. Use `-Suite Core` on Linux/macOS. Real filesystem checks are marked `Integration`, operate only in unique temporary directories, and clean up after themselves. Native image processing is exercised on matching x64/ARM64 hosts. CI runs portable tests on Linux and both suites on Windows x64/ARM64, and publishes results and coverage even when a suite fails.
+The test projects also require the .NET 11 SDK. Use `-Suite Core` on Linux/macOS. Real filesystem checks are marked `Integration`, operate only in unique temporary directories, and clean up after themselves. Native image processing is exercised on matching x64/ARM64 hosts. CI runs portable tests on Linux and both suites on Windows x64/ARM64, and publishes results and coverage even when a suite fails.
 
 Coverage runs enforce the measured production-library floors in `tests\thresholds.json`. Keep these ratcheting upward; generated code is excluded, but entire helper/service classes are not. Core requires 95% line and 90% branch coverage; Windows requires 85% line and 80% branch coverage.
 
