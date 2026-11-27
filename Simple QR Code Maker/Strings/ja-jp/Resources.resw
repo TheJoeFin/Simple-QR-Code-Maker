@@ -132,6 +132,18 @@
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>個人用設定</value>
   </data>
+  <data name="SettingsPage_LanguageSettingsCard.Header" xml:space="preserve">
+    <value>言語</value>
+  </data>
+  <data name="SettingsPage_LanguageSettingsCard.Description" xml:space="preserve">
+    <value>アプリの言語を選択します。変更を適用するには、アプリを再起動してください。</value>
+  </data>
+  <data name="Settings_Language_SystemDefault" xml:space="preserve">
+    <value>Windows の言語を使用</value>
+  </data>
+  <data name="SettingsPage_LanguageComboBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>アプリの言語</value>
+  </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
     <value>ライト</value>
   </data>

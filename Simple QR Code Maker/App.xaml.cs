@@ -156,11 +156,14 @@ public partial class App : Application
 #elif PSEUDO_LOCALE_MIRRORED
         ApplicationLanguages.PrimaryLanguageOverride = "qps-plocm";
 #else
-        // Packaged apps persist the override. Clear only an earlier localization test override.
-        string language = ApplicationLanguages.PrimaryLanguageOverride;
+        if (!RuntimeHelper.IsMSIX)
+            return;
+
+        // Clear only an earlier localization test override from the persisted Windows setting.
+        string language = Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride;
         if (string.Equals(language, "qps-ploc", StringComparison.OrdinalIgnoreCase)
             || string.Equals(language, "qps-plocm", StringComparison.OrdinalIgnoreCase))
-            ApplicationLanguages.PrimaryLanguageOverride = string.Empty;
+            Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = string.Empty;
 #endif
     }
 

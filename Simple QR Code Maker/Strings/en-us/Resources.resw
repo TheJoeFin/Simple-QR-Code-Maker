@@ -132,6 +132,18 @@
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>Personalization</value>
   </data>
+  <data name="SettingsPage_LanguageSettingsCard.Header" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="SettingsPage_LanguageSettingsCard.Description" xml:space="preserve">
+    <value>Choose the app language. Restart the app to apply your change.</value>
+  </data>
+  <data name="Settings_Language_SystemDefault" xml:space="preserve">
+    <value>Use Windows language</value>
+  </data>
+  <data name="SettingsPage_LanguageComboBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>App language</value>
+  </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
     <value>Light</value>
   </data>

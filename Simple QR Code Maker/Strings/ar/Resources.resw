@@ -132,6 +132,18 @@
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>التخصيص</value>
   </data>
+  <data name="SettingsPage_LanguageSettingsCard.Header" xml:space="preserve">
+    <value>اللغة</value>
+  </data>
+  <data name="SettingsPage_LanguageSettingsCard.Description" xml:space="preserve">
+    <value>اختر لغة التطبيق. أعد تشغيل التطبيق لتطبيق التغيير.</value>
+  </data>
+  <data name="Settings_Language_SystemDefault" xml:space="preserve">
+    <value>استخدام لغة Windows</value>
+  </data>
+  <data name="SettingsPage_LanguageComboBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>لغة التطبيق</value>
+  </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
     <value>فاتح</value>
   </data>

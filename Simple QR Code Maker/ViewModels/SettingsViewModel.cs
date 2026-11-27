@@ -13,6 +13,7 @@ using System.Globalization;
 using System.IO.Compression;
 using System.Text.Json;
 using System.Windows.Input;
+using Windows.Globalization;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -186,6 +187,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
 
     public ICommand SwitchThemeCommand { get; }
 
+    public IReadOnlyList<LanguageOption> AvailableLanguages { get; }
+
     public bool CanUseTitleBarBack => true;
 
     [RelayCommand]
@@ -296,6 +299,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
         _themeSelectorService = themeSelectorService;
         ElementTheme = _themeSelectorService.Theme;
         VersionDescription = GetVersionDescription();
+        AvailableLanguages = CreateAvailableLanguages();
 
         settingChangedDebounceTimer.Interval = TimeSpan.FromMilliseconds(500);
         settingChangedDebounceTimer.Tick -= SettingChangedDebounceTimer_Tick;
@@ -323,6 +327,57 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
                     await _themeSelectorService.SetThemeAsync(param);
                 }
             });
+    }
+
+    private static IReadOnlyList<LanguageOption> CreateAvailableLanguages()
+    {
+        string languageOverride = ApplicationLanguages.PrimaryLanguageOverride;
+        List<LanguageOption> languages =
+        [
+            new(string.Empty, "Settings_Language_SystemDefault".GetLocalized()),
+        ];
+
+        foreach (string languageTag in (ApplicationLanguages.ManifestLanguages ?? [])
+            .Where(tag => !tag.StartsWith("qps-", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(tag, languageOverride, StringComparison.OrdinalIgnoreCase))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(tag => GetLanguageDisplayName(tag), StringComparer.CurrentCultureIgnoreCase))
+        {
+            languages.Add(new(languageTag, GetLanguageDisplayName(languageTag)));
+        }
+
+        return languages;
+    }
+
+    private static string GetLanguageDisplayName(string languageTag)
+    {
+        try
+        {
+            CultureInfo culture = CultureInfo.GetCultureInfo(languageTag);
+            return culture.NativeName;
+        }
+        catch (CultureNotFoundException)
+        {
+            return languageTag;
+        }
+    }
+
+    public int GetSelectedLanguageIndex()
+    {
+        // The Windows App SDK getter only reads the current process, not the saved package setting.
+        string languageTag = ApplicationLanguages.PrimaryLanguageOverride;
+        for (int index = 0; index < AvailableLanguages.Count; index++)
+        {
+            if (string.Equals(AvailableLanguages[index].LanguageTag, languageTag, StringComparison.OrdinalIgnoreCase))
+                return index;
+        }
+
+        return 0;
+    }
+
+    public void SelectLanguage(int index)
+    {
+        ApplicationLanguages.PrimaryLanguageOverride = AvailableLanguages[index].LanguageTag;
     }
 
     private async void SettingChangedDebounceTimer_Tick(object? sender, object e)

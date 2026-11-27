@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Simple_QR_Code_Maker.Controls;
 using Simple_QR_Code_Maker.Helpers;
+using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
 using Windows.System;
 
@@ -15,6 +16,19 @@ public sealed partial class SettingsPage : Page
     {
         ViewModel = App.GetService<SettingsViewModel>();
         InitializeComponent();
+
+        foreach (LanguageOption language in ViewModel.AvailableLanguages)
+            LanguageComboBox.Items.Add(language.DisplayName);
+
+        LanguageComboBox.SelectedIndex = ViewModel.GetSelectedLanguageIndex();
+        LanguageComboBox.SelectionChanged += LanguageComboBox_SelectionChanged;
+    }
+
+    private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        int index = LanguageComboBox.SelectedIndex;
+        if (index >= 0)
+            ViewModel.SelectLanguage(index);
     }
 
     private bool _processingRating;

@@ -132,6 +132,18 @@
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>个性化</value>
   </data>
+  <data name="SettingsPage_LanguageSettingsCard.Header" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="SettingsPage_LanguageSettingsCard.Description" xml:space="preserve">
+    <value>选择应用语言。重启应用以应用更改。</value>
+  </data>
+  <data name="Settings_Language_SystemDefault" xml:space="preserve">
+    <value>使用 Windows 语言</value>
+  </data>
+  <data name="SettingsPage_LanguageComboBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>应用语言</value>
+  </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
     <value>浅色</value>
   </data>

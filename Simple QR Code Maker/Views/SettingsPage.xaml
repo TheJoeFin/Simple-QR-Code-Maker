@@ -93,6 +93,17 @@
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>
 
+                <!--  Language  -->
+                <settingsControls:SettingsCard x:Uid="SettingsPage_LanguageSettingsCard">
+                    <settingsControls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE774;" />
+                    </settingsControls:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        x:Name="LanguageComboBox"
+                        x:Uid="SettingsPage_LanguageComboBox"
+                        MinWidth="220" />
+                </settingsControls:SettingsCard>
+
                 <!--  QR Code Settings  -->
                 <TextBlock
                     x:Uid="SettingsPage_QRCodeText"
