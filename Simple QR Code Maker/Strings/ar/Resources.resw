@@ -1,0 +1,4065 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>تطبيق لإنشاء رموز QR وقراءتها</value>
+  </data>
+  <data name="QrDesign_NoBackground.Content" xml:space="preserve">
+    <value>بلا خلفية</value>
+  </data>
+  <data name="QrDesign_NoBackgroundHelp.Text" xml:space="preserve">
+    <value>أزل خلفية رمز QR دون اقتطاع أي جزء من الإطار. استخدم لونًا داكنًا للرمز وإطارًا فاتحًا لتسهيل المسح.</value>
+  </data>
+  <data name="Settings_Personalization.Text" xml:space="preserve">
+    <value>التخصيص</value>
+  </data>
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
+    <value>فاتح</value>
+  </data>
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
+    <value>داكن</value>
+  </data>
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
+    <value>افتراضي</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>حول هذا التطبيق</value>
+  </data>
+  <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
+    <value>بيان الخصوصية</value>
+  </data>
+  <data name="Settings_Title.Text" xml:space="preserve">
+    <value>الإعدادات</value>
+    <comment>Page title for SettingsPage</comment>
+  </data>
+  <data name="WebView_Loading.Text" xml:space="preserve">
+    <value>جارٍ التحميل...</value>
+  </data>
+  <data name="WebView_FailedMessage.Text" xml:space="preserve">
+    <value>تعذّر تحميل الصفحة. تحقّق من الاتصال وأعد التحميل.</value>
+  </data>
+  <data name="BrowserBackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>الرجوع في المستعرض</value>
+  </data>
+  <data name="BrowserBackButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>الرجوع في المستعرض</value>
+  </data>
+  <data name="BrowserForwardButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>التقدّم في المستعرض</value>
+  </data>
+  <data name="BrowserForwardButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>التقدّم في المستعرض</value>
+  </data>
+  <data name="WebView_Reload.Content" xml:space="preserve">
+    <value>إعادة التحميل</value>
+  </data>
+  <data name="ReloadButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إعادة التحميل</value>
+  </data>
+  <data name="ReloadButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>إعادة التحميل</value>
+  </data>
+  <data name="OpenInBrowserButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>فتح في المستعرض</value>
+  </data>
+  <data name="OpenInBrowserButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>فتح في المستعرض</value>
+  </data>
+  <data name="AdvancedToolsUserControl_AdvancedDecodingText.Text" xml:space="preserve">
+    <value>أدوات فك الترميز المتقدمة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ChooseAFocusedWorkflowOrText.Text" xml:space="preserve">
+    <value>اختر أداة موجهة أو أجرِ تعديلات سريعة على الصورة قبل فك الترميز.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_QuickFixesSettingsExpander.Description" xml:space="preserve">
+    <value>أجرِ تعديلات سريعة على الصورة دون خطوات موجهة.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_QuickFixesSettingsExpander.Header" xml:space="preserve">
+    <value>إصلاحات سريعة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OneTapFixesSettingsCard.Header" xml:space="preserve">
+    <value>إصلاحات بنقرة واحدة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ConvertTheImageToGrayscaleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>حوّل الصورة إلى تدرج رمادي لتحسين اكتشاف رمز QR</value>
+  </data>
+  <data name="AdvancedToolsUserControl_GrayscaleText.Text" xml:space="preserve">
+    <value>تدرج رمادي</value>
+  </data>
+  <data name="AdvancedToolsUserControl_InvertImageColorsWhenTheButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>اعكس ألوان الصورة إذا كان الرمز أفتح من خلفيته</value>
+  </data>
+  <data name="AdvancedToolsUserControl_InvertText.Text" xml:space="preserve">
+    <value>عكس الألوان</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ContrastSettingsCard.Header" xml:space="preserve">
+    <value>التباين</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ContrastSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>زِد التباين أو قلّله لتمييز الرمز عن خلفيته</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BlackPointSettingsCard.Header" xml:space="preserve">
+    <value>النقطة السوداء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BlackPointSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>حدّد مدى قتامة البكسل قبل اعتباره أسود</value>
+  </data>
+  <data name="AdvancedToolsUserControl_WhitePointSettingsCard.Header" xml:space="preserve">
+    <value>النقطة البيضاء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_WhitePointSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>حدّد مدى سطوع البكسل قبل اعتباره أبيض</value>
+  </data>
+  <data name="AdvancedToolsUserControl_AddBorderSettingsCard.Header" xml:space="preserve">
+    <value>إضافة حد</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BorderPercentSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>أضف حدًا أبيض بنسبة مئوية من عرض الصورة (مثلاً، 10 يعني حدًا بنسبة 10% على كل جانب)</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyQuickFixesSettingsCard.Header" xml:space="preserve">
+    <value>تطبيق الإصلاحات السريعة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyTheCurrentQuickFixButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>طبّق إعدادات الإصلاحات السريعة الحالية على الصورة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyQuickFixesText.Text" xml:space="preserve">
+    <value>تطبيق الإصلاحات السريعة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_GuidedWorkflowsSettingsExpander.Description" xml:space="preserve">
+    <value>افتح أداة موجهة، ثم عُد إلى هنا عند الانتهاء.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_GuidedWorkflowsSettingsExpander.Header" xml:space="preserve">
+    <value>أدوات موجهة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleBlackPointSettingsCard.Description" xml:space="preserve">
+    <value>انقر على بكسل داكن لتطبيق العينة فورًا.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleBlackPointSettingsCard.Header" xml:space="preserve">
+    <value>أخذ عينة للنقطة السوداء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheBlackPointSamplingButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>افتح أداة أخذ عينة للنقطة السوداء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickBlackPointText.Text" xml:space="preserve">
+    <value>اختيار النقطة السوداء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleWhitePointSettingsCard.Description" xml:space="preserve">
+    <value>انقر على بكسل فاتح لتطبيق العينة فورًا.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleWhitePointSettingsCard.Header" xml:space="preserve">
+    <value>أخذ عينة للنقطة البيضاء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheWhitePointSamplingButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>افتح أداة أخذ عينة للنقطة البيضاء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickWhitePointText.Text" xml:space="preserve">
+    <value>اختيار النقطة البيضاء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_StraightenAQRCodeSettingsCard.Description" xml:space="preserve">
+    <value>حدّد الزوايا الأربع، ثم طبّق التصحيح.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_StraightenAQRCodeSettingsCard.Header" xml:space="preserve">
+    <value>تقويم رمز QR</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenThePerspectiveCorrectionWorkflowButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>افتح أداة تصحيح المنظور</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickCodeCornersText.Text" xml:space="preserve">
+    <value>اختيار زوايا الرمز</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractARegionSettingsCard.Description" xml:space="preserve">
+    <value>ارسم منطقة على الصورة، ثم استخرجها كصورة جديدة.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractARegionSettingsCard.Header" xml:space="preserve">
+    <value>استخراج منطقة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheExtractRegionWorkflowButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>افتح أداة استخراج منطقة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CutoutAreaText.Text" xml:space="preserve">
+    <value>منطقة الاقتصاص</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UnwarpAQRCodeSettingsCard.Description" xml:space="preserve">
+    <value>حدّد الزوايا ونقاط المحاذاة لتصحيح رمز QR منحنٍ أو مشوّه.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UnwarpAQRCodeSettingsCard.Header" xml:space="preserve">
+    <value>تصحيح انحناء رمز QR</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheUnwarpWorkflowToButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>افتح أداة تصحيح انحناء رموز QR المشوّهة أو المنحنية</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickUnwarpPointsText.Text" xml:space="preserve">
+    <value>اختيار نقاط تصحيح الانحناء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleBlackPointText.Text" xml:space="preserve">
+    <value>أخذ عينة للنقطة السوداء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickTheDarkestMeaningfulPartText.Text" xml:space="preserve">
+    <value>انقر على أغمق جزء يمثّل الرمز أو الخلفية. تُطبّق العينة فور اختيارها.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickOnceOnTheImageInfoBar.Message" xml:space="preserve">
+    <value>انقر مرة واحدة على الصورة لاختيار النقطة السوداء.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleWhitePointText.Text" xml:space="preserve">
+    <value>أخذ عينة للنقطة البيضاء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickTheLightestMeaningfulPartText.Text" xml:space="preserve">
+    <value>انقر على أفتح جزء يمثّل الرمز أو الخلفية. تُطبّق العينة فور اختيارها.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickOnceOnTheImageInfoBar2.Message" xml:space="preserve">
+    <value>انقر مرة واحدة على الصورة لاختيار النقطة البيضاء.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_StraightenAQRCodeText.Text" xml:space="preserve">
+    <value>تقويم رمز QR</value>
+  </data>
+  <data name="AdvancedToolsUserControl_WorkThroughTheCornerSelectionText.Text" xml:space="preserve">
+    <value>اتّبع خطوات تحديد الزوايا، ثم طبّق التصحيح عند اكتمال المخطط.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickEachCornerOnTheInfoBar.Message" xml:space="preserve">
+    <value>انقر على كل زاوية في الصورة بالترتيب.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CurrentStepSettingsCard.Header" xml:space="preserve">
+    <value>الخطوة الحالية</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BorderSizeSettingsCard.Header" xml:space="preserve">
+    <value>حجم الحد</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BorderSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>أضف هامشًا أبيض حول الصورة المصححة لتحسين الاكتشاف</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectionSettingsCard.Header" xml:space="preserve">
+    <value>التحديد</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearAllSelectedCornersAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>امسح كل الزوايا المحددة وابدأ من جديد</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearCornersText.Text" xml:space="preserve">
+    <value>مسح الزوايا</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UnwarpAQRCodeText.Text" xml:space="preserve">
+    <value>تصحيح انحناء رمز QR</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SetTheQRVersionClickText.Text" xml:space="preserve">
+    <value>حدّد إصدار الرمز، وانقر على كل زاوية ثم على كل نقطة محاذاة. اختر «استخدام التقدير» لقبول المواضع المحسوبة.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickOnTheImageToInfoBar.Message" xml:space="preserve">
+    <value>انقر على الصورة لوضع كل نقطة بالترتيب.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_QRCodeVersionSettingsCard.Header" xml:space="preserve">
+    <value>إصدار رمز QR</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectTheQRCodeVersionSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>حدّد إصدار رمز QR (من 10 إلى 40). تتضمن الإصدارات الأعلى نقاط محاذاة أكثر.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PointLayoutText.Text" xml:space="preserve">
+    <value>توزيع النقاط</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CurrentStepSettingsCard2.Header" xml:space="preserve">
+    <value>الخطوة الحالية</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UseEstimatedPositionSettingsCard.Header" xml:space="preserve">
+    <value>استخدام الموضع المقدّر</value>
+  </data>
+  <data name="AdvancedToolsUserControl_AcceptTheCalculatedBilinearPositionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>اقبل الموضع المحسوب بالاستيفاء الثنائي الخطي لنقطة المحاذاة الحالية</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UseEstimatedText.Text" xml:space="preserve">
+    <value>استخدام التقدير</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PointsSettingsCard.Header" xml:space="preserve">
+    <value>النقاط</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearAllPlacedPointsAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>امسح كل النقاط الموضوعة وابدأ من جديد</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearAllPointsText.Text" xml:space="preserve">
+    <value>مسح كل النقاط</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractARegionText.Text" xml:space="preserve">
+    <value>استخراج منطقة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_DragOverTheImageToText.Text" xml:space="preserve">
+    <value>اسحب فوق الصورة لتحديد منطقة، ثم استخرجها لفك ترميزها بشكل مستقل.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickAndDragOnTheInfoBar.Message" xml:space="preserve">
+    <value>انقر واسحب على الصورة لرسم منطقة.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectionStatusSettingsCard.Header" xml:space="preserve">
+    <value>حالة التحديد</value>
+  </data>
+  <data name="AdvancedToolsUserControl_NoRegionSelectedYetText.Text" xml:space="preserve">
+    <value>لم تُحدّد أي منطقة بعد.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_RegionSelectedAndReadyToText.Text" xml:space="preserve">
+    <value>المنطقة محددة وجاهزة للاستخراج.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectionSettingsCard2.Header" xml:space="preserve">
+    <value>التحديد</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearTheCurrentRegionSelectionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>امسح تحديد المنطقة الحالية</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearSelectionText.Text" xml:space="preserve">
+    <value>مسح التحديد</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ResetAllQuickFixSettingsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>استعد الإعدادات الافتراضية لجميع الإصلاحات السريعة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ResetAllText.Text" xml:space="preserve">
+    <value>إعادة ضبط الكل</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UndoIconAndTextHyperlinkButton.Text" xml:space="preserve">
+    <value>تراجع</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UndoIconAndTextHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>تراجع عن آخر تغيير مطبّق (Ctrl+Z)</value>
+  </data>
+  <data name="AdvancedToolsUserControl_RedoIconAndTextHyperlinkButton.Text" xml:space="preserve">
+    <value>إعادة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_RedoIconAndTextHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>أعِد تطبيق آخر تغيير تراجعت عنه (Ctrl+Y)</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton.Content" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ألغِ أخذ عينة للنقطة السوداء وعُد إلى قائمة الأدوات</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton2.Content" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton2.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ألغِ أخذ عينة للنقطة البيضاء وعُد إلى قائمة الأدوات</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyCorrectionButton.Content" xml:space="preserve">
+    <value>تطبيق التصحيح</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyCorrectionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>طبّق تصحيح المنظور وعُد إلى قائمة الأدوات</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearCornersButton.Content" xml:space="preserve">
+    <value>مسح الزوايا</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton3.Content" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractTheSelectedRegionAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>استخرج المنطقة المحددة وعُد إلى قائمة الأدوات</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractRegionText.Text" xml:space="preserve">
+    <value>استخراج المنطقة</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearSelectionButton.Content" xml:space="preserve">
+    <value>مسح التحديد</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton4.Content" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyPolynomialUnwarpCorrectionAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>طبّق تصحيح الانحناء متعدد الحدود وعُد إلى قائمة الأدوات</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyUnwarpText.Text" xml:space="preserve">
+    <value>تطبيق تصحيح الانحناء</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearPointsButton.Content" xml:space="preserve">
+    <value>مسح النقاط</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton5.Content" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="BrandEditDialog_Dialog.Title" xml:space="preserve">
+    <value>تحرير العلامة التجارية</value>
+  </data>
+  <data name="BrandEditDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="BrandEditDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="BrandEditDialog_BrandNameSettingsCard.Description" xml:space="preserve">
+    <value>الاسم المعروض لهذه العلامة التجارية</value>
+  </data>
+  <data name="BrandEditDialog_BrandNameSettingsCard.Header" xml:space="preserve">
+    <value>اسم العلامة التجارية</value>
+  </data>
+  <data name="BrandEditDialog_BrandNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>اسم العلامة التجارية</value>
+  </data>
+  <data name="BrandEditDialog_ForegroundColorSettingsCard.Description" xml:space="preserve">
+    <value>طبّق لونًا مخصصًا للمقدمة</value>
+  </data>
+  <data name="BrandEditDialog_ForegroundColorSettingsCard.Header" xml:space="preserve">
+    <value>لون المقدمة</value>
+  </data>
+  <data name="BrandEditDialog_BackgroundColorSettingsCard.Description" xml:space="preserve">
+    <value>طبّق لونًا مخصصًا للخلفية</value>
+  </data>
+  <data name="BrandEditDialog_BackgroundColorSettingsCard.Header" xml:space="preserve">
+    <value>لون الخلفية</value>
+  </data>
+  <data name="BrandEditDialog_ErrorCorrectionSettingsCard.Description" xml:space="preserve">
+    <value>حدّد مستوى تصحيح أخطاء رمز QR</value>
+  </data>
+  <data name="BrandEditDialog_ErrorCorrectionSettingsCard.Header" xml:space="preserve">
+    <value>تصحيح الأخطاء</value>
+  </data>
+  <data name="BrandEditDialog_DesignSettingsExpander.Description" xml:space="preserve">
+    <value>تضمين الإطار والتسمية التوضيحية والنمط وألوان التمييز</value>
+  </data>
+  <data name="BrandEditDialog_DesignSettingsExpander.Header" xml:space="preserve">
+    <value>التصميم</value>
+  </data>
+  <data name="BrandEditDialog_StyleSettingsCard.Header" xml:space="preserve">
+    <value>النمط</value>
+  </data>
+  <data name="BrandEditDialog_URLTextSettingsExpander.Description" xml:space="preserve">
+    <value>تضمين عنوان URL أو نص افتراضي</value>
+  </data>
+  <data name="BrandEditDialog_URLTextSettingsExpander.Header" xml:space="preserve">
+    <value>عنوان URL / نص</value>
+  </data>
+  <data name="BrandEditDialog_ContentSettingsCard.Header" xml:space="preserve">
+    <value>المحتوى</value>
+  </data>
+  <data name="BrandEditDialog_URLOrTextContentTextBox.PlaceholderText" xml:space="preserve">
+    <value>عنوان URL أو محتوى نصي</value>
+  </data>
+  <data name="BrandEditDialog_LogoImageSettingsExpander.Description" xml:space="preserve">
+    <value>أضف شعارًا فوق رمز QR</value>
+  </data>
+  <data name="BrandEditDialog_LogoImageSettingsExpander.Header" xml:space="preserve">
+    <value>صورة الشعار</value>
+  </data>
+  <data name="BrandEditDialog_ImageSettingsCard.Header" xml:space="preserve">
+    <value>الصورة</value>
+  </data>
+  <data name="BrandEditDialog_PickImageText.Text" xml:space="preserve">
+    <value>اختيار صورة</value>
+  </data>
+  <data name="BrandEditDialog_RemoveLogoButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إزالة الشعار</value>
+  </data>
+  <data name="BrandEditDialog_ImageSizeSettingsCard.Header" xml:space="preserve">
+    <value>حجم الصورة</value>
+  </data>
+  <data name="BrandEditDialog_PaddingSettingsCard.Header" xml:space="preserve">
+    <value>الهامش</value>
+  </data>
+  <data name="BrandManagementControl_SaveAndManageBrandsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>حفظ العلامات التجارية وإدارتها</value>
+  </data>
+  <data name="BrandManagementControl_BrandsText.Text" xml:space="preserve">
+    <value>العلامات التجارية</value>
+  </data>
+  <data name="BrandManagementControl_NoBrandsSavedYetText.Text" xml:space="preserve">
+    <value>لم تُحفظ أي علامة تجارية بعد.</value>
+  </data>
+  <data name="BrandManagementControl_SaveAsBrandText.Text" xml:space="preserve">
+    <value>حفظ كعلامة تجارية</value>
+  </data>
+  <data name="BrandManagementControl_SaveCurrentSettingsAsBrandText.Text" xml:space="preserve">
+    <value>حفظ الإعدادات الحالية كعلامة تجارية</value>
+  </data>
+  <data name="BrandManagementControl_BrandNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>اسم العلامة التجارية</value>
+  </data>
+  <data name="BrandManagementControl_ForegroundColorCheckBox.Content" xml:space="preserve">
+    <value>لون المقدمة</value>
+  </data>
+  <data name="BrandManagementControl_BackgroundColorCheckBox.Content" xml:space="preserve">
+    <value>لون الخلفية</value>
+  </data>
+  <data name="BrandManagementControl_ErrorCorrectionCheckBox.Content" xml:space="preserve">
+    <value>تصحيح الأخطاء</value>
+  </data>
+  <data name="BrandManagementControl_DesignFrameAndPatternCheckBox.Content" xml:space="preserve">
+    <value>التصميم (الإطار والنمط)</value>
+  </data>
+  <data name="BrandManagementControl_URLTextCheckBox.Content" xml:space="preserve">
+    <value>عنوان URL / نص</value>
+  </data>
+  <data name="BrandManagementControl_CenterImageCheckBox.Content" xml:space="preserve">
+    <value>صورة في الوسط</value>
+  </data>
+  <data name="BrandManagementControl_SaveBrandText.Text" xml:space="preserve">
+    <value>حفظ العلامة التجارية</value>
+  </data>
+  <data name="BrandManagementControl_LearnMoreAboutBrandsText.Text" xml:space="preserve">
+    <value>معرفة المزيد حول العلامات التجارية</value>
+  </data>
+  <data name="BrandPickerControl_SelectBrandDropDownButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>اختيار علامة تجارية</value>
+  </data>
+  <data name="BrandPickerControl_DefaultBrandSymbolIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>العلامة التجارية الافتراضية</value>
+  </data>
+  <data name="BrandPickerControl_SelectABrandText.Text" xml:space="preserve">
+    <value>اختيار علامة تجارية</value>
+  </data>
+  <data name="BrandRowItem_BackgroundColorBorder.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>لون الخلفية</value>
+  </data>
+  <data name="BrandRowItem_ForegroundColorQrCodeIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>لون المقدمة</value>
+  </data>
+  <data name="BrandRowItem_DefaultBrandFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>العلامة التجارية الافتراضية</value>
+  </data>
+  <data name="BrandRowItem_ErrorCorrectionLevelText.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>مستوى تصحيح الأخطاء</value>
+  </data>
+  <data name="BrandRowItem_TextText.Text" xml:space="preserve">
+    <value>النص</value>
+  </data>
+  <data name="BrandRowItem_BrandOptionsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>خيارات العلامة التجارية</value>
+  </data>
+  <data name="BrandRowItem_EditMenuItem.Text" xml:space="preserve">
+    <value>تحرير</value>
+  </data>
+  <data name="BrandRowItem_SetAsDefaultMenuItem.Text" xml:space="preserve">
+    <value>تعيين كافتراضي</value>
+  </data>
+  <data name="BrandRowItem_DeleteMenuItem.Text" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="ColorPickerButton_ColorSegmentedItem.Content" xml:space="preserve">
+    <value>اللون</value>
+  </data>
+  <data name="ColorPickerButton_ImageSegmentedItem.Content" xml:space="preserve">
+    <value>الصورة</value>
+  </data>
+  <data name="ColorPickerButton_ListModePickerItem.Content" xml:space="preserve">
+    <value>قائمة</value>
+  </data>
+  <data name="ColorPickerButton_BrandsText.Text" xml:space="preserve">
+    <value>العلامات التجارية</value>
+  </data>
+  <data name="ColorPickerButton_RecentColorsText.Text" xml:space="preserve">
+    <value>الألوان الأخيرة</value>
+  </data>
+  <data name="ColorPickerButton_SavedColorsEmptyStateText.Text" xml:space="preserve">
+    <value>لا توجد علامات تجارية أو ألوان حديثة بعد.</value>
+  </data>
+  <data name="ColorPickerButton_ClipboardText.Text" xml:space="preserve">
+    <value>الحافظة</value>
+  </data>
+  <data name="CutOutImagesPaneContentControl_ImagesText.Text" xml:space="preserve">
+    <value>الصور</value>
+  </data>
+  <data name="CutOutImagesPaneContentControl_ClosePaneButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إغلاق الجزء</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_DecodingHistoryText.Text" xml:space="preserve">
+    <value>محفوظات فك الترميز</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_ClearAllDecodingHistoryHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>امسح جميع محفوظات فك الترميز</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_ClearText.Text" xml:space="preserve">
+    <value>مسح</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_NoDecodingHistoryYetOpenText.Text" xml:space="preserve">
+    <value>محفوظات فك الترميز فارغة. افتح صورة أو الصقها أو التقطها لفك ترميزها.</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_RemoveMenuItem.Text" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="EmailBuilderDialog_Dialog.Title" xml:space="preserve">
+    <value>إعداد رسالة بريد إلكتروني</value>
+  </data>
+  <data name="EmailBuilderDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="EmailBuilderDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>تطبيق</value>
+  </data>
+  <data name="EmailBuilderDialog_CreateAQRCodeThatText.Text" xml:space="preserve">
+    <value>أنشئ رمز QR يفتح تطبيق البريد الافتراضي مع تعبئة المستلم والموضوع ونص الرسالة مسبقًا.</value>
+  </data>
+  <data name="EmailBuilderDialog_ToTextBox.Header" xml:space="preserve">
+    <value>إلى (مطلوب)</value>
+  </data>
+  <data name="EmailBuilderDialog_ToTextBox.PlaceholderText" xml:space="preserve">
+    <value>recipient@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="EmailBuilderDialog_CCTextBox.Header" xml:space="preserve">
+    <value>نسخة (CC)</value>
+  </data>
+  <data name="EmailBuilderDialog_CCTextBox.PlaceholderText" xml:space="preserve">
+    <value>cc@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="EmailBuilderDialog_BCCTextBox.Header" xml:space="preserve">
+    <value>نسخة مخفية (BCC)</value>
+  </data>
+  <data name="EmailBuilderDialog_BCCTextBox.PlaceholderText" xml:space="preserve">
+    <value>bcc@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="EmailBuilderDialog_SubjectTextBox.Header" xml:space="preserve">
+    <value>الموضوع</value>
+  </data>
+  <data name="EmailBuilderDialog_SubjectTextBox.PlaceholderText" xml:space="preserve">
+    <value>أدخل موضوع الرسالة</value>
+  </data>
+  <data name="EmailBuilderDialog_BodyTextBox.Header" xml:space="preserve">
+    <value>نص الرسالة</value>
+  </data>
+  <data name="EmailBuilderDialog_BodyTextBox.PlaceholderText" xml:space="preserve">
+    <value>أدخل نص الرسالة</value>
+  </data>
+  <data name="EmailBuilderDialog_HowItWorksInfoBar.Message" xml:space="preserve">
+    <value>يفتح مسح رمز QR هذا تطبيق البريد الافتراضي مع تعبئة هذه الحقول مسبقًا. يمكن لمن يمسح الرمز مراجعة الرسالة وتحريرها قبل إرسالها.</value>
+  </data>
+  <data name="EmailBuilderDialog_HowItWorksInfoBar.Title" xml:space="preserve">
+    <value>طريقة العمل</value>
+  </data>
+  <data name="EmailBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>معاينة</value>
+  </data>
+  <data name="FaqsContent_FrequentlyAskedQuestionsText.Text" xml:space="preserve">
+    <value>الأسئلة الشائعة</value>
+  </data>
+  <data name="FaqsContent_SearchForContentInTheAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>ابحث في الأسئلة الشائعة...</value>
+  </data>
+  <data name="FaqsContent_NoFAQsMatchTheSearchText.Text" xml:space="preserve">
+    <value>لا توجد أسئلة شائعة تطابق البحث. جرّب عبارة أخرى أو أرسل رسالة بالبريد الإلكتروني.</value>
+  </data>
+  <data name="FaqsContent_DonTSeeYourQuestionText.Text" xml:space="preserve">
+    <value>ألم تجد سؤالك أو تحتاج إلى مزيد من المعلومات؟ راسلني وسأجيبك.</value>
+  </data>
+  <data name="FaqsContent_EmailAQuestionIconAndTextButton.Text" xml:space="preserve">
+    <value>إرسال سؤال بالبريد</value>
+  </data>
+  <data name="FeedbackDialog_Dialog.Title" xml:space="preserve">
+    <value>شارك ملاحظاتك</value>
+  </data>
+  <data name="FeedbackDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="FeedbackDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>فتح تطبيق البريد</value>
+  </data>
+  <data name="FeedbackDialog_HiIMAnIndieText.Text" xml:space="preserve">
+    <value>مرحبًا! أنا مطوّر مستقل، وملاحظات المستخدمين أفضل وسيلة لفهم المشكلات وتحسين التطبيق. إذا واجهتك مشكلة أو كان لديك اقتراح، يسعدني سماع رأيك!</value>
+  </data>
+  <data name="FeedbackDialog_FeedbackTextBox.Header" xml:space="preserve">
+    <value>الرسالة</value>
+  </data>
+  <data name="FeedbackDialog_FeedbackTextBox.PlaceholderText" xml:space="preserve">
+    <value>صِف المشكلة أو شاركنا رأيك...</value>
+  </data>
+  <data name="FeedbackDialog_JoeJoefinappsComText.Text" xml:space="preserve">
+    <value>joe@joefinapps.com</value>
+  </data>
+  <data name="FeedbackDialog_CopyEmailButton.Content" xml:space="preserve">
+    <value>نسخ</value>
+  </data>
+  <data name="FeedbackDialog_OpenMailAppWillOpenText.Text" xml:space="preserve">
+    <value>يفتح خيار «فتح تطبيق البريد» تطبيق البريد الإلكتروني الافتراضي مع تعبئة رسالتك مسبقًا.</value>
+  </data>
+  <data name="FolderPaneContentControl_FolderText.Text" xml:space="preserve">
+    <value>المجلد</value>
+  </data>
+  <data name="FolderPaneContentControl_CloseFolderPaneButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إغلاق جزء المجلد</value>
+  </data>
+  <data name="FolderPaneContentControl_NoImageFilesFoundInText.Text" xml:space="preserve">
+    <value>لم يُعثر على ملفات صور في هذا المجلد.</value>
+  </data>
+  <data name="FolderPaneContentControl_SaveCutOutImageButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>حفظ الصورة المقتطعة</value>
+  </data>
+  <data name="FolderPaneContentControl_DecodeAllImagesAndViewButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>فك ترميز جميع الصور وعرض جدول ملخص للنتائج</value>
+  </data>
+  <data name="FolderPaneContentControl_SummaryViewText.Text" xml:space="preserve">
+    <value>عرض الملخص</value>
+  </data>
+  <data name="FolderPaneContentControl_DecodeEveryImageInTheButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>فك ترميز كل صورة في المجلد وحفظ ملف ‎.txt بجوارها</value>
+  </data>
+  <data name="FolderPaneContentControl_DecodeAllExportTxtFilesText.Text" xml:space="preserve">
+    <value>فك ترميز الكل وتصدير ملفات ‎.txt</value>
+  </data>
+  <data name="GenerateIdsDialog_Dialog.Title" xml:space="preserve">
+    <value>إنشاء معرّفات</value>
+  </data>
+  <data name="GenerateIdsDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="GenerateIdsDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="GenerateIdsDialog_GenerateOneRandomIDPerText.Text" xml:space="preserve">
+    <value>أنشئ معرّفًا عشوائيًا لكل سطر وأضف المعرّفات إلى النص الحالي.</value>
+  </data>
+  <data name="GenerateIdsDialog_CountNumberBox.Header" xml:space="preserve">
+    <value>عدد المعرّفات</value>
+  </data>
+  <data name="GenerateIdsDialog_IDStyleComboBox.Header" xml:space="preserve">
+    <value>تنسيق المعرّف</value>
+  </data>
+  <data name="GenerateIdsDialog_NanoIdLengthNumberBox.Header" xml:space="preserve">
+    <value>طول NanoID</value>
+  </data>
+  <data name="GenerateIdsDialog_TextBeforeEachIDTextBox.Header" xml:space="preserve">
+    <value>النص قبل كل معرّف</value>
+  </data>
+  <data name="GenerateIdsDialog_TextBeforeEachIDTextBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="GenerateIdsDialog_TextAfterEachIDTextBox.Header" xml:space="preserve">
+    <value>النص بعد كل معرّف</value>
+  </data>
+  <data name="GenerateIdsDialog_TextAfterEachIDTextBox.PlaceholderText" xml:space="preserve">
+    <value>?source=qr-code</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="GenerateIdsDialog_PreviewText.Text" xml:space="preserve">
+    <value>معاينة</value>
+  </data>
+  <data name="GenerateIdsDialog_CheckYourSettingsInfoBar.Title" xml:space="preserve">
+    <value>تحقّق من الإعدادات</value>
+  </data>
+  <data name="HistoryPaneContentControl_HistoryText.Text" xml:space="preserve">
+    <value>المحفوظات</value>
+  </data>
+  <data name="HistoryPaneContentControl_SaveCurrentQRCodeToHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>حفظ رمز QR الحالي في المحفوظات</value>
+  </data>
+  <data name="HistoryPaneContentControl_SaveToHistoryText.Text" xml:space="preserve">
+    <value>حفظ في المحفوظات</value>
+  </data>
+  <data name="HistoryPaneContentControl_NoHistoryYetSaveOrText.Text" xml:space="preserve">
+    <value>المحفوظات فارغة. احفظ رمز QR أو انسخه ليظهر هنا.</value>
+  </data>
+  <data name="HistoryPaneContentControl_RemoveMenuItem.Text" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="ImageColorPickerControl_PickImageText.Text" xml:space="preserve">
+    <value>اختيار صورة</value>
+  </data>
+  <data name="ImageColorPickerControl_NoImageLoadedText.Text" xml:space="preserve">
+    <value>لم تُحمّل أي صورة</value>
+  </data>
+  <data name="ImageColorPickerControl_SuggestedColorsText.Text" xml:space="preserve">
+    <value>ألوان مقترحة</value>
+  </data>
+  <data name="LicensesDialog_Dialog.Title" xml:space="preserve">
+    <value>تراخيص البرامج مفتوحة المصدر</value>
+  </data>
+  <data name="LicensesDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="LicensesDialog_ViewOnGitHubHyperlinkButton.Content" xml:space="preserve">
+    <value>عرض على GitHub</value>
+  </data>
+  <data name="PrintSettingsDialog_Dialog.Title" xml:space="preserve">
+    <value>إعدادات الطباعة</value>
+  </data>
+  <data name="PrintSettingsDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="PrintSettingsDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>طباعة</value>
+  </data>
+  <data name="PrintSettingsDialog_SettingsScrollViewer.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>إعدادات الطباعة</value>
+  </data>
+  <data name="PrintSettingsDialog_QuickPresetCombo.Header" xml:space="preserve">
+    <value>إعداد سريع</value>
+  </data>
+  <data name="PrintSettingsDialog_CustomComboBoxItem.Content" xml:space="preserve">
+    <value>مخصص</value>
+  </data>
+  <data name="PrintSettingsDialog_ProductLabelsComboBoxItem.Content" xml:space="preserve">
+    <value>ملصقات المنتجات</value>
+  </data>
+  <data name="PrintSettingsDialog_FlyersOrHandoutsComboBoxItem.Content" xml:space="preserve">
+    <value>منشورات أو مطويات</value>
+  </data>
+  <data name="PrintSettingsDialog_TableTentsOrMenusComboBoxItem.Content" xml:space="preserve">
+    <value>بطاقات الطاولات أو قوائم الطعام</value>
+  </data>
+  <data name="PrintSettingsDialog_PostersOrSignsComboBoxItem.Content" xml:space="preserve">
+    <value>ملصقات أو لافتات</value>
+  </data>
+  <data name="PrintSettingsDialog_QuickPresetDescriptionTextBlock.Text" xml:space="preserve">
+    <value>اختر أحد الاستخدامات الشائعة لطباعة رموز QR أو خصّص التخطيط بالكامل.</value>
+  </data>
+  <data name="PrintSettingsDialog_CodesPerPageCombo.Header" xml:space="preserve">
+    <value>عدد الرموز في الصفحة</value>
+  </data>
+  <data name="PrintSettingsDialog_AsManyFitComboBoxItem.Content" xml:space="preserve">
+    <value>أكبر عدد يتّسع في الصفحة</value>
+  </data>
+  <data name="PrintSettingsDialog_1PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>1 لكل صفحة</value>
+  </data>
+  <data name="PrintSettingsDialog_2PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>2 لكل صفحة</value>
+  </data>
+  <data name="PrintSettingsDialog_4PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>4 لكل صفحة</value>
+  </data>
+  <data name="PrintSettingsDialog_6PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>6 لكل صفحة</value>
+  </data>
+  <data name="PrintSettingsDialog_9PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>9 لكل صفحة</value>
+  </data>
+  <data name="PrintSettingsDialog_12PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>12 لكل صفحة</value>
+  </data>
+  <data name="PrintSettingsDialog_16PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>16 لكل صفحة</value>
+  </data>
+  <data name="PrintSettingsDialog_PageTypeCombo.Header" xml:space="preserve">
+    <value>نوع الصفحة</value>
+  </data>
+  <data name="PrintSettingsDialog_LetterComboBoxItem.Content" xml:space="preserve">
+    <value>Letter</value>
+  </data>
+  <data name="PrintSettingsDialog_LegalComboBoxItem.Content" xml:space="preserve">
+    <value>Legal</value>
+  </data>
+  <data name="PrintSettingsDialog_StatementComboBoxItem.Content" xml:space="preserve">
+    <value>Statement</value>
+  </data>
+  <data name="PrintSettingsDialog_ExecutiveComboBoxItem.Content" xml:space="preserve">
+    <value>Executive</value>
+  </data>
+  <data name="PrintSettingsDialog_TabloidComboBoxItem.Content" xml:space="preserve">
+    <value>Tabloid</value>
+  </data>
+  <data name="PrintSettingsDialog_LedgerComboBoxItem.Content" xml:space="preserve">
+    <value>Ledger</value>
+  </data>
+  <data name="PrintSettingsDialog_A3ComboBoxItem.Content" xml:space="preserve">
+    <value>A3</value>
+  </data>
+  <data name="PrintSettingsDialog_A4ComboBoxItem.Content" xml:space="preserve">
+    <value>A4</value>
+  </data>
+  <data name="PrintSettingsDialog_A5ComboBoxItem.Content" xml:space="preserve">
+    <value>A5</value>
+  </data>
+  <data name="PrintSettingsDialog_B4ComboBoxItem.Content" xml:space="preserve">
+    <value>B4</value>
+  </data>
+  <data name="PrintSettingsDialog_B5ComboBoxItem.Content" xml:space="preserve">
+    <value>B5</value>
+  </data>
+  <data name="PrintSettingsDialog_PageLayoutCombo.Header" xml:space="preserve">
+    <value>تخطيط الصفحة</value>
+  </data>
+  <data name="PrintSettingsDialog_PortraitComboBoxItem.Content" xml:space="preserve">
+    <value>عمودي</value>
+  </data>
+  <data name="PrintSettingsDialog_LandscapeComboBoxItem.Content" xml:space="preserve">
+    <value>أفقي</value>
+  </data>
+  <data name="PrintSettingsDialog_ShowLabelsSwitch.Header" xml:space="preserve">
+    <value>إظهار التسميات</value>
+  </data>
+  <data name="PrintSettingsDialog_ShowLabelsSwitch.OffContent" xml:space="preserve">
+    <value>إيقاف</value>
+  </data>
+  <data name="PrintSettingsDialog_ShowLabelsSwitch.OnContent" xml:space="preserve">
+    <value>تشغيل</value>
+  </data>
+  <data name="PrintSettingsDialog_CodeSizeMmBox.Header" xml:space="preserve">
+    <value>حجم رمز QR (مم)</value>
+  </data>
+  <data name="PrintSettingsDialog_SpacingMmBox.Header" xml:space="preserve">
+    <value>التباعد (مم)</value>
+  </data>
+  <data name="PrintSettingsDialog_MarginMmBox.Header" xml:space="preserve">
+    <value>هامش الصفحة (مم)</value>
+  </data>
+  <data name="PrintSettingsDialog_PreviewText.Text" xml:space="preserve">
+    <value>معاينة</value>
+  </data>
+  <data name="PrintSettingsDialog_FitPreviewButton.Content" xml:space="preserve">
+    <value>ملاءمة العرض</value>
+  </data>
+  <data name="PrintSettingsDialog_ZoomOutButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>تصغير</value>
+  </data>
+  <data name="PrintSettingsDialog_ZoomInButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>تكبير</value>
+  </data>
+  <data name="PrintSettingsDialog_PreviewScrollViewer.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>معاينة الطباعة</value>
+  </data>
+  <data name="PrintSettingsDialog_UpdatingPDFPreviewText.Text" xml:space="preserve">
+    <value>جارٍ تحديث معاينة PDF...</value>
+  </data>
+  <data name="QrCodeImageControl_SavePNGMenuItem.Text" xml:space="preserve">
+    <value>حفظ بتنسيق PNG...</value>
+  </data>
+  <data name="QrCodeImageControl_CopyPNGMenuItem.Text" xml:space="preserve">
+    <value>نسخ بتنسيق PNG</value>
+  </data>
+  <data name="QrCodeImageControl_ShareMenuItem.Text" xml:space="preserve">
+    <value>مشاركة...</value>
+  </data>
+  <data name="QrCodeImageControl_SaveSVGMenuItem.Text" xml:space="preserve">
+    <value>حفظ بتنسيق SVG...</value>
+  </data>
+  <data name="QrCodeImageControl_CopySVGMenuItem.Text" xml:space="preserve">
+    <value>نسخ بتنسيق SVG</value>
+  </data>
+  <data name="QrCodeImageControl_CopySVGAsTextMenuItem.Text" xml:space="preserve">
+    <value>نسخ SVG كنص</value>
+  </data>
+  <data name="QrCodeImageControl_UseCommonBrandMenuItem.Text" xml:space="preserve">
+    <value>استخدام العلامة التجارية المشتركة</value>
+  </data>
+  <data name="QrCodeImageControl_UseCurrentStyleMenuItem.Text" xml:space="preserve">
+    <value>استخدام النمط الحالي</value>
+  </data>
+  <data name="QrCodeImageControl_ThisWarningCanBeDisabledInfoBar.Message" xml:space="preserve">
+    <value>رمز QR لا يحتوي على عنوان URL</value>
+  </data>
+  <data name="QrCodeImageControl_ThisWarningCanBeDisabledInfoBar.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>يمكن تعطيل هذا التحذير من الإعدادات</value>
+  </data>
+  <data name="QrCodeImageControl_HowWasThisCalculatedHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>كيف حُسب هذا؟</value>
+  </data>
+  <data name="QrCodeImageControl_CopySizeMenuItem.Text" xml:space="preserve">
+    <value>نسخ الحجم</value>
+  </data>
+  <data name="QrCodeImageControl_HideMinSizeTextMenuItem.Text" xml:space="preserve">
+    <value>إخفاء نص الحد الأدنى للحجم</value>
+  </data>
+  <data name="QrCodeImageControl_YourCurrentDesignIsKeptText.Text" xml:space="preserve">
+    <value>يُحتفظ بتصميمك الحالي، لذا يمكنك الرجوع إليه في أي وقت.</value>
+  </data>
+  <data name="QrCodeImageControl_MinimumSizeEstimatesAreUnavailableText.Text" xml:space="preserve">
+    <value>لا يمكن تقدير الحد الأدنى للحجم عند استخدام شعار في الوسط.</value>
+  </data>
+  <data name="QrCodeImageControl_CopySizeMenuItem2.Text" xml:space="preserve">
+    <value>نسخ الحجم</value>
+  </data>
+  <data name="QrCodeImageControl_AboutQRCodeSizingMenuItem.Text" xml:space="preserve">
+    <value>حول تقدير حجم رمز QR</value>
+  </data>
+  <data name="QrDesignDialog_Dialog.Title" xml:space="preserve">
+    <value>تصميم رمز QR</value>
+  </data>
+  <data name="QrDesignDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>تم</value>
+  </data>
+  <data name="QrDesignDialog_LivePreviewText.Text" xml:space="preserve">
+    <value>معاينة مباشرة</value>
+  </data>
+  <data name="QrDesignDialog_LivePreviewImage.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>معاينة تصميم رمز QR الحالي</value>
+  </data>
+  <data name="QrDesignDialog_NoPreviewText.Text" xml:space="preserve">
+    <value>أدخل محتوى رمز QR في النافذة الرئيسية لتظهر المعاينة هنا.</value>
+  </data>
+  <data name="QrDesignDialog_PreviewHelpText.Text" xml:space="preserve">
+    <value>تُطبّق التغييرات فورًا. اختر «تم» للعودة إلى رموز QR.</value>
+  </data>
+  <data name="QrDesignDialog_PickALookThenMakeText.Text" xml:space="preserve">
+    <value>اختر مظهرًا وخصّصه كما تشاء. سيظل محتوى رمز QR كما هو.</value>
+  </data>
+  <data name="QrDesignDialog_PresetsSection.Text" xml:space="preserve">
+    <value>إعدادات مسبقة</value>
+  </data>
+  <data name="QrDesignDialog_PatternSection.Text" xml:space="preserve">
+    <value>النمط</value>
+  </data>
+  <data name="QrDesignDialog_FrameSection.Text" xml:space="preserve">
+    <value>الإطار</value>
+  </data>
+  <data name="QrDesignDialog_PreviewError.Title" xml:space="preserve">
+    <value>معاينات التصميم غير متاحة</value>
+  </data>
+  <data name="QrDesignDialog_PresetGrid.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>إعدادات تصميم مسبقة متناسقة</value>
+  </data>
+  <data name="QrDesignDialog_ModuleCombo.Header" xml:space="preserve">
+    <value>نمط رمز QR</value>
+  </data>
+  <data name="QrDesignDialog_EyeCombo.Header" xml:space="preserve">
+    <value>علامات الزوايا</value>
+  </data>
+  <data name="QrDesignDialog_TheSmallTimingAndAlignmentText.Text" xml:space="preserve">
+    <value>تظل أنماط التوقيت والمحاذاة الصغيرة مربعة لتسهيل قراءة الرمز بالماسح الضوئي.</value>
+  </data>
+  <data name="QrDesignDialog_ClassicSquaresButton.Content" xml:space="preserve">
+    <value>مربعات تقليدية</value>
+  </data>
+  <data name="QrDesignDialog_QRColorAndOpacityDropDownButton.Content" xml:space="preserve">
+    <value>لون الرمز وعتامته</value>
+  </data>
+  <data name="QrDesignDialog_QRColorAndOpacityColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>لون الرمز وعتامته</value>
+  </data>
+  <data name="QrDesignDialog_BackgroundColorAndOpacityDropDownButton.Content" xml:space="preserve">
+    <value>لون الخلفية وعتامتها</value>
+  </data>
+  <data name="QrDesignDialog_QRBackgroundColorAndOpacityColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>لون خلفية رمز QR وعتامتها</value>
+  </data>
+  <data name="QrDesignDialog_TransparentBackgroundsDependOnTheText.Text" xml:space="preserve">
+    <value>تتأثر الخلفية الشفافة بالسطح الذي تضع رمز QR عليه.</value>
+  </data>
+  <data name="QrDesignDialog_FrameGrid.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>أشكال الإطارات</value>
+  </data>
+  <data name="QrDesignDialog_CaptionSuggestionCombo.Header" xml:space="preserve">
+    <value>تسميات توضيحية مقترحة</value>
+  </data>
+  <data name="QrDesignDialog_LabelSourceCombo.Header" xml:space="preserve">
+    <value>مصدر التسمية</value>
+  </data>
+  <data name="QrDesignDialog_IconCombo.Header" xml:space="preserve">
+    <value>أيقونة التسمية التوضيحية</value>
+  </data>
+  <data name="QrDesignDialog_IndependentFrameColorToggleSwitch.Header" xml:space="preserve">
+    <value>لون مستقل للإطار</value>
+  </data>
+  <data name="QrDesignDialog_IndependentFrameColorToggleSwitch.OffContent" xml:space="preserve">
+    <value>استخدام لون رمز QR</value>
+  </data>
+  <data name="QrDesignDialog_IndependentFrameColorToggleSwitch.OnContent" xml:space="preserve">
+    <value>لون تمييز مخصص</value>
+  </data>
+  <data name="QrDesignDialog_AccentColorDropDownButton.Content" xml:space="preserve">
+    <value>لون التمييز</value>
+  </data>
+  <data name="QrDesignDialog_FrameAccentColorColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>لون تمييز الإطار</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientToggleSwitch.Header" xml:space="preserve">
+    <value>تدرّج لون الإطار</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientToggleSwitch.OffContent" xml:space="preserve">
+    <value>لون موحّد</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientToggleSwitch.OnContent" xml:space="preserve">
+    <value>تدرّج بلونين</value>
+  </data>
+  <data name="QrDesignDialog_GradientEndColorDropDownButton.Content" xml:space="preserve">
+    <value>لون نهاية التدرّج</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientEndColorColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>لون نهاية تدرّج الإطار</value>
+  </data>
+  <data name="QrDesignDialog_PresetsUseAClearFourText.Text" xml:space="preserve">
+    <value>تستخدم الإعدادات المسبقة هامشًا خاليًا بعرض أربع وحدات. اجعل الرمز داكنًا على خلفية فاتحة، وجرّب مسحه بهاتفك بالحجم النهائي قبل الطباعة.</value>
+  </data>
+  <data name="QrDesignDialog_UndoPresetButton.Content" xml:space="preserve">
+    <value>التراجع عن الإعداد المسبق</value>
+  </data>
+  <data name="QrDesignDialog_SetDesignAsDefaultButton.Content" xml:space="preserve">
+    <value>تعيين التصميم كافتراضي</value>
+  </data>
+  <data name="QrDesignGalleryControl_DesignButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>تصميم رمز QR</value>
+  </data>
+  <data name="QrDesignGalleryControl_DesignButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>افتح مصمّم رموز QR</value>
+  </data>
+  <data name="QrDesignGalleryControl_DesignText.Text" xml:space="preserve">
+    <value>التصميم</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAsText.Text" xml:space="preserve">
+    <value>حفظ باسم</value>
+  </data>
+  <data name="QrExportActionsControl_SaveCodeSAsPNGSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>حفظ الرموز كملفات PNG</value>
+  </data>
+  <data name="QrExportActionsControl_PNGIconAndTextContent.ContentText" xml:space="preserve">
+    <value>PNG</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToFilesDefaultMenuItem.Text" xml:space="preserve">
+    <value>حفظ الكل كملفات (افتراضي)</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToZipMenuItem.Text" xml:space="preserve">
+    <value>حفظ الكل في ملف ZIP</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllToClipboardMenuItem.Text" xml:space="preserve">
+    <value>نسخ الكل إلى الحافظة</value>
+  </data>
+  <data name="QrExportActionsControl_SaveCodeSAsSVGSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>حفظ الرموز كملفات SVG</value>
+  </data>
+  <data name="QrExportActionsControl_SVGIconAndTextContent.ContentText" xml:space="preserve">
+    <value>SVG</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToFilesDefaultMenuItem2.Text" xml:space="preserve">
+    <value>حفظ الكل كملفات (افتراضي)</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToZipMenuItem2.Text" xml:space="preserve">
+    <value>حفظ الكل في ملف ZIP</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllToClipboardMenuItem2.Text" xml:space="preserve">
+    <value>نسخ الكل إلى الحافظة</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllAsTextToMenuItem.Text" xml:space="preserve">
+    <value>نسخ الكل كنص إلى الحافظة</value>
+  </data>
+  <data name="QrExportActionsControl_SaveCodeSAsBothSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>حفظ الرموز كملفات PNG وSVG</value>
+  </data>
+  <data name="QrExportActionsControl_BothIconAndTextContent.ContentText" xml:space="preserve">
+    <value>كلا التنسيقين</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToFilesDefaultMenuItem3.Text" xml:space="preserve">
+    <value>حفظ الكل كملفات (افتراضي)</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToZipMenuItem3.Text" xml:space="preserve">
+    <value>حفظ الكل في ملف ZIP</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllToClipboardMenuItem3.Text" xml:space="preserve">
+    <value>نسخ الكل إلى الحافظة</value>
+  </data>
+  <data name="QrExportActionsControl_PrintQRCodeSButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>طباعة رموز QR</value>
+  </data>
+  <data name="QrExportActionsControl_PrintIconAndTextContent.ContentText" xml:space="preserve">
+    <value>طباعة</value>
+  </data>
+  <data name="QrExportActionsControl_QuicklyShowOrHideExportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إظهار خيارات التصدير أو إخفاؤها بسرعة</value>
+  </data>
+  <data name="QrExportActionsControl_ShowSaveBothButtonToggleMenuFlyoutItem.Text" xml:space="preserve">
+    <value>إظهار زر «حفظ بكلا التنسيقين»</value>
+  </data>
+  <data name="QrExportActionsControl_ShowPrintButtonToggleMenuFlyoutItem.Text" xml:space="preserve">
+    <value>إظهار زر «طباعة»</value>
+  </data>
+  <data name="QrLogoDesignerControl_AddImageToTheCenterSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إضافة صورة في وسط رمز QR</value>
+  </data>
+  <data name="QrLogoDesignerControl_ImageSegmentedItem.Content" xml:space="preserve">
+    <value>صورة</value>
+  </data>
+  <data name="QrLogoDesignerControl_EmojiSegmentedItem.Content" xml:space="preserve">
+    <value>رمز تعبيري</value>
+  </data>
+  <data name="QrLogoDesignerControl_NoImageSelectedText.Text" xml:space="preserve">
+    <value>لم تُحدّد أي صورة</value>
+  </data>
+  <data name="QrLogoDesignerControl_PickImageText.Text" xml:space="preserve">
+    <value>اختيار صورة</value>
+  </data>
+  <data name="QrLogoDesignerControl_PasteText.Text" xml:space="preserve">
+    <value>لصق</value>
+  </data>
+  <data name="QrLogoDesignerControl_RemoveImageButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إزالة الصورة</value>
+  </data>
+  <data name="QrLogoDesignerControl_UseOnDeviceAIToButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>استخدم الذكاء الاصطناعي على الجهاز لإزالة خلفية صورة الشعار</value>
+  </data>
+  <data name="QrLogoDesignerControl_EraseBackgroundText.Text" xml:space="preserve">
+    <value>إزالة الخلفية</value>
+  </data>
+  <data name="QrLogoDesignerControl_SolidText.Text" xml:space="preserve">
+    <value>مسطّح</value>
+  </data>
+  <data name="QrLogoDesignerControl_3DText.Text" xml:space="preserve">
+    <value>ثلاثي الأبعاد</value>
+  </data>
+  <data name="QrLogoDesignerControl_ClearEmojiText.Text" xml:space="preserve">
+    <value>مسح الرمز التعبيري</value>
+  </data>
+  <data name="QrLogoDesignerControl_CenterLogoSizeText.Text" xml:space="preserve">
+    <value>حجم الشعار في الوسط</value>
+  </data>
+  <data name="QrLogoDesignerControl_AdjustTheLogoSizeRelativeSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>اضبط حجم الشعار بالنسبة إلى حجم رمز QR</value>
+  </data>
+  <data name="QrLogoDesignerControl_PercentText.Text" xml:space="preserve">
+    <value>بالمئة</value>
+  </data>
+  <data name="QrLogoDesignerControl_PaddingAroundCenterLogoText.Text" xml:space="preserve">
+    <value>الهامش حول الشعار في الوسط</value>
+  </data>
+  <data name="QrLogoDesignerControl_ScaleTheLogoImageToSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>اضبط حجم صورة الشعار لتناسب المساحة (القيمة الموجبة تصغّره وتترك هامشًا، والسالبة تكبّره)</value>
+  </data>
+  <data name="QrLogoDesignerControl_PxText.Text" xml:space="preserve">
+    <value>بكسل</value>
+  </data>
+  <data name="RemoveBackgroundDialog_Dialog.Title" xml:space="preserve">
+    <value>إزالة الخلفية</value>
+  </data>
+  <data name="RemoveBackgroundDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="RemoveBackgroundDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>تطبيق</value>
+  </data>
+  <data name="RemoveBackgroundDialog_OriginalText.Text" xml:space="preserve">
+    <value>الصورة الأصلية</value>
+  </data>
+  <data name="RemoveBackgroundDialog_BackgroundRemovedText.Text" xml:space="preserve">
+    <value>بعد إزالة الخلفية</value>
+  </data>
+  <data name="UrlBuilderDialog_Root.Title" xml:space="preserve">
+    <value>إنشاء عنوان URL</value>
+  </data>
+  <data name="UrlBuilderDialog_Root.CloseButtonText" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="UrlBuilderDialog_Root.PrimaryButtonText" xml:space="preserve">
+    <value>تطبيق</value>
+  </data>
+  <data name="UrlBuilderDialog_GoToThePreviousLineButton.AccessKey" xml:space="preserve">
+    <value>P</value>
+    <comment>A single access-key character. Do not use the same key for both line navigation buttons.</comment>
+  </data>
+  <data name="UrlBuilderDialog_GoToThePreviousLineButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>انتقال إلى السطر السابق</value>
+  </data>
+  <data name="UrlBuilderDialog_PreviousText.Text" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="UrlBuilderDialog_GoToTheNextLineButton.AccessKey" xml:space="preserve">
+    <value>N</value>
+    <comment>A single access-key character. Do not use the same key for both line navigation buttons.</comment>
+  </data>
+  <data name="UrlBuilderDialog_GoToTheNextLineButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>انتقال إلى السطر التالي</value>
+  </data>
+  <data name="UrlBuilderDialog_NextText.Text" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="UrlBuilderDialog_SchemeTextBox.Header" xml:space="preserve">
+    <value>المخطط</value>
+  </data>
+  <data name="UrlBuilderDialog_SchemeTextBox.PlaceholderText" xml:space="preserve">
+    <value>https</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_AuthorityTextBox.Header" xml:space="preserve">
+    <value>المرجعية / المضيف</value>
+  </data>
+  <data name="UrlBuilderDialog_AuthorityTextBox.PlaceholderText" xml:space="preserve">
+    <value>example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_PathTextBox.Header" xml:space="preserve">
+    <value>المسار</value>
+  </data>
+  <data name="UrlBuilderDialog_PathTextBox.PlaceholderText" xml:space="preserve">
+    <value>/products/qr codes</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_QueryParametersText.Text" xml:space="preserve">
+    <value>معلمات الاستعلام</value>
+  </data>
+  <data name="UrlBuilderDialog_AddAQueryParameterButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إضافة معلمة استعلام</value>
+  </data>
+  <data name="UrlBuilderDialog_AddParameterText.Text" xml:space="preserve">
+    <value>إضافة معلمة</value>
+  </data>
+  <data name="UrlBuilderDialog_NoQueryParametersYetText.Text" xml:space="preserve">
+    <value>لا توجد معلمات استعلام بعد</value>
+  </data>
+  <data name="UrlBuilderDialog_NameTextBox.Header" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="UrlBuilderDialog_NameTextBox.PlaceholderText" xml:space="preserve">
+    <value>utm_source</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_ValueTextBox.Header" xml:space="preserve">
+    <value>القيمة</value>
+  </data>
+  <data name="UrlBuilderDialog_ValueTextBox.PlaceholderText" xml:space="preserve">
+    <value>newsletter</value>
+  </data>
+  <data name="UrlBuilderDialog_RemoveParameterHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إزالة المعلمة</value>
+  </data>
+  <data name="UrlBuilderDialog_FragmentTextBox.Header" xml:space="preserve">
+    <value>الجزء</value>
+  </data>
+  <data name="UrlBuilderDialog_FragmentTextBox.PlaceholderText" xml:space="preserve">
+    <value>section-1</value>
+  </data>
+  <data name="UrlBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>معاينة</value>
+  </data>
+  <data name="VCardBuilderDialog_Dialog.Title" xml:space="preserve">
+    <value>إنشاء بطاقة vCard</value>
+  </data>
+  <data name="VCardBuilderDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="VCardBuilderDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>تطبيق</value>
+  </data>
+  <data name="VCardBuilderDialog_StartWithTheCommonContactText.Text" xml:space="preserve">
+    <value>ابدأ بحقول جهة الاتصال الشائعة، ثم استخدم + لإضافة تفاصيل اختيارية.</value>
+  </data>
+  <data name="VCardBuilderDialog_FormattedNameTextBox.Header" xml:space="preserve">
+    <value>الاسم المنسّق</value>
+  </data>
+  <data name="VCardBuilderDialog_FormattedNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Jane Doe</value>
+  </data>
+  <data name="VCardBuilderDialog_FirstNameTextBox.Header" xml:space="preserve">
+    <value>الاسم الأول</value>
+  </data>
+  <data name="VCardBuilderDialog_FirstNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Jane</value>
+  </data>
+  <data name="VCardBuilderDialog_LastNameTextBox.Header" xml:space="preserve">
+    <value>اسم العائلة</value>
+  </data>
+  <data name="VCardBuilderDialog_LastNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Doe</value>
+  </data>
+  <data name="VCardBuilderDialog_MiddleTextBox.Header" xml:space="preserve">
+    <value>الاسم الأوسط</value>
+  </data>
+  <data name="VCardBuilderDialog_PrefixTextBox.Header" xml:space="preserve">
+    <value>اللقب قبل الاسم</value>
+  </data>
+  <data name="VCardBuilderDialog_PrefixTextBox.PlaceholderText" xml:space="preserve">
+    <value>د.</value>
+  </data>
+  <data name="VCardBuilderDialog_SuffixTextBox.Header" xml:space="preserve">
+    <value>اللاحقة بعد الاسم</value>
+  </data>
+  <data name="VCardBuilderDialog_SuffixTextBox.PlaceholderText" xml:space="preserve">
+    <value>Jr.</value>
+  </data>
+  <data name="VCardBuilderDialog_OrganizationTextBox.Header" xml:space="preserve">
+    <value>المؤسسة</value>
+  </data>
+  <data name="VCardBuilderDialog_OrganizationTextBox.PlaceholderText" xml:space="preserve">
+    <value>Contoso</value>
+  </data>
+  <data name="VCardBuilderDialog_TitleTextBox.Header" xml:space="preserve">
+    <value>المسمّى الوظيفي</value>
+  </data>
+  <data name="VCardBuilderDialog_TitleTextBox.PlaceholderText" xml:space="preserve">
+    <value>مدير المنتج</value>
+  </data>
+  <data name="VCardBuilderDialog_MobilePhoneTextBox.Header" xml:space="preserve">
+    <value>الهاتف المحمول</value>
+  </data>
+  <data name="VCardBuilderDialog_MobilePhoneTextBox.PlaceholderText" xml:space="preserve">
+    <value>+1 555 0100</value>
+  </data>
+  <data name="VCardBuilderDialog_EmailTextBox.Header" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="VCardBuilderDialog_EmailTextBox.PlaceholderText" xml:space="preserve">
+    <value>jane@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="VCardBuilderDialog_WebsiteTextBox.Header" xml:space="preserve">
+    <value>موقع الويب</value>
+  </data>
+  <data name="VCardBuilderDialog_WebsiteTextBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="VCardBuilderDialog_AddAnOptionalVCardFieldButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إضافة حقل اختياري إلى بطاقة vCard</value>
+  </data>
+  <data name="VCardBuilderDialog_AddFieldText.Text" xml:space="preserve">
+    <value>إضافة حقل</value>
+  </data>
+  <data name="VCardBuilderDialog_WorkPhoneMenuItem.Text" xml:space="preserve">
+    <value>هاتف العمل</value>
+  </data>
+  <data name="VCardBuilderDialog_HomePhoneMenuItem.Text" xml:space="preserve">
+    <value>هاتف المنزل</value>
+  </data>
+  <data name="VCardBuilderDialog_NicknameMenuItem.Text" xml:space="preserve">
+    <value>الاسم المستعار</value>
+  </data>
+  <data name="VCardBuilderDialog_BirthdayMenuItem.Text" xml:space="preserve">
+    <value>تاريخ الميلاد</value>
+  </data>
+  <data name="VCardBuilderDialog_AddressMenuItem.Text" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="VCardBuilderDialog_NoteMenuItem.Text" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="VCardBuilderDialog_WorkPhoneText.Text" xml:space="preserve">
+    <value>هاتف العمل</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveWorkPhoneHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إزالة هاتف العمل</value>
+  </data>
+  <data name="VCardBuilderDialog_15550101TextBox.PlaceholderText" xml:space="preserve">
+    <value>+1 555 0101</value>
+  </data>
+  <data name="VCardBuilderDialog_HomePhoneText.Text" xml:space="preserve">
+    <value>هاتف المنزل</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveHomePhoneHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إزالة هاتف المنزل</value>
+  </data>
+  <data name="VCardBuilderDialog_15550102TextBox.PlaceholderText" xml:space="preserve">
+    <value>+1 555 0102</value>
+  </data>
+  <data name="VCardBuilderDialog_NicknameText.Text" xml:space="preserve">
+    <value>الاسم المستعار</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveNicknameHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إزالة الاسم المستعار</value>
+  </data>
+  <data name="VCardBuilderDialog_JanieTextBox.PlaceholderText" xml:space="preserve">
+    <value>Janie</value>
+  </data>
+  <data name="VCardBuilderDialog_BirthdayText.Text" xml:space="preserve">
+    <value>تاريخ الميلاد</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveBirthdayHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إزالة تاريخ الميلاد</value>
+  </data>
+  <data name="VCardBuilderDialog_19901021TextBox.PlaceholderText" xml:space="preserve">
+    <value>1990-10-21</value>
+  </data>
+  <data name="VCardBuilderDialog_AddressText.Text" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveAddressHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إزالة العنوان</value>
+  </data>
+  <data name="VCardBuilderDialog_StreetTextBox.Header" xml:space="preserve">
+    <value>الشارع</value>
+  </data>
+  <data name="VCardBuilderDialog_CityTextBox.Header" xml:space="preserve">
+    <value>المدينة</value>
+  </data>
+  <data name="VCardBuilderDialog_StateRegionTextBox.Header" xml:space="preserve">
+    <value>الولاية / المنطقة</value>
+  </data>
+  <data name="VCardBuilderDialog_PostalCodeTextBox.Header" xml:space="preserve">
+    <value>الرمز البريدي</value>
+  </data>
+  <data name="VCardBuilderDialog_CountryTextBox.Header" xml:space="preserve">
+    <value>البلد</value>
+  </data>
+  <data name="VCardBuilderDialog_NoteText.Text" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveNoteHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إزالة الملاحظة</value>
+  </data>
+  <data name="VCardBuilderDialog_AddContactNotesTextBox.PlaceholderText" xml:space="preserve">
+    <value>إضافة ملاحظات عن جهة الاتصال</value>
+  </data>
+  <data name="VCardBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>معاينة</value>
+  </data>
+  <data name="WifiBuilderDialog_Dialog.Title" xml:space="preserve">
+    <value>إنشاء رمز Wi-Fi</value>
+  </data>
+  <data name="WifiBuilderDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="WifiBuilderDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>تطبيق</value>
+  </data>
+  <data name="WifiBuilderDialog_CreateAQRCodeThatText.Text" xml:space="preserve">
+    <value>أنشئ رمز QR لمشاركة بيانات الاتصال بشبكة Wi-Fi مع الهواتف والماسحات التي تدعم تنسيق Wi-Fi القياسي.</value>
+  </data>
+  <data name="WifiBuilderDialog_SsidTextBox.Header" xml:space="preserve">
+    <value>اسم الشبكة (SSID)</value>
+  </data>
+  <data name="WifiBuilderDialog_SsidTextBox.PlaceholderText" xml:space="preserve">
+    <value>Contoso Guest</value>
+  </data>
+  <data name="WifiBuilderDialog_SecurityTypeComboBox.Header" xml:space="preserve">
+    <value>نوع الأمان</value>
+  </data>
+  <data name="WifiBuilderDialog_WPAWPA2WPA3ComboBoxItem.Content" xml:space="preserve">
+    <value>WPA / WPA2 / WPA3</value>
+  </data>
+  <data name="WifiBuilderDialog_WEPLegacyComboBoxItem.Content" xml:space="preserve">
+    <value>WEP (قديم)</value>
+  </data>
+  <data name="WifiBuilderDialog_NoneOpenNetworkComboBoxItem.Content" xml:space="preserve">
+    <value>بلا حماية (شبكة مفتوحة)</value>
+  </data>
+  <data name="WifiBuilderDialog_PasswordTextBox.Header" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="WifiBuilderDialog_PasswordTextBox.PlaceholderText" xml:space="preserve">
+    <value>أدخل كلمة مرور شبكة Wi-Fi</value>
+  </data>
+  <data name="WifiBuilderDialog_ThisIsAHiddenNetworkCheckBox.Content" xml:space="preserve">
+    <value>هذه شبكة مخفية</value>
+  </data>
+  <data name="WifiBuilderDialog_OpenNetworkInfoBar.Message" xml:space="preserve">
+    <value>لا تستخدم الشبكات المفتوحة كلمة مرور، وتعرض أجهزة كثيرة تفاصيل الشبكة قبل الاتصال بها.</value>
+  </data>
+  <data name="WifiBuilderDialog_OpenNetworkInfoBar.Title" xml:space="preserve">
+    <value>شبكة مفتوحة</value>
+  </data>
+  <data name="WifiBuilderDialog_LegacySecurityInfoBar.Message" xml:space="preserve">
+    <value>أصبح WEP قديمًا وغير آمن. لا تستخدمه إلا عند الحاجة إلى التوافق مع أجهزة قديمة جدًا.</value>
+  </data>
+  <data name="WifiBuilderDialog_LegacySecurityInfoBar.Title" xml:space="preserve">
+    <value>أمان قديم</value>
+  </data>
+  <data name="WifiBuilderDialog_BeforeYouShareThisInfoBar.Message" xml:space="preserve">
+    <value>يمكن لأي شخص يمسح رمز QR هذا أو يصوّره الحصول على بيانات الاتصال بشبكة Wi-Fi. تتعرّف عليه عادةً أجهزة iPhone وAndroid الحديثة، لكن بعض الكاميرات القديمة والماسحات التابعة لجهات أخرى قد تعرض النص الخام فقط.</value>
+  </data>
+  <data name="WifiBuilderDialog_BeforeYouShareThisInfoBar.Title" xml:space="preserve">
+    <value>قبل المشاركة</value>
+  </data>
+  <data name="WifiBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>معاينة</value>
+  </data>
+  <data name="AboutQrCodesWebPage_BackToYourSimpleQRButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>العودة إلى إعدادات Simple QR Code Maker</value>
+  </data>
+  <data name="AboutQrCodesWebPage_BackToSettingsText.Text" xml:space="preserve">
+    <value>العودة إلى الإعدادات</value>
+  </data>
+  <data name="DecodingPage_CloseAdvancedToolsButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>إغلاق الأدوات المتقدمة</value>
+  </data>
+  <data name="DecodingPage_CloseAdvancedToolsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إغلاق الأدوات المتقدمة</value>
+  </data>
+  <data name="DecodingPage_CancelButton.Content" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="DecodingPage_OpenFilesIconAndTextButton.Text" xml:space="preserve">
+    <value>فتح ملفات...</value>
+  </data>
+  <data name="DecodingPage_OpenFilesIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>افتح ملف صورة واحدًا أو أكثر لفك ترميز الرموز الشريطية فيها</value>
+  </data>
+  <data name="DecodingPage_OpenFolderIconAndTextButton.Text" xml:space="preserve">
+    <value>فتح مجلد...</value>
+  </data>
+  <data name="DecodingPage_OpenFolderIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>افتح مجلدًا لاستعراض كل الصور فيه وفك ترميزها دفعة واحدة</value>
+  </data>
+  <data name="DecodingPage_PasteIconAndTextButton.Text" xml:space="preserve">
+    <value>لصق</value>
+  </data>
+  <data name="DecodingPage_PasteIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>الصق صورة أو ملفًا من الحافظة لمحاولة فك ترميز الرموز الشريطية</value>
+  </data>
+  <data name="DecodingPage_CameraIconAndTextButton.Text" xml:space="preserve">
+    <value>الكاميرا</value>
+  </data>
+  <data name="DecodingPage_CameraIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>افتح كاميرا Windows لالتقاط صورة وفك ترميزها</value>
+  </data>
+  <data name="DecodingPage_SnipIconAndTextButton.Text" xml:space="preserve">
+    <value>لقطة شاشة</value>
+  </data>
+  <data name="DecodingPage_SnipIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>افتح أداة القطع لالتقاط لقطة شاشة وفك ترميزها</value>
+  </data>
+  <data name="DecodingPage_OpenFileMenuItem.Text" xml:space="preserve">
+    <value>فتح الملف</value>
+  </data>
+  <data name="DecodingPage_OpenFileMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>فتح الملف المصدر</value>
+  </data>
+  <data name="DecodingPage_SaveImageMenuItem.Text" xml:space="preserve">
+    <value>حفظ الصورة...</value>
+  </data>
+  <data name="DecodingPage_SaveImageMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>حفظ الصورة التي فُكّ ترميزها في ملف</value>
+  </data>
+  <data name="DecodingPage_OpenContainingFolderMenuItem.Text" xml:space="preserve">
+    <value>فتح المجلد الحاوي</value>
+  </data>
+  <data name="DecodingPage_OpenContainingFolderMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>فتح المجلد الحاوي</value>
+  </data>
+  <data name="DecodingPage_OpenPasteDropAnImageText.Text" xml:space="preserve">
+    <value>افتح صورة أو الصقها أو أسقطها هنا أو التقطها لفك ترميزها.</value>
+  </data>
+  <data name="DecodingPage_NoCodesInfoBar.Title" xml:space="preserve">
+    <value>لم يُعثر على أي رموز</value>
+  </data>
+  <data name="DecodingPage_UseAdvancedToolsToOpenText.Text" xml:space="preserve">
+    <value>استخدم «الأدوات المتقدمة» لفتح أداة موجهة أو لإجراء إصلاحات سريعة على الصورة وتحسين اكتشاف الرموز.</value>
+  </data>
+  <data name="DecodingPage_MakeCodesIconAndTextButton.Text" xml:space="preserve">
+    <value>إنشاء رموز</value>
+  </data>
+  <data name="DecodingPage_MakeCodesIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>التبديل إلى إنشاء رموز QR</value>
+  </data>
+  <data name="DecodingPage_SettingsIconAndTextButton.Text" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="DecodingPage_SettingsIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إعدادات Simple QR Code Maker</value>
+  </data>
+  <data name="DecodingPage_NewDropDownButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>استبدال الصورة الحالية بصورة جديدة</value>
+  </data>
+  <data name="DecodingPage_NewText.Text" xml:space="preserve">
+    <value>جديد</value>
+  </data>
+  <data name="DecodingPage_OpenFilesMenuItem.Text" xml:space="preserve">
+    <value>فتح ملفات...</value>
+  </data>
+  <data name="DecodingPage_OpenFolderMenuItem.Text" xml:space="preserve">
+    <value>فتح مجلد...</value>
+  </data>
+  <data name="DecodingPage_PasteMenuItem.Text" xml:space="preserve">
+    <value>لصق</value>
+  </data>
+  <data name="DecodingPage_CameraMenuItem.Text" xml:space="preserve">
+    <value>الكاميرا</value>
+  </data>
+  <data name="DecodingPage_SnipMenuItem.Text" xml:space="preserve">
+    <value>لقطة شاشة</value>
+  </data>
+  <data name="DecodingPage_ShowOrHideAdvancedImageToggleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إظهار أدوات معالجة الصور المتقدمة أو إخفاؤها</value>
+  </data>
+  <data name="DecodingPage_AdvancedToolsText.Text" xml:space="preserve">
+    <value>الأدوات المتقدمة</value>
+  </data>
+  <data name="DecodingPage_EditThisTextAsAAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>تحرير هذا النص كرمز QR جديد</value>
+  </data>
+  <data name="DecodingPage_CopyTheEncodedTextToAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>نسخ النص المرمّز إلى الحافظة</value>
+  </data>
+  <data name="DecodingPage_TryToGoToTheAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>محاولة فتح عنوان URL</value>
+  </data>
+  <data name="DecodingPage_ShowHideImagesPanelAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إظهار جزء الصور أو إخفاؤه</value>
+  </data>
+  <data name="FolderSummaryPage_FolderSummaryText.Text" xml:space="preserve">
+    <value>ملخص المجلد</value>
+  </data>
+  <data name="FolderSummaryPage_SaveResultsAsACSVButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>حفظ النتائج كجدول بيانات CSV</value>
+  </data>
+  <data name="FolderSummaryPage_SaveSpreadsheetText.Text" xml:space="preserve">
+    <value>حفظ جدول البيانات</value>
+  </data>
+  <data name="FolderSummaryPage_FileNameTableViewTemplateColumn.Header" xml:space="preserve">
+    <value>اسم الملف</value>
+  </data>
+  <data name="FolderSummaryPage_OpenFileLinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>فتح هذه الصورة في تطبيقها الافتراضي</value>
+  </data>
+  <data name="FolderSummaryPage_OpenFileText.Text" xml:space="preserve">
+    <value>فتح الملف ↗</value>
+  </data>
+  <data name="FolderSummaryPage_QRCodesTableViewTemplateColumn.Header" xml:space="preserve">
+    <value>رموز QR</value>
+  </data>
+  <data name="FolderSummaryPage_ContentsTableViewTemplateColumn.Header" xml:space="preserve">
+    <value>المحتوى</value>
+  </data>
+  <data name="MainPage_UrlImportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إضافة نص أو استيراده</value>
+  </data>
+  <data name="MainPage_PasteMenuItem.Text" xml:space="preserve">
+    <value>لصق</value>
+  </data>
+  <data name="MainPage_BuildURLMenuItem.Text" xml:space="preserve">
+    <value>إنشاء عنوان URL</value>
+  </data>
+  <data name="MainPage_BuildVCardMenuItem.Text" xml:space="preserve">
+    <value>إنشاء بطاقة vCard</value>
+  </data>
+  <data name="MainPage_BuildVCardMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>أنشئ بطاقات عمل لمشاركة معلومات الاتصال بسهولة عبر رموز QR</value>
+  </data>
+  <data name="MainPage_BuildWiFiMenuItem.Text" xml:space="preserve">
+    <value>إنشاء رمز Wi-Fi</value>
+  </data>
+  <data name="MainPage_BuildWiFiMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>أنشئ رمز QR لمشاركة بيانات الاتصال بشبكة Wi-Fi</value>
+  </data>
+  <data name="MainPage_BuildEmailMenuItem.Text" xml:space="preserve">
+    <value>إعداد رسالة بريد إلكتروني</value>
+  </data>
+  <data name="MainPage_BuildEmailMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>أنشئ رمز QR للبريد الإلكتروني مع تعبئة المستلم والموضوع ونص الرسالة مسبقًا</value>
+  </data>
+  <data name="MainPage_GenerateIDsMenuItem.Text" xml:space="preserve">
+    <value>إنشاء معرّفات</value>
+  </data>
+  <data name="MainPage_OpenTextFileMenuItem.Text" xml:space="preserve">
+    <value>فتح ملف نصي</value>
+  </data>
+  <data name="MainPage_OpenSpreadsheetMenuItem.Text" xml:space="preserve">
+    <value>فتح جدول بيانات</value>
+  </data>
+  <data name="MainPage_MultiLineCodesToggleMenuFlyoutItem.Text" xml:space="preserve">
+    <value>رموز متعددة الأسطر</value>
+  </data>
+  <data name="MainPage_CodeColorColorPickerButton.ToolTipText" xml:space="preserve">
+    <value>لون الرمز</value>
+  </data>
+  <data name="MainPage_SetAsDefaultCodeColorMenuItem.Text" xml:space="preserve">
+    <value>تعيين كلون افتراضي للرمز</value>
+  </data>
+  <data name="MainPage_BackgroundColorColorPickerButton.ToolTipText" xml:space="preserve">
+    <value>لون الخلفية</value>
+  </data>
+  <data name="MainPage_SetAsDefaultBackgroundColorMenuItem.Text" xml:space="preserve">
+    <value>تعيين كلون افتراضي للخلفية</value>
+  </data>
+  <data name="MainPage_LevelOfErrorCorrectionDropDownButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>مستوى تصحيح الأخطاء</value>
+  </data>
+  <data name="MainPage_SetAsDefaultErrorCorrectionMenuItem.Text" xml:space="preserve">
+    <value>تعيين كمستوى افتراضي لتصحيح الأخطاء</value>
+  </data>
+  <data name="MainPage_WhatIsErrorCorrectionText.Text" xml:space="preserve">
+    <value>ما المقصود بتصحيح الأخطاء؟</value>
+  </data>
+  <data name="MainPage_LoadMoreText.Text" xml:space="preserve">
+    <value>تحميل المزيد</value>
+  </data>
+  <data name="MainPage_ReadCodesIconAndTextButton.Text" xml:space="preserve">
+    <value>قراءة الرموز</value>
+  </data>
+  <data name="MainPage_ReadCodesIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>افتح صورة لقراءة رموزها واستخراج النص منها</value>
+  </data>
+  <data name="MainPage_SettingsIconAndTextButton.Text" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="MainPage_SettingsIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إعدادات Simple QR Code Maker</value>
+  </data>
+  <data name="MainPage_ScrollToCodesButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>التمرير إلى معاينة رموز QR</value>
+  </data>
+  <data name="MainPage_ScrollToCodesText.Text" xml:space="preserve">
+    <value>التمرير إلى الرموز</value>
+  </data>
+  <data name="MainPage_OpenFolderHyperlinkButton.Content" xml:space="preserve">
+    <value>فتح المجلد</value>
+  </data>
+  <data name="MainPage_SettingsIconAndTextHyperlinkButton.Text" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="MainPage_AddButtonTeachingTip.Title" xml:space="preserve">
+    <value>طرق أخرى لإضافة المحتوى</value>
+  </data>
+  <data name="MainPage_AddButtonTeachingTip.CloseButtonContent" xml:space="preserve">
+    <value>فهمت</value>
+  </data>
+  <data name="MainPage_AddButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>افتح هذه القائمة للصق نص، أو إنشاء رموز QR لعناوين URL أو بطاقات vCard أو Wi-Fi أو البريد الإلكتروني، أو الاستيراد من ملف.</value>
+  </data>
+  <data name="MainPage_HistoryButtonTeachingTip.Title" xml:space="preserve">
+    <value>محفوظات رموز QR</value>
+  </data>
+  <data name="MainPage_HistoryButtonTeachingTip.CloseButtonContent" xml:space="preserve">
+    <value>فهمت</value>
+  </data>
+  <data name="MainPage_HistoryButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>تُحفظ هنا رموز QR التي أنشأتها سابقًا. اختر «المحفوظات» من شريط الأدوات لاستعادة رمز سابق.</value>
+  </data>
+  <data name="MainPage_BrandButtonTeachingTip.Title" xml:space="preserve">
+    <value>حفظ نمطك كعلامة تجارية</value>
+  </data>
+  <data name="MainPage_BrandButtonTeachingTip.CloseButtonContent" xml:space="preserve">
+    <value>فهمت</value>
+  </data>
+  <data name="MainPage_BrandButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>استخدم هذا الزر لحفظ ألوانك وشعارك وإعداداتك كعلامة تجارية باسم تختاره، ثم طبّقها على أي رمز QR فورًا.</value>
+  </data>
+  <data name="MainPage_BrandUrlWarningTip.Title" xml:space="preserve">
+    <value>تعارض عنوان URL للعلامة التجارية</value>
+  </data>
+  <data name="MainPage_BrandUrlWarningTip.CloseButtonContent" xml:space="preserve">
+    <value>فهمت</value>
+  </data>
+  <data name="MainPage_BrandUrlWarningTip.Subtitle" xml:space="preserve">
+    <value>بعض المحتوى لا يطابق عنوان URL لهذه العلامة التجارية. يمكنك تغيير طريقة التعامل مع هذا التعارض في الإعدادات.</value>
+  </data>
+  <data name="SettingsPage_RateAndReviewSettingsCard.Description" xml:space="preserve">
+    <value>هل يعجبك التطبيق؟ قيّمه أو أرسل لي ملاحظاتك!</value>
+  </data>
+  <data name="SettingsPage_RateAndReviewSettingsCard.Header" xml:space="preserve">
+    <value>التقييم والمراجعة</value>
+  </data>
+  <data name="SettingsPage_ThemeSettingsExpander.Description" xml:space="preserve">
+    <value>اختر نسق التطبيق</value>
+  </data>
+  <data name="SettingsPage_ThemeSettingsExpander.Header" xml:space="preserve">
+    <value>النسق</value>
+  </data>
+  <data name="SettingsPage_QRCodeText.Text" xml:space="preserve">
+    <value>رمز QR</value>
+  </data>
+  <data name="SettingsPage_LaunchModeSettingsExpander.Description" xml:space="preserve">
+    <value>اختر ما إذا كان التطبيق يبدأ في وضع إنشاء رموز QR أم قراءتها</value>
+  </data>
+  <data name="SettingsPage_LaunchModeSettingsExpander.Header" xml:space="preserve">
+    <value>وضع بدء التشغيل</value>
+  </data>
+  <data name="SettingsPage_CreatingQRCodesRadioButton.Content" xml:space="preserve">
+    <value>إنشاء رموز QR</value>
+  </data>
+  <data name="SettingsPage_ReadingQRCodesRadioButton.Content" xml:space="preserve">
+    <value>قراءة رموز QR</value>
+  </data>
+  <data name="SettingsPage_MultiLineHandlingSettingsExpander.Description" xml:space="preserve">
+    <value>طريقة التعامل مع النص متعدد الأسطر عند إنشاء رموز QR</value>
+  </data>
+  <data name="SettingsPage_MultiLineHandlingSettingsExpander.Header" xml:space="preserve">
+    <value>التعامل مع النص متعدد الأسطر</value>
+  </data>
+  <data name="SettingsPage_OneCodeForEachLineRadioButton.Content" xml:space="preserve">
+    <value>رمز واحد لكل سطر</value>
+  </data>
+  <data name="SettingsPage_MultiLineInSingleCodeRadioButton.Content" xml:space="preserve">
+    <value>عدة أسطر في رمز واحد</value>
+  </data>
+  <data name="SettingsPage_BaseTextSettingsCard.Description" xml:space="preserve">
+    <value>النص الذي يظهر في البداية وعند إضافة أسطر جديدة</value>
+  </data>
+  <data name="SettingsPage_BaseTextSettingsCard.Header" xml:space="preserve">
+    <value>النص الأساسي</value>
+  </data>
+  <data name="SettingsPage_ExHttpsExampleComTextBox.PlaceholderText" xml:space="preserve">
+    <value>مثال: ⁦https://example.com/⁩</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="SettingsPage_AutoBrandsSettingsCard.Description" xml:space="preserve">
+    <value>طبّق العلامة التجارية المطابقة تلقائيًا عندما يتطابق عنوان URL الأساسي للرمز مع عنوانها</value>
+  </data>
+  <data name="SettingsPage_AutoBrandsSettingsCard.Header" xml:space="preserve">
+    <value>تطبيق العلامات التجارية تلقائيًا</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch.OffContent" xml:space="preserve">
+    <value>إيقاف</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch.OnContent" xml:space="preserve">
+    <value>تشغيل</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesSettingsCard.Description" xml:space="preserve">
+    <value>اقتراح ألوان وشعارات لروابط المواقع المعروفة. لا تُطبّق الأنماط إلا إذا اخترتها.</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesSettingsCard.Header" xml:space="preserve">
+    <value>اقتراح أنماط العلامات التجارية</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesToggleSwitch.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>اقتراح أنماط العلامات التجارية</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesToggleSwitch.OffContent" xml:space="preserve">
+    <value>إيقاف</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesToggleSwitch.OnContent" xml:space="preserve">
+    <value>تشغيل</value>
+  </data>
+  <data name="SettingsPage_BrandURLOnPlainTextSettingsExpander.Description" xml:space="preserve">
+    <value>الإجراء عند تطبيق علامة تجارية لها عنوان URL على نص عادي لا يحتوي على عنوان URL</value>
+  </data>
+  <data name="SettingsPage_BrandURLOnPlainTextSettingsExpander.Header" xml:space="preserve">
+    <value>عنوان URL للعلامة التجارية في النص العادي</value>
+  </data>
+  <data name="SettingsPage_IgnoreLeaveExistingContentUnchangedRadioButton.Content" xml:space="preserve">
+    <value>تجاهل — إبقاء المحتوى الحالي دون تغيير</value>
+  </data>
+  <data name="SettingsPage_WarnDefaultShowAnInfoRadioButton.Content" xml:space="preserve">
+    <value>تحذير (افتراضي) — إظهار شريط معلومات</value>
+  </data>
+  <data name="SettingsPage_AutoPrependAddBrandURLRadioButton.Content" xml:space="preserve">
+    <value>إضافة تلقائية — وضع عنوان URL للعلامة التجارية قبل كل عنصر نصي</value>
+  </data>
+  <data name="SettingsPage_BrandURLMismatchSettingsExpander.Description" xml:space="preserve">
+    <value>الإجراء عند تطبيق علامة تجارية لها عنوان URL على محتوى فيه عناوين غير مطابقة</value>
+  </data>
+  <data name="SettingsPage_BrandURLMismatchSettingsExpander.Header" xml:space="preserve">
+    <value>عدم تطابق عنوان URL للعلامة التجارية</value>
+  </data>
+  <data name="SettingsPage_IgnoreKeepExistingURLsRadioButton.Content" xml:space="preserve">
+    <value>تجاهل — إبقاء عناوين URL الحالية</value>
+  </data>
+  <data name="SettingsPage_WarnDefaultShowAnInfoRadioButton2.Content" xml:space="preserve">
+    <value>تحذير (افتراضي) — إظهار شريط معلومات</value>
+  </data>
+  <data name="SettingsPage_AutoFixReplaceNonMatchingRadioButton.Content" xml:space="preserve">
+    <value>تصحيح تلقائي — استبدال العناوين غير المطابقة بعنوان URL للعلامة التجارية</value>
+  </data>
+  <data name="SettingsPage_URLWarningsSettingsCard.Description" xml:space="preserve">
+    <value>إظهار تحذير إذا لم تحتوِ رموز QR على عناوين URL</value>
+  </data>
+  <data name="SettingsPage_URLWarningsSettingsCard.Header" xml:space="preserve">
+    <value>تحذيرات عناوين URL</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch2.OffContent" xml:space="preserve">
+    <value>إيقاف</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch2.OnContent" xml:space="preserve">
+    <value>تشغيل</value>
+  </data>
+  <data name="SettingsPage_RedirectorWarningsSettingsCard.Description" xml:space="preserve">
+    <value>إظهار تحذير عند استخدام رموز QR خدمة إعادة توجيه معروفة مثل ⁦bit.ly⁩ أو ⁦qrco.de⁩</value>
+  </data>
+  <data name="SettingsPage_RedirectorWarningsSettingsCard.Header" xml:space="preserve">
+    <value>تحذيرات إعادة التوجيه</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch3.OffContent" xml:space="preserve">
+    <value>إيقاف</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch3.OnContent" xml:space="preserve">
+    <value>تشغيل</value>
+  </data>
+  <data name="SettingsPage_SafeRedirectorDomainsSettingsExpander.Description" xml:space="preserve">
+    <value>النطاقات التي وضعت عليها علامة آمنة من شريط معلومات التحذير من إعادة التوجيه</value>
+  </data>
+  <data name="SettingsPage_SafeRedirectorDomainsSettingsExpander.Header" xml:space="preserve">
+    <value>نطاقات إعادة التوجيه الآمنة</value>
+  </data>
+  <data name="SettingsPage_KnownSafeDomainsSettingsCard.Header" xml:space="preserve">
+    <value>النطاقات الآمنة المعروفة</value>
+  </data>
+  <data name="SettingsPage_RemoveButton.Content" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="SettingsPage_ClearAllButton.Content" xml:space="preserve">
+    <value>مسح الكل</value>
+  </data>
+  <data name="SettingsPage_MinimumSizeTextSettingsCard.Description" xml:space="preserve">
+    <value>إخفاء نص الحد الأدنى للحجم في رموز QR</value>
+  </data>
+  <data name="SettingsPage_MinimumSizeTextSettingsCard.Header" xml:space="preserve">
+    <value>نص الحد الأدنى للحجم</value>
+  </data>
+  <data name="SettingsPage_ShowingToggleSwitch.OffContent" xml:space="preserve">
+    <value>ظاهر</value>
+  </data>
+  <data name="SettingsPage_ShowingToggleSwitch.OnContent" xml:space="preserve">
+    <value>مخفي</value>
+  </data>
+  <data name="SettingsPage_SaveBothButtonSettingsCard.Description" xml:space="preserve">
+    <value>إظهار زر «حفظ بكلا التنسيقين» لتنسيقي PNG وSVG</value>
+  </data>
+  <data name="SettingsPage_SaveBothButtonSettingsCard.Header" xml:space="preserve">
+    <value>زر «حفظ بكلا التنسيقين»</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch.OffContent" xml:space="preserve">
+    <value>مخفي</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch.OnContent" xml:space="preserve">
+    <value>ظاهر</value>
+  </data>
+  <data name="SettingsPage_PrintButtonSettingsCard.Description" xml:space="preserve">
+    <value>إظهار زر «طباعة» مع إجراءات التصدير</value>
+  </data>
+  <data name="SettingsPage_PrintButtonSettingsCard.Header" xml:space="preserve">
+    <value>زر «طباعة»</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch2.OffContent" xml:space="preserve">
+    <value>مخفي</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch2.OnContent" xml:space="preserve">
+    <value>ظاهر</value>
+  </data>
+  <data name="SettingsPage_ZipSaveOptionsSettingsCard.Description" xml:space="preserve">
+    <value>إظهار خيارات الحفظ في ملف ZIP في قوائم التصدير</value>
+  </data>
+  <data name="SettingsPage_ZipSaveOptionsSettingsCard.Header" xml:space="preserve">
+    <value>خيارات الحفظ في ملف ZIP</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch3.OffContent" xml:space="preserve">
+    <value>مخفي</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch3.OnContent" xml:space="preserve">
+    <value>ظاهر</value>
+  </data>
+  <data name="SettingsPage_MaxScanDistanceAtMinimumSettingsCard.Header" xml:space="preserve">
+    <value>أقصى مسافة مسح عند الحد الأدنى للحجم</value>
+  </data>
+  <data name="SettingsPage_QRPaddingSettingsCard.Header" xml:space="preserve">
+    <value>هامش رمز QR</value>
+  </data>
+  <data name="SettingsPage_QuickSaveLocationSettingsExpander.Description" xml:space="preserve">
+    <value>تخطَّ منتقي المجلدات واحفظ مباشرةً في هذا المجلد</value>
+  </data>
+  <data name="SettingsPage_QuickSaveLocationSettingsExpander.Header" xml:space="preserve">
+    <value>موقع الحفظ السريع</value>
+  </data>
+  <data name="SettingsPage_FolderSettingsCard.Header" xml:space="preserve">
+    <value>المجلد</value>
+  </data>
+  <data name="SettingsPage_NoFolderSelectedTextBox.PlaceholderText" xml:space="preserve">
+    <value>لم يُحدّد أي مجلد</value>
+  </data>
+  <data name="SettingsPage_BrowseButton.Content" xml:space="preserve">
+    <value>استعراض...</value>
+  </data>
+  <data name="SettingsPage_ClearButton.Content" xml:space="preserve">
+    <value>مسح</value>
+  </data>
+  <data name="SettingsPage_DefaultsText.Text" xml:space="preserve">
+    <value>الإعدادات الافتراضية</value>
+  </data>
+  <data name="SettingsPage_QRCodeDefaultsSettingsExpander.Description" xml:space="preserve">
+    <value>قيم البداية لكل جلسة، قبل تطبيق أي علامة تجارية. عيّنها من الصفحة الرئيسية باستخدام النقر بزر الماوس الأيمن أو أزرار القوائم المنبثقة.</value>
+  </data>
+  <data name="SettingsPage_QRCodeDefaultsSettingsExpander.Header" xml:space="preserve">
+    <value>الإعدادات الافتراضية لرمز QR</value>
+  </data>
+  <data name="SettingsPage_CodeColorSettingsCard.Header" xml:space="preserve">
+    <value>لون الرمز</value>
+  </data>
+  <data name="SettingsPage_ResetButton.Content" xml:space="preserve">
+    <value>إعادة ضبط</value>
+  </data>
+  <data name="SettingsPage_BackgroundColorSettingsCard.Header" xml:space="preserve">
+    <value>لون الخلفية</value>
+  </data>
+  <data name="SettingsPage_ResetButton2.Content" xml:space="preserve">
+    <value>إعادة ضبط</value>
+  </data>
+  <data name="SettingsPage_ErrorCorrectionSettingsCard.Header" xml:space="preserve">
+    <value>تصحيح الأخطاء</value>
+  </data>
+  <data name="SettingsPage_ResetButton3.Content" xml:space="preserve">
+    <value>إعادة ضبط</value>
+  </data>
+  <data name="SettingsPage_FrameAndPatternSettingsCard.Header" xml:space="preserve">
+    <value>الإطار والنمط</value>
+  </data>
+  <data name="SettingsPage_ResetButton4.Content" xml:space="preserve">
+    <value>إعادة ضبط</value>
+  </data>
+  <data name="SettingsPage_DataText.Text" xml:space="preserve">
+    <value>البيانات</value>
+  </data>
+  <data name="SettingsPage_ExportSettingsExpander.Description" xml:space="preserve">
+    <value>حفظ الإعدادات والمحفوظات والعلامات التجارية وصور الشعارات في ملف نسخ احتياطي بتنسيق ZIP</value>
+  </data>
+  <data name="SettingsPage_ExportSettingsExpander.Header" xml:space="preserve">
+    <value>تصدير</value>
+  </data>
+  <data name="SettingsPage_ExportButton.Content" xml:space="preserve">
+    <value>تصدير...</value>
+  </data>
+  <data name="SettingsPage_IncludeSettingsSettingsCard.Header" xml:space="preserve">
+    <value>تضمين الإعدادات</value>
+  </data>
+  <data name="SettingsPage_IncludeBrandsSettingsCard.Header" xml:space="preserve">
+    <value>تضمين العلامات التجارية</value>
+  </data>
+  <data name="SettingsPage_IncludeHistorySettingsCard.Header" xml:space="preserve">
+    <value>تضمين المحفوظات</value>
+  </data>
+  <data name="SettingsPage_ImportSettingsCard.Description" xml:space="preserve">
+    <value>ادمج الإعدادات والمحفوظات والعلامات التجارية وصور الشعارات من ملف نسخ احتياطي بتنسيق ZIP. تُحفظ الإعدادات الحالية غير الموجودة في النسخة الاحتياطية.</value>
+  </data>
+  <data name="SettingsPage_ImportSettingsCard.Header" xml:space="preserve">
+    <value>استيراد</value>
+  </data>
+  <data name="SettingsPage_ImportButton.Content" xml:space="preserve">
+    <value>استيراد...</value>
+  </data>
+  <data name="SettingsPage_SimpleQRCodeMakerSettingsExpander.Header" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="SettingsPage_PrivacySettingsCard.Header" xml:space="preserve">
+    <value>الخصوصية</value>
+  </data>
+  <data name="SettingsPage_LearnMoreSettingsCard.Header" xml:space="preserve">
+    <value>معرفة المزيد</value>
+  </data>
+  <data name="SettingsPage_QRCodesOnWikipediaHyperlinkButton.Content" xml:space="preserve">
+    <value>رموز QR على ويكيبيديا</value>
+  </data>
+  <data name="SettingsPage_RateThisAppSettingsCard.Header" xml:space="preserve">
+    <value>تقييم هذا التطبيق</value>
+  </data>
+  <data name="SettingsPage_MicrosoftStoreHyperlinkButton.Content" xml:space="preserve">
+    <value>متجر Microsoft</value>
+  </data>
+  <data name="SettingsPage_SourceCodeSettingsCard.Header" xml:space="preserve">
+    <value>التعليمات البرمجية المصدرية</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_CreatedBySettingsCard.Header" xml:space="preserve">
+    <value>المطوّر</value>
+  </data>
+  <data name="SettingsPage_TheJoeFinHyperlinkButton.Content" xml:space="preserve">
+    <value>TheJoeFin</value>
+  </data>
+  <data name="SettingsPage_MoreAppsByTheJoeFinSettingsExpander.Description" xml:space="preserve">
+    <value>تطبيقات مجانية أخرى من المطوّر نفسه</value>
+  </data>
+  <data name="SettingsPage_MoreAppsByTheJoeFinSettingsExpander.Header" xml:space="preserve">
+    <value>المزيد من تطبيقات TheJoeFin</value>
+  </data>
+  <data name="SettingsPage_SimpleIconFileMakerSettingsCard.Description" xml:space="preserve">
+    <value>إنشاء ملفات الأيقونات وتحريرها وتحويلها</value>
+  </data>
+  <data name="SettingsPage_SimpleIconFileMakerSettingsCard.Header" xml:space="preserve">
+    <value>Simple Icon File Maker</value>
+  </data>
+  <data name="SettingsPage_MicrosoftStoreHyperlinkButton2.Content" xml:space="preserve">
+    <value>متجر Microsoft</value>
+  </data>
+  <data name="SettingsPage_TextGrabSettingsCard.Description" xml:space="preserve">
+    <value>نسخ النص من أي مكان على الشاشة</value>
+  </data>
+  <data name="SettingsPage_TextGrabSettingsCard.Header" xml:space="preserve">
+    <value>Text Grab</value>
+  </data>
+  <data name="SettingsPage_MicrosoftStoreHyperlinkButton3.Content" xml:space="preserve">
+    <value>متجر Microsoft</value>
+  </data>
+  <data name="SettingsPage_WebsiteSettingsCard.Header" xml:space="preserve">
+    <value>موقع الويب</value>
+  </data>
+  <data name="SettingsPage_JoeFinAppsComHyperlinkButton.Content" xml:space="preserve">
+    <value>JoeFinApps.com</value>
+  </data>
+  <data name="SettingsPage_LibrariesSettingsExpander.Description" xml:space="preserve">
+    <value>مكتبات مفتوحة المصدر يستخدمها هذا التطبيق</value>
+  </data>
+  <data name="SettingsPage_LibrariesSettingsExpander.Header" xml:space="preserve">
+    <value>المكتبات</value>
+  </data>
+  <data name="SettingsPage_ViewLicensesButton.Content" xml:space="preserve">
+    <value>عرض التراخيص...</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitMvvmSettingsCard.Description" xml:space="preserve">
+    <value>ترخيص MIT</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitMvvmSettingsCard.Header" xml:space="preserve">
+    <value>CommunityToolkit.Mvvm</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton2.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitWinUISettingsCard.Description" xml:space="preserve">
+    <value>ترخيص MIT</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitWinUISettingsCard.Header" xml:space="preserve">
+    <value>CommunityToolkit WinUI</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton3.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_HumanizerSettingsCard.Description" xml:space="preserve">
+    <value>ترخيص MIT</value>
+  </data>
+  <data name="SettingsPage_HumanizerSettingsCard.Header" xml:space="preserve">
+    <value>Humanizer</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton4.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_MagickNETSettingsCard.Description" xml:space="preserve">
+    <value>ترخيص Apache-2.0</value>
+  </data>
+  <data name="SettingsPage_MagickNETSettingsCard.Header" xml:space="preserve">
+    <value>Magick.NET</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton5.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_MicrosoftExtensionsHostingSettingsCard.Description" xml:space="preserve">
+    <value>ترخيص MIT</value>
+  </data>
+  <data name="SettingsPage_MicrosoftExtensionsHostingSettingsCard.Header" xml:space="preserve">
+    <value>Microsoft.Extensions.Hosting</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton6.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_MicrosoftGraphicsWin2DSettingsCard.Description" xml:space="preserve">
+    <value>ترخيص MIT</value>
+  </data>
+  <data name="SettingsPage_MicrosoftGraphicsWin2DSettingsCard.Header" xml:space="preserve">
+    <value>Microsoft.Graphics.Win2D</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton7.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_PdfPigSettingsCard.Description" xml:space="preserve">
+    <value>ترخيص Apache-2.0</value>
+  </data>
+  <data name="SettingsPage_PdfPigSettingsCard.Header" xml:space="preserve">
+    <value>PdfPig</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton8.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WindowsAppSDKSettingsCard.Description" xml:space="preserve">
+    <value>ترخيص MIT</value>
+  </data>
+  <data name="SettingsPage_WindowsAppSDKSettingsCard.Header" xml:space="preserve">
+    <value>Windows App SDK</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton9.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WinUI3SettingsCard.Description" xml:space="preserve">
+    <value>ترخيص MIT</value>
+  </data>
+  <data name="SettingsPage_WinUI3SettingsCard.Header" xml:space="preserve">
+    <value>WinUI 3</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton10.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WinUITableViewSettingsCard.Description" xml:space="preserve">
+    <value>ترخيص MIT</value>
+  </data>
+  <data name="SettingsPage_WinUITableViewSettingsCard.Header" xml:space="preserve">
+    <value>WinUI.TableView</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton11.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WinUIExSettingsCard.Description" xml:space="preserve">
+    <value>ترخيص MIT</value>
+  </data>
+  <data name="SettingsPage_WinUIExSettingsCard.Header" xml:space="preserve">
+    <value>WinUIEx</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton12.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_XAMLBehaviorsSettingsCard.Description" xml:space="preserve">
+    <value>ترخيص MIT</value>
+  </data>
+  <data name="SettingsPage_XAMLBehaviorsSettingsCard.Header" xml:space="preserve">
+    <value>XAML Behaviors</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton13.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_ZXingNETSettingsCard.Description" xml:space="preserve">
+    <value>ترخيص Apache-2.0</value>
+  </data>
+  <data name="SettingsPage_ZXingNETSettingsCard.Header" xml:space="preserve">
+    <value>ZXing.NET</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton14.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="ShellPage_MakeCodesNavItem.Content" xml:space="preserve">
+    <value>إنشاء رموز</value>
+  </data>
+  <data name="ShellPage_ReadCodesNavItem.Content" xml:space="preserve">
+    <value>قراءة الرموز</value>
+  </data>
+  <data name="ShellPage_FaqNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>أسئلة شائعة حول رموز QR</value>
+  </data>
+  <data name="ShellPage_HistoryNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>محفوظات رموز QR التي أُنشئت سابقًا</value>
+  </data>
+  <data name="ShellPage_ShareNavItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>مشاركة</value>
+  </data>
+  <data name="ShellPage_ShareNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>مشاركة المحتوى أو تطبيق Simple QR Code Maker</value>
+  </data>
+  <data name="ShellPage_ShareContentMenuItem.Text" xml:space="preserve">
+    <value>مشاركة المحتوى</value>
+  </data>
+  <data name="ShellPage_ShareAppMenuItem.Text" xml:space="preserve">
+    <value>مشاركة التطبيق</value>
+  </data>
+  <data name="ShellPage_SettingsNavItem.Content" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="ShellPage_SettingsNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>إعدادات Simple QR Code Maker</value>
+  </data>
+  <data name="ShellPage_SharePane.Title" xml:space="preserve">
+    <value>مشاركة Simple QR Code Maker</value>
+  </data>
+  <data name="ShellPage_LinkToTheMicrosoftStoreText.Text" xml:space="preserve">
+    <value>رابط متجر Microsoft</value>
+  </data>
+  <data name="ShellPage_VisitText.Text" xml:space="preserve">
+    <value>زيارة</value>
+  </data>
+  <data name="ShellPage_CopyText.Text" xml:space="preserve">
+    <value>نسخ</value>
+  </data>
+  <data name="ShellPage_ShareErrorBar.Title" xml:space="preserve">
+    <value>تعذّرت مشاركة المحتوى</value>
+  </data>
+  <data name="SpreadsheetImportPage_HeaderRowSettingsCard.Description" xml:space="preserve">
+    <value>اختر ما إذا كنت تريد استخدام الصف الأول لأسماء الأعمدة.</value>
+  </data>
+  <data name="SpreadsheetImportPage_HeaderRowSettingsCard.Header" xml:space="preserve">
+    <value>صف رؤوس الأعمدة</value>
+  </data>
+  <data name="SpreadsheetImportPage_GenerateIDsAndSaveBackSettingsExpander.Header" xml:space="preserve">
+    <value>إنشاء المعرّفات وحفظها في الملف الأصلي</value>
+  </data>
+  <data name="SpreadsheetImportPage_IDStyleSettingsCard.Header" xml:space="preserve">
+    <value>تنسيق المعرّف</value>
+  </data>
+  <data name="SpreadsheetImportPage_NanoIDLengthSettingsCard.Description" xml:space="preserve">
+    <value>يُستخدم فقط عند اختيار تنسيق NanoID.</value>
+  </data>
+  <data name="SpreadsheetImportPage_NanoIDLengthSettingsCard.Header" xml:space="preserve">
+    <value>طول NanoID</value>
+  </data>
+  <data name="SpreadsheetImportPage_ColumnToImportSettingsCard.Header" xml:space="preserve">
+    <value>العمود المراد استيراده</value>
+  </data>
+  <data name="SpreadsheetImportPage_TextBeforeImportedLineSettingsCard.Description" xml:space="preserve">
+    <value>نص اختياري يُضاف قبل كل سطر مستورد.</value>
+  </data>
+  <data name="SpreadsheetImportPage_TextBeforeImportedLineSettingsCard.Header" xml:space="preserve">
+    <value>النص قبل السطر المستورد</value>
+  </data>
+  <data name="SpreadsheetImportPage_ExHttpsTextBox.PlaceholderText" xml:space="preserve">
+    <value>مثال: ⁦https://⁩</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="SpreadsheetImportPage_TextAfterImportedLineSettingsCard.Description" xml:space="preserve">
+    <value>نص اختياري يُضاف بعد كل سطر مستورد.</value>
+  </data>
+  <data name="SpreadsheetImportPage_TextAfterImportedLineSettingsCard.Header" xml:space="preserve">
+    <value>النص بعد السطر المستورد</value>
+  </data>
+  <data name="SpreadsheetImportPage_ExSourceQrCodeTextBox.PlaceholderText" xml:space="preserve">
+    <value>مثال: ⁦?source=qr-code⁩</value>
+  </data>
+  <data name="SpreadsheetImportPage_RemoveDuplicatesSettingsCard.Description" xml:space="preserve">
+    <value>استورد القيم الفريدة فقط بعد إضافة أي نص قبلها أو بعدها.</value>
+  </data>
+  <data name="SpreadsheetImportPage_RemoveDuplicatesSettingsCard.Header" xml:space="preserve">
+    <value>إزالة التكرارات</value>
+  </data>
+  <data name="SpreadsheetImportPage_PreviewText.Text" xml:space="preserve">
+    <value>معاينة</value>
+  </data>
+  <data name="Main_InputExample" xml:space="preserve">
+    <value>مثال: ⁦http://www.example.com⁩</value>
+  </data>
+  <data name="Main_InputExampleFormat" xml:space="preserve">
+    <value>مثال: ⁦{0}⁩</value>
+    <comment>{0} = placeholdersList[random.Next(placeholdersList.Length)]</comment>
+  </data>
+  <data name="Main_CodeCopied" xml:space="preserve">
+    <value>نُسخ رمز QR إلى الحافظة</value>
+  </data>
+  <data name="Main_MarkRedirectorSafe" xml:space="preserve">
+    <value>وضع علامة آمنة على «⁦{0}⁩»</value>
+    <comment>{0} = CurrentRedirectorWarningDomain</comment>
+  </data>
+  <data name="Frame_FallbackHelp" xml:space="preserve">
+    <value>تُستخدم عند تعذّر استخراج ملخص للمحتوى.</value>
+  </data>
+  <data name="Frame_FallbackLabel" xml:space="preserve">
+    <value>نص التسمية الاحتياطية</value>
+  </data>
+  <data name="Frame_BannerText" xml:space="preserve">
+    <value>نص الشريط</value>
+  </data>
+  <data name="Frame_CalloutText" xml:space="preserve">
+    <value>نص الفقاعة</value>
+  </data>
+  <data name="Frame_LabelText" xml:space="preserve">
+    <value>نص التسمية</value>
+  </data>
+  <data name="Main_EmojiRenderFailed" xml:space="preserve">
+    <value>تعذّر عرض الرمز التعبيري المحدّد</value>
+  </data>
+  <data name="Correction_Low" xml:space="preserve">
+    <value>منخفض (7%)</value>
+  </data>
+  <data name="Correction_Medium" xml:space="preserve">
+    <value>متوسط (15%)</value>
+  </data>
+  <data name="Correction_Quarter" xml:space="preserve">
+    <value>الربع (25%)</value>
+  </data>
+  <data name="Correction_High" xml:space="preserve">
+    <value>عالٍ (30%)</value>
+  </data>
+  <data name="Main_EmojiStyleColor" xml:space="preserve">
+    <value>النمط المحدّد: ثلاثي الأبعاد</value>
+  </data>
+  <data name="Main_EmojiStyleSolid" xml:space="preserve">
+    <value>النمط المحدّد: أبيض وأسود</value>
+  </data>
+  <data name="Main_BulkClipboardLimit" xml:space="preserve">
+    <value>لا يتوفر النسخ الجماعي عند طلب أكثر من {0} من رموز QR. احفظها كملفات منفصلة أو في ملف ZIP بدلاً من ذلك.</value>
+    <comment>{0} = LargeBatchThreshold</comment>
+  </data>
+  <data name="Main_PreviewSingle" xml:space="preserve">
+    <value>تظهر معاينة واحدة.</value>
+  </data>
+  <data name="Main_PreviewAll" xml:space="preserve">
+    <value>تظهر جميع المعاينات، وعددها {0}.</value>
+    <comment>{0} = RequestedCodeCount</comment>
+  </data>
+  <data name="Main_PreviewPartial" xml:space="preserve">
+    <value>المعاينات المعروضة: {0} من {1}.</value>
+    <comment>{0} = LoadedPreviewCount; {1} = RequestedCodeCount</comment>
+  </data>
+  <data name="Main_BulkSaving" xml:space="preserve">
+    <value>جارٍ حفظ رموز QR:‏ {0} من {1}...</value>
+    <comment>{0} = BulkOperationCompletedItemCount; {1} = BulkOperationTotalItemCount</comment>
+  </data>
+  <data name="Main_CommonBrandFailed" xml:space="preserve">
+    <value>تعذّر تغيير العلامة التجارية المشتركة</value>
+  </data>
+  <data name="Main_CommonBrandFailedHelp" xml:space="preserve">
+    <value>تعذّر تطبيق الألوان والشعار. جرّب عنوان URL أقصر أو استخدم النمط الحالي.</value>
+  </data>
+  <data name="Main_GenerationFailed" xml:space="preserve">
+    <value>حدث خطأ أثناء إنشاء رمز QR</value>
+  </data>
+  <data name="Main_ContentTooLong" xml:space="preserve">
+    <value>النص الذي أدخلته طويل جدًا لرمز QR. جرّب نصًا أقصر.</value>
+  </data>
+  <data name="Main_SomeContentTooLong" xml:space="preserve">
+    <value>تم تخطي بعض النصوص لأنها أطول مما يستوعبه رمز QR.</value>
+  </data>
+  <data name="Redirector_Detected" xml:space="preserve">
+    <value>تم اكتشاف خدمة إعادة توجيه معروفة</value>
+  </data>
+  <data name="Main_RedirectorBatchWarning" xml:space="preserve">
+    <value>عدد عناوين URL التي تستخدم خدمات إعادة توجيه معروفة في هذه المجموعة: {0}. أول نطاق تم اكتشافه: ⁦{1}⁩.</value>
+    <comment>{0} = unsafeRedirectorCount; {1} = host</comment>
+  </data>
+  <data name="Main_RedirectorWarning" xml:space="preserve">
+    <value>يستخدم عنوان URL هذا خدمة إعادة التوجيه المعروفة ⁦{0}⁩. قد لا تظهر الوجهة النهائية لمن يمسح الرمز إلا بعد فتح الرابط.</value>
+    <comment>{0} = host</comment>
+  </data>
+  <data name="Main_BrandNonUrl" xml:space="preserve">
+    <value>تم اكتشاف محتوى لا يتضمن عنوان URL</value>
+  </data>
+  <data name="Main_BrandNonUrlHelp" xml:space="preserve">
+    <value>لهذه العلامة التجارية عنوان URL، لكن بعض العناصر نص عادي. غيّر طريقة التعامل مع عنوان العلامة التجارية في الإعدادات.</value>
+  </data>
+  <data name="Main_BrandUrlMismatch" xml:space="preserve">
+    <value>عنوان URL لا يطابق عنوان العلامة التجارية</value>
+  </data>
+  <data name="Main_BrandUrlMismatchHelp" xml:space="preserve">
+    <value>بعض عناوين URL لا تطابق عنوان هذه العلامة التجارية. غيّر طريقة التعامل مع التعارض في الإعدادات.</value>
+  </data>
+  <data name="Main_ClipboardNoImage" xml:space="preserve">
+    <value>لا تحتوي الحافظة على صورة</value>
+  </data>
+  <data name="Main_ClipboardLogoFailed" xml:space="preserve">
+    <value>تعذّر تحميل الصورة من الحافظة</value>
+  </data>
+  <data name="Main_FileReadFailedHelp" xml:space="preserve">
+    <value>تعذّرت قراءة الملف المحدّد</value>
+  </data>
+  <data name="Main_FileReadFailed" xml:space="preserve">
+    <value>خطأ في قراءة الملف</value>
+  </data>
+  <data name="Main_ExcelUnavailableHelp" xml:space="preserve">
+    <value>يمكن استيراد ملفات CSV وTSV. ثبّت Microsoft Excel لاستيراد مصنفات Excel.</value>
+  </data>
+  <data name="Main_ExcelUnavailable" xml:space="preserve">
+    <value>مصنفات Excel غير متاحة</value>
+  </data>
+  <data name="Main_SpreadsheetReadFailed" xml:space="preserve">
+    <value>خطأ في قراءة جدول البيانات</value>
+  </data>
+  <data name="Main_NoSpreadsheetDataHelp" xml:space="preserve">
+    <value>جدول البيانات المحدّد لا يحتوي على بيانات.</value>
+  </data>
+  <data name="Main_NoSpreadsheetData" xml:space="preserve">
+    <value>لا توجد بيانات للاستيراد</value>
+  </data>
+  <data name="Main_BulkClipboardDisabled" xml:space="preserve">
+    <value>النسخ الجماعي غير متاح</value>
+  </data>
+  <data name="Main_CopyFailed" xml:space="preserve">
+    <value>تعذّر نسخ رموز QR إلى الحافظة</value>
+  </data>
+  <data name="Main_NothingToCopy" xml:space="preserve">
+    <value>لا توجد رموز QR لنسخها إلى الحافظة</value>
+  </data>
+  <data name="Main_PngCopied" xml:space="preserve">
+    <value>نُسخ رمز QR بتنسيق PNG إلى الحافظة</value>
+  </data>
+  <data name="Main_PngsCopied" xml:space="preserve">
+    <value>عدد رموز QR المنسوخة إلى الحافظة بتنسيق PNG:‏ {0}</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_PngClipboardFailed" xml:space="preserve">
+    <value>تعذّر تجهيز رموز QR بتنسيق PNG للنسخ إلى الحافظة</value>
+  </data>
+  <data name="Main_SvgCopied" xml:space="preserve">
+    <value>نُسخ رمز QR بتنسيق SVG إلى الحافظة</value>
+  </data>
+  <data name="Main_SvgsCopied" xml:space="preserve">
+    <value>عدد رموز QR المنسوخة إلى الحافظة بتنسيق SVG:‏ {0}</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_SvgClipboardFailed" xml:space="preserve">
+    <value>تعذّر تجهيز رموز QR بتنسيق SVG للنسخ إلى الحافظة</value>
+  </data>
+  <data name="Main_SvgTextsCopied" xml:space="preserve">
+    <value>عدد رموز QR المنسوخة إلى الحافظة كنص SVG:‏ {0}</value>
+    <comment>{0} = textStrings.Count</comment>
+  </data>
+  <data name="Main_SvgTextClipboardFailed" xml:space="preserve">
+    <value>تعذّر تجهيز نص SVG للنسخ إلى الحافظة</value>
+  </data>
+  <data name="Main_CopyStatusTitle" xml:space="preserve">
+    <value>حالة النسخ</value>
+  </data>
+  <data name="Main_BrandSaved" xml:space="preserve">
+    <value>تم حفظ العلامة التجارية</value>
+  </data>
+  <data name="Main_BrandSavedDetail" xml:space="preserve">
+    <value>تم حفظ «⁨{0}⁩»</value>
+    <comment>{0} = brand.Name</comment>
+  </data>
+  <data name="Main_BrandUpdated" xml:space="preserve">
+    <value>تم تحديث العلامة التجارية</value>
+  </data>
+  <data name="Main_BrandUpdatedDetail" xml:space="preserve">
+    <value>تم تحديث «⁨{0}⁩»</value>
+    <comment>{0} = edited.Name</comment>
+  </data>
+  <data name="Main_PngSaved" xml:space="preserve">
+    <value>تم حفظ رمز QR بتنسيق PNG!</value>
+  </data>
+  <data name="Main_PngsSaved" xml:space="preserve">
+    <value>عدد رموز QR المحفوظة بتنسيق PNG:‏ {0}</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_PngZipSaved" xml:space="preserve">
+    <value>تم حفظ رمز QR بتنسيق PNG في ملف ZIP!</value>
+  </data>
+  <data name="Main_PngsZipSaved" xml:space="preserve">
+    <value>عدد رموز QR المحفوظة بتنسيق PNG في ملف ZIP:‏ {0}</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_SvgSaved" xml:space="preserve">
+    <value>تم حفظ رمز QR بتنسيق SVG!</value>
+  </data>
+  <data name="Main_SvgsSaved" xml:space="preserve">
+    <value>عدد رموز QR المحفوظة بتنسيق SVG:‏ {0}</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_SvgZipSaved" xml:space="preserve">
+    <value>تم حفظ رمز QR بتنسيق SVG في ملف ZIP!</value>
+  </data>
+  <data name="Main_SvgsZipSaved" xml:space="preserve">
+    <value>عدد رموز QR المحفوظة بتنسيق SVG في ملف ZIP:‏ {0}</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothSaved" xml:space="preserve">
+    <value>تم حفظ رمز QR بتنسيقي PNG وSVG!</value>
+  </data>
+  <data name="Main_BothMultipleSaved" xml:space="preserve">
+    <value>عدد رموز QR المحفوظة بتنسيقي PNG وSVG:‏ {0}</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothZipSaved" xml:space="preserve">
+    <value>تم حفظ رمز QR بتنسيقي PNG وSVG في ملف ZIP!</value>
+  </data>
+  <data name="Main_BothMultipleZipSaved" xml:space="preserve">
+    <value>عدد رموز QR المحفوظة بتنسيقي PNG وSVG في ملف ZIP:‏ {0}</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothCopied" xml:space="preserve">
+    <value>نُسخ رمز QR بتنسيقي PNG وSVG إلى الحافظة</value>
+  </data>
+  <data name="Main_BothMultipleCopied" xml:space="preserve">
+    <value>عدد رموز QR المنسوخة إلى الحافظة بتنسيقي PNG وSVG:‏ {0}</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothClipboardFailed" xml:space="preserve">
+    <value>تعذّر تجهيز رموز QR للنسخ إلى الحافظة</value>
+  </data>
+  <data name="Main_LogoLoadFailedHelp" xml:space="preserve">
+    <value>تعذّر تحميل الصورة المحددة</value>
+  </data>
+  <data name="Main_LogoLoadFailed" xml:space="preserve">
+    <value>خطأ في تحميل الشعار</value>
+  </data>
+  <data name="Main_ExportFailed" xml:space="preserve">
+    <value>تعذّر حفظ رموز QR</value>
+  </data>
+  <data name="Main_ExportFilesFailedHelp" xml:space="preserve">
+    <value>تعذّر حفظ رموز QR المطلوبة كملفات.</value>
+  </data>
+  <data name="Main_ExportZipFailedHelp" xml:space="preserve">
+    <value>تعذّر حفظ رموز QR المطلوبة في أرشيف ZIP.</value>
+  </data>
+  <data name="Main_SavedToFolder" xml:space="preserve">
+    <value>تم الحفظ في ⁦{0}⁩</value>
+    <comment>{0} = folderPath</comment>
+  </data>
+  <data name="Frame_Caption" xml:space="preserve">
+    <value>التسمية التوضيحية</value>
+  </data>
+  <data name="Logo_SizePercent" xml:space="preserve">
+    <value>{0} بالمئة</value>
+    <comment>{0} = LogoSize</comment>
+  </data>
+  <data name="Logo_PaddingPixels" xml:space="preserve">
+    <value>{0} بكسل</value>
+    <comment>{0} = LogoPadding</comment>
+  </data>
+  <data name="Settings_DefaultMaxScanDistance" xml:space="preserve">
+    <value>36 بوصة أو متر واحد</value>
+  </data>
+  <data name="Settings_DefaultForeground" xml:space="preserve">
+    <value>الإعداد الافتراضي للنظام — أسود</value>
+  </data>
+  <data name="Settings_DefaultBackground" xml:space="preserve">
+    <value>الإعداد الافتراضي للنظام — أبيض</value>
+  </data>
+  <data name="Settings_CorrectionLow" xml:space="preserve">
+    <value>L — منخفض (7%)</value>
+  </data>
+  <data name="Settings_CorrectionMedium" xml:space="preserve">
+    <value>M — متوسط (15%)</value>
+  </data>
+  <data name="Settings_CorrectionQuarter" xml:space="preserve">
+    <value>Q — الربع (25%)</value>
+  </data>
+  <data name="Settings_CorrectionHigh" xml:space="preserve">
+    <value>H — عالٍ (30%)</value>
+  </data>
+  <data name="Settings_DefaultCorrection" xml:space="preserve">
+    <value>الإعداد الافتراضي للنظام — M (متوسط، 15%)</value>
+  </data>
+  <data name="Settings_DefaultFrame" xml:space="preserve">
+    <value>الإعداد الافتراضي للنظام — تقليدي بلا إطار</value>
+  </data>
+  <data name="Settings_NoSafeDomains" xml:space="preserve">
+    <value>لا توجد نطاقات آمنة بعد. استخدم شريط معلومات التحذير من إعادة التوجيه لوضع علامة آمنة على أحد النطاقات.</value>
+  </data>
+  <data name="Settings_ScanDistanceMeters" xml:space="preserve">
+    <value>عدد الأمتار: {0}</value>
+    <comment>{0} = value</comment>
+  </data>
+  <data name="Settings_ScanDistanceMeter" xml:space="preserve">
+    <value>{0} متر</value>
+    <comment>{0} = value</comment>
+  </data>
+  <data name="Settings_ScanDistanceFeet" xml:space="preserve">
+    <value>القياس بالقدم: {0}</value>
+    <comment>{0} = Math.Round(value * 3, 1)</comment>
+  </data>
+  <data name="Settings_ScanDistanceInches" xml:space="preserve">
+    <value>القياس بالبوصة: {0}</value>
+    <comment>{0} = Math.Round(value * 36, 0)</comment>
+  </data>
+  <data name="Settings_PaddingModules" xml:space="preserve">
+    <value>عدد الوحدات: {0:0}</value>
+    <comment>{0} = QrPaddingModules</comment>
+  </data>
+  <data name="Settings_PrintSizingReliable" xml:space="preserve">
+    <value>{0}. يظل تقدير حجم الطباعة موثوقًا عند هذا الإعداد.</value>
+    <comment>{0} = QrPaddingDescription</comment>
+  </data>
+  <data name="Settings_PrintSizingDisabled" xml:space="preserve">
+    <value>{0}. يتعذّر تقدير حجم الطباعة إذا لم يكن عرض الهامش بين وحدة واحدة وأربع وحدات.</value>
+    <comment>{0} = QrPaddingDescription</comment>
+  </data>
+  <data name="Settings_BackupNothingToExport" xml:space="preserve">
+    <value>حدّد عنصرًا واحدًا على الأقل للتصدير.</value>
+  </data>
+  <data name="FileType_ZipArchive" xml:space="preserve">
+    <value>أرشيف ZIP</value>
+  </data>
+  <data name="Settings_BackupExportComplete" xml:space="preserve">
+    <value>اكتمل التصدير.</value>
+  </data>
+  <data name="Settings_BackupImportComplete" xml:space="preserve">
+    <value>اكتمل الاستيراد. عُد إلى الشاشة الرئيسية لإعادة تحميل المحفوظات والعلامات التجارية.</value>
+  </data>
+  <data name="Settings_BackupInvalid" xml:space="preserve">
+    <value>تعذّر الاستيراد: الملف المحدّد ليس ملف نسخ احتياطي صالحًا بتنسيق ZIP.</value>
+  </data>
+  <data name="Feedback_EmailSubject" xml:space="preserve">
+    <value>ملاحظات حول Simple QR Code Maker</value>
+  </data>
+  <data name="Feedback_CopyDone" xml:space="preserve">
+    <value>تم النسخ!</value>
+  </data>
+  <data name="Feedback_Copy" xml:space="preserve">
+    <value>نسخ</value>
+  </data>
+  <data name="Licenses_Unavailable" xml:space="preserve">
+    <value>[نص الترخيص غير متوفر — انظر ⁦https://www.apache.org/licenses/LICENSE-2.0⁩]</value>
+  </data>
+  <data name="Licenses_Mit" xml:space="preserve">
+    <value>ترخيص MIT</value>
+  </data>
+  <data name="Licenses_Apache20" xml:space="preserve">
+    <value>ترخيص Apache-2.0</value>
+  </data>
+  <data name="Share_OneQrCode" xml:space="preserve">
+    <value>رمز QR</value>
+  </data>
+  <data name="Share_MultipleQrCodes" xml:space="preserve">
+    <value>رموز QR</value>
+  </data>
+  <data name="Share_DecodedCodes" xml:space="preserve">
+    <value>الرموز التي فُكّ ترميزها</value>
+  </data>
+  <data name="Share_PrepareContentFailed" xml:space="preserve">
+    <value>تعذّر تجهيز المحتوى للمشاركة. حاول مرة أخرى.</value>
+  </data>
+  <data name="Shell_SearchBrandKind" xml:space="preserve">
+    <value>علامة تجارية</value>
+  </data>
+  <data name="Shell_SearchHistoryKind" xml:space="preserve">
+    <value>المحفوظات</value>
+  </data>
+  <data name="Shell_SearchFaqKind" xml:space="preserve">
+    <value>الأسئلة الشائعة</value>
+  </data>
+  <data name="Shell_SearchHistorySaved" xml:space="preserve">
+    <value>تم الحفظ {0}</value>
+    <comment>{0} = item.SaveDateAsString</comment>
+  </data>
+  <data name="Shell_SearchHistoryKindSaved" xml:space="preserve">
+    <value>{0} — تم الحفظ {1}</value>
+    <comment>{0} = item.ContentKindLabel; {1} = item.SaveDateAsString</comment>
+  </data>
+  <data name="Shell_SearchSavedBrand" xml:space="preserve">
+    <value>علامة تجارية محفوظة</value>
+  </data>
+  <data name="Shell_SearchDefaultBrand" xml:space="preserve">
+    <value>العلامة التجارية الافتراضية — {0}</value>
+    <comment>{0} = description</comment>
+  </data>
+  <data name="FileType_Csv" xml:space="preserve">
+    <value>ملف CSV</value>
+  </data>
+  <data name="Spreadsheet_IdNotSaved" xml:space="preserve">
+    <value>لن تُكتب المعرّفات المنشأة في جدول البيانات.</value>
+  </data>
+  <data name="Spreadsheet_Review" xml:space="preserve">
+    <value>راجع الصفوف المكتشفة واختر عمودًا لاستيراده.</value>
+  </data>
+  <data name="Spreadsheet_ReviewFile" xml:space="preserve">
+    <value>راجع «⁨{0}⁩» واختر عمودًا لاستيراده.</value>
+    <comment>{0} = SourceFileName</comment>
+  </data>
+  <data name="Spreadsheet_SaveIdsAndImport" xml:space="preserve">
+    <value>حفظ المعرّفات واستيراد العمود المحدّد</value>
+  </data>
+  <data name="Spreadsheet_Import" xml:space="preserve">
+    <value>استيراد العمود المحدّد</value>
+  </data>
+  <data name="Spreadsheet_IdsSaved" xml:space="preserve">
+    <value>تم حفظ المعرّفات في جدول البيانات</value>
+  </data>
+  <data name="Spreadsheet_IdsSavedFile" xml:space="preserve">
+    <value>تم حفظ المعرّفات المنشأة في الملف الأصلي «⁨{0}⁩».</value>
+    <comment>{0} = SourceFileName</comment>
+  </data>
+  <data name="Spreadsheet_SaveFailedHelp" xml:space="preserve">
+    <value>تعذّر حفظ المعرّفات المنشأة في جدول البيانات. أغلق الملف إذا كان مفتوحًا في مكان آخر وحاول مرة أخرى.</value>
+  </data>
+  <data name="Spreadsheet_SaveFailed" xml:space="preserve">
+    <value>تعذّر حفظ جدول البيانات</value>
+  </data>
+  <data name="Spreadsheet_Empty" xml:space="preserve">
+    <value>لم يُعثر على أي بيانات</value>
+  </data>
+  <data name="Spreadsheet_EmptyNoWriteback" xml:space="preserve">
+    <value>لن تُكتب المعرّفات المنشأة في الملف لأنه لا يحتوي على بيانات.</value>
+  </data>
+  <data name="Spreadsheet_RowCountLimited" xml:space="preserve">
+    <value>عدد الصفوف في الملف: {0} (تُظهر المعاينة أول {1})</value>
+    <comment>{0} = _dataRows.Count; {1} = PreviewRowLimit</comment>
+  </data>
+  <data name="Spreadsheet_IdNeedsRows" xml:space="preserve">
+    <value>يتعذّر حفظ المعرّفات المنشأة لعدم وجود صفوف بيانات.</value>
+  </data>
+  <data name="Spreadsheet_IdsAlreadyPresent" xml:space="preserve">
+    <value>يحتوي العمود «⁨{0}⁩» بالفعل على قيم في كل صف. ستبقى المعرّفات الحالية دون تغيير.</value>
+    <comment>{0} = _headers[_idColumnIndex]</comment>
+  </data>
+  <data name="Spreadsheet_InvalidNanoIdLength" xml:space="preserve">
+    <value>أدخل عددًا صحيحًا لطول NanoID قبل حفظ المعرّفات المنشأة.</value>
+  </data>
+  <data name="GenerateIds_PreviewLimited" xml:space="preserve">
+    <value>تظهر أول {0} من أصل {1} من المعرّفات المنشأة.</value>
+    <comment>{0} = previewCount; {1} = count</comment>
+  </data>
+  <data name="GenerateIds_InvalidCount" xml:space="preserve">
+    <value>أدخل عددًا صحيحًا للمعرّفات التي تريد إنشاءها.</value>
+  </data>
+  <data name="GenerateIds_InvalidNanoIdLength" xml:space="preserve">
+    <value>أدخل عددًا صحيحًا لطول NanoID.</value>
+  </data>
+  <data name="UrlBuilder_LineNavigation" xml:space="preserve">
+    <value>السطر {0} من {1}</value>
+    <comment>{0} = _currentLineIndex + 1; {1} = _lines.Count</comment>
+  </data>
+  <data name="RemoveBackground_Preparing" xml:space="preserve">
+    <value>جارٍ تجهيز نموذج الذكاء الاصطناعي…</value>
+  </data>
+  <data name="RemoveBackground_Unavailable" xml:space="preserve">
+    <value>إزالة الخلفية غير متاحة على هذا الجهاز.</value>
+  </data>
+  <data name="RemoveBackground_InProgress" xml:space="preserve">
+    <value>جارٍ إزالة الخلفية…</value>
+  </data>
+  <data name="RemoveBackground_Success" xml:space="preserve">
+    <value>تمت إزالة الخلفية بنجاح</value>
+  </data>
+  <data name="Read_ResultTitle" xml:space="preserve">
+    <value>محتوى رمز QR</value>
+  </data>
+  <data name="Read_ClipboardImage" xml:space="preserve">
+    <value>صورة من الحافظة</value>
+  </data>
+  <data name="Read_CameraCapture" xml:space="preserve">
+    <value>صورة من الكاميرا</value>
+  </data>
+  <data name="Read_SnippingToolCapture" xml:space="preserve">
+    <value>لقطة من أداة القطع</value>
+  </data>
+  <data name="Read_ExtractingRegion" xml:space="preserve">
+    <value>جارٍ استخراج المنطقة…</value>
+  </data>
+  <data name="Read_CutOutLabel" xml:space="preserve">
+    <value>صورة مقتطعة {0}</value>
+    <comment>{0} = cutOutNumber</comment>
+  </data>
+  <data name="Read_OriginalLabel" xml:space="preserve">
+    <value>الأصل</value>
+  </data>
+  <data name="Read_RegionLabel" xml:space="preserve">
+    <value>المنطقة {0}</value>
+    <comment>{0} = regionNumber</comment>
+  </data>
+  <data name="FileType_Png" xml:space="preserve">
+    <value>صورة PNG</value>
+  </data>
+  <data name="Read_RedirectorWarning" xml:space="preserve">
+    <value>يشير هذا الرمز إلى ⁦{0}⁩، وهي خدمة إعادة توجيه معروفة. توخّ الحذر عند فتحه، فالوجهة النهائية لا تظهر إلا بعد إعادة التوجيه.</value>
+    <comment>{0} = classification.Host</comment>
+  </data>
+  <data name="Read_OpeningCamera" xml:space="preserve">
+    <value>جارٍ فتح الكاميرا…</value>
+  </data>
+  <data name="Read_TakingPicture" xml:space="preserve">
+    <value>جارٍ التقاط الصورة…</value>
+  </data>
+  <data name="Read_ProcessingImage" xml:space="preserve">
+    <value>جارٍ معالجة الصورة…</value>
+  </data>
+  <data name="Read_CameraUnavailable" xml:space="preserve">
+    <value>الكاميرا غير متاحة</value>
+  </data>
+  <data name="Read_ApplyingAdjustments" xml:space="preserve">
+    <value>جارٍ تطبيق التعديلات…</value>
+  </data>
+  <data name="Read_OpeningClipboardImage" xml:space="preserve">
+    <value>جارٍ فتح الصورة من الحافظة…</value>
+  </data>
+  <data name="Read_NoImageToPaste" xml:space="preserve">
+    <value>لا توجد صورة للصقها</value>
+  </data>
+  <data name="Read_NoImageToPasteHelp" xml:space="preserve">
+    <value>انسخ صورة أو ملف صورة مدعومًا أو مسار الملف الكامل، ثم حاول مرة أخرى.</value>
+  </data>
+  <data name="Read_PasteFailed" xml:space="preserve">
+    <value>تعذّر لصق الصورة</value>
+  </data>
+  <data name="Read_OpeningImage" xml:space="preserve">
+    <value>جارٍ فتح الصورة…</value>
+  </data>
+  <data name="Read_LargeFolder" xml:space="preserve">
+    <value>مجلد كبير</value>
+  </data>
+  <data name="Read_LargeFolderConfirmation" xml:space="preserve">
+    <value>عدد ملفات الصور في هذا المجلد: {0}. قد تستغرق العمليات الجماعية مثل «فك ترميز الكل» أو «عرض الملخص» بعض الوقت. هل تريد المتابعة؟</value>
+    <comment>{0} = imageFiles.Count</comment>
+  </data>
+  <data name="Common_Continue" xml:space="preserve">
+    <value>متابعة</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Read_BatchProgress" xml:space="preserve">
+    <value>جارٍ معالجة {0} من {1}: ⁨{2}⁩</value>
+    <comment>{0} = current; {1} = total; {2} = fileItem.FileName</comment>
+  </data>
+  <data name="Read_MultipleOpenProgress" xml:space="preserve">
+    <value>جارٍ فتح الصورة {0} من {1}…</value>
+    <comment>{0} = index + 1; {1} = pickedFiles.Count</comment>
+  </data>
+  <data name="Read_UnsupportedImage" xml:space="preserve">
+    <value>⁨{0}⁩: ليس ملف صورة مدعومًا.</value>
+    <comment>{0} = pickedItem.Name</comment>
+  </data>
+  <data name="Read_SomeFilesFailed" xml:space="preserve">
+    <value>تعذّر فتح بعض الملفات</value>
+  </data>
+  <data name="Advanced_NoAlignmentPoints" xml:space="preserve">
+    <value>4 زوايا، بلا نقاط محاذاة</value>
+  </data>
+  <data name="Advanced_UnwarpSetup" xml:space="preserve">
+    <value>حدّد الإصدار وافتح أداة تصحيح الانحناء.</value>
+  </data>
+  <data name="Advanced_UnwarpReady" xml:space="preserve">
+    <value>تم وضع كل النقاط. انقر على «تطبيق تصحيح الانحناء».</value>
+  </data>
+  <data name="Advanced_UnwarpNextCorner" xml:space="preserve">
+    <value>انقر على الزاوية {0} من 4 على الصورة ({1}).</value>
+    <comment>{0} = next.OrderIndex + 1; {1} = next.Label</comment>
+  </data>
+  <data name="Advanced_UnwarpNextAlignment" xml:space="preserve">
+    <value>انقر على نقطة المحاذاة {0} من {1} ({2}) أو اختر «استخدام التقدير».</value>
+    <comment>{0} = alignIndex; {1} = alignments.Count; {2} = next.Label</comment>
+  </data>
+  <data name="Advanced_SelectTopLeft" xml:space="preserve">
+    <value>1. حدّد الزاوية العلوية اليسرى</value>
+  </data>
+  <data name="Advanced_SelectTopRight" xml:space="preserve">
+    <value>2. حدّد الزاوية العلوية اليمنى</value>
+  </data>
+  <data name="Advanced_SelectBottomRight" xml:space="preserve">
+    <value>3. حدّد الزاوية السفلية اليمنى</value>
+  </data>
+  <data name="Advanced_SelectBottomLeft" xml:space="preserve">
+    <value>4. حدّد الزاوية السفلية اليسرى</value>
+  </data>
+  <data name="Advanced_CornersSelected" xml:space="preserve">
+    <value>تم تحديد كل الزوايا. طبّق التصحيح للمتابعة.</value>
+  </data>
+  <data name="Read_NoCodesContact" xml:space="preserve">
+    <value>قد لا تكون هناك رموز أو ربما تعذّرت قراءة المحتوى. إذا كنت تعتقد أن المشكلة في التطبيق، فأرسل رسالة إلى ⁦Joe@JoeFinApps.com⁩</value>
+  </data>
+  <data name="Read_NoCodesAdvancedTools" xml:space="preserve">
+    <value>لم تُكتشف أي رموز QR. جرّب «الأدوات المتقدمة» لعزل الرمز وتحسين اكتشافه بتعديلات مثل التدرج الرمادي والتباين وتصحيح المنظور.</value>
+  </data>
+  <data name="Design_LabelManualText" xml:space="preserve">
+    <value>نص يدوي</value>
+  </data>
+  <data name="Design_LabelContentSummary" xml:space="preserve">
+    <value>ملخص المحتوى</value>
+  </data>
+  <data name="Design_CaptionScanMe" xml:space="preserve">
+    <value>امسح الرمز</value>
+  </data>
+  <data name="Design_CaptionJoinWifi" xml:space="preserve">
+    <value>اتصل بشبكة Wi-Fi</value>
+  </data>
+  <data name="Design_CaptionContact" xml:space="preserve">
+    <value>احفظ بيانات اتصالي</value>
+  </data>
+  <data name="Design_CaptionViewMenu" xml:space="preserve">
+    <value>اعرض قائمة الطعام</value>
+  </data>
+  <data name="Design_CaptionTickets" xml:space="preserve">
+    <value>احصل على تذاكر</value>
+  </data>
+  <data name="Design_CaptionSayHello" xml:space="preserve">
+    <value>ألقِ التحية!</value>
+  </data>
+  <data name="Design_NoFrame" xml:space="preserve">
+    <value>بلا إطار</value>
+  </data>
+  <data name="Design_PreviewErrorHelp" xml:space="preserve">
+    <value>أغلق «التصميم» وافتحه من جديد لإعادة محاولة تحميل المعاينات.</value>
+  </data>
+  <data name="Design_OpenFailed" xml:space="preserve">
+    <value>تعذّر فتح المصمّم</value>
+  </data>
+  <data name="Design_OpenFailedHelp" xml:space="preserve">
+    <value>أغلق أي مربع حوار آخر وحاول مرة أخرى.</value>
+  </data>
+  <data name="Colors_Foreground" xml:space="preserve">
+    <value>المقدمة</value>
+  </data>
+  <data name="Colors_Background" xml:space="preserve">
+    <value>الخلفية</value>
+  </data>
+  <data name="Colors_Empty" xml:space="preserve">
+    <value>(فارغ)</value>
+  </data>
+  <data name="Colors_ListItem" xml:space="preserve">
+    <value>{0}، {1}</value>
+    <comment>{0} = prefix; {1} = NormalizeSource(source)</comment>
+  </data>
+  <data name="Preview_RestoreStyle" xml:space="preserve">
+    <value>استعادة النمط الحالي بدلاً من «⁨{0}⁩»</value>
+    <comment>{0} = CommonBrandName</comment>
+  </data>
+  <data name="Preview_UseBrand" xml:space="preserve">
+    <value>استخدام العلامة التجارية «⁨{0}⁩»</value>
+    <comment>{0} = CommonBrandName</comment>
+  </data>
+  <data name="Preview_RestoreStyleHelp" xml:space="preserve">
+    <value>تم تطبيق ألوان وشعار «⁨{0}⁩». استعد نمطك الحالي.</value>
+    <comment>{0} = CommonBrand?.Name</comment>
+  </data>
+  <data name="Preview_UseBrandHelp" xml:space="preserve">
+    <value>استخدم ألوان وشعار «⁨{0}⁩» لرمز QR هذا.</value>
+    <comment>{0} = CommonBrand?.Name</comment>
+  </data>
+  <data name="Preview_MinimumSize" xml:space="preserve">
+    <value>الحد الأدنى للحجم</value>
+  </data>
+  <data name="Preview_SizingUnavailable" xml:space="preserve">
+    <value>تقدير حجم الطباعة غير متاح</value>
+  </data>
+  <data name="Preview_MinimumSizeCopyFailed" xml:space="preserve">
+    <value>الحد الأدنى الدقيق للحجم غير متاح</value>
+  </data>
+  <data name="Preview_PaddingSizingHelp" xml:space="preserve">
+    <value>لا يمكن تقدير حجم الطباعة عند استخدام هامش خارج نطاق 1 إلى 4 وحدات، إذ تتفاوت نتائج مسح الرموز بلا حدود أو بحدود سميكة تفاوتًا يصعب التنبؤ به.</value>
+  </data>
+  <data name="Preview_TransparencySizingHelp" xml:space="preserve">
+    <value>تتأثر ألوان رمز QR الشفافة بسطح الطباعة النهائي، لذا لا يوجد حد أدنى دقيق للحجم يمكن نسخه.</value>
+  </data>
+  <data name="Preview_ContrastSizingHelp" xml:space="preserve">
+    <value>تباين الألوان منخفض جدًا بحيث لا يمكن اقتراح حد أدنى موثوق للحجم.</value>
+  </data>
+  <data name="Preview_DistanceSizingHelp" xml:space="preserve">
+    <value>لا تتيح مسافة المسح القصوى المحدّدة اقتراح حد أدنى موثوق للحجم.</value>
+  </data>
+  <data name="Preview_NoSizingHelp" xml:space="preserve">
+    <value>لا يوجد حد أدنى دقيق للحجم يمكن نسخه لرمز QR هذا.</value>
+  </data>
+  <data name="Preview_SizeCopied" xml:space="preserve">
+    <value>نُسخ حجم رمز QR إلى الحافظة</value>
+  </data>
+  <data name="Preview_CopyFailed" xml:space="preserve">
+    <value>تعذّر نسخ رمز QR إلى الحافظة</value>
+  </data>
+  <data name="Preview_NothingToCopy" xml:space="preserve">
+    <value>لا يوجد رمز QR لنسخه إلى الحافظة</value>
+  </data>
+  <data name="Preview_ShareFailed" xml:space="preserve">
+    <value>تعذّرت مشاركة رمز QR</value>
+  </data>
+  <data name="Preview_SvgTextCopied" xml:space="preserve">
+    <value>نُسخ نص SVG لرمز QR إلى الحافظة</value>
+  </data>
+  <data name="FileType_Svg" xml:space="preserve">
+    <value>صورة SVG</value>
+  </data>
+  <data name="Preview_PngSaved" xml:space="preserve">
+    <value>تم حفظ رمز QR بتنسيق PNG!</value>
+  </data>
+  <data name="FileType_ZipExport" xml:space="preserve">
+    <value>أرشيف ZIP</value>
+  </data>
+  <data name="Print_ZoomPercent" xml:space="preserve">
+    <value>{0}%</value>
+    <comment>{0} = Math.Round(PreviewScrollViewer.ZoomFactor * 100)</comment>
+  </data>
+  <data name="Print_WaitForPreview" xml:space="preserve">
+    <value>انتظر حتى يكتمل تحميل معاينة PDF قبل الطباعة.</value>
+  </data>
+  <data name="Print_QrSize" xml:space="preserve">
+    <value>حجم رمز QR</value>
+  </data>
+  <data name="Print_Spacing" xml:space="preserve">
+    <value>التباعد</value>
+  </data>
+  <data name="Print_Margin" xml:space="preserve">
+    <value>هامش الصفحة</value>
+  </data>
+  <data name="Print_LengthHeader" xml:space="preserve">
+    <value>{0} ({1})</value>
+    <comment>{0} = title; {1} = lengthUnitSuffix</comment>
+  </data>
+  <data name="Print_LengthValue" xml:space="preserve">
+    <value>{0:0.##} {1}</value>
+    <comment>{0} = displayValue; {1} = lengthUnitSuffix</comment>
+  </data>
+  <data name="Print_PresetProductLabelsHelp" xml:space="preserve">
+    <value>رموز QR صغيرة للمسح من مسافة قريبة، مناسبة للتغليف وبطاقات الرفوف وملصقات الأصول.</value>
+  </data>
+  <data name="Print_PresetFlyersHelp" xml:space="preserve">
+    <value>رموز QR متوسطة الحجم للمرفقات والمنشورات والفواتير والمطويات من صفحة واحدة.</value>
+  </data>
+  <data name="Print_PresetMenusHelp" xml:space="preserve">
+    <value>رموز QR أكبر لقوائم المطاعم وعروض الطاولات وبطاقات المناضد.</value>
+  </data>
+  <data name="Print_PresetPostersHelp" xml:space="preserve">
+    <value>رمز QR كبير واحد للأبواب والجدران والملصقات ولافتات الفعاليات.</value>
+  </data>
+  <data name="Print_PresetCustomHelp" xml:space="preserve">
+    <value>اختر أحد الاستخدامات الشائعة لطباعة رموز QR أو خصّص التخطيط بالكامل.</value>
+  </data>
+  <data name="Settings_AppVersion" xml:space="preserve">
+    <value>⁦{0} - {1}⁩</value>
+    <comment>{0} = app display name; {1} = installed version.</comment>
+  </data>
+  <data name="Settings_BackupExportFailed" xml:space="preserve">
+    <value>تعذّر التصدير. لم يُحفظ ملف النسخ الاحتياطي بتنسيق ZIP.</value>
+  </data>
+  <data name="Settings_BackupImportFailed" xml:space="preserve">
+    <value>تعذّر الاستيراد. لم تُقرأ النسخة الاحتياطية بتنسيق ZIP.</value>
+  </data>
+  <data name="RemoveBackground_Failed" xml:space="preserve">
+    <value>تعذّرت إزالة الخلفية. حاول مرة أخرى.</value>
+  </data>
+  <data name="Read_CameraUnavailableHelp" xml:space="preserve">
+    <value>تعذّر على Windows تشغيل الكاميرا. تحقّق من إذن الوصول إلى الكاميرا في الإعدادات وحاول مرة أخرى.</value>
+  </data>
+  <data name="Read_PasteFailedHelp" xml:space="preserve">
+    <value>تعذّر فتح الصورة من الحافظة.</value>
+  </data>
+  <data name="Read_OpenImageFailed" xml:space="preserve">
+    <value>⁨{0}⁩: تعذّر فتح الصورة.</value>
+    <comment>{0} = original file name.</comment>
+  </data>
+  <data name="Preview_ShareFailedHelp" xml:space="preserve">
+    <value>تعذّر تجهيز رمز QR هذا للمشاركة. حاول مرة أخرى.</value>
+  </data>
+  <data name="Print_PreviewStartFailed" xml:space="preserve">
+    <value>تعذّر بدء معاينة PDF.</value>
+  </data>
+  <data name="Print_PreviewGenerationFailed" xml:space="preserve">
+    <value>تعذّر إنشاء معاينة PDF. تحقّق من إعدادات الطباعة وحاول مرة أخرى.</value>
+  </data>
+  <data name="Print_JobFailed" xml:space="preserve">
+    <value>تعذّر إرسال ملف PDF الذي تم إنشاؤه إلى الطابعة.</value>
+  </data>
+  <data name="Read_UnknownSource" xml:space="preserve">
+    <value>مصدر غير معروف</value>
+  </data>
+  <data name="Read_HistoryNoCodes" xml:space="preserve">
+    <value>(لم يُعثر على أي رموز)</value>
+  </data>
+  <data name="Read_HistoryAdditionalCodes" xml:space="preserve">
+    <value> (⁦+{0}⁩ إضافية)</value>
+    <comment>Leading space separates this count from the first decoded result. {0} = additional decoded codes.</comment>
+  </data>
+  <data name="History_KindVCard" xml:space="preserve">
+    <value>vCard</value>
+    <comment>Name of a contact-card format. Do not translate the format name.</comment>
+  </data>
+  <data name="History_KindWifi" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="History_KindEmail" xml:space="preserve">
+    <value>بريد إلكتروني</value>
+  </data>
+  <data name="History_FallbackContact" xml:space="preserve">
+    <value>جهة اتصال vCard</value>
+  </data>
+  <data name="History_FallbackNetwork" xml:space="preserve">
+    <value>شبكة Wi-Fi</value>
+  </data>
+  <data name="Spreadsheet_ColumnNumber" xml:space="preserve">
+    <value>العمود {0}</value>
+    <comment>{0} = 1-based display column number. Not a workbook header.</comment>
+  </data>
+  <data name="Spreadsheet_RowCount_One" xml:space="preserve">
+    <value>عدد الصفوف في الملف: {0}</value>
+    <comment>{0} = row count.</comment>
+  </data>
+  <data name="Spreadsheet_RowCount_Other" xml:space="preserve">
+    <value>عدد الصفوف في الملف: {0}</value>
+    <comment>{0} = row count.</comment>
+  </data>
+  <data name="Spreadsheet_ImportCount_One" xml:space="preserve">
+    <value>عدد القيم التي ستُستورد من «⁨{1}⁩»:‏ {0}</value>
+    <comment>{0} = count; {1} = column name.</comment>
+  </data>
+  <data name="Spreadsheet_ImportCount_Other" xml:space="preserve">
+    <value>عدد القيم التي ستُستورد من «⁨{1}⁩»:‏ {0}</value>
+    <comment>{0} = count; {1} = column name.</comment>
+  </data>
+  <data name="Spreadsheet_HeaderlessWriteback_One" xml:space="preserve">
+    <value>لأن صف رؤوس الأعمدة معطّل، ستُضاف قيم {1} إلى عمود أخير جديد. عدد الصفوف المعنية: {0}.</value>
+    <comment>{0} = row count; {1} = ID format.</comment>
+  </data>
+  <data name="Spreadsheet_HeaderlessWriteback_Other" xml:space="preserve">
+    <value>لأن صف رؤوس الأعمدة معطّل، ستُضاف قيم {1} إلى عمود أخير جديد. عدد الصفوف المعنية: {0}.</value>
+    <comment>{0} = row count; {1} = ID format.</comment>
+  </data>
+  <data name="Spreadsheet_NewIdColumn_One" xml:space="preserve">
+    <value>ستُضاف قيم {1} في عمود جديد باسم «⁨{2}⁩». عدد الصفوف المعنية: {0}. لن تتغير الخلايا الموجودة في الأعمدة الأخرى.</value>
+    <comment>{0} = row count; {1} = ID format; {2} = invariant header.</comment>
+  </data>
+  <data name="Spreadsheet_NewIdColumn_Other" xml:space="preserve">
+    <value>ستُضاف قيم {1} في عمود جديد باسم «⁨{2}⁩». عدد الصفوف المعنية: {0}. لن تتغير الخلايا الموجودة في الأعمدة الأخرى.</value>
+    <comment>{0} = row count; {1} = ID format; {2} = invariant header.</comment>
+  </data>
+  <data name="Spreadsheet_FillIdColumn_One" xml:space="preserve">
+    <value>ستُملأ الخلايا الفارغة في «⁨{1}⁩» باستخدام {2}. عدد الخلايا المعنية: {0}. ستبقى المعرّفات الحالية دون تغيير.</value>
+    <comment>{0} = cell count; {1} = column name; {2} = ID format.</comment>
+  </data>
+  <data name="Spreadsheet_FillIdColumn_Other" xml:space="preserve">
+    <value>ستُملأ الخلايا الفارغة في «⁨{1}⁩» باستخدام {2}. عدد الخلايا المعنية: {0}. ستبقى المعرّفات الحالية دون تغيير.</value>
+    <comment>{0} = cell count; {1} = column name; {2} = ID format.</comment>
+  </data>
+  <data name="GenerateIds_PreviewAll_One" xml:space="preserve">
+    <value>تظهر جميع المعرّفات المنشأة، وعددها {0}.</value>
+    <comment>{0} = ID count.</comment>
+  </data>
+  <data name="GenerateIds_PreviewAll_Other" xml:space="preserve">
+    <value>تظهر جميع المعرّفات المنشأة، وعددها {0}.</value>
+    <comment>{0} = ID count.</comment>
+  </data>
+  <data name="GenerateIds_FormatGuid" xml:space="preserve">
+    <value>GUID</value>
+    <comment>Identifier type. Do not translate the acronym.</comment>
+  </data>
+  <data name="GenerateIds_FormatGuidCompact" xml:space="preserve">
+    <value>GUID بلا شرطات</value>
+    <comment>GUID is an identifier format; only translate "without dashes".</comment>
+  </data>
+  <data name="GenerateIds_FormatNanoId" xml:space="preserve">
+    <value>NanoID</value>
+    <comment>Identifier type. Do not translate the name.</comment>
+  </data>
+  <data name="Advanced_AlignmentPointCount_One" xml:space="preserve">
+    <value>4 زوايا — عدد نقاط المحاذاة: {0}</value>
+    <comment>{0} = alignment point count.</comment>
+  </data>
+  <data name="Advanced_AlignmentPointCount_Other" xml:space="preserve">
+    <value>4 زوايا — عدد نقاط المحاذاة: {0}</value>
+    <comment>{0} = alignment point count.</comment>
+  </data>
+  <data name="Advanced_CornerTopLeft" xml:space="preserve">
+    <value>TL</value>
+    <comment>Abbreviation for the top-left corner, not a direction-sensitive reading-order label.</comment>
+  </data>
+  <data name="Advanced_CornerTopRight" xml:space="preserve">
+    <value>TR</value>
+    <comment>Abbreviation for the top-right corner.</comment>
+  </data>
+  <data name="Advanced_CornerBottomRight" xml:space="preserve">
+    <value>BR</value>
+    <comment>Abbreviation for the bottom-right corner.</comment>
+  </data>
+  <data name="Advanced_CornerBottomLeft" xml:space="preserve">
+    <value>BL</value>
+    <comment>Abbreviation for the bottom-left corner.</comment>
+  </data>
+  <data name="Advanced_AlignmentMarker" xml:space="preserve">
+    <value>A{0}</value>
+    <comment>Compact image overlay for an alignment point. {0} = marker number.</comment>
+  </data>
+  <data name="Preview_MinimumSizeAndContent" xml:space="preserve">
+    <value>أصغر حجم موصى به: {0}، {1}</value>
+    <comment>{0} = formatted size; {1} = QR content. Narrator label.</comment>
+  </data>
+  <data name="Preview_MetadataAndContent" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>{0} = status or sizing text; {1} = QR content. Narrator label.</comment>
+  </data>
+  <data name="Preview_SizeInches" xml:space="preserve">
+    <value>⁦{0:F2} × {0:F2}⁩ بوصة</value>
+    <comment>{0} = side length in inches.</comment>
+  </data>
+  <data name="Preview_SizeCentimeters" xml:space="preserve">
+    <value>⁦{0:F2} × {0:F2}⁩ سم</value>
+    <comment>{0} = side length in centimeters.</comment>
+  </data>
+  <data name="Preview_SizeTransparency" xml:space="preserve">
+    <value>عند استخدام الشفافية، يعتمد الحد الأدنى الدقيق للحجم على سطح الطباعة النهائي.</value>
+  </data>
+  <data name="Preview_SizePadding" xml:space="preserve">
+    <value>الهامش {0} خارج النطاق الموثوق من وحدة واحدة إلى أربع وحدات. تتفاوت نتائج مسح رموز QR بلا حدود أو بحدود سميكة، لذا لا يمكن تقدير حجم الطباعة بدقة.</value>
+    <comment>{0} = padding in QR modules.</comment>
+  </data>
+  <data name="Preview_SizeContrast" xml:space="preserve">
+    <value>تباين الألوان منخفض جدًا</value>
+  </data>
+  <data name="Preview_SizeDistance" xml:space="preserve">
+    <value>تعذّر الحساب عند المسافة القصوى المحددة.</value>
+  </data>
+  <data name="Package_TileShortName" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="Package_ShareTargetName" xml:space="preserve">
+    <value>فك ترميز رمز QR أو إنشاء رمز جديد</value>
+  </data>
+  <data name="Faq_WhatIsAQRCode_Question" xml:space="preserve">
+    <value>ما رمز QR؟</value>
+  </data>
+  <data name="Faq_WhatIsAQRCode_Answer" xml:space="preserve">
+    <value>يمكنك التفكير في رمز QR كنص بتنسيق يسهل على الحاسوب قراءته. وبصورة أدق، هو نوع من الرموز الشريطية ثنائية الأبعاد يُستخدم لترميز المحتوى. يمكن استخدامه لعرض نص أو فتح عنوان URL وغير ذلك، لكن استخدامه الأكثر شيوعًا هو فتح مواقع الويب.</value>
+  </data>
+  <data name="Faq_WhatDoesQRStandFor_Question" xml:space="preserve">
+    <value>إلى ماذا يشير اختصار QR؟</value>
+  </data>
+  <data name="Faq_WhatDoesQRStandFor_Answer" xml:space="preserve">
+    <value>Quick Response، أي الاستجابة السريعة.</value>
+  </data>
+  <data name="Faq_WhyCanQRCodesBeDangerous_Question" xml:space="preserve">
+    <value>لماذا قد تنطوي رموز QR على مخاطر؟</value>
+  </data>
+  <data name="Faq_WhyCanQRCodesBeDangerous_Answer" xml:space="preserve">
+    <value>يستخدم معظم الناس رموز QR لفتح مواقع الويب بسرعة، لكن لا يمكن معرفة الموقع المرمّز بمجرد النظر إلى الرمز. وإذا كان الرابط يعيد التوجيه، يستطيع مالكه تغيير الوجهة التي يصل إليها من يمسح الرمز في أي وقت.</value>
+  </data>
+  <data name="Faq_AreTheseDynamicQRCodes_Question" xml:space="preserve">
+    <value>هل هذه رموز QR ديناميكية؟</value>
+  </data>
+  <data name="Faq_AreTheseDynamicQRCodes_Answer" xml:space="preserve">
+    <value>رموز QR ليست ديناميكية بطبيعتها. لجعل أحدها ديناميكيًا، استخدم رابطًا يعيد التوجيه إلى رابط آخر. تحتاج إعادة التوجيه إلى خادم خارجي؛ ويمكن أن يكون موقعًا تابعًا لجهة أخرى أو موقعك الخاص حيث تستطيع تغيير وجهة الرابط.</value>
+  </data>
+  <data name="Faq_HowCanYouTellIfAQRCodeIsDynamic_Question" xml:space="preserve">
+    <value>كيف تعرف إن كان رمز QR ديناميكيًا؟</value>
+  </data>
+  <data name="Faq_HowCanYouTellIfAQRCodeIsDynamic_Answer" xml:space="preserve">
+    <value>قارن الموقع النهائي بمحتوى رمز QR. إذا فتح مسح الرمز بهاتفك موقعًا مثل ⁦https://www.example.com⁩، لكن قراءة الرمز في هذا التطبيق أظهرت عنوانًا مختلفًا تمامًا مثل ⁦http://JoeFinApps.com/123⁩، فالرمز غالبًا ديناميكي، أو على الأقل يعيد النطاق الموجود فيه توجيهك إلى موقع آخر.</value>
+  </data>
+  <data name="Faq_WhatIsATwoDimensionalBarcode_Question" xml:space="preserve">
+    <value>ما الرمز الشريطي ثنائي الأبعاد؟</value>
+  </data>
+  <data name="Faq_WhatIsATwoDimensionalBarcode_Answer" xml:space="preserve">
+    <value>تُمثّل الرموز الشريطية المحتوى بتنسيق يسهل على الآلات مسحه. الخطوط متفاوتة العرض على معظم المنتجات رموز شريطية أحادية البعد لأنها تحمل صفًا واحدًا من البيانات. أما الرموز الشريطية ثنائية الأبعاد فتشفّر البيانات في نمط متعدد الصفوف. ولا تُرمّز البيانات دائمًا من اليسار إلى اليمين أو من الأعلى إلى الأسفل، بل قد تُرتّب أو تُجمّع بطرق تختلف حسب نوع الرمز.</value>
+  </data>
+  <data name="Faq_HowToReadAQRCode_Question" xml:space="preserve">
+    <value>كيف أقرأ رمز QR؟</value>
+  </data>
+  <data name="Faq_HowToReadAQRCode_Answer" xml:space="preserve">
+    <value>تحتاج إلى ماسح ضوئي يقرأ الرموز الشريطية ثنائية الأبعاد. تدعم تطبيقات الكاميرا الافتراضية في Android وiOS وWindows مسح رموز QR. افتح تطبيق الكاميرا ووجّهها نحو الرمز ليتعرّف عليه التطبيق ويتعامل معه. انتبه: قد تختلف صفحة الويب التي تُفتح عن العنوان المرمّز نفسه. لقراءة المحتوى الفعلي لرمز QR، افتح صورة أو الصقها من الحافظة في صفحة «قراءة الرموز» في هذا التطبيق.</value>
+  </data>
+  <data name="Faq_WhatIsTheURLBuilder_Question" xml:space="preserve">
+    <value>ما أداة إنشاء عنوان URL؟</value>
+  </data>
+  <data name="Faq_WhatIsTheURLBuilder_Answer" xml:space="preserve">
+    <value>تساعدك الأداة على تركيب عنوان ويب من أجزائه بدلاً من كتابته يدويًا بالكامل. يمكنك تحديد المخطط والمضيف والمنفذ والمسار والجزء ومعلمات الاستعلام، ثم يجمعها التطبيق في عنوان URL نهائي لرمز QR. يفيد ذلك في تجنّب أخطاء الكتابة وإضافة معلمات التتبّع أو إنشاء عدة روابط ببنية موحّدة.</value>
+  </data>
+  <data name="Faq_WhatIsAVCardQRCode_Question" xml:space="preserve">
+    <value>ما رمز QR لبطاقة vCard؟</value>
+  </data>
+  <data name="Faq_WhatIsAVCardQRCode_Answer" xml:space="preserve">
+    <value>يخزّن هذا الرمز معلومات الاتصال، مثل الاسم والشركة وأرقام الهواتف وعناوين البريد الإلكتروني والموقع والعنوان البريدي، بتنسيق تفهمه هواتف كثيرة وتطبيقات جهات الاتصال. عند مسحه، قد يعرض الجهاز إنشاء جهة اتصال جديدة دون إدخال البيانات يدويًا. ويفيد ذلك في بطاقات العمل وشارات الفعاليات واللافتات عند الرغبة في مشاركة بيانات الاتصال بسرعة.</value>
+  </data>
+  <data name="Faq_WhatIsAWiFiQRCode_Question" xml:space="preserve">
+    <value>ما رمز QR لشبكة Wi-Fi؟</value>
+  </data>
+  <data name="Faq_WhatIsAWiFiQRCode_Answer" xml:space="preserve">
+    <value>يخزّن هذا الرمز اسم الشبكة ونوع الأمان وكلمة المرور وخيار الشبكة المخفية بتنسيق نصي قياسي تتعرّف عليه هواتف كثيرة. وقد يعرض الاتصال بالشبكة مباشرةً على أجهزة iPhone وAndroid الحديثة، بينما قد تُظهر الكاميرات الأقدم وبعض الماسحات النص الخام فقط. يمكن لأي شخص يمسح الرمز أو يصوّره الحصول على بيانات الاتصال، لذا شاركه فقط عندما يكون ذلك مقبولاً. بروتوكول WEP قديم وغير آمن، وعادةً تحتاج شبكات المؤسسات إلى ما يتجاوز إمكانات هذا التنسيق البسيط.</value>
+  </data>
+  <data name="Faq_HowDoIMakeAWiFiQRCode_Question" xml:space="preserve">
+    <value>كيف أنشئ رمز QR لشبكة Wi-Fi؟</value>
+  </data>
+  <data name="Faq_HowDoIMakeAWiFiQRCode_Answer" xml:space="preserve">
+    <value>استخدم أداة إنشاء رمز Wi-Fi لمساعدة الضيوف على الاتصال بالشبكة دون كتابة كلمة المرور. أدخل اسم الشبكة، واختر نوع الأمان، وأضف كلمة المرور إن كانت مطلوبة. لا تحدّد خيار الشبكة المخفية إلا إذا كانت مخفية بالفعل. بعد ذلك، ينشئ التطبيق نص Wi-Fi القياسي ويحوّله إلى رمز QR.</value>
+  </data>
+  <data name="Faq_WhatIsTheErrorCorrectionLevel_Question" xml:space="preserve">
+    <value>ما مستوى تصحيح الأخطاء؟</value>
+  </data>
+  <data name="Faq_WhatIsTheErrorCorrectionLevel_Answer" xml:space="preserve">
+    <value>يمكن قراءة رموز QR حتى عند احتجاب جزء منها بسبب التلف أو ظروف المسح الصعبة. يُحدّد مستوى تصحيح الأخطاء مقدار الجزء الذي يمكن حجبه مع بقاء الرمز قابلاً للقراءة. وعند رفع المستوى، يصبح الرمز أكثر تحمّلاً لكن الحد الأدنى لحجمه يزداد بسبب ترميز بيانات إضافية.</value>
+  </data>
+  <data name="Faq_HowDoesAddingAnImageAffectTheQRCode_Question" xml:space="preserve">
+    <value>كيف تؤثر إضافة صورة في رمز QR؟</value>
+  </data>
+  <data name="Faq_HowDoesAddingAnImageAffectTheQRCode_Answer" xml:space="preserve">
+    <value>عند إضافة صورة مثل شعار باستخدام هذا التطبيق، تُوضَع فوق وسط الرمز مباشرةً فتحجب بعض البيانات. لذلك يعد تصحيح الأخطاء مهمًا: فهو يحافظ على قابلية المسح رغم احتجاب جزء من الرمز. كلما ارتفع مستوى التصحيح، أمكن للشعار تغطية جزء أكبر دون تعطيل الرمز. استخدم دائمًا مستوى أعلى عند إضافة شعار، واختبر الرمز جيدًا للتأكد من أنه يُمسح دون مشاكل.</value>
+  </data>
+  <data name="Faq_HowIsTheCenterImageStoredInSVGFiles_Question" xml:space="preserve">
+    <value>كيف تُخزّن الصورة التي في الوسط في ملفات SVG؟</value>
+  </data>
+  <data name="Faq_HowIsTheCenterImageStoredInSVGFiles_Answer" xml:space="preserve">
+    <value>عند حفظ رمز QR فيه صورة في الوسط بصيغة SVG، تُضمّن الصورة مباشرةً في الملف بترميز Base64. تتحوّل بيانات الصورة كلها إلى نص داخل ملف SVG، فلا يلزم الاحتفاظ بملف الصورة الأصلي على حدة. يسهل بذلك مشاركة الرمز واستخدامه دون القلق بشأن مراجع الصور المفقودة. تُخزّن الصورة بتنسيق PNG نقطي لا بتنسيق متجهي، لذا قد يظهر تكسّر البكسلات عند تكبيرها كثيرًا بينما يظل الرمز المتجهي واضحًا.</value>
+  </data>
+  <data name="Faq_HowToPutAnImageInsideOfTheCenterOfAQRCode_Question" xml:space="preserve">
+    <value>كيف أضع صورة في وسط رمز QR؟</value>
+  </data>
+  <data name="Faq_HowToPutAnImageInsideOfTheCenterOfAQRCode_Answer" xml:space="preserve">
+    <value>يمكنك إضافة صورة من زر «صورة في الوسط» (الشعار) في شريط الأدوات، أو حفظ علامة تجارية تتضمن شعارًا. انقر زر الصورة لاختيار ملف PNG أو JPG من جهازك، ثم اضبط الحجم (من 7% إلى 30%) والهامش (من ‎-20 إلى ‎+20 بكسل) باستخدام أشرطة التمرير في القائمة المنبثقة. توضع الصورة فوق وسط الرمز، لذا يُنصح بشدة باستخدام مستوى تصحيح أعلى (Q أو H). اختبر الرمز النهائي دائمًا للتأكد من أنه يُمسح دون مشاكل.</value>
+  </data>
+  <data name="Faq_HowIsMinimumSizeCalculated_Question" xml:space="preserve">
+    <value>كيف يُحسب الحد الأدنى للحجم؟</value>
+  </data>
+  <data name="Faq_HowIsMinimumSizeCalculated_Answer" xml:space="preserve">
+    <value>يُحسب الحد الأدنى لحجم رمز QR بالاستناد إلى بيانات تجريبية. طُبعت رموز بأحجام مختلفة على ورق أبيض بطابعة ليزر بدقة 600 نقطة في البوصة، ثم مُسحت لتحديد العلاقة بين حجم الرمز ومسافة المسح. ويُراعى كذلك التباين بين لون الرمز وخلفيته. إذا كان أي من اللونين شفافًا، يتأثر التباين الفعلي بسطح الطباعة النهائي، فلا يعرض التطبيق حدًا أدنى دقيقًا.</value>
+  </data>
+  <data name="Faq_HowCanIChangeTheMaximumScanDistance_Question" xml:space="preserve">
+    <value>كيف أغيّر مسافة المسح القصوى؟</value>
+  </data>
+  <data name="Faq_HowCanIChangeTheMaximumScanDistance_Answer" xml:space="preserve">
+    <value>يمكنك تغيير مسافة المسح القصوى المقدّرة عند الحد الأدنى لحجم الرمز من الإعدادات. اختبر الرمز في ظروف الاستخدام الفعلية قبل الالتزام بطلب طباعة أو تركيب مكلف.</value>
+  </data>
+  <data name="Faq_WhatIsTheContrastRatio_Question" xml:space="preserve">
+    <value>ما نسبة التباين؟</value>
+  </data>
+  <data name="Faq_WhatIsTheContrastRatio_Answer" xml:space="preserve">
+    <value>التباين هو الاختلاف في السطوع أو اللون الذي يجعل عنصرًا ما واضحًا. وفي رموز QR، يُقصد به الفرق بين لون الرمز ولون الخلفية. كلما ارتفعت نسبة التباين، سهل مسح الرمز وقراءته. الحد الأدنى الموصى به هو ⁦2.5:1⁩. عند استخدام الشفافية، تعتمد النسبة الفعلية على سطح الطباعة النهائي بعد دمج الرمز مع الخلفية.</value>
+  </data>
+  <data name="Faq_AtTheMinimumSizeHowFarAwayCanAQRCodeBeScanned_Question" xml:space="preserve">
+    <value>من أي مسافة يمكن مسح رمز QR عند الحد الأدنى لحجمه؟</value>
+  </data>
+  <data name="Faq_AtTheMinimumSizeHowFarAwayCanAQRCodeBeScanned_Answer" xml:space="preserve">
+    <value>نحو 36 بوصة أو متر واحد هي المسافة القصوى التقريبية لمسح رمز QR مطبوع بالحد الأدنى للحجم. وتؤثر عوامل مثل الإضاءة وتلف الرمز والوهج في سهولة المسح، بل قد تمنعه تمامًا.</value>
+  </data>
+  <data name="Faq_WhatIfIPrintTheQRCodeSmallerThanTheMinimumSize_Question" xml:space="preserve">
+    <value>ماذا لو طبعت رمز QR بحجم أصغر من الحد الأدنى؟</value>
+  </data>
+  <data name="Faq_WhatIfIPrintTheQRCodeSmallerThanTheMinimumSize_Answer" xml:space="preserve">
+    <value>العلاقة بين الحجم ومسافة المسح طردية: إذا ضاعفت حجم الرمز تضاعفت مسافة المسح، وإذا صغّرته انخفضت المسافة بالنسبة نفسها.</value>
+  </data>
+  <data name="Faq_WhatTypeOfScannerOrPhoneCameraIsExpectedWhenPrintingAtTheMinimumSize_Question" xml:space="preserve">
+    <value>ما الماسح الضوئي أو كاميرا الهاتف المناسبة للطباعة بالحد الأدنى للحجم؟</value>
+  </data>
+  <data name="Faq_WhatTypeOfScannerOrPhoneCameraIsExpectedWhenPrintingAtTheMinimumSize_Answer" xml:space="preserve">
+    <value>أُجريت تجارب المسح باستخدام الهاتف iPhone 13 وتطبيق المسح الافتراضي في iOS والكاميرا الرئيسية بدقة 12 ميغابكسل. يُفترض أن تتمكن هواتف Android أو iOS الحديثة الصادرة بعد عام 2018 من مسح الرموز من مسافة متر واحد عند الحد الأدنى الافتراضي للحجم.</value>
+  </data>
+  <data name="Faq_WillTheScanningAlwaysWorkIfMinimumSizeIsFollowed_Question" xml:space="preserve">
+    <value>هل ينجح المسح دائمًا إذا التزمت بالحد الأدنى للحجم؟</value>
+  </data>
+  <data name="Faq_WillTheScanningAlwaysWorkIfMinimumSizeIsFollowed_Answer" xml:space="preserve">
+    <value>لا. يفترض الحد الأدنى للحجم توفر ظروف جيدة، مثل إضاءة مناسبة وسطح طباعة غير لامع وجهاز مسح حديث نسبيًا.</value>
+  </data>
+  <data name="Faq_WhyDoWeHaveToUseQRCodes_Question" xml:space="preserve">
+    <value>لماذا نستخدم رموز QR؟</value>
+  </data>
+  <data name="Faq_WhyDoWeHaveToUseQRCodes_Answer" xml:space="preserve">
+    <value>كتابة عناوين URL أمر مرهق، ومسحها بالكاميرا أسهل وأكثر موثوقية.</value>
+  </data>
+  <data name="Faq_AreQRCodesEvilAndOrDumb_Question" xml:space="preserve">
+    <value>هل رموز QR شريرة أو سخيفة؟</value>
+  </data>
+  <data name="Faq_AreQRCodesEvilAndOrDumb_Answer" xml:space="preserve">
+    <value>ربما فيها شيء من الاثنين، لكنها وسيلة عملية لتوجيه الناس إلى مواقع الويب.</value>
+  </data>
+  <data name="Faq_WhyMightQRCodeDetectionFail_Question" xml:space="preserve">
+    <value>لماذا قد يفشل اكتشاف رمز QR؟</value>
+  </data>
+  <data name="Faq_WhyMightQRCodeDetectionFail_Answer" xml:space="preserve">
+    <value>قد تكون الصورة ضبابية أو منخفضة الدقة، أو يحجب الوهج أو الظلال أجزاء من الرمز، أو يكون مطبوعًا بحجم صغير جدًا. وقد يكون التباين بين الرمز والخلفية ضعيفًا أو يكون الرمز تالفًا أو مغطّى جزئيًا. كذلك قد يشوّه المسح بزاوية حادّة الرمز بدرجة تمنع اكتشافه.</value>
+  </data>
+  <data name="Faq_HowCanIImproveQRCodeDetectionInThisApp_Question" xml:space="preserve">
+    <value>كيف أحسّن اكتشاف رموز QR في هذا التطبيق؟</value>
+  </data>
+  <data name="Faq_HowCanIImproveQRCodeDetectionInThisApp_Answer" xml:space="preserve">
+    <value>إذا لم يُكتشف رمز QR، جرّب «الأدوات المتقدمة» في صفحة قراءة الرموز. يمكنك تحويل الصورة إلى تدرج رمادي وتحسين التباين وتصحيح المنظور لمساعدة التطبيق على التعرّف على الرمز. وقد يفيد أيضًا اقتصاص الصورة لإبقاء منطقة الرمز فقط. تأكد من وضوح الصورة وجودة إضاءتها ومن أن الرمز يشغل مساحة كافية منها.</value>
+  </data>
+  <data name="Faq_WhatIsABrand_Question" xml:space="preserve">
+    <value>ما العلامة التجارية؟</value>
+  </data>
+  <data name="Faq_WhatIsABrand_Answer" xml:space="preserve">
+    <value>العلامة التجارية هي مجموعة محفوظة من إعدادات رمز QR. يمكن أن تتضمن أي مجموعة من لون المقدمة ولون الخلفية ومستوى تصحيح الأخطاء وعنوان URL أو نص وصورة شعار في الوسط. عند تطبيقها، تُستعاد جميع إعداداتها فورًا لتنشئ رموزًا متناسقة دون إعادة ضبط كل شيء في كل مرة.</value>
+  </data>
+  <data name="Faq_HowDoICreateABrand_Question" xml:space="preserve">
+    <value>كيف أنشئ علامة تجارية؟</value>
+  </data>
+  <data name="Faq_HowDoICreateABrand_Answer" xml:space="preserve">
+    <value>افتح قائمة «العلامات التجارية» بالنقر على أيقونة الإشارة المرجعية في شريط الأدوات. اختر «حفظ كعلامة تجارية»، وسمِّ الإعداد المسبق، وحدّد الإعدادات التي تريد الاحتفاظ بها: لون المقدمة ولون الخلفية ومستوى تصحيح الأخطاء وعنوان URL أو النص والصورة في الوسط. ثم اختر «حفظ العلامة التجارية» لحفظ القيم الحالية لكل إعداد محدد.</value>
+  </data>
+  <data name="Faq_HowDoIApplyABrand_Question" xml:space="preserve">
+    <value>كيف أطبّق علامة تجارية؟</value>
+  </data>
+  <data name="Faq_HowDoIApplyABrand_Answer" xml:space="preserve">
+    <value>افتح قائمة «العلامات التجارية» وانقر على أي علامة محفوظة. تُطبّق جميع إعداداتها فورًا. يمكنك أيضًا تعيين علامة تجارية كافتراضية لتحميل إعداداتها تلقائيًا عند فتح التطبيق. انقر بزر الماوس الأيمن على العلامة في القائمة واختر «تعيين كافتراضي».</value>
+  </data>
+  <data name="Faq_WhatDoesTheDefaultBrandSettingDo_Question" xml:space="preserve">
+    <value>ماذا يفعل إعداد العلامة التجارية الافتراضية؟</value>
+  </data>
+  <data name="Faq_WhatDoesTheDefaultBrandSettingDo_Answer" xml:space="preserve">
+    <value>عند تعيين علامة تجارية كافتراضية، تُطبّق إعداداتها المحفوظة تلقائيًا عند كل بدء تشغيل. لا يمكن تعيين أكثر من علامة واحدة في الوقت نفسه. لتعيينها، انقر بزر الماوس الأيمن عليها في قائمة «العلامات التجارية» واختر «تعيين كافتراضي». لإلغاء التعيين، انقر بزر الماوس الأيمن على العلامة الافتراضية واختر الخيار نفسه.</value>
+  </data>
+  <data name="Faq_CanABrandStoreACenterLogoImage_Question" xml:space="preserve">
+    <value>هل يمكن لعلامة تجارية حفظ صورة شعار في الوسط؟</value>
+  </data>
+  <data name="Faq_CanABrandStoreACenterLogoImage_Answer" xml:space="preserve">
+    <value>نعم. حمّل صورة الشعار من زر الصورة في الوسط في شريط الأدوات، واضبط حجمها وهامشها كما تريد. ثم افتح قائمة «العلامات التجارية»، واختر «حفظ كعلامة تجارية»، وحدّد «صورة في الوسط»، ثم احفظ. تُخزّن العلامة التجارية مسار ملف الصورة. إذا نقلت الملف أو حذفته لاحقًا، فلن تتمكن العلامة التجارية من تطبيق الشعار.</value>
+  </data>
+  <data name="Faq_ShowMe" xml:space="preserve">
+    <value>أرني</value>
+  </data>
+  <data name="Faq_TopicSize" xml:space="preserve">
+    <value>الحجم</value>
+  </data>
+  <data name="Faq_TopicErrorCorrection" xml:space="preserve">
+    <value>تصحيح الأخطاء</value>
+  </data>
+  <data name="Faq_TopicBrands" xml:space="preserve">
+    <value>علامة تجارية</value>
+  </data>
+  <data name="Faq_TopicDetection" xml:space="preserve">
+    <value>الاكتشاف</value>
+  </data>
+  <data name="DecodingPage_DetectionHelpLink.Content" xml:space="preserve">
+    <value>أسباب تعذّر فك الترميز</value>
+  </data>
+  <data name="Emoji_Smile" xml:space="preserve">
+    <value>ابتسامة</value>
+  </data>
+  <data name="Emoji_Grin" xml:space="preserve">
+    <value>ابتسامة عريضة</value>
+  </data>
+  <data name="Emoji_Laugh" xml:space="preserve">
+    <value>ضحك</value>
+  </data>
+  <data name="Emoji_ROFL" xml:space="preserve">
+    <value>التدحرج من الضحك</value>
+  </data>
+  <data name="Emoji_Happy" xml:space="preserve">
+    <value>سعيد</value>
+  </data>
+  <data name="Emoji_Cool" xml:space="preserve">
+    <value>رائع</value>
+  </data>
+  <data name="Emoji_Wow" xml:space="preserve">
+    <value>دهشة</value>
+  </data>
+  <data name="Emoji_Love" xml:space="preserve">
+    <value>حب</value>
+  </data>
+  <data name="Emoji_Adore" xml:space="preserve">
+    <value>إعجاب شديد</value>
+  </data>
+  <data name="Emoji_Celebrate" xml:space="preserve">
+    <value>احتفال</value>
+  </data>
+  <data name="Emoji_Robot" xml:space="preserve">
+    <value>روبوت</value>
+  </data>
+  <data name="Emoji_Like" xml:space="preserve">
+    <value>إعجاب</value>
+  </data>
+  <data name="Emoji_Applause" xml:space="preserve">
+    <value>تصفيق</value>
+  </data>
+  <data name="Emoji_Thanks" xml:space="preserve">
+    <value>شكرًا</value>
+  </data>
+  <data name="Emoji_Crown" xml:space="preserve">
+    <value>تاج</value>
+  </data>
+  <data name="Emoji_Rocket" xml:space="preserve">
+    <value>صاروخ</value>
+  </data>
+  <data name="Emoji_Star" xml:space="preserve">
+    <value>نجمة</value>
+  </data>
+  <data name="Emoji_Lightning" xml:space="preserve">
+    <value>برق</value>
+  </data>
+  <data name="Emoji_Shine" xml:space="preserve">
+    <value>لمعان</value>
+  </data>
+  <data name="Emoji_Alert" xml:space="preserve">
+    <value>تنبيه</value>
+  </data>
+  <data name="Emoji_Question" xml:space="preserve">
+    <value>سؤال</value>
+  </data>
+  <data name="Emoji_Fire" xml:space="preserve">
+    <value>نار</value>
+  </data>
+  <data name="Emoji_Idea" xml:space="preserve">
+    <value>فكرة</value>
+  </data>
+  <data name="Emoji_Gem" xml:space="preserve">
+    <value>جوهرة</value>
+  </data>
+  <data name="Emoji_Check" xml:space="preserve">
+    <value>علامة صح</value>
+  </data>
+  <data name="Emoji_Heart" xml:space="preserve">
+    <value>قلب</value>
+  </data>
+  <data name="Emoji_PurpleHeart" xml:space="preserve">
+    <value>قلب أرجواني</value>
+  </data>
+  <data name="Emoji_Target" xml:space="preserve">
+    <value>هدف</value>
+  </data>
+  <data name="Emoji_Party" xml:space="preserve">
+    <value>حفلة</value>
+  </data>
+  <data name="Emoji_Trophy" xml:space="preserve">
+    <value>كأس</value>
+  </data>
+  <data name="Emoji_GoldMedal" xml:space="preserve">
+    <value>ميدالية ذهبية</value>
+  </data>
+  <data name="Emoji_Package" xml:space="preserve">
+    <value>طرد</value>
+  </data>
+  <data name="Emoji_Announcement" xml:space="preserve">
+    <value>إعلان</value>
+  </data>
+  <data name="Emoji_Growth" xml:space="preserve">
+    <value>نمو</value>
+  </data>
+  <data name="Emoji_Cart" xml:space="preserve">
+    <value>عربة تسوّق</value>
+  </data>
+  <data name="Emoji_Briefcase" xml:space="preserve">
+    <value>حقيبة عمل</value>
+  </data>
+  <data name="Emoji_Money" xml:space="preserve">
+    <value>مال</value>
+  </data>
+  <data name="Emoji_Coffee" xml:space="preserve">
+    <value>قهوة</value>
+  </data>
+  <data name="Emoji_Time" xml:space="preserve">
+    <value>وقت</value>
+  </data>
+  <data name="Emoji_Clock" xml:space="preserve">
+    <value>ساعة</value>
+  </data>
+  <data name="Emoji_Donut" xml:space="preserve">
+    <value>دونات</value>
+  </data>
+  <data name="Emoji_Gift" xml:space="preserve">
+    <value>هدية</value>
+  </data>
+  <data name="Emoji_Music" xml:space="preserve">
+    <value>موسيقى</value>
+  </data>
+  <data name="Emoji_Gaming" xml:space="preserve">
+    <value>ألعاب</value>
+  </data>
+  <data name="Emoji_Camera" xml:space="preserve">
+    <value>كاميرا</value>
+  </data>
+  <data name="Emoji_Movie" xml:space="preserve">
+    <value>فيلم</value>
+  </data>
+  <data name="Emoji_Brain" xml:space="preserve">
+    <value>دماغ</value>
+  </data>
+  <data name="Emoji_Person" xml:space="preserve">
+    <value>شخص</value>
+  </data>
+  <data name="Emoji_Contacts" xml:space="preserve">
+    <value>جهات الاتصال</value>
+  </data>
+  <data name="Emoji_ContactCard" xml:space="preserve">
+    <value>بطاقة جهة اتصال</value>
+  </data>
+  <data name="Emoji_Pin" xml:space="preserve">
+    <value>دبوس</value>
+  </data>
+  <data name="Emoji_Phone" xml:space="preserve">
+    <value>هاتف محمول</value>
+  </data>
+  <data name="Emoji_Telephone" xml:space="preserve">
+    <value>هاتف</value>
+  </data>
+  <data name="Emoji_Email" xml:space="preserve">
+    <value>بريد إلكتروني</value>
+  </data>
+  <data name="Emoji_Envelope" xml:space="preserve">
+    <value>ظرف</value>
+  </data>
+  <data name="Emoji_Home" xml:space="preserve">
+    <value>المنزل</value>
+  </data>
+  <data name="Emoji_House" xml:space="preserve">
+    <value>بيت</value>
+  </data>
+  <data name="Emoji_Office" xml:space="preserve">
+    <value>مكتب</value>
+  </data>
+  <data name="Emoji_Laptop" xml:space="preserve">
+    <value>حاسوب محمول</value>
+  </data>
+  <data name="Emoji_Globe" xml:space="preserve">
+    <value>الكرة الأرضية</value>
+  </data>
+  <data name="Emoji_WiFi" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="Emoji_Rainbow" xml:space="preserve">
+    <value>قوس قزح</value>
+  </data>
+  <data name="Emoji_Sunflower" xml:space="preserve">
+    <value>عبّاد الشمس</value>
+  </data>
+  <data name="Emoji_Cat" xml:space="preserve">
+    <value>قط</value>
+  </data>
+  <data name="Emoji_Dog" xml:space="preserve">
+    <value>كلب</value>
+  </data>
+  <data name="Emoji_Fox" xml:space="preserve">
+    <value>ثعلب</value>
+  </data>
+  <data name="Emoji_Panda" xml:space="preserve">
+    <value>باندا</value>
+  </data>
+  <data name="Emoji_Pizza" xml:space="preserve">
+    <value>بيتزا</value>
+  </data>
+  <data name="Emoji_Burger" xml:space="preserve">
+    <value>برغر</value>
+  </data>
+  <data name="Emoji_Fries" xml:space="preserve">
+    <value>بطاطس مقلية</value>
+  </data>
+  <data name="Emoji_Strawberry" xml:space="preserve">
+    <value>فراولة</value>
+  </data>
+  <data name="Emoji_Sparkles" xml:space="preserve">
+    <value>بريق</value>
+  </data>
+  <data name="Emoji_Lock" xml:space="preserve">
+    <value>قفل</value>
+  </data>
+  <data name="Emoji_Bell" xml:space="preserve">
+    <value>جرس</value>
+  </data>
+  <data name="Emoji_Shield" xml:space="preserve">
+    <value>درع</value>
+  </data>
+  <data name="FramePreset_None_Short" xml:space="preserve">
+    <value>إطار</value>
+  </data>
+  <data name="FramePreset_None_Description" xml:space="preserve">
+    <value>بلا إطار</value>
+  </data>
+  <data name="FramePreset_BottomLabel_Short" xml:space="preserve">
+    <value>تسمية</value>
+  </data>
+  <data name="FramePreset_BottomLabel_Description" xml:space="preserve">
+    <value>تسمية سفلية</value>
+  </data>
+  <data name="FramePreset_BottomLabel_Caption" xml:space="preserve">
+    <value>امسح الرمز</value>
+  </data>
+  <data name="FramePreset_RoundedFrame_Short" xml:space="preserve">
+    <value>مستدير</value>
+  </data>
+  <data name="FramePreset_RoundedFrame_Description" xml:space="preserve">
+    <value>إطار بزوايا مستديرة</value>
+  </data>
+  <data name="FramePreset_RoundedFrame_Caption" xml:space="preserve">
+    <value>امسح هنا</value>
+  </data>
+  <data name="FramePreset_CornerCallout_Short" xml:space="preserve">
+    <value>فقاعة</value>
+  </data>
+  <data name="FramePreset_CornerCallout_Description" xml:space="preserve">
+    <value>فقاعة في الزاوية</value>
+  </data>
+  <data name="FramePreset_CornerCallout_Caption" xml:space="preserve">
+    <value>امسح رمز QR</value>
+  </data>
+  <data name="FramePreset_SpeechBubble_Short" xml:space="preserve">
+    <value>فقاعة كلام</value>
+  </data>
+  <data name="FramePreset_SpeechBubble_Description" xml:space="preserve">
+    <value>فقاعة كلام</value>
+  </data>
+  <data name="FramePreset_SpeechBubble_Caption" xml:space="preserve">
+    <value>امسح الرمز</value>
+  </data>
+  <data name="FramePreset_Ticket_Short" xml:space="preserve">
+    <value>تذكرة</value>
+  </data>
+  <data name="FramePreset_Ticket_Description" xml:space="preserve">
+    <value>تذكرة فعالية</value>
+  </data>
+  <data name="FramePreset_Ticket_Caption" xml:space="preserve">
+    <value>احصل على تذاكر</value>
+  </data>
+  <data name="FramePreset_Sticker_Short" xml:space="preserve">
+    <value>ملصق</value>
+  </data>
+  <data name="FramePreset_Sticker_Description" xml:space="preserve">
+    <value>ملصق بألوان زاهية</value>
+  </data>
+  <data name="FramePreset_Sticker_Caption" xml:space="preserve">
+    <value>افتحني</value>
+  </data>
+  <data name="FramePreset_ScallopedBadge_Short" xml:space="preserve">
+    <value>شارة</value>
+  </data>
+  <data name="FramePreset_ScallopedBadge_Description" xml:space="preserve">
+    <value>شارة بحواف متموّجة</value>
+  </data>
+  <data name="FramePreset_ScallopedBadge_Caption" xml:space="preserve">
+    <value>امسح الرمز</value>
+  </data>
+  <data name="FramePreset_Polaroid_Short" xml:space="preserve">
+    <value>صورة</value>
+  </data>
+  <data name="FramePreset_Polaroid_Description" xml:space="preserve">
+    <value>بطاقة بتسمية توضيحية</value>
+  </data>
+  <data name="FramePreset_Polaroid_Caption" xml:space="preserve">
+    <value>اصنع ذكرى</value>
+  </data>
+  <data name="FramePreset_Burst_Short" xml:space="preserve">
+    <value>انفجار</value>
+  </data>
+  <data name="FramePreset_Burst_Description" xml:space="preserve">
+    <value>انفجار بأسلوب القصص المصوّرة</value>
+  </data>
+  <data name="FramePreset_Burst_Caption" xml:space="preserve">
+    <value>جرّبني!</value>
+  </data>
+  <data name="DesignPreset_Classic_Name" xml:space="preserve">
+    <value>تقليدي</value>
+  </data>
+  <data name="DesignPreset_Classic_Description" xml:space="preserve">
+    <value>واضح وبسيط ومناسب لأي استخدام.</value>
+  </data>
+  <data name="DesignPreset_Bubblegum_Name" xml:space="preserve">
+    <value>علكة</value>
+  </data>
+  <data name="DesignPreset_Bubblegum_Description" xml:space="preserve">
+    <value>نقاط أرجوانية داكنة داخل فقاعة كلام بلون الحلوى.</value>
+  </data>
+  <data name="DesignPreset_Bubblegum_Caption" xml:space="preserve">
+    <value>ألقِ التحية!</value>
+  </data>
+  <data name="DesignPreset_GigTicket_Name" xml:space="preserve">
+    <value>تذكرة حفل</value>
+  </data>
+  <data name="DesignPreset_GigTicket_Description" xml:space="preserve">
+    <value>تذكرة دخول بإطار دافئ بألوان الغروب.</value>
+  </data>
+  <data name="DesignPreset_GigTicket_Caption" xml:space="preserve">
+    <value>احصل على تذاكر</value>
+  </data>
+  <data name="DesignPreset_Cafe_Name" xml:space="preserve">
+    <value>مقهى</value>
+  </data>
+  <data name="DesignPreset_Cafe_Description" xml:space="preserve">
+    <value>زوايا مستديرة ودرجات ورقية دافئة.</value>
+  </data>
+  <data name="DesignPreset_Cafe_Caption" xml:space="preserve">
+    <value>اعرض قائمة الطعام</value>
+  </data>
+  <data name="DesignPreset_PopSticker_Name" xml:space="preserve">
+    <value>ملصق زاهٍ</value>
+  </data>
+  <data name="DesignPreset_PopSticker_Description" xml:space="preserve">
+    <value>أخضر ليموني وعلامات زوايا مستديرة وظل بارز مزاح.</value>
+  </data>
+  <data name="DesignPreset_PopSticker_Caption" xml:space="preserve">
+    <value>افتحني</value>
+  </data>
+  <data name="DesignPreset_Festival_Name" xml:space="preserve">
+    <value>مهرجان</value>
+  </data>
+  <data name="DesignPreset_Festival_Description" xml:space="preserve">
+    <value>انفجار ساطع بأسلوب القصص المصوّرة يضفي لمسة حيوية.</value>
+  </data>
+  <data name="DesignPreset_Festival_Caption" xml:space="preserve">
+    <value>انضم إلى المرح!</value>
+  </data>
+  <data name="DesignPreset_Ocean_Name" xml:space="preserve">
+    <value>محيط</value>
+  </data>
+  <data name="DesignPreset_Ocean_Description" xml:space="preserve">
+    <value>شارة فيروزية بتدرّج أزرق منعش.</value>
+  </data>
+  <data name="DesignPreset_Ocean_Caption" xml:space="preserve">
+    <value>اغطس معنا</value>
+  </data>
+  <data name="DesignPreset_Postcard_Name" xml:space="preserve">
+    <value>بطاقة بريدية</value>
+  </data>
+  <data name="DesignPreset_Postcard_Description" xml:space="preserve">
+    <value>إطار أزرق هادئ لمشاركة شيء شخصي.</value>
+  </data>
+  <data name="DesignPreset_Postcard_Caption" xml:space="preserve">
+    <value>ابقَ على تواصل</value>
+  </data>
+  <data name="Design_Module_Square" xml:space="preserve">
+    <value>مربّع</value>
+  </data>
+  <data name="Design_Module_Rounded" xml:space="preserve">
+    <value>مستدير</value>
+  </data>
+  <data name="Design_Module_Dots" xml:space="preserve">
+    <value>نقاط</value>
+  </data>
+  <data name="Design_Eye_Square" xml:space="preserve">
+    <value>مربّع</value>
+  </data>
+  <data name="Design_Eye_Rounded" xml:space="preserve">
+    <value>مستدير</value>
+  </data>
+  <data name="Design_Eye_Circle" xml:space="preserve">
+    <value>دائري</value>
+  </data>
+  <data name="Design_Icon_None" xml:space="preserve">
+    <value>بلا أيقونة</value>
+  </data>
+  <data name="Design_Icon_Arrow" xml:space="preserve">
+    <value>سهم</value>
+  </data>
+  <data name="Design_Icon_WiFi" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="Design_Icon_Contact" xml:space="preserve">
+    <value>جهة اتصال</value>
+  </data>
+  <data name="Design_Icon_Link" xml:space="preserve">
+    <value>رابط</value>
+  </data>
+  <data name="App_FlowDirection" xml:space="preserve">
+    <value>RightToLeft</value>
+    <comment>WinUI enum value: choose LeftToRight or RightToLeft for the language. Do not translate the enum name.</comment>
+  </data>
+  <data name="Colors_PickColor" xml:space="preserve">
+    <value>اختيار لون</value>
+  </data>
+  <data name="Colors_PasteClipboard" xml:space="preserve">
+    <value>لصق لون من الحافظة</value>
+  </data>
+  <data name="Colors_PasteClipboardValue" xml:space="preserve">
+    <value>لصق ⁦{0}⁩ من الحافظة</value>
+    <comment>{0} is the color's hexadecimal or RGB value. Accessible label and tooltip.</comment>
+  </data>
+  <data name="Licenses_MitCopyrightNote" xml:space="preserve">
+    <value>ملاحظة: تُذكر سنوات حقوق النشر وأسماء أصحابها لهذه المكتبة في مستودعها على GitHub. اختر «عرض على GitHub» أعلاه لقراءة إشعار حقوق النشر بالكامل.</value>
+  </data>
+  <data name="PrintSettingsDialog_InitialZoom.Text" xml:space="preserve">
+    <value>100%</value>
+    <comment>The initial zoom before the preview loads.</comment>
+  </data>
+  <data name="Print_DocumentTitle" xml:space="preserve">
+    <value>رموز QR</value>
+    <comment>Title of the PDF and the corresponding Windows print job.</comment>
+  </data>
+</root>

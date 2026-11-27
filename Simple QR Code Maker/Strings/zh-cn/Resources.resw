@@ -1,0 +1,4065 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="QrDesign_NoBackground.Content" xml:space="preserve">
+    <value>无背景</value>
+  </data>
+  <data name="QrDesign_NoBackgroundHelp.Text" xml:space="preserve">
+    <value>移除二维码的背景，同时保留边框。请在浅色边框上使用深色二维码，以便顺利扫描。</value>
+  </data>
+  <data name="Settings_Personalization.Text" xml:space="preserve">
+    <value>个性化</value>
+  </data>
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
+    <value>浅色</value>
+  </data>
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
+    <value>深色</value>
+  </data>
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
+    <value>默认</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>关于此应用</value>
+  </data>
+  <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
+    <value>隐私声明</value>
+  </data>
+  <data name="Settings_Title.Text" xml:space="preserve">
+    <value>设置</value>
+    <comment>Page title for SettingsPage</comment>
+  </data>
+  <data name="WebView_Loading.Text" xml:space="preserve">
+    <value>正在加载…</value>
+  </data>
+  <data name="WebView_FailedMessage.Text" xml:space="preserve">
+    <value>页面加载失败。请检查网络连接后重新加载。</value>
+  </data>
+  <data name="BrowserBackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>浏览器后退</value>
+  </data>
+  <data name="BrowserBackButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>浏览器后退</value>
+  </data>
+  <data name="BrowserForwardButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>浏览器前进</value>
+  </data>
+  <data name="BrowserForwardButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>浏览器前进</value>
+  </data>
+  <data name="WebView_Reload.Content" xml:space="preserve">
+    <value>重新加载</value>
+  </data>
+  <data name="ReloadButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>重新加载</value>
+  </data>
+  <data name="ReloadButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>重新加载</value>
+  </data>
+  <data name="OpenInBrowserButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>在浏览器中打开</value>
+  </data>
+  <data name="OpenInBrowserButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>在浏览器中打开</value>
+  </data>
+  <data name="AdvancedToolsUserControl_AdvancedDecodingText.Text" xml:space="preserve">
+    <value>高级解码</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ChooseAFocusedWorkflowOrText.Text" xml:space="preserve">
+    <value>解码前，可以选择专用工具或快速调整图像。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_QuickFixesSettingsExpander.Description" xml:space="preserve">
+    <value>无需引导，快速调整图像。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_QuickFixesSettingsExpander.Header" xml:space="preserve">
+    <value>快速修正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OneTapFixesSettingsCard.Header" xml:space="preserve">
+    <value>一键修正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ConvertTheImageToGrayscaleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>将图像转换为灰度，以便检测二维码</value>
+  </data>
+  <data name="AdvancedToolsUserControl_GrayscaleText.Text" xml:space="preserve">
+    <value>灰度</value>
+  </data>
+  <data name="AdvancedToolsUserControl_InvertImageColorsWhenTheButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>当码图比背景浅时，反转图像颜色</value>
+  </data>
+  <data name="AdvancedToolsUserControl_InvertText.Text" xml:space="preserve">
+    <value>反色</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ContrastSettingsCard.Header" xml:space="preserve">
+    <value>对比度</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ContrastSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>调整对比度，使码图更容易与背景区分</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BlackPointSettingsCard.Header" xml:space="preserve">
+    <value>黑场</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BlackPointSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>设置像素变为纯黑的亮度阈值</value>
+  </data>
+  <data name="AdvancedToolsUserControl_WhitePointSettingsCard.Header" xml:space="preserve">
+    <value>白场</value>
+  </data>
+  <data name="AdvancedToolsUserControl_WhitePointSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>设置像素变为纯白的亮度阈值</value>
+  </data>
+  <data name="AdvancedToolsUserControl_AddBorderSettingsCard.Header" xml:space="preserve">
+    <value>添加留白</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BorderPercentSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>按图像宽度的百分比添加白边（例如，10 表示每侧留白 10%）</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyQuickFixesSettingsCard.Header" xml:space="preserve">
+    <value>应用快速修正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyTheCurrentQuickFixButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>将当前快速修正设置应用到图像</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyQuickFixesText.Text" xml:space="preserve">
+    <value>应用快速修正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_GuidedWorkflowsSettingsExpander.Description" xml:space="preserve">
+    <value>打开专用工具，完成后返回此处。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_GuidedWorkflowsSettingsExpander.Header" xml:space="preserve">
+    <value>引导式修正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleBlackPointSettingsCard.Description" xml:space="preserve">
+    <value>单击一个深色像素，即可立即应用取样。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleBlackPointSettingsCard.Header" xml:space="preserve">
+    <value>黑场取样</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheBlackPointSamplingButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开黑场取样工具</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickBlackPointText.Text" xml:space="preserve">
+    <value>选取黑场</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleWhitePointSettingsCard.Description" xml:space="preserve">
+    <value>单击一个浅色像素，即可立即应用取样。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleWhitePointSettingsCard.Header" xml:space="preserve">
+    <value>白场取样</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheWhitePointSamplingButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开白场取样工具</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickWhitePointText.Text" xml:space="preserve">
+    <value>选取白场</value>
+  </data>
+  <data name="AdvancedToolsUserControl_StraightenAQRCodeSettingsCard.Description" xml:space="preserve">
+    <value>标记四个角点，然后应用校正。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_StraightenAQRCodeSettingsCard.Header" xml:space="preserve">
+    <value>校正二维码透视</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenThePerspectiveCorrectionWorkflowButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开透视校正工具</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickCodeCornersText.Text" xml:space="preserve">
+    <value>选取二维码角点</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractARegionSettingsCard.Description" xml:space="preserve">
+    <value>在图像上框选区域，然后将其提取为新图像。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractARegionSettingsCard.Header" xml:space="preserve">
+    <value>提取区域</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheExtractRegionWorkflowButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开区域提取工具</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CutoutAreaText.Text" xml:space="preserve">
+    <value>裁切区域</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UnwarpAQRCodeSettingsCard.Description" xml:space="preserve">
+    <value>标记角点和对齐点，校正弯曲或变形的二维码。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UnwarpAQRCodeSettingsCard.Header" xml:space="preserve">
+    <value>校正二维码形变</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheUnwarpWorkflowToButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开形变校正工具，修复扭曲或弯曲的二维码</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickUnwarpPointsText.Text" xml:space="preserve">
+    <value>选取校正点</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleBlackPointText.Text" xml:space="preserve">
+    <value>黑场取样</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickTheDarkestMeaningfulPartText.Text" xml:space="preserve">
+    <value>在码图或背景中单击有代表性的最暗区域。选取后会立即应用取样。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickOnceOnTheImageInfoBar.Message" xml:space="preserve">
+    <value>单击图像一次以选取黑场。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleWhitePointText.Text" xml:space="preserve">
+    <value>白场取样</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickTheLightestMeaningfulPartText.Text" xml:space="preserve">
+    <value>在码图或背景中单击有代表性的最亮区域。选取后会立即应用取样。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickOnceOnTheImageInfoBar2.Message" xml:space="preserve">
+    <value>单击图像一次以选取白场。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_StraightenAQRCodeText.Text" xml:space="preserve">
+    <value>校正二维码透视</value>
+  </data>
+  <data name="AdvancedToolsUserControl_WorkThroughTheCornerSelectionText.Text" xml:space="preserve">
+    <value>按步骤选取角点，确定轮廓后应用校正。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickEachCornerOnTheInfoBar.Message" xml:space="preserve">
+    <value>按顺序单击图像上的各个角点。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CurrentStepSettingsCard.Header" xml:space="preserve">
+    <value>当前步骤</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BorderSizeSettingsCard.Header" xml:space="preserve">
+    <value>留白宽度</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BorderSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>在校正后的图像周围添加白边，以便检测</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectionSettingsCard.Header" xml:space="preserve">
+    <value>选区</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearAllSelectedCornersAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>清除选中的所有角点并重新开始</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearCornersText.Text" xml:space="preserve">
+    <value>清除角点</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UnwarpAQRCodeText.Text" xml:space="preserve">
+    <value>校正二维码形变</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SetTheQRVersionClickText.Text" xml:space="preserve">
+    <value>设置二维码版本，依次单击各个角点，再单击各个对齐点。选择“使用估算位置”可采用计算结果。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickOnTheImageToInfoBar.Message" xml:space="preserve">
+    <value>在图像上依次单击以放置各个点。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_QRCodeVersionSettingsCard.Header" xml:space="preserve">
+    <value>二维码版本</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectTheQRCodeVersionSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>选择二维码版本（10–40）。版本越高，对齐点越多。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PointLayoutText.Text" xml:space="preserve">
+    <value>点位布局</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CurrentStepSettingsCard2.Header" xml:space="preserve">
+    <value>当前步骤</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UseEstimatedPositionSettingsCard.Header" xml:space="preserve">
+    <value>使用估算位置</value>
+  </data>
+  <data name="AdvancedToolsUserControl_AcceptTheCalculatedBilinearPositionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>采用双线性插值计算出的当前对齐点位置</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UseEstimatedText.Text" xml:space="preserve">
+    <value>使用估算位置</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PointsSettingsCard.Header" xml:space="preserve">
+    <value>点位</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearAllPlacedPointsAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>清除已放置的所有点并重新开始</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearAllPointsText.Text" xml:space="preserve">
+    <value>清除所有点</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractARegionText.Text" xml:space="preserve">
+    <value>提取区域</value>
+  </data>
+  <data name="AdvancedToolsUserControl_DragOverTheImageToText.Text" xml:space="preserve">
+    <value>在图像上拖动以框选区域，再将其提取为单独的解码项。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickAndDragOnTheInfoBar.Message" xml:space="preserve">
+    <value>在图像上按住并拖动以框选区域。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectionStatusSettingsCard.Header" xml:space="preserve">
+    <value>选区状态</value>
+  </data>
+  <data name="AdvancedToolsUserControl_NoRegionSelectedYetText.Text" xml:space="preserve">
+    <value>尚未选择区域。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_RegionSelectedAndReadyToText.Text" xml:space="preserve">
+    <value>已选择区域，可以提取。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectionSettingsCard2.Header" xml:space="preserve">
+    <value>选区</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearTheCurrentRegionSelectionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>清除当前选区</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearSelectionText.Text" xml:space="preserve">
+    <value>清除选区</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ResetAllQuickFixSettingsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>将所有快速修正设置恢复为默认值</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ResetAllText.Text" xml:space="preserve">
+    <value>全部重置</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UndoIconAndTextHyperlinkButton.Text" xml:space="preserve">
+    <value>撤销</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UndoIconAndTextHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>撤销上次应用的更改（Ctrl+Z）</value>
+  </data>
+  <data name="AdvancedToolsUserControl_RedoIconAndTextHyperlinkButton.Text" xml:space="preserve">
+    <value>重做</value>
+  </data>
+  <data name="AdvancedToolsUserControl_RedoIconAndTextHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>重做上次撤销的更改（Ctrl+Y）</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton.Content" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>取消黑场取样并返回工具列表</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton2.Content" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton2.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>取消白场取样并返回工具列表</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyCorrectionButton.Content" xml:space="preserve">
+    <value>应用校正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyCorrectionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>应用透视校正并返回工具列表</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearCornersButton.Content" xml:space="preserve">
+    <value>清除角点</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton3.Content" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractTheSelectedRegionAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>提取选中的区域并返回工具列表</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractRegionText.Text" xml:space="preserve">
+    <value>提取区域</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearSelectionButton.Content" xml:space="preserve">
+    <value>清除选区</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton4.Content" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyPolynomialUnwarpCorrectionAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>应用多项式形变校正并返回工具列表</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyUnwarpText.Text" xml:space="preserve">
+    <value>应用形变校正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearPointsButton.Content" xml:space="preserve">
+    <value>清除点位</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton5.Content" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="BrandEditDialog_Dialog.Title" xml:space="preserve">
+    <value>编辑品牌</value>
+  </data>
+  <data name="BrandEditDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="BrandEditDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="BrandEditDialog_BrandNameSettingsCard.Description" xml:space="preserve">
+    <value>此品牌的显示名称</value>
+  </data>
+  <data name="BrandEditDialog_BrandNameSettingsCard.Header" xml:space="preserve">
+    <value>品牌名称</value>
+  </data>
+  <data name="BrandEditDialog_BrandNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>品牌名称</value>
+  </data>
+  <data name="BrandEditDialog_ForegroundColorSettingsCard.Description" xml:space="preserve">
+    <value>应用自定义前景色</value>
+  </data>
+  <data name="BrandEditDialog_ForegroundColorSettingsCard.Header" xml:space="preserve">
+    <value>前景色</value>
+  </data>
+  <data name="BrandEditDialog_BackgroundColorSettingsCard.Description" xml:space="preserve">
+    <value>应用自定义背景色</value>
+  </data>
+  <data name="BrandEditDialog_BackgroundColorSettingsCard.Header" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="BrandEditDialog_ErrorCorrectionSettingsCard.Description" xml:space="preserve">
+    <value>设置二维码的纠错级别</value>
+  </data>
+  <data name="BrandEditDialog_ErrorCorrectionSettingsCard.Header" xml:space="preserve">
+    <value>纠错</value>
+  </data>
+  <data name="BrandEditDialog_DesignSettingsExpander.Description" xml:space="preserve">
+    <value>包含边框、说明文字、图案和强调色</value>
+  </data>
+  <data name="BrandEditDialog_DesignSettingsExpander.Header" xml:space="preserve">
+    <value>设计</value>
+  </data>
+  <data name="BrandEditDialog_StyleSettingsCard.Header" xml:space="preserve">
+    <value>样式</value>
+  </data>
+  <data name="BrandEditDialog_URLTextSettingsExpander.Description" xml:space="preserve">
+    <value>包含默认网址或文本内容</value>
+  </data>
+  <data name="BrandEditDialog_URLTextSettingsExpander.Header" xml:space="preserve">
+    <value>网址 / 文本</value>
+  </data>
+  <data name="BrandEditDialog_ContentSettingsCard.Header" xml:space="preserve">
+    <value>内容</value>
+  </data>
+  <data name="BrandEditDialog_URLOrTextContentTextBox.PlaceholderText" xml:space="preserve">
+    <value>网址或文本内容</value>
+  </data>
+  <data name="BrandEditDialog_LogoImageSettingsExpander.Description" xml:space="preserve">
+    <value>在二维码上叠加徽标</value>
+  </data>
+  <data name="BrandEditDialog_LogoImageSettingsExpander.Header" xml:space="preserve">
+    <value>徽标图像</value>
+  </data>
+  <data name="BrandEditDialog_ImageSettingsCard.Header" xml:space="preserve">
+    <value>图像</value>
+  </data>
+  <data name="BrandEditDialog_PickImageText.Text" xml:space="preserve">
+    <value>选择图像</value>
+  </data>
+  <data name="BrandEditDialog_RemoveLogoButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>移除徽标</value>
+  </data>
+  <data name="BrandEditDialog_ImageSizeSettingsCard.Header" xml:space="preserve">
+    <value>图像大小</value>
+  </data>
+  <data name="BrandEditDialog_PaddingSettingsCard.Header" xml:space="preserve">
+    <value>内边距</value>
+  </data>
+  <data name="BrandManagementControl_SaveAndManageBrandsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>保存和管理品牌</value>
+  </data>
+  <data name="BrandManagementControl_BrandsText.Text" xml:space="preserve">
+    <value>品牌</value>
+  </data>
+  <data name="BrandManagementControl_NoBrandsSavedYetText.Text" xml:space="preserve">
+    <value>尚未保存任何品牌。</value>
+  </data>
+  <data name="BrandManagementControl_SaveAsBrandText.Text" xml:space="preserve">
+    <value>另存为品牌</value>
+  </data>
+  <data name="BrandManagementControl_SaveCurrentSettingsAsBrandText.Text" xml:space="preserve">
+    <value>将当前设置另存为品牌</value>
+  </data>
+  <data name="BrandManagementControl_BrandNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>品牌名称</value>
+  </data>
+  <data name="BrandManagementControl_ForegroundColorCheckBox.Content" xml:space="preserve">
+    <value>前景色</value>
+  </data>
+  <data name="BrandManagementControl_BackgroundColorCheckBox.Content" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="BrandManagementControl_ErrorCorrectionCheckBox.Content" xml:space="preserve">
+    <value>纠错</value>
+  </data>
+  <data name="BrandManagementControl_DesignFrameAndPatternCheckBox.Content" xml:space="preserve">
+    <value>设计（边框和图案）</value>
+  </data>
+  <data name="BrandManagementControl_URLTextCheckBox.Content" xml:space="preserve">
+    <value>网址 / 文本</value>
+  </data>
+  <data name="BrandManagementControl_CenterImageCheckBox.Content" xml:space="preserve">
+    <value>居中图像</value>
+  </data>
+  <data name="BrandManagementControl_SaveBrandText.Text" xml:space="preserve">
+    <value>保存品牌</value>
+  </data>
+  <data name="BrandManagementControl_LearnMoreAboutBrandsText.Text" xml:space="preserve">
+    <value>了解品牌功能</value>
+  </data>
+  <data name="BrandPickerControl_SelectBrandDropDownButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>选择品牌</value>
+  </data>
+  <data name="BrandPickerControl_DefaultBrandSymbolIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>默认品牌</value>
+  </data>
+  <data name="BrandPickerControl_SelectABrandText.Text" xml:space="preserve">
+    <value>选择品牌</value>
+  </data>
+  <data name="BrandRowItem_BackgroundColorBorder.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="BrandRowItem_ForegroundColorQrCodeIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>前景色</value>
+  </data>
+  <data name="BrandRowItem_DefaultBrandFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>默认品牌</value>
+  </data>
+  <data name="BrandRowItem_ErrorCorrectionLevelText.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>纠错级别</value>
+  </data>
+  <data name="BrandRowItem_TextText.Text" xml:space="preserve">
+    <value>文本</value>
+  </data>
+  <data name="BrandRowItem_BrandOptionsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>品牌选项</value>
+  </data>
+  <data name="BrandRowItem_EditMenuItem.Text" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="BrandRowItem_SetAsDefaultMenuItem.Text" xml:space="preserve">
+    <value>设为默认</value>
+  </data>
+  <data name="BrandRowItem_DeleteMenuItem.Text" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="ColorPickerButton_ColorSegmentedItem.Content" xml:space="preserve">
+    <value>颜色</value>
+  </data>
+  <data name="ColorPickerButton_ImageSegmentedItem.Content" xml:space="preserve">
+    <value>图像</value>
+  </data>
+  <data name="ColorPickerButton_ListModePickerItem.Content" xml:space="preserve">
+    <value>列表</value>
+  </data>
+  <data name="ColorPickerButton_BrandsText.Text" xml:space="preserve">
+    <value>品牌</value>
+  </data>
+  <data name="ColorPickerButton_RecentColorsText.Text" xml:space="preserve">
+    <value>最近使用的颜色</value>
+  </data>
+  <data name="ColorPickerButton_SavedColorsEmptyStateText.Text" xml:space="preserve">
+    <value>尚无品牌或最近使用的颜色。</value>
+  </data>
+  <data name="ColorPickerButton_ClipboardText.Text" xml:space="preserve">
+    <value>剪贴板</value>
+  </data>
+  <data name="CutOutImagesPaneContentControl_ImagesText.Text" xml:space="preserve">
+    <value>图像</value>
+  </data>
+  <data name="CutOutImagesPaneContentControl_ClosePaneButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>关闭窗格</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_DecodingHistoryText.Text" xml:space="preserve">
+    <value>解码历史记录</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_ClearAllDecodingHistoryHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>清除所有解码历史记录</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_ClearText.Text" xml:space="preserve">
+    <value>清除</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_NoDecodingHistoryYetOpenText.Text" xml:space="preserve">
+    <value>暂无解码历史记录。请打开、粘贴或拍摄图像进行解码。</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_RemoveMenuItem.Text" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="EmailBuilderDialog_Dialog.Title" xml:space="preserve">
+    <value>创建电子邮件</value>
+  </data>
+  <data name="EmailBuilderDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="EmailBuilderDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>应用</value>
+  </data>
+  <data name="EmailBuilderDialog_CreateAQRCodeThatText.Text" xml:space="preserve">
+    <value>创建二维码，扫描后打开默认邮件应用并预填收件人、主题和正文。</value>
+  </data>
+  <data name="EmailBuilderDialog_ToTextBox.Header" xml:space="preserve">
+    <value>收件人（必填）</value>
+  </data>
+  <data name="EmailBuilderDialog_ToTextBox.PlaceholderText" xml:space="preserve">
+    <value>recipient@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="EmailBuilderDialog_CCTextBox.Header" xml:space="preserve">
+    <value>抄送</value>
+  </data>
+  <data name="EmailBuilderDialog_CCTextBox.PlaceholderText" xml:space="preserve">
+    <value>cc@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="EmailBuilderDialog_BCCTextBox.Header" xml:space="preserve">
+    <value>密送</value>
+  </data>
+  <data name="EmailBuilderDialog_BCCTextBox.PlaceholderText" xml:space="preserve">
+    <value>bcc@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="EmailBuilderDialog_SubjectTextBox.Header" xml:space="preserve">
+    <value>主题</value>
+  </data>
+  <data name="EmailBuilderDialog_SubjectTextBox.PlaceholderText" xml:space="preserve">
+    <value>输入邮件主题</value>
+  </data>
+  <data name="EmailBuilderDialog_BodyTextBox.Header" xml:space="preserve">
+    <value>正文</value>
+  </data>
+  <data name="EmailBuilderDialog_BodyTextBox.PlaceholderText" xml:space="preserve">
+    <value>输入邮件正文</value>
+  </data>
+  <data name="EmailBuilderDialog_HowItWorksInfoBar.Message" xml:space="preserve">
+    <value>扫描此二维码会打开默认邮件应用，并预填这些字段。发送前可以查看和编辑邮件。</value>
+  </data>
+  <data name="EmailBuilderDialog_HowItWorksInfoBar.Title" xml:space="preserve">
+    <value>工作原理</value>
+  </data>
+  <data name="EmailBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>预览</value>
+  </data>
+  <data name="FaqsContent_FrequentlyAskedQuestionsText.Text" xml:space="preserve">
+    <value>常见问题</value>
+  </data>
+  <data name="FaqsContent_SearchForContentInTheAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>搜索常见问题…</value>
+  </data>
+  <data name="FaqsContent_NoFAQsMatchTheSearchText.Text" xml:space="preserve">
+    <value>找不到匹配的问题。请尝试其他关键词，或发送邮件咨询。</value>
+  </data>
+  <data name="FaqsContent_DonTSeeYourQuestionText.Text" xml:space="preserve">
+    <value>没找到你的问题，或需要更多信息？欢迎发邮件给我，我会为你解答。</value>
+  </data>
+  <data name="FaqsContent_EmailAQuestionIconAndTextButton.Text" xml:space="preserve">
+    <value>通过邮件提问</value>
+  </data>
+  <data name="FeedbackDialog_Dialog.Title" xml:space="preserve">
+    <value>分享你的反馈</value>
+  </data>
+  <data name="FeedbackDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="FeedbackDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>打开邮件应用</value>
+  </data>
+  <data name="FeedbackDialog_HiIMAnIndieText.Text" xml:space="preserve">
+    <value>你好！我是一名独立开发者。用户反馈能帮助我发现问题并改进应用。如果你遇到了问题，或有任何建议，欢迎告诉我！</value>
+  </data>
+  <data name="FeedbackDialog_FeedbackTextBox.Header" xml:space="preserve">
+    <value>消息</value>
+  </data>
+  <data name="FeedbackDialog_FeedbackTextBox.PlaceholderText" xml:space="preserve">
+    <value>描述问题或分享你的想法…</value>
+  </data>
+  <data name="FeedbackDialog_JoeJoefinappsComText.Text" xml:space="preserve">
+    <value>joe@joefinapps.com</value>
+  </data>
+  <data name="FeedbackDialog_CopyEmailButton.Content" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="FeedbackDialog_OpenMailAppWillOpenText.Text" xml:space="preserve">
+    <value>选择“打开邮件应用”将打开默认邮件客户端，并预填你输入的消息。</value>
+  </data>
+  <data name="FolderPaneContentControl_FolderText.Text" xml:space="preserve">
+    <value>文件夹</value>
+  </data>
+  <data name="FolderPaneContentControl_CloseFolderPaneButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>关闭文件夹窗格</value>
+  </data>
+  <data name="FolderPaneContentControl_NoImageFilesFoundInText.Text" xml:space="preserve">
+    <value>此文件夹中未找到图像文件。</value>
+  </data>
+  <data name="FolderPaneContentControl_SaveCutOutImageButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>保存裁切后的图像</value>
+  </data>
+  <data name="FolderPaneContentControl_DecodeAllImagesAndViewButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>解码所有图像并查看结果汇总表</value>
+  </data>
+  <data name="FolderPaneContentControl_SummaryViewText.Text" xml:space="preserve">
+    <value>结果汇总</value>
+  </data>
+  <data name="FolderPaneContentControl_DecodeEveryImageInTheButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>解码文件夹中的所有图像，并在每张图像旁保存一个 .txt 文件</value>
+  </data>
+  <data name="FolderPaneContentControl_DecodeAllExportTxtFilesText.Text" xml:space="preserve">
+    <value>全部解码并导出 .txt 文件</value>
+  </data>
+  <data name="GenerateIdsDialog_Dialog.Title" xml:space="preserve">
+    <value>生成 ID</value>
+  </data>
+  <data name="GenerateIdsDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="GenerateIdsDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>添加</value>
+  </data>
+  <data name="GenerateIdsDialog_GenerateOneRandomIDPerText.Text" xml:space="preserve">
+    <value>每行生成一个随机 ID，并添加到当前文本中。</value>
+  </data>
+  <data name="GenerateIdsDialog_CountNumberBox.Header" xml:space="preserve">
+    <value>ID 数量</value>
+  </data>
+  <data name="GenerateIdsDialog_IDStyleComboBox.Header" xml:space="preserve">
+    <value>ID 格式</value>
+  </data>
+  <data name="GenerateIdsDialog_NanoIdLengthNumberBox.Header" xml:space="preserve">
+    <value>NanoID 长度</value>
+  </data>
+  <data name="GenerateIdsDialog_TextBeforeEachIDTextBox.Header" xml:space="preserve">
+    <value>每个 ID 前的文本</value>
+  </data>
+  <data name="GenerateIdsDialog_TextBeforeEachIDTextBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="GenerateIdsDialog_TextAfterEachIDTextBox.Header" xml:space="preserve">
+    <value>每个 ID 后的文本</value>
+  </data>
+  <data name="GenerateIdsDialog_TextAfterEachIDTextBox.PlaceholderText" xml:space="preserve">
+    <value>?source=qr-code</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="GenerateIdsDialog_PreviewText.Text" xml:space="preserve">
+    <value>预览</value>
+  </data>
+  <data name="GenerateIdsDialog_CheckYourSettingsInfoBar.Title" xml:space="preserve">
+    <value>请检查设置</value>
+  </data>
+  <data name="HistoryPaneContentControl_HistoryText.Text" xml:space="preserve">
+    <value>生成历史记录</value>
+  </data>
+  <data name="HistoryPaneContentControl_SaveCurrentQRCodeToHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>将当前二维码保存到历史记录</value>
+  </data>
+  <data name="HistoryPaneContentControl_SaveToHistoryText.Text" xml:space="preserve">
+    <value>保存到历史记录</value>
+  </data>
+  <data name="HistoryPaneContentControl_NoHistoryYetSaveOrText.Text" xml:space="preserve">
+    <value>暂无生成历史记录。保存或复制二维码后，便会在此处显示。</value>
+  </data>
+  <data name="HistoryPaneContentControl_RemoveMenuItem.Text" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="ImageColorPickerControl_PickImageText.Text" xml:space="preserve">
+    <value>选择图像</value>
+  </data>
+  <data name="ImageColorPickerControl_NoImageLoadedText.Text" xml:space="preserve">
+    <value>未加载图像</value>
+  </data>
+  <data name="ImageColorPickerControl_SuggestedColorsText.Text" xml:space="preserve">
+    <value>建议颜色</value>
+  </data>
+  <data name="LicensesDialog_Dialog.Title" xml:space="preserve">
+    <value>开源许可证</value>
+  </data>
+  <data name="LicensesDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="LicensesDialog_ViewOnGitHubHyperlinkButton.Content" xml:space="preserve">
+    <value>在 GitHub 上查看</value>
+  </data>
+  <data name="PrintSettingsDialog_Dialog.Title" xml:space="preserve">
+    <value>打印设置</value>
+  </data>
+  <data name="PrintSettingsDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="PrintSettingsDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>打印</value>
+  </data>
+  <data name="PrintSettingsDialog_SettingsScrollViewer.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>打印设置</value>
+  </data>
+  <data name="PrintSettingsDialog_QuickPresetCombo.Header" xml:space="preserve">
+    <value>快速设置</value>
+  </data>
+  <data name="PrintSettingsDialog_CustomComboBoxItem.Content" xml:space="preserve">
+    <value>自定义</value>
+  </data>
+  <data name="PrintSettingsDialog_ProductLabelsComboBoxItem.Content" xml:space="preserve">
+    <value>产品标签</value>
+  </data>
+  <data name="PrintSettingsDialog_FlyersOrHandoutsComboBoxItem.Content" xml:space="preserve">
+    <value>传单或宣传资料</value>
+  </data>
+  <data name="PrintSettingsDialog_TableTentsOrMenusComboBoxItem.Content" xml:space="preserve">
+    <value>桌牌或菜单</value>
+  </data>
+  <data name="PrintSettingsDialog_PostersOrSignsComboBoxItem.Content" xml:space="preserve">
+    <value>海报或标牌</value>
+  </data>
+  <data name="PrintSettingsDialog_QuickPresetDescriptionTextBlock.Text" xml:space="preserve">
+    <value>选择常见的二维码打印场景，或完全自定义布局。</value>
+  </data>
+  <data name="PrintSettingsDialog_CodesPerPageCombo.Header" xml:space="preserve">
+    <value>每页码数</value>
+  </data>
+  <data name="PrintSettingsDialog_AsManyFitComboBoxItem.Content" xml:space="preserve">
+    <value>尽可能多地排布</value>
+  </data>
+  <data name="PrintSettingsDialog_1PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>每页 1 个</value>
+  </data>
+  <data name="PrintSettingsDialog_2PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>每页 2 个</value>
+  </data>
+  <data name="PrintSettingsDialog_4PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>每页 4 个</value>
+  </data>
+  <data name="PrintSettingsDialog_6PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>每页 6 个</value>
+  </data>
+  <data name="PrintSettingsDialog_9PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>每页 9 个</value>
+  </data>
+  <data name="PrintSettingsDialog_12PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>每页 12 个</value>
+  </data>
+  <data name="PrintSettingsDialog_16PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>每页 16 个</value>
+  </data>
+  <data name="PrintSettingsDialog_PageTypeCombo.Header" xml:space="preserve">
+    <value>纸张类型</value>
+  </data>
+  <data name="PrintSettingsDialog_LetterComboBoxItem.Content" xml:space="preserve">
+    <value>信纸（Letter）</value>
+  </data>
+  <data name="PrintSettingsDialog_LegalComboBoxItem.Content" xml:space="preserve">
+    <value>法律用纸（Legal）</value>
+  </data>
+  <data name="PrintSettingsDialog_StatementComboBoxItem.Content" xml:space="preserve">
+    <value>报表纸（Statement）</value>
+  </data>
+  <data name="PrintSettingsDialog_ExecutiveComboBoxItem.Content" xml:space="preserve">
+    <value>行政用纸（Executive）</value>
+  </data>
+  <data name="PrintSettingsDialog_TabloidComboBoxItem.Content" xml:space="preserve">
+    <value>小报纸（Tabloid）</value>
+  </data>
+  <data name="PrintSettingsDialog_LedgerComboBoxItem.Content" xml:space="preserve">
+    <value>账簿纸（Ledger）</value>
+  </data>
+  <data name="PrintSettingsDialog_A3ComboBoxItem.Content" xml:space="preserve">
+    <value>A3</value>
+  </data>
+  <data name="PrintSettingsDialog_A4ComboBoxItem.Content" xml:space="preserve">
+    <value>A4</value>
+  </data>
+  <data name="PrintSettingsDialog_A5ComboBoxItem.Content" xml:space="preserve">
+    <value>A5</value>
+  </data>
+  <data name="PrintSettingsDialog_B4ComboBoxItem.Content" xml:space="preserve">
+    <value>B4</value>
+  </data>
+  <data name="PrintSettingsDialog_B5ComboBoxItem.Content" xml:space="preserve">
+    <value>B5</value>
+  </data>
+  <data name="PrintSettingsDialog_PageLayoutCombo.Header" xml:space="preserve">
+    <value>页面方向</value>
+  </data>
+  <data name="PrintSettingsDialog_PortraitComboBoxItem.Content" xml:space="preserve">
+    <value>纵向</value>
+  </data>
+  <data name="PrintSettingsDialog_LandscapeComboBoxItem.Content" xml:space="preserve">
+    <value>横向</value>
+  </data>
+  <data name="PrintSettingsDialog_ShowLabelsSwitch.Header" xml:space="preserve">
+    <value>显示标签</value>
+  </data>
+  <data name="PrintSettingsDialog_ShowLabelsSwitch.OffContent" xml:space="preserve">
+    <value>关</value>
+  </data>
+  <data name="PrintSettingsDialog_ShowLabelsSwitch.OnContent" xml:space="preserve">
+    <value>开</value>
+  </data>
+  <data name="PrintSettingsDialog_CodeSizeMmBox.Header" xml:space="preserve">
+    <value>二维码大小（毫米）</value>
+  </data>
+  <data name="PrintSettingsDialog_SpacingMmBox.Header" xml:space="preserve">
+    <value>间距（毫米）</value>
+  </data>
+  <data name="PrintSettingsDialog_MarginMmBox.Header" xml:space="preserve">
+    <value>页边距（毫米）</value>
+  </data>
+  <data name="PrintSettingsDialog_PreviewText.Text" xml:space="preserve">
+    <value>预览</value>
+  </data>
+  <data name="PrintSettingsDialog_FitPreviewButton.Content" xml:space="preserve">
+    <value>适应宽度</value>
+  </data>
+  <data name="PrintSettingsDialog_ZoomOutButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>缩小</value>
+  </data>
+  <data name="PrintSettingsDialog_ZoomInButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>放大</value>
+  </data>
+  <data name="PrintSettingsDialog_PreviewScrollViewer.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>打印预览</value>
+  </data>
+  <data name="PrintSettingsDialog_UpdatingPDFPreviewText.Text" xml:space="preserve">
+    <value>正在更新 PDF 预览…</value>
+  </data>
+  <data name="QrCodeImageControl_SavePNGMenuItem.Text" xml:space="preserve">
+    <value>保存为 PNG…</value>
+  </data>
+  <data name="QrCodeImageControl_CopyPNGMenuItem.Text" xml:space="preserve">
+    <value>复制 PNG</value>
+  </data>
+  <data name="QrCodeImageControl_ShareMenuItem.Text" xml:space="preserve">
+    <value>共享…</value>
+  </data>
+  <data name="QrCodeImageControl_SaveSVGMenuItem.Text" xml:space="preserve">
+    <value>保存为 SVG…</value>
+  </data>
+  <data name="QrCodeImageControl_CopySVGMenuItem.Text" xml:space="preserve">
+    <value>复制 SVG</value>
+  </data>
+  <data name="QrCodeImageControl_CopySVGAsTextMenuItem.Text" xml:space="preserve">
+    <value>将 SVG 复制为文本</value>
+  </data>
+  <data name="QrCodeImageControl_UseCommonBrandMenuItem.Text" xml:space="preserve">
+    <value>使用通用品牌</value>
+  </data>
+  <data name="QrCodeImageControl_UseCurrentStyleMenuItem.Text" xml:space="preserve">
+    <value>使用当前样式</value>
+  </data>
+  <data name="QrCodeImageControl_ThisWarningCanBeDisabledInfoBar.Message" xml:space="preserve">
+    <value>二维码内容不是网址</value>
+  </data>
+  <data name="QrCodeImageControl_ThisWarningCanBeDisabledInfoBar.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>可在设置中关闭此警告</value>
+  </data>
+  <data name="QrCodeImageControl_HowWasThisCalculatedHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>如何计算得出？</value>
+  </data>
+  <data name="QrCodeImageControl_CopySizeMenuItem.Text" xml:space="preserve">
+    <value>复制尺寸</value>
+  </data>
+  <data name="QrCodeImageControl_HideMinSizeTextMenuItem.Text" xml:space="preserve">
+    <value>隐藏最小尺寸文字</value>
+  </data>
+  <data name="QrCodeImageControl_YourCurrentDesignIsKeptText.Text" xml:space="preserve">
+    <value>当前设计会保留，可随时切换回来。</value>
+  </data>
+  <data name="QrCodeImageControl_MinimumSizeEstimatesAreUnavailableText.Text" xml:space="preserve">
+    <value>使用居中徽标时无法估算最小尺寸。</value>
+  </data>
+  <data name="QrCodeImageControl_CopySizeMenuItem2.Text" xml:space="preserve">
+    <value>复制尺寸</value>
+  </data>
+  <data name="QrCodeImageControl_AboutQRCodeSizingMenuItem.Text" xml:space="preserve">
+    <value>关于二维码尺寸</value>
+  </data>
+  <data name="QrDesignDialog_Dialog.Title" xml:space="preserve">
+    <value>二维码设计</value>
+  </data>
+  <data name="QrDesignDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="QrDesignDialog_LivePreviewText.Text" xml:space="preserve">
+    <value>实时预览</value>
+  </data>
+  <data name="QrDesignDialog_LivePreviewImage.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>当前二维码设计预览</value>
+  </data>
+  <data name="QrDesignDialog_NoPreviewText.Text" xml:space="preserve">
+    <value>在主窗口输入二维码内容，即可在此实时预览。</value>
+  </data>
+  <data name="QrDesignDialog_PreviewHelpText.Text" xml:space="preserve">
+    <value>更改立即生效。选择“完成”返回二维码页面。</value>
+  </data>
+  <data name="QrDesignDialog_PickALookThenMakeText.Text" xml:space="preserve">
+    <value>选一种外观，再按喜好调整。二维码内容不会改变。</value>
+  </data>
+  <data name="QrDesignDialog_PresetsSection.Text" xml:space="preserve">
+    <value>预设</value>
+  </data>
+  <data name="QrDesignDialog_PatternSection.Text" xml:space="preserve">
+    <value>图案</value>
+  </data>
+  <data name="QrDesignDialog_FrameSection.Text" xml:space="preserve">
+    <value>边框</value>
+  </data>
+  <data name="QrDesignDialog_PreviewError.Title" xml:space="preserve">
+    <value>无法显示设计预览</value>
+  </data>
+  <data name="QrDesignDialog_PresetGrid.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>搭配好的设计预设</value>
+  </data>
+  <data name="QrDesignDialog_ModuleCombo.Header" xml:space="preserve">
+    <value>二维码图案</value>
+  </data>
+  <data name="QrDesignDialog_EyeCombo.Header" xml:space="preserve">
+    <value>角部定位图案</value>
+  </data>
+  <data name="QrDesignDialog_TheSmallTimingAndAlignmentText.Text" xml:space="preserve">
+    <value>较小的时序和对齐图案会保持方形，便于扫描设备识读二维码。</value>
+  </data>
+  <data name="QrDesignDialog_ClassicSquaresButton.Content" xml:space="preserve">
+    <value>经典方块</value>
+  </data>
+  <data name="QrDesignDialog_QRColorAndOpacityDropDownButton.Content" xml:space="preserve">
+    <value>二维码颜色和不透明度</value>
+  </data>
+  <data name="QrDesignDialog_QRColorAndOpacityColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>二维码颜色和不透明度</value>
+  </data>
+  <data name="QrDesignDialog_BackgroundColorAndOpacityDropDownButton.Content" xml:space="preserve">
+    <value>背景颜色和不透明度</value>
+  </data>
+  <data name="QrDesignDialog_QRBackgroundColorAndOpacityColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>二维码背景颜色和不透明度</value>
+  </data>
+  <data name="QrDesignDialog_TransparentBackgroundsDependOnTheText.Text" xml:space="preserve">
+    <value>使用透明背景时，实际效果取决于放置二维码的表面。</value>
+  </data>
+  <data name="QrDesignDialog_FrameGrid.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>边框形状</value>
+  </data>
+  <data name="QrDesignDialog_CaptionSuggestionCombo.Header" xml:space="preserve">
+    <value>说明文字建议</value>
+  </data>
+  <data name="QrDesignDialog_LabelSourceCombo.Header" xml:space="preserve">
+    <value>标签来源</value>
+  </data>
+  <data name="QrDesignDialog_IconCombo.Header" xml:space="preserve">
+    <value>说明文字图标</value>
+  </data>
+  <data name="QrDesignDialog_IndependentFrameColorToggleSwitch.Header" xml:space="preserve">
+    <value>独立边框颜色</value>
+  </data>
+  <data name="QrDesignDialog_IndependentFrameColorToggleSwitch.OffContent" xml:space="preserve">
+    <value>使用二维码颜色</value>
+  </data>
+  <data name="QrDesignDialog_IndependentFrameColorToggleSwitch.OnContent" xml:space="preserve">
+    <value>自定义强调色</value>
+  </data>
+  <data name="QrDesignDialog_AccentColorDropDownButton.Content" xml:space="preserve">
+    <value>强调色</value>
+  </data>
+  <data name="QrDesignDialog_FrameAccentColorColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>边框强调色</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientToggleSwitch.Header" xml:space="preserve">
+    <value>边框渐变</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientToggleSwitch.OffContent" xml:space="preserve">
+    <value>纯色</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientToggleSwitch.OnContent" xml:space="preserve">
+    <value>双色渐变</value>
+  </data>
+  <data name="QrDesignDialog_GradientEndColorDropDownButton.Content" xml:space="preserve">
+    <value>渐变结束色</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientEndColorColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>边框渐变结束色</value>
+  </data>
+  <data name="QrDesignDialog_PresetsUseAClearFourText.Text" xml:space="preserve">
+    <value>预设留有四个模块宽的空白区。请在浅色背景上使用深色二维码，并在打印前用手机测试最终尺寸能否扫描。</value>
+  </data>
+  <data name="QrDesignDialog_UndoPresetButton.Content" xml:space="preserve">
+    <value>撤销应用预设</value>
+  </data>
+  <data name="QrDesignDialog_SetDesignAsDefaultButton.Content" xml:space="preserve">
+    <value>设为默认设计</value>
+  </data>
+  <data name="QrDesignGalleryControl_DesignButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>二维码设计</value>
+  </data>
+  <data name="QrDesignGalleryControl_DesignButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开二维码设计工具</value>
+  </data>
+  <data name="QrDesignGalleryControl_DesignText.Text" xml:space="preserve">
+    <value>设计</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAsText.Text" xml:space="preserve">
+    <value>另存为</value>
+  </data>
+  <data name="QrExportActionsControl_SaveCodeSAsPNGSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>将码图保存为 PNG 文件</value>
+  </data>
+  <data name="QrExportActionsControl_PNGIconAndTextContent.ContentText" xml:space="preserve">
+    <value>PNG</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToFilesDefaultMenuItem.Text" xml:space="preserve">
+    <value>全部保存为单独文件（默认）</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToZipMenuItem.Text" xml:space="preserve">
+    <value>全部保存为 ZIP</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllToClipboardMenuItem.Text" xml:space="preserve">
+    <value>全部复制到剪贴板</value>
+  </data>
+  <data name="QrExportActionsControl_SaveCodeSAsSVGSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>将码图保存为 SVG 文件</value>
+  </data>
+  <data name="QrExportActionsControl_SVGIconAndTextContent.ContentText" xml:space="preserve">
+    <value>SVG</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToFilesDefaultMenuItem2.Text" xml:space="preserve">
+    <value>全部保存为单独文件（默认）</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToZipMenuItem2.Text" xml:space="preserve">
+    <value>全部保存为 ZIP</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllToClipboardMenuItem2.Text" xml:space="preserve">
+    <value>全部复制到剪贴板</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllAsTextToMenuItem.Text" xml:space="preserve">
+    <value>全部以文本形式复制到剪贴板</value>
+  </data>
+  <data name="QrExportActionsControl_SaveCodeSAsBothSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>将码图同时保存为 PNG 和 SVG 文件</value>
+  </data>
+  <data name="QrExportActionsControl_BothIconAndTextContent.ContentText" xml:space="preserve">
+    <value>两种格式</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToFilesDefaultMenuItem3.Text" xml:space="preserve">
+    <value>全部保存为单独文件（默认）</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToZipMenuItem3.Text" xml:space="preserve">
+    <value>全部保存为 ZIP</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllToClipboardMenuItem3.Text" xml:space="preserve">
+    <value>全部复制到剪贴板</value>
+  </data>
+  <data name="QrExportActionsControl_PrintQRCodeSButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打印二维码</value>
+  </data>
+  <data name="QrExportActionsControl_PrintIconAndTextContent.ContentText" xml:space="preserve">
+    <value>打印</value>
+  </data>
+  <data name="QrExportActionsControl_QuicklyShowOrHideExportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>快速显示或隐藏导出选项</value>
+  </data>
+  <data name="QrExportActionsControl_ShowSaveBothButtonToggleMenuFlyoutItem.Text" xml:space="preserve">
+    <value>显示“两种格式”按钮</value>
+  </data>
+  <data name="QrExportActionsControl_ShowPrintButtonToggleMenuFlyoutItem.Text" xml:space="preserve">
+    <value>显示“打印”按钮</value>
+  </data>
+  <data name="QrLogoDesignerControl_AddImageToTheCenterSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>在二维码中央添加图像</value>
+  </data>
+  <data name="QrLogoDesignerControl_ImageSegmentedItem.Content" xml:space="preserve">
+    <value>图像</value>
+  </data>
+  <data name="QrLogoDesignerControl_EmojiSegmentedItem.Content" xml:space="preserve">
+    <value>表情符号</value>
+  </data>
+  <data name="QrLogoDesignerControl_NoImageSelectedText.Text" xml:space="preserve">
+    <value>未选择图像</value>
+  </data>
+  <data name="QrLogoDesignerControl_PickImageText.Text" xml:space="preserve">
+    <value>选择图像</value>
+  </data>
+  <data name="QrLogoDesignerControl_PasteText.Text" xml:space="preserve">
+    <value>粘贴</value>
+  </data>
+  <data name="QrLogoDesignerControl_RemoveImageButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>移除图像</value>
+  </data>
+  <data name="QrLogoDesignerControl_UseOnDeviceAIToButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>使用设备端 AI 移除徽标图像的背景</value>
+  </data>
+  <data name="QrLogoDesignerControl_EraseBackgroundText.Text" xml:space="preserve">
+    <value>移除背景</value>
+  </data>
+  <data name="QrLogoDesignerControl_SolidText.Text" xml:space="preserve">
+    <value>纯色</value>
+  </data>
+  <data name="QrLogoDesignerControl_3DText.Text" xml:space="preserve">
+    <value>3D</value>
+  </data>
+  <data name="QrLogoDesignerControl_ClearEmojiText.Text" xml:space="preserve">
+    <value>清除表情符号</value>
+  </data>
+  <data name="QrLogoDesignerControl_CenterLogoSizeText.Text" xml:space="preserve">
+    <value>居中徽标大小</value>
+  </data>
+  <data name="QrLogoDesignerControl_AdjustTheLogoSizeRelativeSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>按二维码大小的比例调整徽标尺寸</value>
+  </data>
+  <data name="QrLogoDesignerControl_PercentText.Text" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="QrLogoDesignerControl_PaddingAroundCenterLogoText.Text" xml:space="preserve">
+    <value>居中徽标周围的留白</value>
+  </data>
+  <data name="QrLogoDesignerControl_ScaleTheLogoImageToSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>缩放徽标图像，使其适应可用空间（正值缩小徽标并留白，负值放大徽标）</value>
+  </data>
+  <data name="QrLogoDesignerControl_PxText.Text" xml:space="preserve">
+    <value>像素</value>
+  </data>
+  <data name="RemoveBackgroundDialog_Dialog.Title" xml:space="preserve">
+    <value>移除背景</value>
+  </data>
+  <data name="RemoveBackgroundDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="RemoveBackgroundDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>应用</value>
+  </data>
+  <data name="RemoveBackgroundDialog_OriginalText.Text" xml:space="preserve">
+    <value>原图</value>
+  </data>
+  <data name="RemoveBackgroundDialog_BackgroundRemovedText.Text" xml:space="preserve">
+    <value>移除背景后</value>
+  </data>
+  <data name="UrlBuilderDialog_Root.Title" xml:space="preserve">
+    <value>创建网址</value>
+  </data>
+  <data name="UrlBuilderDialog_Root.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="UrlBuilderDialog_Root.PrimaryButtonText" xml:space="preserve">
+    <value>应用</value>
+  </data>
+  <data name="UrlBuilderDialog_GoToThePreviousLineButton.AccessKey" xml:space="preserve">
+    <value>P</value>
+    <comment>A single access-key character. Do not use the same key for both line navigation buttons.</comment>
+  </data>
+  <data name="UrlBuilderDialog_GoToThePreviousLineButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>转到上一行</value>
+  </data>
+  <data name="UrlBuilderDialog_PreviousText.Text" xml:space="preserve">
+    <value>上一行</value>
+  </data>
+  <data name="UrlBuilderDialog_GoToTheNextLineButton.AccessKey" xml:space="preserve">
+    <value>N</value>
+    <comment>A single access-key character. Do not use the same key for both line navigation buttons.</comment>
+  </data>
+  <data name="UrlBuilderDialog_GoToTheNextLineButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>转到下一行</value>
+  </data>
+  <data name="UrlBuilderDialog_NextText.Text" xml:space="preserve">
+    <value>下一行</value>
+  </data>
+  <data name="UrlBuilderDialog_SchemeTextBox.Header" xml:space="preserve">
+    <value>协议</value>
+  </data>
+  <data name="UrlBuilderDialog_SchemeTextBox.PlaceholderText" xml:space="preserve">
+    <value>https</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_AuthorityTextBox.Header" xml:space="preserve">
+    <value>授权部分 / 主机</value>
+  </data>
+  <data name="UrlBuilderDialog_AuthorityTextBox.PlaceholderText" xml:space="preserve">
+    <value>example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_PathTextBox.Header" xml:space="preserve">
+    <value>路径</value>
+  </data>
+  <data name="UrlBuilderDialog_PathTextBox.PlaceholderText" xml:space="preserve">
+    <value>/products/qr codes</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_QueryParametersText.Text" xml:space="preserve">
+    <value>查询参数</value>
+  </data>
+  <data name="UrlBuilderDialog_AddAQueryParameterButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>添加查询参数</value>
+  </data>
+  <data name="UrlBuilderDialog_AddParameterText.Text" xml:space="preserve">
+    <value>添加参数</value>
+  </data>
+  <data name="UrlBuilderDialog_NoQueryParametersYetText.Text" xml:space="preserve">
+    <value>暂无查询参数</value>
+  </data>
+  <data name="UrlBuilderDialog_NameTextBox.Header" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="UrlBuilderDialog_NameTextBox.PlaceholderText" xml:space="preserve">
+    <value>utm_source</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_ValueTextBox.Header" xml:space="preserve">
+    <value>值</value>
+  </data>
+  <data name="UrlBuilderDialog_ValueTextBox.PlaceholderText" xml:space="preserve">
+    <value>newsletter</value>
+  </data>
+  <data name="UrlBuilderDialog_RemoveParameterHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>移除参数</value>
+  </data>
+  <data name="UrlBuilderDialog_FragmentTextBox.Header" xml:space="preserve">
+    <value>片段</value>
+  </data>
+  <data name="UrlBuilderDialog_FragmentTextBox.PlaceholderText" xml:space="preserve">
+    <value>section-1</value>
+  </data>
+  <data name="UrlBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>预览</value>
+  </data>
+  <data name="VCardBuilderDialog_Dialog.Title" xml:space="preserve">
+    <value>创建 vCard 名片</value>
+  </data>
+  <data name="VCardBuilderDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="VCardBuilderDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>应用</value>
+  </data>
+  <data name="VCardBuilderDialog_StartWithTheCommonContactText.Text" xml:space="preserve">
+    <value>先填写常用联系信息，再使用“+”添加选填信息。</value>
+  </data>
+  <data name="VCardBuilderDialog_FormattedNameTextBox.Header" xml:space="preserve">
+    <value>显示姓名</value>
+  </data>
+  <data name="VCardBuilderDialog_FormattedNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>张小雨</value>
+  </data>
+  <data name="VCardBuilderDialog_FirstNameTextBox.Header" xml:space="preserve">
+    <value>名</value>
+  </data>
+  <data name="VCardBuilderDialog_FirstNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>小雨</value>
+  </data>
+  <data name="VCardBuilderDialog_LastNameTextBox.Header" xml:space="preserve">
+    <value>姓</value>
+  </data>
+  <data name="VCardBuilderDialog_LastNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>张</value>
+  </data>
+  <data name="VCardBuilderDialog_MiddleTextBox.Header" xml:space="preserve">
+    <value>中间名</value>
+  </data>
+  <data name="VCardBuilderDialog_PrefixTextBox.Header" xml:space="preserve">
+    <value>称谓前缀</value>
+  </data>
+  <data name="VCardBuilderDialog_PrefixTextBox.PlaceholderText" xml:space="preserve">
+    <value>Dr.</value>
+  </data>
+  <data name="VCardBuilderDialog_SuffixTextBox.Header" xml:space="preserve">
+    <value>称谓后缀</value>
+  </data>
+  <data name="VCardBuilderDialog_SuffixTextBox.PlaceholderText" xml:space="preserve">
+    <value>Jr.</value>
+  </data>
+  <data name="VCardBuilderDialog_OrganizationTextBox.Header" xml:space="preserve">
+    <value>组织</value>
+  </data>
+  <data name="VCardBuilderDialog_OrganizationTextBox.PlaceholderText" xml:space="preserve">
+    <value>Contoso</value>
+  </data>
+  <data name="VCardBuilderDialog_TitleTextBox.Header" xml:space="preserve">
+    <value>职务</value>
+  </data>
+  <data name="VCardBuilderDialog_TitleTextBox.PlaceholderText" xml:space="preserve">
+    <value>产品经理</value>
+  </data>
+  <data name="VCardBuilderDialog_MobilePhoneTextBox.Header" xml:space="preserve">
+    <value>手机</value>
+  </data>
+  <data name="VCardBuilderDialog_MobilePhoneTextBox.PlaceholderText" xml:space="preserve">
+    <value>+1 555 0100</value>
+  </data>
+  <data name="VCardBuilderDialog_EmailTextBox.Header" xml:space="preserve">
+    <value>电子邮件</value>
+  </data>
+  <data name="VCardBuilderDialog_EmailTextBox.PlaceholderText" xml:space="preserve">
+    <value>jane@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="VCardBuilderDialog_WebsiteTextBox.Header" xml:space="preserve">
+    <value>网站</value>
+  </data>
+  <data name="VCardBuilderDialog_WebsiteTextBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="VCardBuilderDialog_AddAnOptionalVCardFieldButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>添加可选的 vCard 字段</value>
+  </data>
+  <data name="VCardBuilderDialog_AddFieldText.Text" xml:space="preserve">
+    <value>添加字段</value>
+  </data>
+  <data name="VCardBuilderDialog_WorkPhoneMenuItem.Text" xml:space="preserve">
+    <value>工作电话</value>
+  </data>
+  <data name="VCardBuilderDialog_HomePhoneMenuItem.Text" xml:space="preserve">
+    <value>家庭电话</value>
+  </data>
+  <data name="VCardBuilderDialog_NicknameMenuItem.Text" xml:space="preserve">
+    <value>昵称</value>
+  </data>
+  <data name="VCardBuilderDialog_BirthdayMenuItem.Text" xml:space="preserve">
+    <value>生日</value>
+  </data>
+  <data name="VCardBuilderDialog_AddressMenuItem.Text" xml:space="preserve">
+    <value>地址</value>
+  </data>
+  <data name="VCardBuilderDialog_NoteMenuItem.Text" xml:space="preserve">
+    <value>备注</value>
+  </data>
+  <data name="VCardBuilderDialog_WorkPhoneText.Text" xml:space="preserve">
+    <value>工作电话</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveWorkPhoneHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>移除工作电话</value>
+  </data>
+  <data name="VCardBuilderDialog_15550101TextBox.PlaceholderText" xml:space="preserve">
+    <value>+1 555 0101</value>
+  </data>
+  <data name="VCardBuilderDialog_HomePhoneText.Text" xml:space="preserve">
+    <value>家庭电话</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveHomePhoneHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>移除家庭电话</value>
+  </data>
+  <data name="VCardBuilderDialog_15550102TextBox.PlaceholderText" xml:space="preserve">
+    <value>+1 555 0102</value>
+  </data>
+  <data name="VCardBuilderDialog_NicknameText.Text" xml:space="preserve">
+    <value>昵称</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveNicknameHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>移除昵称</value>
+  </data>
+  <data name="VCardBuilderDialog_JanieTextBox.PlaceholderText" xml:space="preserve">
+    <value>小雨</value>
+  </data>
+  <data name="VCardBuilderDialog_BirthdayText.Text" xml:space="preserve">
+    <value>生日</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveBirthdayHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>移除生日</value>
+  </data>
+  <data name="VCardBuilderDialog_19901021TextBox.PlaceholderText" xml:space="preserve">
+    <value>1990-10-21</value>
+  </data>
+  <data name="VCardBuilderDialog_AddressText.Text" xml:space="preserve">
+    <value>地址</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveAddressHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>移除地址</value>
+  </data>
+  <data name="VCardBuilderDialog_StreetTextBox.Header" xml:space="preserve">
+    <value>街道地址</value>
+  </data>
+  <data name="VCardBuilderDialog_CityTextBox.Header" xml:space="preserve">
+    <value>城市</value>
+  </data>
+  <data name="VCardBuilderDialog_StateRegionTextBox.Header" xml:space="preserve">
+    <value>省 / 州 / 地区</value>
+  </data>
+  <data name="VCardBuilderDialog_PostalCodeTextBox.Header" xml:space="preserve">
+    <value>邮政编码</value>
+  </data>
+  <data name="VCardBuilderDialog_CountryTextBox.Header" xml:space="preserve">
+    <value>国家</value>
+  </data>
+  <data name="VCardBuilderDialog_NoteText.Text" xml:space="preserve">
+    <value>备注</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveNoteHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>移除备注</value>
+  </data>
+  <data name="VCardBuilderDialog_AddContactNotesTextBox.PlaceholderText" xml:space="preserve">
+    <value>添加联系人备注</value>
+  </data>
+  <data name="VCardBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>预览</value>
+  </data>
+  <data name="WifiBuilderDialog_Dialog.Title" xml:space="preserve">
+    <value>创建 Wi-Fi 二维码</value>
+  </data>
+  <data name="WifiBuilderDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="WifiBuilderDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>应用</value>
+  </data>
+  <data name="WifiBuilderDialog_CreateAQRCodeThatText.Text" xml:space="preserve">
+    <value>创建二维码，向支持标准 Wi-Fi 数据格式的手机和其他扫描设备共享 Wi-Fi 连接信息。</value>
+  </data>
+  <data name="WifiBuilderDialog_SsidTextBox.Header" xml:space="preserve">
+    <value>网络名称（SSID）</value>
+  </data>
+  <data name="WifiBuilderDialog_SsidTextBox.PlaceholderText" xml:space="preserve">
+    <value>Contoso 访客网络</value>
+  </data>
+  <data name="WifiBuilderDialog_SecurityTypeComboBox.Header" xml:space="preserve">
+    <value>安全类型</value>
+  </data>
+  <data name="WifiBuilderDialog_WPAWPA2WPA3ComboBoxItem.Content" xml:space="preserve">
+    <value>WPA / WPA2 / WPA3</value>
+  </data>
+  <data name="WifiBuilderDialog_WEPLegacyComboBoxItem.Content" xml:space="preserve">
+    <value>WEP（旧版）</value>
+  </data>
+  <data name="WifiBuilderDialog_NoneOpenNetworkComboBoxItem.Content" xml:space="preserve">
+    <value>无（开放网络）</value>
+  </data>
+  <data name="WifiBuilderDialog_PasswordTextBox.Header" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="WifiBuilderDialog_PasswordTextBox.PlaceholderText" xml:space="preserve">
+    <value>输入 Wi-Fi 密码</value>
+  </data>
+  <data name="WifiBuilderDialog_ThisIsAHiddenNetworkCheckBox.Content" xml:space="preserve">
+    <value>这是隐藏网络</value>
+  </data>
+  <data name="WifiBuilderDialog_OpenNetworkInfoBar.Message" xml:space="preserve">
+    <value>开放网络无需密码。许多设备仍会在连接前显示网络详细信息。</value>
+  </data>
+  <data name="WifiBuilderDialog_OpenNetworkInfoBar.Title" xml:space="preserve">
+    <value>开放网络</value>
+  </data>
+  <data name="WifiBuilderDialog_LegacySecurityInfoBar.Message" xml:space="preserve">
+    <value>WEP 已过时且不安全。仅在需要兼容非常旧的设备时使用。</value>
+  </data>
+  <data name="WifiBuilderDialog_LegacySecurityInfoBar.Title" xml:space="preserve">
+    <value>旧版安全协议</value>
+  </data>
+  <data name="WifiBuilderDialog_BeforeYouShareThisInfoBar.Message" xml:space="preserve">
+    <value>任何扫描或拍摄此二维码的人都可以获取 Wi-Fi 连接信息。较新的 iPhone 和 Android 设备通常能识别此码，但较旧的相机和部分第三方扫描工具可能只显示原始文本。</value>
+  </data>
+  <data name="WifiBuilderDialog_BeforeYouShareThisInfoBar.Title" xml:space="preserve">
+    <value>共享前须知</value>
+  </data>
+  <data name="WifiBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>预览</value>
+  </data>
+  <data name="AboutQrCodesWebPage_BackToYourSimpleQRButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>返回 Simple QR Code Maker 设置</value>
+  </data>
+  <data name="AboutQrCodesWebPage_BackToSettingsText.Text" xml:space="preserve">
+    <value>返回设置</value>
+  </data>
+  <data name="DecodingPage_CloseAdvancedToolsButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>关闭高级工具</value>
+  </data>
+  <data name="DecodingPage_CloseAdvancedToolsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>关闭高级工具</value>
+  </data>
+  <data name="DecodingPage_CancelButton.Content" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="DecodingPage_OpenFilesIconAndTextButton.Text" xml:space="preserve">
+    <value>打开文件…</value>
+  </data>
+  <data name="DecodingPage_OpenFilesIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开一个或多个图像文件以解码其中的条码</value>
+  </data>
+  <data name="DecodingPage_OpenFolderIconAndTextButton.Text" xml:space="preserve">
+    <value>打开文件夹…</value>
+  </data>
+  <data name="DecodingPage_OpenFolderIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开文件夹，浏览并批量解码其中的所有图像</value>
+  </data>
+  <data name="DecodingPage_PasteIconAndTextButton.Text" xml:space="preserve">
+    <value>粘贴</value>
+  </data>
+  <data name="DecodingPage_PasteIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>从剪贴板粘贴图像或文件，尝试解码其中的条码</value>
+  </data>
+  <data name="DecodingPage_CameraIconAndTextButton.Text" xml:space="preserve">
+    <value>相机</value>
+  </data>
+  <data name="DecodingPage_CameraIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开 Windows 相机，拍摄照片进行解码</value>
+  </data>
+  <data name="DecodingPage_SnipIconAndTextButton.Text" xml:space="preserve">
+    <value>截图</value>
+  </data>
+  <data name="DecodingPage_SnipIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开截图工具，截取屏幕图像进行解码</value>
+  </data>
+  <data name="DecodingPage_OpenFileMenuItem.Text" xml:space="preserve">
+    <value>打开文件</value>
+  </data>
+  <data name="DecodingPage_OpenFileMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开源文件</value>
+  </data>
+  <data name="DecodingPage_SaveImageMenuItem.Text" xml:space="preserve">
+    <value>保存图像…</value>
+  </data>
+  <data name="DecodingPage_SaveImageMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>将已解码的图像保存到文件</value>
+  </data>
+  <data name="DecodingPage_OpenContainingFolderMenuItem.Text" xml:space="preserve">
+    <value>打开所在文件夹</value>
+  </data>
+  <data name="DecodingPage_OpenContainingFolderMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开文件所在的文件夹</value>
+  </data>
+  <data name="DecodingPage_OpenPasteDropAnImageText.Text" xml:space="preserve">
+    <value>打开、粘贴或拖放图像到此处，或拍摄图像进行解码。</value>
+  </data>
+  <data name="DecodingPage_NoCodesInfoBar.Title" xml:space="preserve">
+    <value>未找到码图</value>
+  </data>
+  <data name="DecodingPage_UseAdvancedToolsToOpenText.Text" xml:space="preserve">
+    <value>使用高级工具中的引导式修正或快速调整图像，以便检测。</value>
+  </data>
+  <data name="DecodingPage_MakeCodesIconAndTextButton.Text" xml:space="preserve">
+    <value>生成二维码</value>
+  </data>
+  <data name="DecodingPage_MakeCodesIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>切换到二维码生成页面</value>
+  </data>
+  <data name="DecodingPage_SettingsIconAndTextButton.Text" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="DecodingPage_SettingsIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Simple QR Code Maker 设置</value>
+  </data>
+  <data name="DecodingPage_NewDropDownButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>用新图像替换当前图像</value>
+  </data>
+  <data name="DecodingPage_NewText.Text" xml:space="preserve">
+    <value>新建</value>
+  </data>
+  <data name="DecodingPage_OpenFilesMenuItem.Text" xml:space="preserve">
+    <value>打开文件…</value>
+  </data>
+  <data name="DecodingPage_OpenFolderMenuItem.Text" xml:space="preserve">
+    <value>打开文件夹…</value>
+  </data>
+  <data name="DecodingPage_PasteMenuItem.Text" xml:space="preserve">
+    <value>粘贴</value>
+  </data>
+  <data name="DecodingPage_CameraMenuItem.Text" xml:space="preserve">
+    <value>相机</value>
+  </data>
+  <data name="DecodingPage_SnipMenuItem.Text" xml:space="preserve">
+    <value>截图</value>
+  </data>
+  <data name="DecodingPage_ShowOrHideAdvancedImageToggleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>显示或隐藏高级图像处理工具</value>
+  </data>
+  <data name="DecodingPage_AdvancedToolsText.Text" xml:space="preserve">
+    <value>高级工具</value>
+  </data>
+  <data name="DecodingPage_EditThisTextAsAAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>编辑此文本以生成新二维码</value>
+  </data>
+  <data name="DecodingPage_CopyTheEncodedTextToAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>将码图中的文本复制到剪贴板</value>
+  </data>
+  <data name="DecodingPage_TryToGoToTheAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>尝试访问网址</value>
+  </data>
+  <data name="DecodingPage_ShowHideImagesPanelAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>显示或隐藏图像窗格</value>
+  </data>
+  <data name="FolderSummaryPage_FolderSummaryText.Text" xml:space="preserve">
+    <value>文件夹结果汇总</value>
+  </data>
+  <data name="FolderSummaryPage_SaveResultsAsACSVButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>将结果保存为 CSV 电子表格</value>
+  </data>
+  <data name="FolderSummaryPage_SaveSpreadsheetText.Text" xml:space="preserve">
+    <value>保存电子表格</value>
+  </data>
+  <data name="FolderSummaryPage_FileNameTableViewTemplateColumn.Header" xml:space="preserve">
+    <value>文件名</value>
+  </data>
+  <data name="FolderSummaryPage_OpenFileLinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>在默认应用中打开此图像</value>
+  </data>
+  <data name="FolderSummaryPage_OpenFileText.Text" xml:space="preserve">
+    <value>打开文件 ↗</value>
+  </data>
+  <data name="FolderSummaryPage_QRCodesTableViewTemplateColumn.Header" xml:space="preserve">
+    <value>二维码</value>
+  </data>
+  <data name="FolderSummaryPage_ContentsTableViewTemplateColumn.Header" xml:space="preserve">
+    <value>内容</value>
+  </data>
+  <data name="MainPage_UrlImportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>添加或导入文本</value>
+  </data>
+  <data name="MainPage_PasteMenuItem.Text" xml:space="preserve">
+    <value>粘贴</value>
+  </data>
+  <data name="MainPage_BuildURLMenuItem.Text" xml:space="preserve">
+    <value>创建网址</value>
+  </data>
+  <data name="MainPage_BuildVCardMenuItem.Text" xml:space="preserve">
+    <value>创建 vCard 名片</value>
+  </data>
+  <data name="MainPage_BuildVCardMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>创建名片，轻松通过二维码共享联系信息</value>
+  </data>
+  <data name="MainPage_BuildWiFiMenuItem.Text" xml:space="preserve">
+    <value>创建 Wi-Fi 二维码</value>
+  </data>
+  <data name="MainPage_BuildWiFiMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>创建用于共享网络连接信息的 Wi-Fi 二维码</value>
+  </data>
+  <data name="MainPage_BuildEmailMenuItem.Text" xml:space="preserve">
+    <value>创建电子邮件</value>
+  </data>
+  <data name="MainPage_BuildEmailMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>创建预填收件人、主题和正文的邮件二维码</value>
+  </data>
+  <data name="MainPage_GenerateIDsMenuItem.Text" xml:space="preserve">
+    <value>生成 ID</value>
+  </data>
+  <data name="MainPage_OpenTextFileMenuItem.Text" xml:space="preserve">
+    <value>打开文本文件</value>
+  </data>
+  <data name="MainPage_OpenSpreadsheetMenuItem.Text" xml:space="preserve">
+    <value>打开电子表格</value>
+  </data>
+  <data name="MainPage_MultiLineCodesToggleMenuFlyoutItem.Text" xml:space="preserve">
+    <value>每行生成一个码</value>
+  </data>
+  <data name="MainPage_CodeColorColorPickerButton.ToolTipText" xml:space="preserve">
+    <value>码图颜色</value>
+  </data>
+  <data name="MainPage_SetAsDefaultCodeColorMenuItem.Text" xml:space="preserve">
+    <value>设为默认码图颜色</value>
+  </data>
+  <data name="MainPage_BackgroundColorColorPickerButton.ToolTipText" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="MainPage_SetAsDefaultBackgroundColorMenuItem.Text" xml:space="preserve">
+    <value>设为默认背景色</value>
+  </data>
+  <data name="MainPage_LevelOfErrorCorrectionDropDownButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>纠错级别</value>
+  </data>
+  <data name="MainPage_SetAsDefaultErrorCorrectionMenuItem.Text" xml:space="preserve">
+    <value>设为默认纠错级别</value>
+  </data>
+  <data name="MainPage_WhatIsErrorCorrectionText.Text" xml:space="preserve">
+    <value>什么是纠错？</value>
+  </data>
+  <data name="MainPage_LoadMoreText.Text" xml:space="preserve">
+    <value>加载更多</value>
+  </data>
+  <data name="MainPage_ReadCodesIconAndTextButton.Text" xml:space="preserve">
+    <value>扫描解码</value>
+  </data>
+  <data name="MainPage_ReadCodesIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开图像，读取其中的码图并提取文本</value>
+  </data>
+  <data name="MainPage_SettingsIconAndTextButton.Text" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="MainPage_SettingsIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Simple QR Code Maker 设置</value>
+  </data>
+  <data name="MainPage_ScrollToCodesButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>滚动到二维码预览</value>
+  </data>
+  <data name="MainPage_ScrollToCodesText.Text" xml:space="preserve">
+    <value>跳到二维码</value>
+  </data>
+  <data name="MainPage_OpenFolderHyperlinkButton.Content" xml:space="preserve">
+    <value>打开文件夹</value>
+  </data>
+  <data name="MainPage_SettingsIconAndTextHyperlinkButton.Text" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="MainPage_AddButtonTeachingTip.Title" xml:space="preserve">
+    <value>更多添加内容的方式</value>
+  </data>
+  <data name="MainPage_AddButtonTeachingTip.CloseButtonContent" xml:space="preserve">
+    <value>知道了</value>
+  </data>
+  <data name="MainPage_AddButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>打开此菜单，可以粘贴文本、创建网址、vCard 名片、Wi-Fi 或邮件二维码，也可以从文件导入。</value>
+  </data>
+  <data name="MainPage_HistoryButtonTeachingTip.Title" xml:space="preserve">
+    <value>二维码生成历史记录</value>
+  </data>
+  <data name="MainPage_HistoryButtonTeachingTip.CloseButtonContent" xml:space="preserve">
+    <value>知道了</value>
+  </data>
+  <data name="MainPage_HistoryButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>先前生成的二维码保存在这里。选择工具栏中的“生成历史记录”即可恢复之前的某个码。</value>
+  </data>
+  <data name="MainPage_BrandButtonTeachingTip.Title" xml:space="preserve">
+    <value>将样式保存为品牌</value>
+  </data>
+  <data name="MainPage_BrandButtonTeachingTip.CloseButtonContent" xml:space="preserve">
+    <value>知道了</value>
+  </data>
+  <data name="MainPage_BrandButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>使用此按钮将当前配色、徽标和设置保存为有名称的品牌，即可快速应用到任意二维码。</value>
+  </data>
+  <data name="MainPage_BrandUrlWarningTip.Title" xml:space="preserve">
+    <value>品牌网址冲突</value>
+  </data>
+  <data name="MainPage_BrandUrlWarningTip.CloseButtonContent" xml:space="preserve">
+    <value>知道了</value>
+  </data>
+  <data name="MainPage_BrandUrlWarningTip.Subtitle" xml:space="preserve">
+    <value>部分内容与此品牌的网址不匹配。可在设置中更改处理网址冲突的方式。</value>
+  </data>
+  <data name="SettingsPage_RateAndReviewSettingsCard.Description" xml:space="preserve">
+    <value>喜欢这个应用吗？欢迎评分或发来反馈！</value>
+  </data>
+  <data name="SettingsPage_RateAndReviewSettingsCard.Header" xml:space="preserve">
+    <value>评分和评论</value>
+  </data>
+  <data name="SettingsPage_ThemeSettingsExpander.Description" xml:space="preserve">
+    <value>选择应用主题</value>
+  </data>
+  <data name="SettingsPage_ThemeSettingsExpander.Header" xml:space="preserve">
+    <value>主题</value>
+  </data>
+  <data name="SettingsPage_QRCodeText.Text" xml:space="preserve">
+    <value>二维码</value>
+  </data>
+  <data name="SettingsPage_LaunchModeSettingsExpander.Description" xml:space="preserve">
+    <value>选择应用启动时生成二维码还是扫描解码</value>
+  </data>
+  <data name="SettingsPage_LaunchModeSettingsExpander.Header" xml:space="preserve">
+    <value>启动模式</value>
+  </data>
+  <data name="SettingsPage_CreatingQRCodesRadioButton.Content" xml:space="preserve">
+    <value>生成二维码</value>
+  </data>
+  <data name="SettingsPage_ReadingQRCodesRadioButton.Content" xml:space="preserve">
+    <value>扫描解码</value>
+  </data>
+  <data name="SettingsPage_MultiLineHandlingSettingsExpander.Description" xml:space="preserve">
+    <value>选择生成二维码时如何处理多行文本</value>
+  </data>
+  <data name="SettingsPage_MultiLineHandlingSettingsExpander.Header" xml:space="preserve">
+    <value>多行文本处理</value>
+  </data>
+  <data name="SettingsPage_OneCodeForEachLineRadioButton.Content" xml:space="preserve">
+    <value>每行生成一个码</value>
+  </data>
+  <data name="SettingsPage_MultiLineInSingleCodeRadioButton.Content" xml:space="preserve">
+    <value>将多行合并为一个码</value>
+  </data>
+  <data name="SettingsPage_BaseTextSettingsCard.Description" xml:space="preserve">
+    <value>在开始输入时和每次换行后填入的文本</value>
+  </data>
+  <data name="SettingsPage_BaseTextSettingsCard.Header" xml:space="preserve">
+    <value>起始文本</value>
+  </data>
+  <data name="SettingsPage_ExHttpsExampleComTextBox.PlaceholderText" xml:space="preserve">
+    <value>例如：https://example.com/</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="SettingsPage_AutoBrandsSettingsCard.Description" xml:space="preserve">
+    <value>二维码的基础网址与品牌网址匹配时，自动应用该品牌</value>
+  </data>
+  <data name="SettingsPage_AutoBrandsSettingsCard.Header" xml:space="preserve">
+    <value>自动应用品牌</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch.OffContent" xml:space="preserve">
+    <value>关</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch.OnContent" xml:space="preserve">
+    <value>开</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesSettingsCard.Description" xml:space="preserve">
+    <value>为识别出的网站链接推荐颜色和徽标。只有选中主题后才会应用。</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesSettingsCard.Header" xml:space="preserve">
+    <value>推荐品牌主题</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesToggleSwitch.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>推荐品牌主题</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesToggleSwitch.OffContent" xml:space="preserve">
+    <value>关</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesToggleSwitch.OnContent" xml:space="preserve">
+    <value>开</value>
+  </data>
+  <data name="SettingsPage_BrandURLOnPlainTextSettingsExpander.Description" xml:space="preserve">
+    <value>将带网址的品牌应用到不是网址的纯文本时采取的操作</value>
+  </data>
+  <data name="SettingsPage_BrandURLOnPlainTextSettingsExpander.Header" xml:space="preserve">
+    <value>纯文本项与品牌网址</value>
+  </data>
+  <data name="SettingsPage_IgnoreLeaveExistingContentUnchangedRadioButton.Content" xml:space="preserve">
+    <value>忽略 — 保留原有内容</value>
+  </data>
+  <data name="SettingsPage_WarnDefaultShowAnInfoRadioButton.Content" xml:space="preserve">
+    <value>警告（默认）— 显示信息栏</value>
+  </data>
+  <data name="SettingsPage_AutoPrependAddBrandURLRadioButton.Content" xml:space="preserve">
+    <value>自动添加 — 在每个纯文本项前加上品牌网址</value>
+  </data>
+  <data name="SettingsPage_BrandURLMismatchSettingsExpander.Description" xml:space="preserve">
+    <value>将带网址的品牌应用到包含不匹配网址的内容时采取的操作</value>
+  </data>
+  <data name="SettingsPage_BrandURLMismatchSettingsExpander.Header" xml:space="preserve">
+    <value>品牌网址不匹配</value>
+  </data>
+  <data name="SettingsPage_IgnoreKeepExistingURLsRadioButton.Content" xml:space="preserve">
+    <value>忽略 — 保留原有网址</value>
+  </data>
+  <data name="SettingsPage_WarnDefaultShowAnInfoRadioButton2.Content" xml:space="preserve">
+    <value>警告（默认）— 显示信息栏</value>
+  </data>
+  <data name="SettingsPage_AutoFixReplaceNonMatchingRadioButton.Content" xml:space="preserve">
+    <value>自动修正 — 用品牌网址替换不匹配的网址</value>
+  </data>
+  <data name="SettingsPage_URLWarningsSettingsCard.Description" xml:space="preserve">
+    <value>二维码内容不是网址时发出警告</value>
+  </data>
+  <data name="SettingsPage_URLWarningsSettingsCard.Header" xml:space="preserve">
+    <value>网址警告</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch2.OffContent" xml:space="preserve">
+    <value>关</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch2.OnContent" xml:space="preserve">
+    <value>开</value>
+  </data>
+  <data name="SettingsPage_RedirectorWarningsSettingsCard.Description" xml:space="preserve">
+    <value>二维码使用 bit.ly 或 qrco.de 等已知重定向服务时发出警告</value>
+  </data>
+  <data name="SettingsPage_RedirectorWarningsSettingsCard.Header" xml:space="preserve">
+    <value>重定向警告</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch3.OffContent" xml:space="preserve">
+    <value>关</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch3.OnContent" xml:space="preserve">
+    <value>开</value>
+  </data>
+  <data name="SettingsPage_SafeRedirectorDomainsSettingsExpander.Description" xml:space="preserve">
+    <value>在重定向警告信息栏中标记为安全的域名</value>
+  </data>
+  <data name="SettingsPage_SafeRedirectorDomainsSettingsExpander.Header" xml:space="preserve">
+    <value>安全的重定向域名</value>
+  </data>
+  <data name="SettingsPage_KnownSafeDomainsSettingsCard.Header" xml:space="preserve">
+    <value>已知的安全域名</value>
+  </data>
+  <data name="SettingsPage_RemoveButton.Content" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="SettingsPage_ClearAllButton.Content" xml:space="preserve">
+    <value>全部清除</value>
+  </data>
+  <data name="SettingsPage_MinimumSizeTextSettingsCard.Description" xml:space="preserve">
+    <value>隐藏二维码的最小尺寸文字</value>
+  </data>
+  <data name="SettingsPage_MinimumSizeTextSettingsCard.Header" xml:space="preserve">
+    <value>最小尺寸文字</value>
+  </data>
+  <data name="SettingsPage_ShowingToggleSwitch.OffContent" xml:space="preserve">
+    <value>显示</value>
+  </data>
+  <data name="SettingsPage_ShowingToggleSwitch.OnContent" xml:space="preserve">
+    <value>隐藏</value>
+  </data>
+  <data name="SettingsPage_SaveBothButtonSettingsCard.Description" xml:space="preserve">
+    <value>显示用于保存 PNG 和 SVG 的“两种格式”按钮</value>
+  </data>
+  <data name="SettingsPage_SaveBothButtonSettingsCard.Header" xml:space="preserve">
+    <value>“两种格式”按钮</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch.OffContent" xml:space="preserve">
+    <value>隐藏</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch.OnContent" xml:space="preserve">
+    <value>显示</value>
+  </data>
+  <data name="SettingsPage_PrintButtonSettingsCard.Description" xml:space="preserve">
+    <value>在导出选项旁显示“打印”按钮</value>
+  </data>
+  <data name="SettingsPage_PrintButtonSettingsCard.Header" xml:space="preserve">
+    <value>“打印”按钮</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch2.OffContent" xml:space="preserve">
+    <value>隐藏</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch2.OnContent" xml:space="preserve">
+    <value>显示</value>
+  </data>
+  <data name="SettingsPage_ZipSaveOptionsSettingsCard.Description" xml:space="preserve">
+    <value>在导出菜单中显示 ZIP 保存选项</value>
+  </data>
+  <data name="SettingsPage_ZipSaveOptionsSettingsCard.Header" xml:space="preserve">
+    <value>ZIP 保存选项</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch3.OffContent" xml:space="preserve">
+    <value>隐藏</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch3.OnContent" xml:space="preserve">
+    <value>显示</value>
+  </data>
+  <data name="SettingsPage_MaxScanDistanceAtMinimumSettingsCard.Header" xml:space="preserve">
+    <value>最小尺寸下的最大扫描距离</value>
+  </data>
+  <data name="SettingsPage_QRPaddingSettingsCard.Header" xml:space="preserve">
+    <value>二维码留白</value>
+  </data>
+  <data name="SettingsPage_QuickSaveLocationSettingsExpander.Description" xml:space="preserve">
+    <value>跳过文件夹选择器，直接保存到此文件夹</value>
+  </data>
+  <data name="SettingsPage_QuickSaveLocationSettingsExpander.Header" xml:space="preserve">
+    <value>快速保存位置</value>
+  </data>
+  <data name="SettingsPage_FolderSettingsCard.Header" xml:space="preserve">
+    <value>文件夹</value>
+  </data>
+  <data name="SettingsPage_NoFolderSelectedTextBox.PlaceholderText" xml:space="preserve">
+    <value>未选择文件夹</value>
+  </data>
+  <data name="SettingsPage_BrowseButton.Content" xml:space="preserve">
+    <value>浏览…</value>
+  </data>
+  <data name="SettingsPage_ClearButton.Content" xml:space="preserve">
+    <value>清除</value>
+  </data>
+  <data name="SettingsPage_DefaultsText.Text" xml:space="preserve">
+    <value>默认值</value>
+  </data>
+  <data name="SettingsPage_QRCodeDefaultsSettingsExpander.Description" xml:space="preserve">
+    <value>每次启动后、应用任何品牌前使用的初始值。可在主页中通过右键菜单或浮出菜单按钮设置。</value>
+  </data>
+  <data name="SettingsPage_QRCodeDefaultsSettingsExpander.Header" xml:space="preserve">
+    <value>二维码默认值</value>
+  </data>
+  <data name="SettingsPage_CodeColorSettingsCard.Header" xml:space="preserve">
+    <value>码图颜色</value>
+  </data>
+  <data name="SettingsPage_ResetButton.Content" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="SettingsPage_BackgroundColorSettingsCard.Header" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="SettingsPage_ResetButton2.Content" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="SettingsPage_ErrorCorrectionSettingsCard.Header" xml:space="preserve">
+    <value>纠错</value>
+  </data>
+  <data name="SettingsPage_ResetButton3.Content" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="SettingsPage_FrameAndPatternSettingsCard.Header" xml:space="preserve">
+    <value>边框和图案</value>
+  </data>
+  <data name="SettingsPage_ResetButton4.Content" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="SettingsPage_DataText.Text" xml:space="preserve">
+    <value>数据</value>
+  </data>
+  <data name="SettingsPage_ExportSettingsExpander.Description" xml:space="preserve">
+    <value>将设置、历史记录、品牌和徽标图像保存到 ZIP 备份文件</value>
+  </data>
+  <data name="SettingsPage_ExportSettingsExpander.Header" xml:space="preserve">
+    <value>导出</value>
+  </data>
+  <data name="SettingsPage_ExportButton.Content" xml:space="preserve">
+    <value>导出…</value>
+  </data>
+  <data name="SettingsPage_IncludeSettingsSettingsCard.Header" xml:space="preserve">
+    <value>包含设置</value>
+  </data>
+  <data name="SettingsPage_IncludeBrandsSettingsCard.Header" xml:space="preserve">
+    <value>包含品牌</value>
+  </data>
+  <data name="SettingsPage_IncludeHistorySettingsCard.Header" xml:space="preserve">
+    <value>包含历史记录</value>
+  </data>
+  <data name="SettingsPage_ImportSettingsCard.Description" xml:space="preserve">
+    <value>合并 ZIP 备份文件中的设置、历史记录、品牌和徽标图像。备份中没有的现有设置会保留。</value>
+  </data>
+  <data name="SettingsPage_ImportSettingsCard.Header" xml:space="preserve">
+    <value>导入</value>
+  </data>
+  <data name="SettingsPage_ImportButton.Content" xml:space="preserve">
+    <value>导入…</value>
+  </data>
+  <data name="SettingsPage_SimpleQRCodeMakerSettingsExpander.Header" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="SettingsPage_PrivacySettingsCard.Header" xml:space="preserve">
+    <value>隐私</value>
+  </data>
+  <data name="SettingsPage_LearnMoreSettingsCard.Header" xml:space="preserve">
+    <value>了解详情</value>
+  </data>
+  <data name="SettingsPage_QRCodesOnWikipediaHyperlinkButton.Content" xml:space="preserve">
+    <value>维基百科上的二维码介绍</value>
+  </data>
+  <data name="SettingsPage_RateThisAppSettingsCard.Header" xml:space="preserve">
+    <value>为此应用评分</value>
+  </data>
+  <data name="SettingsPage_MicrosoftStoreHyperlinkButton.Content" xml:space="preserve">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="SettingsPage_SourceCodeSettingsCard.Header" xml:space="preserve">
+    <value>源代码</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_CreatedBySettingsCard.Header" xml:space="preserve">
+    <value>开发者</value>
+  </data>
+  <data name="SettingsPage_TheJoeFinHyperlinkButton.Content" xml:space="preserve">
+    <value>TheJoeFin</value>
+  </data>
+  <data name="SettingsPage_MoreAppsByTheJoeFinSettingsExpander.Description" xml:space="preserve">
+    <value>同一开发者的其他免费应用</value>
+  </data>
+  <data name="SettingsPage_MoreAppsByTheJoeFinSettingsExpander.Header" xml:space="preserve">
+    <value>TheJoeFin 的其他应用</value>
+  </data>
+  <data name="SettingsPage_SimpleIconFileMakerSettingsCard.Description" xml:space="preserve">
+    <value>创建、编辑和转换图标文件</value>
+  </data>
+  <data name="SettingsPage_SimpleIconFileMakerSettingsCard.Header" xml:space="preserve">
+    <value>Simple Icon File Maker</value>
+  </data>
+  <data name="SettingsPage_MicrosoftStoreHyperlinkButton2.Content" xml:space="preserve">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="SettingsPage_TextGrabSettingsCard.Description" xml:space="preserve">
+    <value>从屏幕上的任意位置复制文本</value>
+  </data>
+  <data name="SettingsPage_TextGrabSettingsCard.Header" xml:space="preserve">
+    <value>Text Grab</value>
+  </data>
+  <data name="SettingsPage_MicrosoftStoreHyperlinkButton3.Content" xml:space="preserve">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="SettingsPage_WebsiteSettingsCard.Header" xml:space="preserve">
+    <value>网站</value>
+  </data>
+  <data name="SettingsPage_JoeFinAppsComHyperlinkButton.Content" xml:space="preserve">
+    <value>JoeFinApps.com</value>
+  </data>
+  <data name="SettingsPage_LibrariesSettingsExpander.Description" xml:space="preserve">
+    <value>此应用使用的开源库</value>
+  </data>
+  <data name="SettingsPage_LibrariesSettingsExpander.Header" xml:space="preserve">
+    <value>库</value>
+  </data>
+  <data name="SettingsPage_ViewLicensesButton.Content" xml:space="preserve">
+    <value>查看许可证…</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitMvvmSettingsCard.Description" xml:space="preserve">
+    <value>MIT 许可证</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitMvvmSettingsCard.Header" xml:space="preserve">
+    <value>CommunityToolkit.Mvvm</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton2.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitWinUISettingsCard.Description" xml:space="preserve">
+    <value>MIT 许可证</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitWinUISettingsCard.Header" xml:space="preserve">
+    <value>CommunityToolkit WinUI</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton3.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_HumanizerSettingsCard.Description" xml:space="preserve">
+    <value>MIT 许可证</value>
+  </data>
+  <data name="SettingsPage_HumanizerSettingsCard.Header" xml:space="preserve">
+    <value>Humanizer</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton4.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_MagickNETSettingsCard.Description" xml:space="preserve">
+    <value>Apache-2.0 许可证</value>
+  </data>
+  <data name="SettingsPage_MagickNETSettingsCard.Header" xml:space="preserve">
+    <value>Magick.NET</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton5.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_MicrosoftExtensionsHostingSettingsCard.Description" xml:space="preserve">
+    <value>MIT 许可证</value>
+  </data>
+  <data name="SettingsPage_MicrosoftExtensionsHostingSettingsCard.Header" xml:space="preserve">
+    <value>Microsoft.Extensions.Hosting</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton6.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_MicrosoftGraphicsWin2DSettingsCard.Description" xml:space="preserve">
+    <value>MIT 许可证</value>
+  </data>
+  <data name="SettingsPage_MicrosoftGraphicsWin2DSettingsCard.Header" xml:space="preserve">
+    <value>Microsoft.Graphics.Win2D</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton7.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_PdfPigSettingsCard.Description" xml:space="preserve">
+    <value>Apache-2.0 许可证</value>
+  </data>
+  <data name="SettingsPage_PdfPigSettingsCard.Header" xml:space="preserve">
+    <value>PdfPig</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton8.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WindowsAppSDKSettingsCard.Description" xml:space="preserve">
+    <value>MIT 许可证</value>
+  </data>
+  <data name="SettingsPage_WindowsAppSDKSettingsCard.Header" xml:space="preserve">
+    <value>Windows App SDK</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton9.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WinUI3SettingsCard.Description" xml:space="preserve">
+    <value>MIT 许可证</value>
+  </data>
+  <data name="SettingsPage_WinUI3SettingsCard.Header" xml:space="preserve">
+    <value>WinUI 3</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton10.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WinUITableViewSettingsCard.Description" xml:space="preserve">
+    <value>MIT 许可证</value>
+  </data>
+  <data name="SettingsPage_WinUITableViewSettingsCard.Header" xml:space="preserve">
+    <value>WinUI.TableView</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton11.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WinUIExSettingsCard.Description" xml:space="preserve">
+    <value>MIT 许可证</value>
+  </data>
+  <data name="SettingsPage_WinUIExSettingsCard.Header" xml:space="preserve">
+    <value>WinUIEx</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton12.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_XAMLBehaviorsSettingsCard.Description" xml:space="preserve">
+    <value>MIT 许可证</value>
+  </data>
+  <data name="SettingsPage_XAMLBehaviorsSettingsCard.Header" xml:space="preserve">
+    <value>XAML Behaviors</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton13.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_ZXingNETSettingsCard.Description" xml:space="preserve">
+    <value>Apache-2.0 许可证</value>
+  </data>
+  <data name="SettingsPage_ZXingNETSettingsCard.Header" xml:space="preserve">
+    <value>ZXing.NET</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton14.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="ShellPage_MakeCodesNavItem.Content" xml:space="preserve">
+    <value>生成二维码</value>
+  </data>
+  <data name="ShellPage_ReadCodesNavItem.Content" xml:space="preserve">
+    <value>扫描解码</value>
+  </data>
+  <data name="ShellPage_FaqNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>关于二维码的常见问题</value>
+  </data>
+  <data name="ShellPage_HistoryNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>之前生成的二维码的历史记录</value>
+  </data>
+  <data name="ShellPage_ShareNavItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>共享</value>
+  </data>
+  <data name="ShellPage_ShareNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>共享内容或 Simple QR Code Maker</value>
+  </data>
+  <data name="ShellPage_ShareContentMenuItem.Text" xml:space="preserve">
+    <value>共享内容</value>
+  </data>
+  <data name="ShellPage_ShareAppMenuItem.Text" xml:space="preserve">
+    <value>共享应用</value>
+  </data>
+  <data name="ShellPage_SettingsNavItem.Content" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="ShellPage_SettingsNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Simple QR Code Maker 设置</value>
+  </data>
+  <data name="ShellPage_SharePane.Title" xml:space="preserve">
+    <value>共享 Simple QR Code Maker</value>
+  </data>
+  <data name="ShellPage_LinkToTheMicrosoftStoreText.Text" xml:space="preserve">
+    <value>Microsoft Store 链接</value>
+  </data>
+  <data name="ShellPage_VisitText.Text" xml:space="preserve">
+    <value>访问</value>
+  </data>
+  <data name="ShellPage_CopyText.Text" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="ShellPage_ShareErrorBar.Title" xml:space="preserve">
+    <value>无法共享内容</value>
+  </data>
+  <data name="SpreadsheetImportPage_HeaderRowSettingsCard.Description" xml:space="preserve">
+    <value>选择是否将第一行用作列名。</value>
+  </data>
+  <data name="SpreadsheetImportPage_HeaderRowSettingsCard.Header" xml:space="preserve">
+    <value>标题行</value>
+  </data>
+  <data name="SpreadsheetImportPage_GenerateIDsAndSaveBackSettingsExpander.Header" xml:space="preserve">
+    <value>生成 ID 并写回文件</value>
+  </data>
+  <data name="SpreadsheetImportPage_IDStyleSettingsCard.Header" xml:space="preserve">
+    <value>ID 格式</value>
+  </data>
+  <data name="SpreadsheetImportPage_NanoIDLengthSettingsCard.Description" xml:space="preserve">
+    <value>仅当 ID 格式为 NanoID 时使用。</value>
+  </data>
+  <data name="SpreadsheetImportPage_NanoIDLengthSettingsCard.Header" xml:space="preserve">
+    <value>NanoID 长度</value>
+  </data>
+  <data name="SpreadsheetImportPage_ColumnToImportSettingsCard.Header" xml:space="preserve">
+    <value>要导入的列</value>
+  </data>
+  <data name="SpreadsheetImportPage_TextBeforeImportedLineSettingsCard.Description" xml:space="preserve">
+    <value>可选：在导入的每行开头添加的文本。</value>
+  </data>
+  <data name="SpreadsheetImportPage_TextBeforeImportedLineSettingsCard.Header" xml:space="preserve">
+    <value>导入行前的文本</value>
+  </data>
+  <data name="SpreadsheetImportPage_ExHttpsTextBox.PlaceholderText" xml:space="preserve">
+    <value>例如：https://</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="SpreadsheetImportPage_TextAfterImportedLineSettingsCard.Description" xml:space="preserve">
+    <value>可选：在导入的每行末尾添加的文本。</value>
+  </data>
+  <data name="SpreadsheetImportPage_TextAfterImportedLineSettingsCard.Header" xml:space="preserve">
+    <value>导入行后的文本</value>
+  </data>
+  <data name="SpreadsheetImportPage_ExSourceQrCodeTextBox.PlaceholderText" xml:space="preserve">
+    <value>例如：?source=qr-code</value>
+  </data>
+  <data name="SpreadsheetImportPage_RemoveDuplicatesSettingsCard.Description" xml:space="preserve">
+    <value>添加行前和行后文本后，只导入不重复的值。</value>
+  </data>
+  <data name="SpreadsheetImportPage_RemoveDuplicatesSettingsCard.Header" xml:space="preserve">
+    <value>删除重复项</value>
+  </data>
+  <data name="SpreadsheetImportPage_PreviewText.Text" xml:space="preserve">
+    <value>预览</value>
+  </data>
+  <data name="Main_InputExample" xml:space="preserve">
+    <value>例如：http://www.example.com</value>
+  </data>
+  <data name="Main_InputExampleFormat" xml:space="preserve">
+    <value>例如：{0}</value>
+    <comment>{0} = placeholdersList[random.Next(placeholdersList.Length)]</comment>
+  </data>
+  <data name="Main_CodeCopied" xml:space="preserve">
+    <value>已将二维码复制到剪贴板</value>
+  </data>
+  <data name="Main_MarkRedirectorSafe" xml:space="preserve">
+    <value>将“{0}”标记为安全</value>
+    <comment>{0} = CurrentRedirectorWarningDomain</comment>
+  </data>
+  <data name="Frame_FallbackHelp" xml:space="preserve">
+    <value>无法从内容提取摘要时使用。</value>
+  </data>
+  <data name="Frame_FallbackLabel" xml:space="preserve">
+    <value>备用标签文本</value>
+  </data>
+  <data name="Frame_BannerText" xml:space="preserve">
+    <value>横幅文字</value>
+  </data>
+  <data name="Frame_CalloutText" xml:space="preserve">
+    <value>标注文字</value>
+  </data>
+  <data name="Frame_LabelText" xml:space="preserve">
+    <value>标签文字</value>
+  </data>
+  <data name="Main_EmojiRenderFailed" xml:space="preserve">
+    <value>无法呈现所选的表情符号</value>
+  </data>
+  <data name="Correction_Low" xml:space="preserve">
+    <value>低 7%</value>
+  </data>
+  <data name="Correction_Medium" xml:space="preserve">
+    <value>中 15%</value>
+  </data>
+  <data name="Correction_Quarter" xml:space="preserve">
+    <value>较高 25%</value>
+  </data>
+  <data name="Correction_High" xml:space="preserve">
+    <value>高 30%</value>
+  </data>
+  <data name="Main_EmojiStyleColor" xml:space="preserve">
+    <value>所选样式：3D</value>
+  </data>
+  <data name="Main_EmojiStyleSolid" xml:space="preserve">
+    <value>所选样式：黑白</value>
+  </data>
+  <data name="Main_BulkClipboardLimit" xml:space="preserve">
+    <value>二维码超过 {0} 个时，无法批量复制到剪贴板。请保存为单独文件或 ZIP。</value>
+    <comment>{0} = LargeBatchThreshold</comment>
+  </data>
+  <data name="Main_PreviewSingle" xml:space="preserve">
+    <value>正在显示 1 项预览。</value>
+  </data>
+  <data name="Main_PreviewAll" xml:space="preserve">
+    <value>正在显示全部 {0} 项预览。</value>
+    <comment>{0} = RequestedCodeCount</comment>
+  </data>
+  <data name="Main_PreviewPartial" xml:space="preserve">
+    <value>共 {1} 项预览，正在显示 {0} 项。</value>
+    <comment>{0} = LoadedPreviewCount; {1} = RequestedCodeCount</comment>
+  </data>
+  <data name="Main_BulkSaving" xml:space="preserve">
+    <value>正在保存二维码（{0}/{1}）…</value>
+    <comment>{0} = BulkOperationCompletedItemCount; {1} = BulkOperationTotalItemCount</comment>
+  </data>
+  <data name="Main_CommonBrandFailed" xml:space="preserve">
+    <value>无法更改通用品牌</value>
+  </data>
+  <data name="Main_CommonBrandFailedHelp" xml:space="preserve">
+    <value>无法应用颜色和徽标。请尝试使用更短的网址，或使用当前样式。</value>
+  </data>
+  <data name="Main_GenerationFailed" xml:space="preserve">
+    <value>生成二维码时出错</value>
+  </data>
+  <data name="Main_ContentTooLong" xml:space="preserve">
+    <value>输入的文本过长，无法生成二维码。请缩短文本后重试。</value>
+  </data>
+  <data name="Main_SomeContentTooLong" xml:space="preserve">
+    <value>部分文本过长，无法生成二维码，已跳过。</value>
+  </data>
+  <data name="Redirector_Detected" xml:space="preserve">
+    <value>检测到已知重定向服务</value>
+  </data>
+  <data name="Main_RedirectorBatchWarning" xml:space="preserve">
+    <value>这组网址中有 {0} 个使用了已知重定向服务。最先检测到：{1}。</value>
+    <comment>{0} = unsafeRedirectorCount; {1} = host</comment>
+  </data>
+  <data name="Main_RedirectorWarning" xml:space="preserve">
+    <value>此网址使用了已知的重定向服务 {0}。扫描二维码的人可能要打开链接后才能看到最终目标网址。</value>
+    <comment>{0} = host</comment>
+  </data>
+  <data name="Main_BrandNonUrl" xml:space="preserve">
+    <value>检测到非网址内容</value>
+  </data>
+  <data name="Main_BrandNonUrlHelp" xml:space="preserve">
+    <value>此品牌带有网址，但部分项为纯文本。可在设置中更改品牌网址的处理方式。</value>
+  </data>
+  <data name="Main_BrandUrlMismatch" xml:space="preserve">
+    <value>网址与品牌不匹配</value>
+  </data>
+  <data name="Main_BrandUrlMismatchHelp" xml:space="preserve">
+    <value>部分网址与此品牌的网址不匹配。可在设置中更改品牌网址冲突的处理方式。</value>
+  </data>
+  <data name="Main_ClipboardNoImage" xml:space="preserve">
+    <value>剪贴板中没有图像</value>
+  </data>
+  <data name="Main_ClipboardLogoFailed" xml:space="preserve">
+    <value>无法从剪贴板加载图像</value>
+  </data>
+  <data name="Main_FileReadFailedHelp" xml:space="preserve">
+    <value>无法读取所选文件</value>
+  </data>
+  <data name="Main_FileReadFailed" xml:space="preserve">
+    <value>读取文件时出错</value>
+  </data>
+  <data name="Main_ExcelUnavailableHelp" xml:space="preserve">
+    <value>可以导入 CSV 和 TSV。若要导入 Excel 工作簿，请安装 Microsoft Excel。</value>
+  </data>
+  <data name="Main_ExcelUnavailable" xml:space="preserve">
+    <value>无法导入 Excel 工作簿</value>
+  </data>
+  <data name="Main_SpreadsheetReadFailed" xml:space="preserve">
+    <value>读取电子表格时出错</value>
+  </data>
+  <data name="Main_NoSpreadsheetDataHelp" xml:space="preserve">
+    <value>所选电子表格不含任何数据。</value>
+  </data>
+  <data name="Main_NoSpreadsheetData" xml:space="preserve">
+    <value>没有可导入的内容</value>
+  </data>
+  <data name="Main_BulkClipboardDisabled" xml:space="preserve">
+    <value>批量复制到剪贴板已禁用</value>
+  </data>
+  <data name="Main_CopyFailed" xml:space="preserve">
+    <value>无法将二维码复制到剪贴板</value>
+  </data>
+  <data name="Main_NothingToCopy" xml:space="preserve">
+    <value>没有可复制到剪贴板的二维码</value>
+  </data>
+  <data name="Main_PngCopied" xml:space="preserve">
+    <value>已将 PNG 二维码复制到剪贴板</value>
+  </data>
+  <data name="Main_PngsCopied" xml:space="preserve">
+    <value>已将 {0} 个 PNG 二维码复制到剪贴板</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_PngClipboardFailed" xml:space="preserve">
+    <value>无法准备要复制到剪贴板的 PNG 二维码</value>
+  </data>
+  <data name="Main_SvgCopied" xml:space="preserve">
+    <value>已将 SVG 二维码复制到剪贴板</value>
+  </data>
+  <data name="Main_SvgsCopied" xml:space="preserve">
+    <value>已将 {0} 个 SVG 二维码复制到剪贴板</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_SvgClipboardFailed" xml:space="preserve">
+    <value>无法准备要复制到剪贴板的 SVG 二维码</value>
+  </data>
+  <data name="Main_SvgTextsCopied" xml:space="preserve">
+    <value>已将 {0} 个 SVG 二维码的文本复制到剪贴板</value>
+    <comment>{0} = textStrings.Count</comment>
+  </data>
+  <data name="Main_SvgTextClipboardFailed" xml:space="preserve">
+    <value>无法准备要复制到剪贴板的 SVG 文本</value>
+  </data>
+  <data name="Main_CopyStatusTitle" xml:space="preserve">
+    <value>复制结果通知标题</value>
+  </data>
+  <data name="Main_BrandSaved" xml:space="preserve">
+    <value>已保存品牌</value>
+  </data>
+  <data name="Main_BrandSavedDetail" xml:space="preserve">
+    <value>已保存“{0}”</value>
+    <comment>{0} = brand.Name</comment>
+  </data>
+  <data name="Main_BrandUpdated" xml:space="preserve">
+    <value>已更新品牌</value>
+  </data>
+  <data name="Main_BrandUpdatedDetail" xml:space="preserve">
+    <value>已更新“{0}”</value>
+    <comment>{0} = edited.Name</comment>
+  </data>
+  <data name="Main_PngSaved" xml:space="preserve">
+    <value>已保存 PNG 二维码</value>
+  </data>
+  <data name="Main_PngsSaved" xml:space="preserve">
+    <value>已保存 {0} 个 PNG 二维码</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_PngZipSaved" xml:space="preserve">
+    <value>已将 PNG 二维码保存到 ZIP</value>
+  </data>
+  <data name="Main_PngsZipSaved" xml:space="preserve">
+    <value>已将 {0} 个 PNG 二维码保存到 ZIP</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_SvgSaved" xml:space="preserve">
+    <value>已保存 SVG 二维码</value>
+  </data>
+  <data name="Main_SvgsSaved" xml:space="preserve">
+    <value>已保存 {0} 个 SVG 二维码</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_SvgZipSaved" xml:space="preserve">
+    <value>已将 SVG 二维码保存到 ZIP</value>
+  </data>
+  <data name="Main_SvgsZipSaved" xml:space="preserve">
+    <value>已将 {0} 个 SVG 二维码保存到 ZIP</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothSaved" xml:space="preserve">
+    <value>已将二维码保存为 PNG 和 SVG</value>
+  </data>
+  <data name="Main_BothMultipleSaved" xml:space="preserve">
+    <value>已将 {0} 个二维码保存为 PNG 和 SVG</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothZipSaved" xml:space="preserve">
+    <value>已将 PNG 和 SVG 二维码保存到 ZIP</value>
+  </data>
+  <data name="Main_BothMultipleZipSaved" xml:space="preserve">
+    <value>已将 {0} 个二维码的 PNG 和 SVG 保存到 ZIP</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothCopied" xml:space="preserve">
+    <value>已将二维码的 PNG 和 SVG 复制到剪贴板</value>
+  </data>
+  <data name="Main_BothMultipleCopied" xml:space="preserve">
+    <value>已将 {0} 个二维码的 PNG 和 SVG 复制到剪贴板</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothClipboardFailed" xml:space="preserve">
+    <value>无法准备要复制到剪贴板的二维码</value>
+  </data>
+  <data name="Main_LogoLoadFailedHelp" xml:space="preserve">
+    <value>无法加载所选图像</value>
+  </data>
+  <data name="Main_LogoLoadFailed" xml:space="preserve">
+    <value>加载徽标时出错</value>
+  </data>
+  <data name="Main_ExportFailed" xml:space="preserve">
+    <value>无法保存二维码</value>
+  </data>
+  <data name="Main_ExportFilesFailedHelp" xml:space="preserve">
+    <value>无法将所选二维码保存为文件。</value>
+  </data>
+  <data name="Main_ExportZipFailedHelp" xml:space="preserve">
+    <value>无法将所选二维码保存到 ZIP 压缩包。</value>
+  </data>
+  <data name="Main_SavedToFolder" xml:space="preserve">
+    <value>已保存到 {0}</value>
+    <comment>{0} = folderPath</comment>
+  </data>
+  <data name="Frame_Caption" xml:space="preserve">
+    <value>说明文字</value>
+  </data>
+  <data name="Logo_SizePercent" xml:space="preserve">
+    <value>{0}%</value>
+    <comment>{0} = LogoSize</comment>
+  </data>
+  <data name="Logo_PaddingPixels" xml:space="preserve">
+    <value>{0} 像素</value>
+    <comment>{0} = LogoPadding</comment>
+  </data>
+  <data name="Settings_DefaultMaxScanDistance" xml:space="preserve">
+    <value>36 英寸或 1 米</value>
+  </data>
+  <data name="Settings_DefaultForeground" xml:space="preserve">
+    <value>系统默认值 — 黑色</value>
+  </data>
+  <data name="Settings_DefaultBackground" xml:space="preserve">
+    <value>系统默认值 — 白色</value>
+  </data>
+  <data name="Settings_CorrectionLow" xml:space="preserve">
+    <value>L — 低 7%</value>
+  </data>
+  <data name="Settings_CorrectionMedium" xml:space="preserve">
+    <value>M — 中 15%</value>
+  </data>
+  <data name="Settings_CorrectionQuarter" xml:space="preserve">
+    <value>Q — 较高 25%</value>
+  </data>
+  <data name="Settings_CorrectionHigh" xml:space="preserve">
+    <value>H — 高 30%</value>
+  </data>
+  <data name="Settings_DefaultCorrection" xml:space="preserve">
+    <value>系统默认值 — M（中 15%）</value>
+  </data>
+  <data name="Settings_DefaultFrame" xml:space="preserve">
+    <value>系统默认值 — 经典样式，无边框</value>
+  </data>
+  <data name="Settings_NoSafeDomains" xml:space="preserve">
+    <value>暂无安全域名。可以在重定向警告信息栏中将域名标记为安全。</value>
+  </data>
+  <data name="Settings_ScanDistanceMeters" xml:space="preserve">
+    <value>{0} 米</value>
+    <comment>{0} = value</comment>
+  </data>
+  <data name="Settings_ScanDistanceMeter" xml:space="preserve">
+    <value>{0} 米</value>
+    <comment>{0} = value</comment>
+  </data>
+  <data name="Settings_ScanDistanceFeet" xml:space="preserve">
+    <value>{0} 英尺</value>
+    <comment>{0} = Math.Round(value * 3, 1)</comment>
+  </data>
+  <data name="Settings_ScanDistanceInches" xml:space="preserve">
+    <value>{0} 英寸</value>
+    <comment>{0} = Math.Round(value * 36, 0)</comment>
+  </data>
+  <data name="Settings_PaddingModules" xml:space="preserve">
+    <value>{0:0} 个模块</value>
+    <comment>{0} = QrPaddingModules</comment>
+  </data>
+  <data name="Settings_PrintSizingReliable" xml:space="preserve">
+    <value>{0}。此设置下的打印尺寸估算仍然可靠。</value>
+    <comment>{0} = QrPaddingDescription</comment>
+  </data>
+  <data name="Settings_PrintSizingDisabled" xml:space="preserve">
+    <value>{0}。留白不在 1–4 个模块的范围内时，无法估算打印尺寸。</value>
+    <comment>{0} = QrPaddingDescription</comment>
+  </data>
+  <data name="Settings_BackupNothingToExport" xml:space="preserve">
+    <value>请至少选择一项以导出。</value>
+  </data>
+  <data name="FileType_ZipArchive" xml:space="preserve">
+    <value>ZIP 压缩包</value>
+  </data>
+  <data name="Settings_BackupExportComplete" xml:space="preserve">
+    <value>导出完成。</value>
+  </data>
+  <data name="Settings_BackupImportComplete" xml:space="preserve">
+    <value>导入完成。请返回主页面重新加载历史记录和品牌。</value>
+  </data>
+  <data name="Settings_BackupInvalid" xml:space="preserve">
+    <value>导入失败：所选文件不是有效的 ZIP 备份。</value>
+  </data>
+  <data name="Feedback_EmailSubject" xml:space="preserve">
+    <value>Simple QR Code Maker 反馈</value>
+  </data>
+  <data name="Feedback_CopyDone" xml:space="preserve">
+    <value>已复制！</value>
+  </data>
+  <data name="Feedback_Copy" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="Licenses_Unavailable" xml:space="preserve">
+    <value>［无法显示许可证文本，请参阅 https://www.apache.org/licenses/LICENSE-2.0］</value>
+  </data>
+  <data name="Licenses_Mit" xml:space="preserve">
+    <value>MIT 许可证</value>
+  </data>
+  <data name="Licenses_Apache20" xml:space="preserve">
+    <value>Apache-2.0 许可证</value>
+  </data>
+  <data name="Share_OneQrCode" xml:space="preserve">
+    <value>二维码</value>
+  </data>
+  <data name="Share_MultipleQrCodes" xml:space="preserve">
+    <value>二维码</value>
+  </data>
+  <data name="Share_DecodedCodes" xml:space="preserve">
+    <value>已解码的码图</value>
+  </data>
+  <data name="Share_PrepareContentFailed" xml:space="preserve">
+    <value>无法准备要共享的内容。请重试。</value>
+  </data>
+  <data name="Shell_SearchBrandKind" xml:space="preserve">
+    <value>品牌</value>
+  </data>
+  <data name="Shell_SearchHistoryKind" xml:space="preserve">
+    <value>生成历史记录</value>
+  </data>
+  <data name="Shell_SearchFaqKind" xml:space="preserve">
+    <value>常见问题</value>
+  </data>
+  <data name="Shell_SearchHistorySaved" xml:space="preserve">
+    <value>保存于 {0}</value>
+    <comment>{0} = item.SaveDateAsString</comment>
+  </data>
+  <data name="Shell_SearchHistoryKindSaved" xml:space="preserve">
+    <value>{0} - 保存于 {1}</value>
+    <comment>{0} = item.ContentKindLabel; {1} = item.SaveDateAsString</comment>
+  </data>
+  <data name="Shell_SearchSavedBrand" xml:space="preserve">
+    <value>已保存的品牌</value>
+  </data>
+  <data name="Shell_SearchDefaultBrand" xml:space="preserve">
+    <value>默认品牌 - {0}</value>
+    <comment>{0} = description</comment>
+  </data>
+  <data name="FileType_Csv" xml:space="preserve">
+    <value>CSV 文件</value>
+  </data>
+  <data name="Spreadsheet_IdNotSaved" xml:space="preserve">
+    <value>生成的 ID 不会写回电子表格。</value>
+  </data>
+  <data name="Spreadsheet_Review" xml:space="preserve">
+    <value>检查识别到的数据行，然后选择要导入的列。</value>
+  </data>
+  <data name="Spreadsheet_ReviewFile" xml:space="preserve">
+    <value>检查“{0}”并选择要导入的列。</value>
+    <comment>{0} = SourceFileName</comment>
+  </data>
+  <data name="Spreadsheet_SaveIdsAndImport" xml:space="preserve">
+    <value>保存 ID 并导入选定列</value>
+  </data>
+  <data name="Spreadsheet_Import" xml:space="preserve">
+    <value>导入选定列</value>
+  </data>
+  <data name="Spreadsheet_IdsSaved" xml:space="preserve">
+    <value>ID 已保存到电子表格</value>
+  </data>
+  <data name="Spreadsheet_IdsSavedFile" xml:space="preserve">
+    <value>生成的 ID 已写回“{0}”。</value>
+    <comment>{0} = SourceFileName</comment>
+  </data>
+  <data name="Spreadsheet_SaveFailedHelp" xml:space="preserve">
+    <value>无法将生成的 ID 写回电子表格。如果文件已在其他应用中打开，请关闭后重试。</value>
+  </data>
+  <data name="Spreadsheet_SaveFailed" xml:space="preserve">
+    <value>无法保存电子表格</value>
+  </data>
+  <data name="Spreadsheet_Empty" xml:space="preserve">
+    <value>未找到数据</value>
+  </data>
+  <data name="Spreadsheet_EmptyNoWriteback" xml:space="preserve">
+    <value>未找到数据，因此不会写回生成的 ID。</value>
+  </data>
+  <data name="Spreadsheet_RowCountLimited" xml:space="preserve">
+    <value>文件中有 {0} 行（预览前 {1} 行）</value>
+    <comment>{0} = _dataRows.Count; {1} = PreviewRowLimit</comment>
+  </data>
+  <data name="Spreadsheet_IdNeedsRows" xml:space="preserve">
+    <value>没有数据行，无法写入生成的 ID。</value>
+  </data>
+  <data name="Spreadsheet_IdsAlreadyPresent" xml:space="preserve">
+    <value>现有的“{0}”列每行都有值。现有 ID 将保留。</value>
+    <comment>{0} = _headers[_idColumnIndex]</comment>
+  </data>
+  <data name="Spreadsheet_InvalidNanoIdLength" xml:space="preserve">
+    <value>保存生成的 ID 前，请输入整数形式的 NanoID 长度。</value>
+  </data>
+  <data name="GenerateIds_PreviewLimited" xml:space="preserve">
+    <value>显示所生成的 {1} 个 ID 中的前 {0} 个。</value>
+    <comment>{0} = previewCount; {1} = count</comment>
+  </data>
+  <data name="GenerateIds_InvalidCount" xml:space="preserve">
+    <value>请输入要生成的 ID 数量，必须为整数。</value>
+  </data>
+  <data name="GenerateIds_InvalidNanoIdLength" xml:space="preserve">
+    <value>请输入整数形式的 NanoID 长度。</value>
+  </data>
+  <data name="UrlBuilder_LineNavigation" xml:space="preserve">
+    <value>第 {0} 行，共 {1} 行</value>
+    <comment>{0} = _currentLineIndex + 1; {1} = _lines.Count</comment>
+  </data>
+  <data name="RemoveBackground_Preparing" xml:space="preserve">
+    <value>正在准备 AI 模型…</value>
+  </data>
+  <data name="RemoveBackground_Unavailable" xml:space="preserve">
+    <value>此设备不支持移除背景。</value>
+  </data>
+  <data name="RemoveBackground_InProgress" xml:space="preserve">
+    <value>正在移除背景…</value>
+  </data>
+  <data name="RemoveBackground_Success" xml:space="preserve">
+    <value>已成功移除背景</value>
+  </data>
+  <data name="Read_ResultTitle" xml:space="preserve">
+    <value>二维码内容</value>
+  </data>
+  <data name="Read_ClipboardImage" xml:space="preserve">
+    <value>剪贴板图像</value>
+  </data>
+  <data name="Read_CameraCapture" xml:space="preserve">
+    <value>相机拍摄</value>
+  </data>
+  <data name="Read_SnippingToolCapture" xml:space="preserve">
+    <value>截图工具捕获的图像</value>
+  </data>
+  <data name="Read_ExtractingRegion" xml:space="preserve">
+    <value>正在提取区域…</value>
+  </data>
+  <data name="Read_CutOutLabel" xml:space="preserve">
+    <value>裁切图 {0}</value>
+    <comment>{0} = cutOutNumber</comment>
+  </data>
+  <data name="Read_OriginalLabel" xml:space="preserve">
+    <value>原图</value>
+  </data>
+  <data name="Read_RegionLabel" xml:space="preserve">
+    <value>区域 {0}</value>
+    <comment>{0} = regionNumber</comment>
+  </data>
+  <data name="FileType_Png" xml:space="preserve">
+    <value>PNG 图像</value>
+  </data>
+  <data name="Read_RedirectorWarning" xml:space="preserve">
+    <value>此码图指向已知的重定向服务 {0}。重定向前看不到最终目标，请谨慎打开。</value>
+    <comment>{0} = classification.Host</comment>
+  </data>
+  <data name="Read_OpeningCamera" xml:space="preserve">
+    <value>正在打开相机…</value>
+  </data>
+  <data name="Read_TakingPicture" xml:space="preserve">
+    <value>正在拍照…</value>
+  </data>
+  <data name="Read_ProcessingImage" xml:space="preserve">
+    <value>正在处理图像…</value>
+  </data>
+  <data name="Read_CameraUnavailable" xml:space="preserve">
+    <value>相机不可用</value>
+  </data>
+  <data name="Read_ApplyingAdjustments" xml:space="preserve">
+    <value>正在应用调整…</value>
+  </data>
+  <data name="Read_OpeningClipboardImage" xml:space="preserve">
+    <value>正在打开剪贴板中的图像…</value>
+  </data>
+  <data name="Read_NoImageToPaste" xml:space="preserve">
+    <value>没有可粘贴的图像</value>
+  </data>
+  <data name="Read_NoImageToPasteHelp" xml:space="preserve">
+    <value>请复制图像、受支持的图像文件或其完整路径，然后重试。</value>
+  </data>
+  <data name="Read_PasteFailed" xml:space="preserve">
+    <value>无法粘贴图像</value>
+  </data>
+  <data name="Read_OpeningImage" xml:space="preserve">
+    <value>正在打开图像…</value>
+  </data>
+  <data name="Read_LargeFolder" xml:space="preserve">
+    <value>文件夹中图像较多</value>
+  </data>
+  <data name="Read_LargeFolderConfirmation" xml:space="preserve">
+    <value>此文件夹包含 {0} 个图像文件。“全部解码”或“结果汇总”等批量操作可能需要一些时间。是否继续？</value>
+    <comment>{0} = imageFiles.Count</comment>
+  </data>
+  <data name="Common_Continue" xml:space="preserve">
+    <value>继续</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Read_BatchProgress" xml:space="preserve">
+    <value>正在处理第 {0} 项，共 {1} 项：{2}</value>
+    <comment>{0} = current; {1} = total; {2} = fileItem.FileName</comment>
+  </data>
+  <data name="Read_MultipleOpenProgress" xml:space="preserve">
+    <value>正在打开第 {0} 张图像，共 {1} 张…</value>
+    <comment>{0} = index + 1; {1} = pickedFiles.Count</comment>
+  </data>
+  <data name="Read_UnsupportedImage" xml:space="preserve">
+    <value>{0}：不是受支持的图像文件。</value>
+    <comment>{0} = pickedItem.Name</comment>
+  </data>
+  <data name="Read_SomeFilesFailed" xml:space="preserve">
+    <value>部分文件无法打开</value>
+  </data>
+  <data name="Advanced_NoAlignmentPoints" xml:space="preserve">
+    <value>4 个角点，无对齐点</value>
+  </data>
+  <data name="Advanced_UnwarpSetup" xml:space="preserve">
+    <value>设置版本并打开形变校正工具。</value>
+  </data>
+  <data name="Advanced_UnwarpReady" xml:space="preserve">
+    <value>所有点均已放置，请单击“应用形变校正”。</value>
+  </data>
+  <data name="Advanced_UnwarpNextCorner" xml:space="preserve">
+    <value>单击图像上的第 {0} 个角点（{1}），共 4 个。</value>
+    <comment>{0} = next.OrderIndex + 1; {1} = next.Label</comment>
+  </data>
+  <data name="Advanced_UnwarpNextAlignment" xml:space="preserve">
+    <value>单击第 {0} 个对齐点（{2}，共 {1} 个），或选择“使用估算位置”。</value>
+    <comment>{0} = alignIndex; {1} = alignments.Count; {2} = next.Label</comment>
+  </data>
+  <data name="Advanced_SelectTopLeft" xml:space="preserve">
+    <value>1. 选取左上角点</value>
+  </data>
+  <data name="Advanced_SelectTopRight" xml:space="preserve">
+    <value>2. 选取右上角点</value>
+  </data>
+  <data name="Advanced_SelectBottomRight" xml:space="preserve">
+    <value>3. 选取右下角点</value>
+  </data>
+  <data name="Advanced_SelectBottomLeft" xml:space="preserve">
+    <value>4. 选取左下角点</value>
+  </data>
+  <data name="Advanced_CornersSelected" xml:space="preserve">
+    <value>已选取所有角点。应用校正后即可继续。</value>
+  </data>
+  <data name="Read_NoCodesContact" xml:space="preserve">
+    <value>图像中可能没有码图，也可能是内容未能读取。如果你认为这是应用的问题，请发邮件至 Joe@JoeFinApps.com。</value>
+  </data>
+  <data name="Read_NoCodesAdvancedTools" xml:space="preserve">
+    <value>未检测到二维码。可使用高级工具裁切图像，或通过灰度、对比度和透视校正等调整来提高检测成功率。</value>
+  </data>
+  <data name="Design_LabelManualText" xml:space="preserve">
+    <value>手动输入文本</value>
+  </data>
+  <data name="Design_LabelContentSummary" xml:space="preserve">
+    <value>内容摘要</value>
+  </data>
+  <data name="Design_CaptionScanMe" xml:space="preserve">
+    <value>扫一扫</value>
+  </data>
+  <data name="Design_CaptionJoinWifi" xml:space="preserve">
+    <value>连接 Wi-Fi</value>
+  </data>
+  <data name="Design_CaptionContact" xml:space="preserve">
+    <value>保存我的联系方式</value>
+  </data>
+  <data name="Design_CaptionViewMenu" xml:space="preserve">
+    <value>查看菜单</value>
+  </data>
+  <data name="Design_CaptionTickets" xml:space="preserve">
+    <value>获取门票</value>
+  </data>
+  <data name="Design_CaptionSayHello" xml:space="preserve">
+    <value>打个招呼！</value>
+  </data>
+  <data name="Design_NoFrame" xml:space="preserve">
+    <value>无边框</value>
+  </data>
+  <data name="Design_PreviewErrorHelp" xml:space="preserve">
+    <value>关闭并重新打开“设计”，再尝试加载预览。</value>
+  </data>
+  <data name="Design_OpenFailed" xml:space="preserve">
+    <value>无法打开设计工具</value>
+  </data>
+  <data name="Design_OpenFailedHelp" xml:space="preserve">
+    <value>请关闭其他对话框后重试。</value>
+  </data>
+  <data name="Colors_Foreground" xml:space="preserve">
+    <value>前景</value>
+  </data>
+  <data name="Colors_Background" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="Colors_Empty" xml:space="preserve">
+    <value>（空）</value>
+  </data>
+  <data name="Colors_ListItem" xml:space="preserve">
+    <value>{0}，{1}</value>
+    <comment>{0} = prefix; {1} = NormalizeSource(source)</comment>
+  </data>
+  <data name="Preview_RestoreStyle" xml:space="preserve">
+    <value>不用 {0}，恢复当前样式</value>
+    <comment>{0} = CommonBrandName</comment>
+  </data>
+  <data name="Preview_UseBrand" xml:space="preserve">
+    <value>使用 {0} 品牌</value>
+    <comment>{0} = CommonBrandName</comment>
+  </data>
+  <data name="Preview_RestoreStyleHelp" xml:space="preserve">
+    <value>已应用 {0} 的颜色和徽标。可以恢复当前样式。</value>
+    <comment>{0} = CommonBrand?.Name</comment>
+  </data>
+  <data name="Preview_UseBrandHelp" xml:space="preserve">
+    <value>为此二维码使用 {0} 的颜色和徽标。</value>
+    <comment>{0} = CommonBrand?.Name</comment>
+  </data>
+  <data name="Preview_MinimumSize" xml:space="preserve">
+    <value>最小尺寸</value>
+  </data>
+  <data name="Preview_SizingUnavailable" xml:space="preserve">
+    <value>无法估算打印尺寸</value>
+  </data>
+  <data name="Preview_MinimumSizeCopyFailed" xml:space="preserve">
+    <value>无法获取精确的最小尺寸</value>
+  </data>
+  <data name="Preview_PaddingSizingHelp" xml:space="preserve">
+    <value>无法估算打印尺寸：留白不在 1–4 个模块的范围内时，二维码的边缘留白过小或过大，扫描效果不稳定，难以可靠预测。</value>
+  </data>
+  <data name="Preview_TransparencySizingHelp" xml:space="preserve">
+    <value>二维码使用透明色时，效果取决于最终印刷表面，因此没有精确的最小尺寸可供复制。</value>
+  </data>
+  <data name="Preview_ContrastSizingHelp" xml:space="preserve">
+    <value>颜色对比度过低，无法可靠地建议最小尺寸。</value>
+  </data>
+  <data name="Preview_DistanceSizingHelp" xml:space="preserve">
+    <value>在所选最大扫描距离下，无法可靠地建议最小尺寸。</value>
+  </data>
+  <data name="Preview_NoSizingHelp" xml:space="preserve">
+    <value>此二维码没有精确的最小尺寸可供复制。</value>
+  </data>
+  <data name="Preview_SizeCopied" xml:space="preserve">
+    <value>已将二维码尺寸复制到剪贴板</value>
+  </data>
+  <data name="Preview_CopyFailed" xml:space="preserve">
+    <value>无法将二维码复制到剪贴板</value>
+  </data>
+  <data name="Preview_NothingToCopy" xml:space="preserve">
+    <value>没有可复制到剪贴板的二维码</value>
+  </data>
+  <data name="Preview_ShareFailed" xml:space="preserve">
+    <value>无法共享二维码</value>
+  </data>
+  <data name="Preview_SvgTextCopied" xml:space="preserve">
+    <value>已将二维码的 SVG 文本复制到剪贴板</value>
+  </data>
+  <data name="FileType_Svg" xml:space="preserve">
+    <value>SVG 图像</value>
+  </data>
+  <data name="Preview_PngSaved" xml:space="preserve">
+    <value>已保存 PNG 二维码</value>
+  </data>
+  <data name="FileType_ZipExport" xml:space="preserve">
+    <value>ZIP 压缩包</value>
+  </data>
+  <data name="Print_ZoomPercent" xml:space="preserve">
+    <value>{0}%</value>
+    <comment>{0} = Math.Round(PreviewScrollViewer.ZoomFactor * 100)</comment>
+  </data>
+  <data name="Print_WaitForPreview" xml:space="preserve">
+    <value>请等待 PDF 预览加载完成后再打印。</value>
+  </data>
+  <data name="Print_QrSize" xml:space="preserve">
+    <value>二维码大小</value>
+  </data>
+  <data name="Print_Spacing" xml:space="preserve">
+    <value>间距</value>
+  </data>
+  <data name="Print_Margin" xml:space="preserve">
+    <value>页边距</value>
+  </data>
+  <data name="Print_LengthHeader" xml:space="preserve">
+    <value>{0}（{1}）</value>
+    <comment>{0} = title; {1} = lengthUnitSuffix</comment>
+  </data>
+  <data name="Print_LengthValue" xml:space="preserve">
+    <value>{0:0.##} {1}</value>
+    <comment>{0} = displayValue; {1} = lengthUnitSuffix</comment>
+  </data>
+  <data name="Print_PresetProductLabelsHelp" xml:space="preserve">
+    <value>适合从近处扫描的小二维码，可用于包装、货架标签和资产标签。</value>
+  </data>
+  <data name="Print_PresetFlyersHelp" xml:space="preserve">
+    <value>适合用于夹页、传单、发票和单页宣传资料的中等尺寸二维码。</value>
+  </data>
+  <data name="Print_PresetMenusHelp" xml:space="preserve">
+    <value>适合用于餐厅菜单、桌面展示和柜台卡片的较大二维码。</value>
+  </data>
+  <data name="Print_PresetPostersHelp" xml:space="preserve">
+    <value>适合用于门、墙面、海报和活动标牌的单个大型二维码。</value>
+  </data>
+  <data name="Print_PresetCustomHelp" xml:space="preserve">
+    <value>选择常见的二维码打印场景，或完全自定义布局。</value>
+  </data>
+  <data name="Settings_AppVersion" xml:space="preserve">
+    <value>{0} - {1}</value>
+    <comment>{0} = app display name; {1} = installed version.</comment>
+  </data>
+  <data name="Settings_BackupExportFailed" xml:space="preserve">
+    <value>导出失败。无法保存 ZIP 备份。</value>
+  </data>
+  <data name="Settings_BackupImportFailed" xml:space="preserve">
+    <value>导入失败。无法读取 ZIP 备份。</value>
+  </data>
+  <data name="RemoveBackground_Failed" xml:space="preserve">
+    <value>无法移除背景。请重试。</value>
+  </data>
+  <data name="Read_CameraUnavailableHelp" xml:space="preserve">
+    <value>Windows 无法启动相机。请在设置中检查相机访问权限，然后重试。</value>
+  </data>
+  <data name="Read_PasteFailedHelp" xml:space="preserve">
+    <value>无法打开剪贴板中的图像。</value>
+  </data>
+  <data name="Read_OpenImageFailed" xml:space="preserve">
+    <value>{0}：无法打开图像。</value>
+    <comment>{0} = original file name.</comment>
+  </data>
+  <data name="Preview_ShareFailedHelp" xml:space="preserve">
+    <value>无法准备要共享的二维码。请重试。</value>
+  </data>
+  <data name="Print_PreviewStartFailed" xml:space="preserve">
+    <value>无法启动 PDF 预览。</value>
+  </data>
+  <data name="Print_PreviewGenerationFailed" xml:space="preserve">
+    <value>无法生成 PDF 预览。请检查打印设置后重试。</value>
+  </data>
+  <data name="Print_JobFailed" xml:space="preserve">
+    <value>无法将生成的 PDF 发送到打印机。</value>
+  </data>
+  <data name="Read_UnknownSource" xml:space="preserve">
+    <value>未知来源</value>
+  </data>
+  <data name="Read_HistoryNoCodes" xml:space="preserve">
+    <value>（未找到码图）</value>
+  </data>
+  <data name="Read_HistoryAdditionalCodes" xml:space="preserve">
+    <value> （另有 {0} 个）</value>
+    <comment>Leading space separates this count from the first decoded result. {0} = additional decoded codes.</comment>
+  </data>
+  <data name="History_KindVCard" xml:space="preserve">
+    <value>vCard</value>
+    <comment>Name of a contact-card format. Do not translate the format name.</comment>
+  </data>
+  <data name="History_KindWifi" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="History_KindEmail" xml:space="preserve">
+    <value>电子邮件</value>
+  </data>
+  <data name="History_FallbackContact" xml:space="preserve">
+    <value>vCard 联系人</value>
+  </data>
+  <data name="History_FallbackNetwork" xml:space="preserve">
+    <value>Wi-Fi 网络</value>
+  </data>
+  <data name="Spreadsheet_ColumnNumber" xml:space="preserve">
+    <value>第 {0} 列</value>
+    <comment>{0} = 1-based display column number. Not a workbook header.</comment>
+  </data>
+  <data name="Spreadsheet_RowCount_One" xml:space="preserve">
+    <value>文件中有 {0} 行</value>
+    <comment>{0} = row count.</comment>
+  </data>
+  <data name="Spreadsheet_RowCount_Other" xml:space="preserve">
+    <value>文件中有 {0} 行</value>
+    <comment>{0} = row count.</comment>
+  </data>
+  <data name="Spreadsheet_ImportCount_One" xml:space="preserve">
+    <value>将从“{1}”导入 {0} 个值</value>
+    <comment>{0} = count; {1} = column name.</comment>
+  </data>
+  <data name="Spreadsheet_ImportCount_Other" xml:space="preserve">
+    <value>将从“{1}”导入 {0} 个值</value>
+    <comment>{0} = count; {1} = column name.</comment>
+  </data>
+  <data name="Spreadsheet_HeaderlessWriteback_One" xml:space="preserve">
+    <value>由于未启用标题行，将在末尾新增一列，并向 {0} 行写入 {1} 个值。</value>
+    <comment>{0} = row count; {1} = ID format.</comment>
+  </data>
+  <data name="Spreadsheet_HeaderlessWriteback_Other" xml:space="preserve">
+    <value>由于未启用标题行，将在末尾新增一列，并向 {0} 行写入 {1} 个值。</value>
+    <comment>{0} = row count; {1} = ID format.</comment>
+  </data>
+  <data name="Spreadsheet_NewIdColumn_One" xml:space="preserve">
+    <value>将在新建的“{2}”列中向 {0} 行写入 {1} 个值。其他列的现有单元格不会更改。</value>
+    <comment>{0} = row count; {1} = ID format; {2} = invariant header.</comment>
+  </data>
+  <data name="Spreadsheet_NewIdColumn_Other" xml:space="preserve">
+    <value>将在新建的“{2}”列中向 {0} 行写入 {1} 个值。其他列的现有单元格不会更改。</value>
+    <comment>{0} = row count; {1} = ID format; {2} = invariant header.</comment>
+  </data>
+  <data name="Spreadsheet_FillIdColumn_One" xml:space="preserve">
+    <value>将使用 {2} 填充“{1}”中的 {0} 个空白单元格。现有 ID 将保留。</value>
+    <comment>{0} = cell count; {1} = column name; {2} = ID format.</comment>
+  </data>
+  <data name="Spreadsheet_FillIdColumn_Other" xml:space="preserve">
+    <value>将使用 {2} 填充“{1}”中的 {0} 个空白单元格。现有 ID 将保留。</value>
+    <comment>{0} = cell count; {1} = column name; {2} = ID format.</comment>
+  </data>
+  <data name="GenerateIds_PreviewAll_One" xml:space="preserve">
+    <value>显示生成的全部 {0} 个 ID。</value>
+    <comment>{0} = ID count.</comment>
+  </data>
+  <data name="GenerateIds_PreviewAll_Other" xml:space="preserve">
+    <value>显示生成的全部 {0} 个 ID。</value>
+    <comment>{0} = ID count.</comment>
+  </data>
+  <data name="GenerateIds_FormatGuid" xml:space="preserve">
+    <value>GUID</value>
+    <comment>Identifier type. Do not translate the acronym.</comment>
+  </data>
+  <data name="GenerateIds_FormatGuidCompact" xml:space="preserve">
+    <value>不含连字符的 GUID</value>
+    <comment>GUID is an identifier format; only translate "without dashes".</comment>
+  </data>
+  <data name="GenerateIds_FormatNanoId" xml:space="preserve">
+    <value>NanoID</value>
+    <comment>Identifier type. Do not translate the name.</comment>
+  </data>
+  <data name="Advanced_AlignmentPointCount_One" xml:space="preserve">
+    <value>4 个角点和 {0} 个对齐点</value>
+    <comment>{0} = alignment point count.</comment>
+  </data>
+  <data name="Advanced_AlignmentPointCount_Other" xml:space="preserve">
+    <value>4 个角点和 {0} 个对齐点</value>
+    <comment>{0} = alignment point count.</comment>
+  </data>
+  <data name="Advanced_CornerTopLeft" xml:space="preserve">
+    <value>左上</value>
+    <comment>Abbreviation for the top-left corner, not a direction-sensitive reading-order label.</comment>
+  </data>
+  <data name="Advanced_CornerTopRight" xml:space="preserve">
+    <value>右上</value>
+    <comment>Abbreviation for the top-right corner.</comment>
+  </data>
+  <data name="Advanced_CornerBottomRight" xml:space="preserve">
+    <value>右下</value>
+    <comment>Abbreviation for the bottom-right corner.</comment>
+  </data>
+  <data name="Advanced_CornerBottomLeft" xml:space="preserve">
+    <value>左下</value>
+    <comment>Abbreviation for the bottom-left corner.</comment>
+  </data>
+  <data name="Advanced_AlignmentMarker" xml:space="preserve">
+    <value>A{0}</value>
+    <comment>Compact image overlay for an alignment point. {0} = marker number.</comment>
+  </data>
+  <data name="Preview_MinimumSizeAndContent" xml:space="preserve">
+    <value>建议的最小尺寸：{0}，{1}</value>
+    <comment>{0} = formatted size; {1} = QR content. Narrator label.</comment>
+  </data>
+  <data name="Preview_MetadataAndContent" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>{0} = status or sizing text; {1} = QR content. Narrator label.</comment>
+  </data>
+  <data name="Preview_SizeInches" xml:space="preserve">
+    <value>{0:F2} × {0:F2} 英寸</value>
+    <comment>{0} = side length in inches.</comment>
+  </data>
+  <data name="Preview_SizeCentimeters" xml:space="preserve">
+    <value>{0:F2} × {0:F2} 厘米</value>
+    <comment>{0} = side length in centimeters.</comment>
+  </data>
+  <data name="Preview_SizeTransparency" xml:space="preserve">
+    <value>使用透明色时，精确的最小尺寸取决于最终印刷表面。</value>
+  </data>
+  <data name="Preview_SizePadding" xml:space="preserve">
+    <value>留白 {0} 不在可预测的 1–4 个模块范围内。边缘留白过小或过大的二维码扫描效果不稳定，无法可靠地估算打印尺寸。</value>
+    <comment>{0} = padding in QR modules.</comment>
+  </data>
+  <data name="Preview_SizeContrast" xml:space="preserve">
+    <value>颜色对比度过低</value>
+  </data>
+  <data name="Preview_SizeDistance" xml:space="preserve">
+    <value>无法按所选最大距离进行估算。</value>
+  </data>
+  <data name="Package_TileShortName" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="Package_ShareTargetName" xml:space="preserve">
+    <value>解码或生成二维码</value>
+  </data>
+  <data name="Faq_WhatIsAQRCode_Question" xml:space="preserve">
+    <value>什么是二维码？</value>
+  </data>
+  <data name="Faq_WhatIsAQRCode_Answer" xml:space="preserve">
+    <value>可以把二维码理解为便于计算机读取的文本。更确切地说，二维码是一种用于编码内容的二维条码。它可以用来显示文本、打开网址等，最常见的用途是打开网站。</value>
+  </data>
+  <data name="Faq_WhatDoesQRStandFor_Question" xml:space="preserve">
+    <value>QR 是什么的缩写？</value>
+  </data>
+  <data name="Faq_WhatDoesQRStandFor_Answer" xml:space="preserve">
+    <value>Quick Response，意为“快速响应”。</value>
+  </data>
+  <data name="Faq_WhyCanQRCodesBeDangerous_Question" xml:space="preserve">
+    <value>为什么二维码可能有风险？</value>
+  </data>
+  <data name="Faq_WhyCanQRCodesBeDangerous_Answer" xml:space="preserve">
+    <value>人们常用二维码快速打开网站，但仅凭码图无法看出其中存储了哪个网址。此外，如果网址使用重定向，网址的所有者就可以随时更改扫码后跳转的目标。</value>
+  </data>
+  <data name="Faq_AreTheseDynamicQRCodes_Question" xml:space="preserve">
+    <value>此应用生成的是动态二维码吗？</value>
+  </data>
+  <data name="Faq_AreTheseDynamicQRCodes_Answer" xml:space="preserve">
+    <value>二维码本身不会变化。要生成动态二维码，需要在其中使用一个会重定向到其他链接的网址。重定向由外部服务器完成，可以使用第三方网站，也可以使用你自己管理的网站来更改跳转目标。</value>
+  </data>
+  <data name="Faq_HowCanYouTellIfAQRCodeIsDynamic_Question" xml:space="preserve">
+    <value>如何判断二维码是否是动态的？</value>
+  </data>
+  <data name="Faq_HowCanYouTellIfAQRCodeIsDynamic_Answer" xml:space="preserve">
+    <value>比较最终打开的网站与二维码中的内容。例如，用手机扫描后打开的是 https://www.example.com，但用本应用读取到的却是 http://JoeFinApps.com/123 这样完全不同的网址，那么它很可能是动态二维码，或者至少发生了二维码内域名所触发的重定向。</value>
+  </data>
+  <data name="Faq_WhatIsATwoDimensionalBarcode_Question" xml:space="preserve">
+    <value>什么是二维条码？</value>
+  </data>
+  <data name="Faq_WhatIsATwoDimensionalBarcode_Answer" xml:space="preserve">
+    <value>条码是将内容转换成便于机器扫描的形式。商品上常见的由粗细不同的线组成的条码只有一行数据，属于一维条码。二维条码将数据编码为多行图案。数据不一定按照从左到右或从上到下的顺序排列，不同类型的二维条码通常采用各自的方式来折行或排布数据。</value>
+  </data>
+  <data name="Faq_HowToReadAQRCode_Question" xml:space="preserve">
+    <value>如何读取二维码？</value>
+  </data>
+  <data name="Faq_HowToReadAQRCode_Answer" xml:space="preserve">
+    <value>需要使用支持二维条码的扫描设备或应用。Android、iOS 和 Windows 自带的相机应用都支持扫描二维码。打开相机并对准二维码，应用就会自动识别并执行相应操作。请注意，最终打开的网页不一定就是二维码中编码的网址。要查看实际内容，请在本应用的“扫描解码”页面打开图像，或从剪贴板粘贴图像。</value>
+  </data>
+  <data name="Faq_WhatIsTheURLBuilder_Question" xml:space="preserve">
+    <value>什么是网址生成工具？</value>
+  </data>
+  <data name="Faq_WhatIsTheURLBuilder_Answer" xml:space="preserve">
+    <value>网址生成工具帮助你通过各组成部分拼出网址，不必手动输入完整链接。可设置协议、主机、端口、路径、片段和查询参数，由应用组合成二维码使用的网址。它适合用来避免输入错误、添加跟踪参数，或创建多个结构一致的链接。</value>
+  </data>
+  <data name="Faq_WhatIsAVCardQRCode_Question" xml:space="preserve">
+    <value>什么是 vCard 名片二维码？</value>
+  </data>
+  <data name="Faq_WhatIsAVCardQRCode_Answer" xml:space="preserve">
+    <value>vCard 名片二维码按许多手机和通讯录应用都能识别的格式存储姓名、公司、电话号码、电子邮件地址、网站和通信地址等信息。扫描后，设备可提示新建联系人，无需逐项输入。它适用于名片、活动胸牌和标牌，让他人能快速保存联系信息。</value>
+  </data>
+  <data name="Faq_WhatIsAWiFiQRCode_Question" xml:space="preserve">
+    <value>什么是 Wi-Fi 二维码？</value>
+  </data>
+  <data name="Faq_WhatIsAWiFiQRCode_Answer" xml:space="preserve">
+    <value>Wi-Fi 二维码以许多手机都能识别的标准文本格式存储网络名称、安全类型、密码以及可选的隐藏网络标记。较新的 iPhone 和 Android 设备通常可提示直接连接，较旧的相机和部分第三方扫描工具可能只显示原始文本。任何扫描或拍摄此码的人都可以获取连接信息，因此只有在适合公开这些信息时才可共享。WEP 已过时且不安全，企业级 Wi-Fi 通常需要提供这种简单二维码格式无法容纳的额外信息。</value>
+  </data>
+  <data name="Faq_HowDoIMakeAWiFiQRCode_Question" xml:space="preserve">
+    <value>如何创建 Wi-Fi 二维码？</value>
+  </data>
+  <data name="Faq_HowDoIMakeAWiFiQRCode_Answer" xml:space="preserve">
+    <value>如果想让访客不输入密码就能加入网络，请使用 Wi-Fi 二维码生成工具。输入网络名称，选择安全类型，按需输入密码。只有网络确实隐藏时才标记为隐藏网络。应用会生成标准 Wi-Fi 连接文本，并将其转换为二维码。</value>
+  </data>
+  <data name="Faq_WhatIsTheErrorCorrectionLevel_Question" xml:space="preserve">
+    <value>什么是纠错级别？</value>
+  </data>
+  <data name="Faq_WhatIsTheErrorCorrectionLevel_Answer" xml:space="preserve">
+    <value>即使码图因损坏或扫描条件不佳而有部分不可见，二维码仍可能读得出来。能够在此情况下读取的缺损程度由纠错级别决定。纠错级别越高，二维码越不容易因缺损而无法读取，但编码的数据也越多，因此所需的最小尺寸会更大。</value>
+  </data>
+  <data name="Faq_HowDoesAddingAnImageAffectTheQRCode_Question" xml:space="preserve">
+    <value>添加图像会对二维码产生什么影响？</value>
+  </data>
+  <data name="Faq_HowDoesAddingAnImageAffectTheQRCode_Answer" xml:space="preserve">
+    <value>在本应用中将徽标等图像添加到二维码时，图像会直接覆盖二维码的中央，挡住一部分编码数据。这就是纠错功能如此重要的原因：即使一部分被挡住，二维码也仍能被扫描。纠错级别越高，徽标能覆盖的区域就越大。添加徽标时，请使用较高的纠错级别，并充分测试二维码能否顺利扫描。</value>
+  </data>
+  <data name="Faq_HowIsTheCenterImageStoredInSVGFiles_Question" xml:space="preserve">
+    <value>居中图像如何存储在 SVG 文件中？</value>
+  </data>
+  <data name="Faq_HowIsTheCenterImageStoredInSVGFiles_Answer" xml:space="preserve">
+    <value>将带有居中图像的二维码保存为 SVG 时，图像经 Base64 编码后会直接嵌入 SVG。整个图像的数据都转换为文本，存放在同一个 SVG 文件中，无需单独保留原图文件。这样共享或使用二维码时，就不必担心丢失图像引用。居中图像以栅格图像（PNG）而非矢量图形存储，因此大幅放大后可能会看到像素，但二维码本身是矢量图形，仍然清晰。</value>
+  </data>
+  <data name="Faq_HowToPutAnImageInsideOfTheCenterOfAQRCode_Question" xml:space="preserve">
+    <value>如何在二维码中央放置图像？</value>
+  </data>
+  <data name="Faq_HowToPutAnImageInsideOfTheCenterOfAQRCode_Answer" xml:space="preserve">
+    <value>可以在应用中通过工具栏上的居中图像（徽标）按钮添加图像，或保存包含徽标的品牌。单击图像按钮，从设备中选择 PNG 或 JPG，再用浮出菜单中的滑块调整大小（7%–30%）和留白（-20 到 +20 px）。由于图像会覆盖二维码中央，强烈建议选择较高的纠错级别（Q 或 H）。完成后务必测试，确认可以顺利扫描。</value>
+  </data>
+  <data name="Faq_HowIsMinimumSizeCalculated_Question" xml:space="preserve">
+    <value>如何计算最小尺寸？</value>
+  </data>
+  <data name="Faq_HowIsMinimumSizeCalculated_Answer" xml:space="preserve">
+    <value>二维码的最小尺寸根据实验数据计算得出。我们使用 600 dpi 的激光打印机在白纸上打印多种尺寸的二维码，再通过扫描确定码图尺寸与扫描距离的关系。计算时也考虑了二维码前景与背景的对比度。任一颜色使用透明度时，最终印刷表面会改变实际对比度，因此应用不再显示精确的最小尺寸。</value>
+  </data>
+  <data name="Faq_HowCanIChangeTheMaximumScanDistance_Question" xml:space="preserve">
+    <value>如何更改最大扫描距离？</value>
+  </data>
+  <data name="Faq_HowCanIChangeTheMaximumScanDistance_Answer" xml:space="preserve">
+    <value>可在设置中更改最小尺寸二维码的预估最大扫描距离。下单或安装等操作成本较高时，请先在实际环境中测试。</value>
+  </data>
+  <data name="Faq_WhatIsTheContrastRatio_Question" xml:space="preserve">
+    <value>什么是对比度？</value>
+  </data>
+  <data name="Faq_WhatIsTheContrastRatio_Answer" xml:space="preserve">
+    <value>对比度表示可使物体易于区分的亮度或颜色差异。对于二维码，它指码图前景与背景之间的颜色差异。对比度越高，二维码越容易扫描和读取。二维码的建议最低对比度为 2.5:1。如果使用透明色，实际对比度取决于合成二维码的最终印刷表面。</value>
+  </data>
+  <data name="Faq_AtTheMinimumSizeHowFarAwayCanAQRCodeBeScanned_Question" xml:space="preserve">
+    <value>按最小尺寸打印时，最远能从多远扫描二维码？</value>
+  </data>
+  <data name="Faq_AtTheMinimumSizeHowFarAwayCanAQRCodeBeScanned_Answer" xml:space="preserve">
+    <value>按最小尺寸打印的二维码，最大扫描距离约为 36 英寸或 1 米。光照条件、码图损坏和反光等因素都会影响扫描，有时甚至无法读取。</value>
+  </data>
+  <data name="Faq_WhatIfIPrintTheQRCodeSmallerThanTheMinimumSize_Question" xml:space="preserve">
+    <value>如果二维码打印得比最小尺寸还小，会怎样？</value>
+  </data>
+  <data name="Faq_WhatIfIPrintTheQRCodeSmallerThanTheMinimumSize_Answer" xml:space="preserve">
+    <value>扫描距离与尺寸成正比。二维码尺寸翻倍时，扫描距离也翻倍；尺寸减半时，扫描距离也减半。</value>
+  </data>
+  <data name="Faq_WhatTypeOfScannerOrPhoneCameraIsExpectedWhenPrintingAtTheMinimumSize_Question" xml:space="preserve">
+    <value>按最小尺寸打印时，需要什么样的扫描设备或手机相机？</value>
+  </data>
+  <data name="Faq_WhatTypeOfScannerOrPhoneCameraIsExpectedWhenPrintingAtTheMinimumSize_Answer" xml:space="preserve">
+    <value>扫描实验使用 iPhone 13 的 1200 万像素（12 MP）主摄像头和 iOS 默认扫码应用。2018 年之后推出的主流 Android 或 iOS 手机应该能从 1 米远处扫描按默认最小尺寸打印的二维码。</value>
+  </data>
+  <data name="Faq_WillTheScanningAlwaysWorkIfMinimumSizeIsFollowed_Question" xml:space="preserve">
+    <value>达到最小尺寸就一定能扫描吗？</value>
+  </data>
+  <data name="Faq_WillTheScanningAlwaysWorkIfMinimumSizeIsFollowed_Answer" xml:space="preserve">
+    <value>不一定。最小尺寸以较好的条件为前提，如光照充足、印刷表面不反光，以及使用较新的扫描设备。</value>
+  </data>
+  <data name="Faq_WhyDoWeHaveToUseQRCodes_Question" xml:space="preserve">
+    <value>为什么要用二维码？</value>
+  </data>
+  <data name="Faq_WhyDoWeHaveToUseQRCodes_Answer" xml:space="preserve">
+    <value>手动输入网址很麻烦，用相机扫描更方便、更可靠。</value>
+  </data>
+  <data name="Faq_AreQRCodesEvilAndOrDumb_Question" xml:space="preserve">
+    <value>二维码又坏又蠢吗？</value>
+  </data>
+  <data name="Faq_AreQRCodesEvilAndOrDumb_Answer" xml:space="preserve">
+    <value>多少有一点吧，不过用它引导别人访问网站确实很方便。</value>
+  </data>
+  <data name="Faq_WhyMightQRCodeDetectionFail_Question" xml:space="preserve">
+    <value>为什么可能检测不到二维码？</value>
+  </data>
+  <data name="Faq_WhyMightQRCodeDetectionFail_Answer" xml:space="preserve">
+    <value>原因可能包括图像模糊或分辨率过低、反光或阴影遮挡了部分码图、打印尺寸过小、前景和背景对比度过低，或者码图已损坏或部分被遮挡。扫描角度过于倾斜也会使码图严重变形，导致检测失败。</value>
+  </data>
+  <data name="Faq_HowCanIImproveQRCodeDetectionInThisApp_Question" xml:space="preserve">
+    <value>如何提高此应用的二维码检测成功率？</value>
+  </data>
+  <data name="Faq_HowCanIImproveQRCodeDetectionInThisApp_Answer" xml:space="preserve">
+    <value>如果未检测到二维码，请尝试使用解码页面的高级工具。可以对图像执行灰度转换、增强对比度或校正透视，以便识别。裁切图像，让画面只保留二维码区域，也可能改善效果。请确保图像清晰、光照充足，且二维码在画面中占有足够的面积。</value>
+  </data>
+  <data name="Faq_WhatIsABrand_Question" xml:space="preserve">
+    <value>什么是品牌？</value>
+  </data>
+  <data name="Faq_WhatIsABrand_Answer" xml:space="preserve">
+    <value>品牌是一组已保存的二维码预设。它可保存前景色、背景色、纠错级别、网址或文本内容，以及居中徽标图像中的任意组合。应用品牌时会立即还原其中的设置，无需每次重新配置，即可生成样式一致的二维码。</value>
+  </data>
+  <data name="Faq_HowDoICreateABrand_Question" xml:space="preserve">
+    <value>如何创建品牌？</value>
+  </data>
+  <data name="Faq_HowDoICreateABrand_Answer" xml:space="preserve">
+    <value>单击工具栏中的书签图标打开品牌浮出菜单。单击“另存为品牌”，为预设命名，并勾选希望保留的设置：前景色、背景色、纠错级别、网址 / 文本或居中图像。再单击“保存品牌”，即可保存所有已勾选设置的当前值。</value>
+  </data>
+  <data name="Faq_HowDoIApplyABrand_Question" xml:space="preserve">
+    <value>如何应用品牌？</value>
+  </data>
+  <data name="Faq_HowDoIApplyABrand_Answer" xml:space="preserve">
+    <value>打开品牌浮出菜单，单击列表中任意已保存的品牌，便可立即应用其中的所有设置。也可以将品牌设为默认，以便每次打开应用时自动加载其中的设置。在列表中右键单击品牌并选择“设为默认”即可。</value>
+  </data>
+  <data name="Faq_WhatDoesTheDefaultBrandSettingDo_Question" xml:space="preserve">
+    <value>默认品牌设置有什么用？</value>
+  </data>
+  <data name="Faq_WhatDoesTheDefaultBrandSettingDo_Answer" xml:space="preserve">
+    <value>将品牌设为默认后，每次启动应用时会自动应用其中的设置。一次只能有一个默认品牌。要设置默认品牌，请在品牌浮出菜单中右键单击品牌，选择“设为默认”。右键单击当前默认品牌并再次选择同一选项，即可取消默认。</value>
+  </data>
+  <data name="Faq_CanABrandStoreACenterLogoImage_Question" xml:space="preserve">
+    <value>品牌可以保存居中徽标图像吗？</value>
+  </data>
+  <data name="Faq_CanABrandStoreACenterLogoImage_Answer" xml:space="preserve">
+    <value>可以。使用工具栏中的居中图像按钮加载徽标，按需调整大小和留白。打开品牌浮出菜单，单击“另存为品牌”，勾选“居中图像”，然后保存。品牌会保存图像文件的路径。如果之后移动或删除图像文件，该品牌将无法再应用此徽标。</value>
+  </data>
+  <data name="Faq_ShowMe" xml:space="preserve">
+    <value>查看操作方法</value>
+  </data>
+  <data name="Faq_TopicSize" xml:space="preserve">
+    <value>尺寸</value>
+  </data>
+  <data name="Faq_TopicErrorCorrection" xml:space="preserve">
+    <value>纠错</value>
+  </data>
+  <data name="Faq_TopicBrands" xml:space="preserve">
+    <value>品牌</value>
+  </data>
+  <data name="Faq_TopicDetection" xml:space="preserve">
+    <value>检测</value>
+  </data>
+  <data name="DecodingPage_DetectionHelpLink.Content" xml:space="preserve">
+    <value>为什么解码可能失败</value>
+  </data>
+  <data name="Emoji_Smile" xml:space="preserve">
+    <value>微笑</value>
+  </data>
+  <data name="Emoji_Grin" xml:space="preserve">
+    <value>咧嘴笑</value>
+  </data>
+  <data name="Emoji_Laugh" xml:space="preserve">
+    <value>大笑</value>
+  </data>
+  <data name="Emoji_ROFL" xml:space="preserve">
+    <value>笑得打滚</value>
+  </data>
+  <data name="Emoji_Happy" xml:space="preserve">
+    <value>开心</value>
+  </data>
+  <data name="Emoji_Cool" xml:space="preserve">
+    <value>耍酷</value>
+  </data>
+  <data name="Emoji_Wow" xml:space="preserve">
+    <value>惊讶</value>
+  </data>
+  <data name="Emoji_Love" xml:space="preserve">
+    <value>爱心眼</value>
+  </data>
+  <data name="Emoji_Adore" xml:space="preserve">
+    <value>喜爱</value>
+  </data>
+  <data name="Emoji_Celebrate" xml:space="preserve">
+    <value>庆祝</value>
+  </data>
+  <data name="Emoji_Robot" xml:space="preserve">
+    <value>机器人</value>
+  </data>
+  <data name="Emoji_Like" xml:space="preserve">
+    <value>点赞</value>
+  </data>
+  <data name="Emoji_Applause" xml:space="preserve">
+    <value>鼓掌</value>
+  </data>
+  <data name="Emoji_Thanks" xml:space="preserve">
+    <value>感谢</value>
+  </data>
+  <data name="Emoji_Crown" xml:space="preserve">
+    <value>王冠</value>
+  </data>
+  <data name="Emoji_Rocket" xml:space="preserve">
+    <value>火箭</value>
+  </data>
+  <data name="Emoji_Star" xml:space="preserve">
+    <value>星星</value>
+  </data>
+  <data name="Emoji_Lightning" xml:space="preserve">
+    <value>闪电</value>
+  </data>
+  <data name="Emoji_Shine" xml:space="preserve">
+    <value>闪亮的星星</value>
+  </data>
+  <data name="Emoji_Alert" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="Emoji_Question" xml:space="preserve">
+    <value>问号</value>
+  </data>
+  <data name="Emoji_Fire" xml:space="preserve">
+    <value>火焰</value>
+  </data>
+  <data name="Emoji_Idea" xml:space="preserve">
+    <value>灵感</value>
+  </data>
+  <data name="Emoji_Gem" xml:space="preserve">
+    <value>宝石</value>
+  </data>
+  <data name="Emoji_Check" xml:space="preserve">
+    <value>对勾</value>
+  </data>
+  <data name="Emoji_Heart" xml:space="preserve">
+    <value>爱心</value>
+  </data>
+  <data name="Emoji_PurpleHeart" xml:space="preserve">
+    <value>紫色爱心</value>
+  </data>
+  <data name="Emoji_Target" xml:space="preserve">
+    <value>靶心</value>
+  </data>
+  <data name="Emoji_Party" xml:space="preserve">
+    <value>派对</value>
+  </data>
+  <data name="Emoji_Trophy" xml:space="preserve">
+    <value>奖杯</value>
+  </data>
+  <data name="Emoji_GoldMedal" xml:space="preserve">
+    <value>金牌</value>
+  </data>
+  <data name="Emoji_Package" xml:space="preserve">
+    <value>包裹</value>
+  </data>
+  <data name="Emoji_Announcement" xml:space="preserve">
+    <value>公告</value>
+  </data>
+  <data name="Emoji_Growth" xml:space="preserve">
+    <value>增长</value>
+  </data>
+  <data name="Emoji_Cart" xml:space="preserve">
+    <value>购物车</value>
+  </data>
+  <data name="Emoji_Briefcase" xml:space="preserve">
+    <value>公文包</value>
+  </data>
+  <data name="Emoji_Money" xml:space="preserve">
+    <value>金钱</value>
+  </data>
+  <data name="Emoji_Coffee" xml:space="preserve">
+    <value>咖啡</value>
+  </data>
+  <data name="Emoji_Time" xml:space="preserve">
+    <value>时间</value>
+  </data>
+  <data name="Emoji_Clock" xml:space="preserve">
+    <value>时钟</value>
+  </data>
+  <data name="Emoji_Donut" xml:space="preserve">
+    <value>甜甜圈</value>
+  </data>
+  <data name="Emoji_Gift" xml:space="preserve">
+    <value>礼物</value>
+  </data>
+  <data name="Emoji_Music" xml:space="preserve">
+    <value>音乐</value>
+  </data>
+  <data name="Emoji_Gaming" xml:space="preserve">
+    <value>游戏</value>
+  </data>
+  <data name="Emoji_Camera" xml:space="preserve">
+    <value>相机</value>
+  </data>
+  <data name="Emoji_Movie" xml:space="preserve">
+    <value>电影</value>
+  </data>
+  <data name="Emoji_Brain" xml:space="preserve">
+    <value>大脑</value>
+  </data>
+  <data name="Emoji_Person" xml:space="preserve">
+    <value>人物</value>
+  </data>
+  <data name="Emoji_Contacts" xml:space="preserve">
+    <value>联系人</value>
+  </data>
+  <data name="Emoji_ContactCard" xml:space="preserve">
+    <value>联系人名片</value>
+  </data>
+  <data name="Emoji_Pin" xml:space="preserve">
+    <value>图钉</value>
+  </data>
+  <data name="Emoji_Phone" xml:space="preserve">
+    <value>手机</value>
+  </data>
+  <data name="Emoji_Telephone" xml:space="preserve">
+    <value>电话</value>
+  </data>
+  <data name="Emoji_Email" xml:space="preserve">
+    <value>电子邮件</value>
+  </data>
+  <data name="Emoji_Envelope" xml:space="preserve">
+    <value>信封</value>
+  </data>
+  <data name="Emoji_Home" xml:space="preserve">
+    <value>家</value>
+  </data>
+  <data name="Emoji_House" xml:space="preserve">
+    <value>房屋</value>
+  </data>
+  <data name="Emoji_Office" xml:space="preserve">
+    <value>办公室</value>
+  </data>
+  <data name="Emoji_Laptop" xml:space="preserve">
+    <value>笔记本电脑</value>
+  </data>
+  <data name="Emoji_Globe" xml:space="preserve">
+    <value>地球</value>
+  </data>
+  <data name="Emoji_WiFi" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="Emoji_Rainbow" xml:space="preserve">
+    <value>彩虹</value>
+  </data>
+  <data name="Emoji_Sunflower" xml:space="preserve">
+    <value>向日葵</value>
+  </data>
+  <data name="Emoji_Cat" xml:space="preserve">
+    <value>猫</value>
+  </data>
+  <data name="Emoji_Dog" xml:space="preserve">
+    <value>狗</value>
+  </data>
+  <data name="Emoji_Fox" xml:space="preserve">
+    <value>狐狸</value>
+  </data>
+  <data name="Emoji_Panda" xml:space="preserve">
+    <value>熊猫</value>
+  </data>
+  <data name="Emoji_Pizza" xml:space="preserve">
+    <value>披萨</value>
+  </data>
+  <data name="Emoji_Burger" xml:space="preserve">
+    <value>汉堡</value>
+  </data>
+  <data name="Emoji_Fries" xml:space="preserve">
+    <value>薯条</value>
+  </data>
+  <data name="Emoji_Strawberry" xml:space="preserve">
+    <value>草莓</value>
+  </data>
+  <data name="Emoji_Sparkles" xml:space="preserve">
+    <value>闪光</value>
+  </data>
+  <data name="Emoji_Lock" xml:space="preserve">
+    <value>锁</value>
+  </data>
+  <data name="Emoji_Bell" xml:space="preserve">
+    <value>铃铛</value>
+  </data>
+  <data name="Emoji_Shield" xml:space="preserve">
+    <value>盾牌</value>
+  </data>
+  <data name="FramePreset_None_Short" xml:space="preserve">
+    <value>边框</value>
+  </data>
+  <data name="FramePreset_None_Description" xml:space="preserve">
+    <value>无边框</value>
+  </data>
+  <data name="FramePreset_BottomLabel_Short" xml:space="preserve">
+    <value>标签</value>
+  </data>
+  <data name="FramePreset_BottomLabel_Description" xml:space="preserve">
+    <value>底部标签</value>
+  </data>
+  <data name="FramePreset_BottomLabel_Caption" xml:space="preserve">
+    <value>扫一扫</value>
+  </data>
+  <data name="FramePreset_RoundedFrame_Short" xml:space="preserve">
+    <value>圆角</value>
+  </data>
+  <data name="FramePreset_RoundedFrame_Description" xml:space="preserve">
+    <value>圆角边框</value>
+  </data>
+  <data name="FramePreset_RoundedFrame_Caption" xml:space="preserve">
+    <value>扫这里</value>
+  </data>
+  <data name="FramePreset_CornerCallout_Short" xml:space="preserve">
+    <value>标注</value>
+  </data>
+  <data name="FramePreset_CornerCallout_Description" xml:space="preserve">
+    <value>角部标注</value>
+  </data>
+  <data name="FramePreset_CornerCallout_Caption" xml:space="preserve">
+    <value>扫描二维码</value>
+  </data>
+  <data name="FramePreset_SpeechBubble_Short" xml:space="preserve">
+    <value>气泡</value>
+  </data>
+  <data name="FramePreset_SpeechBubble_Description" xml:space="preserve">
+    <value>对话气泡</value>
+  </data>
+  <data name="FramePreset_SpeechBubble_Caption" xml:space="preserve">
+    <value>扫一扫</value>
+  </data>
+  <data name="FramePreset_Ticket_Short" xml:space="preserve">
+    <value>门票</value>
+  </data>
+  <data name="FramePreset_Ticket_Description" xml:space="preserve">
+    <value>活动门票</value>
+  </data>
+  <data name="FramePreset_Ticket_Caption" xml:space="preserve">
+    <value>获取门票</value>
+  </data>
+  <data name="FramePreset_Sticker_Short" xml:space="preserve">
+    <value>贴纸</value>
+  </data>
+  <data name="FramePreset_Sticker_Description" xml:space="preserve">
+    <value>波普贴纸</value>
+  </data>
+  <data name="FramePreset_Sticker_Caption" xml:space="preserve">
+    <value>打开看看</value>
+  </data>
+  <data name="FramePreset_ScallopedBadge_Short" xml:space="preserve">
+    <value>徽章</value>
+  </data>
+  <data name="FramePreset_ScallopedBadge_Description" xml:space="preserve">
+    <value>波浪边徽章</value>
+  </data>
+  <data name="FramePreset_ScallopedBadge_Caption" xml:space="preserve">
+    <value>扫一扫</value>
+  </data>
+  <data name="FramePreset_Polaroid_Short" xml:space="preserve">
+    <value>照片</value>
+  </data>
+  <data name="FramePreset_Polaroid_Description" xml:space="preserve">
+    <value>带说明的卡片</value>
+  </data>
+  <data name="FramePreset_Polaroid_Caption" xml:space="preserve">
+    <value>留住回忆</value>
+  </data>
+  <data name="FramePreset_Burst_Short" xml:space="preserve">
+    <value>爆炸框</value>
+  </data>
+  <data name="FramePreset_Burst_Description" xml:space="preserve">
+    <value>漫画爆炸框</value>
+  </data>
+  <data name="FramePreset_Burst_Caption" xml:space="preserve">
+    <value>试试看！</value>
+  </data>
+  <data name="DesignPreset_Classic_Name" xml:space="preserve">
+    <value>经典</value>
+  </data>
+  <data name="DesignPreset_Classic_Description" xml:space="preserve">
+    <value>清晰简洁，适合各种场合。</value>
+  </data>
+  <data name="DesignPreset_Bubblegum_Name" xml:space="preserve">
+    <value>泡泡糖</value>
+  </data>
+  <data name="DesignPreset_Bubblegum_Description" xml:space="preserve">
+    <value>糖果色对话气泡中点缀着梅紫色圆点。</value>
+  </data>
+  <data name="DesignPreset_Bubblegum_Caption" xml:space="preserve">
+    <value>打个招呼！</value>
+  </data>
+  <data name="DesignPreset_GigTicket_Name" xml:space="preserve">
+    <value>演出门票</value>
+  </data>
+  <data name="DesignPreset_GigTicket_Description" xml:space="preserve">
+    <value>带暖色晚霞边框的入场券。</value>
+  </data>
+  <data name="DesignPreset_GigTicket_Caption" xml:space="preserve">
+    <value>获取门票</value>
+  </data>
+  <data name="DesignPreset_Cafe_Name" xml:space="preserve">
+    <value>咖啡馆</value>
+  </data>
+  <data name="DesignPreset_Cafe_Description" xml:space="preserve">
+    <value>柔和的圆角与温暖的纸张色调。</value>
+  </data>
+  <data name="DesignPreset_Cafe_Caption" xml:space="preserve">
+    <value>查看菜单</value>
+  </data>
+  <data name="DesignPreset_PopSticker_Name" xml:space="preserve">
+    <value>波普贴纸</value>
+  </data>
+  <data name="DesignPreset_PopSticker_Description" xml:space="preserve">
+    <value>青柠色、圆形定位图案和醒目的错位阴影。</value>
+  </data>
+  <data name="DesignPreset_PopSticker_Caption" xml:space="preserve">
+    <value>打开看看</value>
+  </data>
+  <data name="DesignPreset_Festival_Name" xml:space="preserve">
+    <value>庆典</value>
+  </data>
+  <data name="DesignPreset_Festival_Description" xml:space="preserve">
+    <value>明亮的漫画爆炸框，充满活力。</value>
+  </data>
+  <data name="DesignPreset_Festival_Caption" xml:space="preserve">
+    <value>一起来玩！</value>
+  </data>
+  <data name="DesignPreset_Ocean_Name" xml:space="preserve">
+    <value>海洋</value>
+  </data>
+  <data name="DesignPreset_Ocean_Description" xml:space="preserve">
+    <value>青绿色徽章，配上清新的蓝色渐变。</value>
+  </data>
+  <data name="DesignPreset_Ocean_Caption" xml:space="preserve">
+    <value>潜入海中</value>
+  </data>
+  <data name="DesignPreset_Postcard_Name" xml:space="preserve">
+    <value>明信片</value>
+  </data>
+  <data name="DesignPreset_Postcard_Description" xml:space="preserve">
+    <value>沉静的蓝色边框，适合分享私人的点滴。</value>
+  </data>
+  <data name="DesignPreset_Postcard_Caption" xml:space="preserve">
+    <value>保持联系</value>
+  </data>
+  <data name="Design_Module_Square" xml:space="preserve">
+    <value>方块</value>
+  </data>
+  <data name="Design_Module_Rounded" xml:space="preserve">
+    <value>圆角</value>
+  </data>
+  <data name="Design_Module_Dots" xml:space="preserve">
+    <value>圆点</value>
+  </data>
+  <data name="Design_Eye_Square" xml:space="preserve">
+    <value>方块</value>
+  </data>
+  <data name="Design_Eye_Rounded" xml:space="preserve">
+    <value>圆角</value>
+  </data>
+  <data name="Design_Eye_Circle" xml:space="preserve">
+    <value>圆形</value>
+  </data>
+  <data name="Design_Icon_None" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="Design_Icon_Arrow" xml:space="preserve">
+    <value>箭头</value>
+  </data>
+  <data name="Design_Icon_WiFi" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="Design_Icon_Contact" xml:space="preserve">
+    <value>联系人</value>
+  </data>
+  <data name="Design_Icon_Link" xml:space="preserve">
+    <value>链接</value>
+  </data>
+  <data name="App_FlowDirection" xml:space="preserve">
+    <value>LeftToRight</value>
+    <comment>WinUI enum value: choose LeftToRight or RightToLeft for the language. Do not translate the enum name.</comment>
+  </data>
+  <data name="Colors_PickColor" xml:space="preserve">
+    <value>选择颜色</value>
+  </data>
+  <data name="Colors_PasteClipboard" xml:space="preserve">
+    <value>从剪贴板粘贴颜色</value>
+  </data>
+  <data name="Colors_PasteClipboardValue" xml:space="preserve">
+    <value>从剪贴板粘贴 {0}</value>
+    <comment>{0} is the color's hexadecimal or RGB value. Accessible label and tooltip.</comment>
+  </data>
+  <data name="Licenses_MitCopyrightNote" xml:space="preserve">
+    <value>注意：此库的具体版权年份和权利人列在其 GitHub 存储库中。选择上方的“在 GitHub 上查看”可阅读完整的版权声明。</value>
+  </data>
+  <data name="PrintSettingsDialog_InitialZoom.Text" xml:space="preserve">
+    <value>100%</value>
+    <comment>The initial zoom before the preview loads.</comment>
+  </data>
+  <data name="Print_DocumentTitle" xml:space="preserve">
+    <value>二维码</value>
+    <comment>Title of the PDF and the corresponding Windows print job.</comment>
+  </data>
+</root>

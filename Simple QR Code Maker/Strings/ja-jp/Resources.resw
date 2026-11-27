@@ -1,0 +1,4065 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="QrDesign_NoBackground.Content" xml:space="preserve">
+    <value>背景なし</value>
+  </data>
+  <data name="QrDesign_NoBackgroundHelp.Text" xml:space="preserve">
+    <value>フレームを残したまま QR コードの背景を取り除きます。読み取りやすくするには、明るいフレームに暗い色の QR コードを配置してください。</value>
+  </data>
+  <data name="Settings_Personalization.Text" xml:space="preserve">
+    <value>個人用設定</value>
+  </data>
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
+    <value>ライト</value>
+  </data>
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
+    <value>ダーク</value>
+  </data>
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
+    <value>既定</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>このアプリについて</value>
+  </data>
+  <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
+    <value>プライバシーに関する声明</value>
+  </data>
+  <data name="Settings_Title.Text" xml:space="preserve">
+    <value>設定</value>
+    <comment>Page title for SettingsPage</comment>
+  </data>
+  <data name="WebView_Loading.Text" xml:space="preserve">
+    <value>読み込み中…</value>
+  </data>
+  <data name="WebView_FailedMessage.Text" xml:space="preserve">
+    <value>ページを読み込めませんでした。接続を確認して再読み込みしてください。</value>
+  </data>
+  <data name="BrowserBackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ブラウザーで戻る</value>
+  </data>
+  <data name="BrowserBackButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ブラウザーで戻る</value>
+  </data>
+  <data name="BrowserForwardButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ブラウザーで進む</value>
+  </data>
+  <data name="BrowserForwardButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ブラウザーで進む</value>
+  </data>
+  <data name="WebView_Reload.Content" xml:space="preserve">
+    <value>再読み込み</value>
+  </data>
+  <data name="ReloadButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>再読み込み</value>
+  </data>
+  <data name="ReloadButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>再読み込み</value>
+  </data>
+  <data name="OpenInBrowserButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ブラウザーで開く</value>
+  </data>
+  <data name="OpenInBrowserButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ブラウザーで開く</value>
+  </data>
+  <data name="AdvancedToolsUserControl_AdvancedDecodingText.Text" xml:space="preserve">
+    <value>高度な読み取り</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ChooseAFocusedWorkflowOrText.Text" xml:space="preserve">
+    <value>読み取りの前に、目的に合ったツールを選ぶか、画像を簡単に調整できます。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_QuickFixesSettingsExpander.Description" xml:space="preserve">
+    <value>ガイドなしで画像を手早く調整します。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_QuickFixesSettingsExpander.Header" xml:space="preserve">
+    <value>クイック補正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OneTapFixesSettingsCard.Header" xml:space="preserve">
+    <value>ワンタップ補正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ConvertTheImageToGrayscaleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>QR コードを検出しやすくするため、画像をグレースケールに変換します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_GrayscaleText.Text" xml:space="preserve">
+    <value>グレースケール</value>
+  </data>
+  <data name="AdvancedToolsUserControl_InvertImageColorsWhenTheButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>コードが背景より明るい場合に、画像の色を反転します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_InvertText.Text" xml:space="preserve">
+    <value>色を反転</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ContrastSettingsCard.Header" xml:space="preserve">
+    <value>コントラスト</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ContrastSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>コントラストを調整してコードと背景を区別しやすくします</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BlackPointSettingsCard.Header" xml:space="preserve">
+    <value>黒点</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BlackPointSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ピクセルを黒にする明るさのしきい値を設定します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_WhitePointSettingsCard.Header" xml:space="preserve">
+    <value>白点</value>
+  </data>
+  <data name="AdvancedToolsUserControl_WhitePointSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ピクセルを白にする明るさのしきい値を設定します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_AddBorderSettingsCard.Header" xml:space="preserve">
+    <value>余白を追加</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BorderPercentSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>画像の幅に対する割合で白い余白を追加します（例：10 なら各辺に 10%）</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyQuickFixesSettingsCard.Header" xml:space="preserve">
+    <value>クイック補正を適用</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyTheCurrentQuickFixButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>現在のクイック補正設定を画像に適用します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyQuickFixesText.Text" xml:space="preserve">
+    <value>クイック補正を適用</value>
+  </data>
+  <data name="AdvancedToolsUserControl_GuidedWorkflowsSettingsExpander.Description" xml:space="preserve">
+    <value>目的別のツールを開きます。完了するとここに戻ります。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_GuidedWorkflowsSettingsExpander.Header" xml:space="preserve">
+    <value>ガイド付き補正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleBlackPointSettingsCard.Description" xml:space="preserve">
+    <value>暗いピクセルをクリックし、その色をすぐに適用します。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleBlackPointSettingsCard.Header" xml:space="preserve">
+    <value>黒点をサンプリング</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheBlackPointSamplingButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>黒点のサンプリングを開始します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickBlackPointText.Text" xml:space="preserve">
+    <value>黒点を選ぶ</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleWhitePointSettingsCard.Description" xml:space="preserve">
+    <value>明るいピクセルをクリックし、その色をすぐに適用します。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleWhitePointSettingsCard.Header" xml:space="preserve">
+    <value>白点をサンプリング</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheWhitePointSamplingButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>白点のサンプリングを開始します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickWhitePointText.Text" xml:space="preserve">
+    <value>白点を選ぶ</value>
+  </data>
+  <data name="AdvancedToolsUserControl_StraightenAQRCodeSettingsCard.Description" xml:space="preserve">
+    <value>四隅を指定してから補正を適用します。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_StraightenAQRCodeSettingsCard.Header" xml:space="preserve">
+    <value>QR コードの傾きを補正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenThePerspectiveCorrectionWorkflowButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>遠近補正ツールを開きます</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickCodeCornersText.Text" xml:space="preserve">
+    <value>コードの角を選ぶ</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractARegionSettingsCard.Description" xml:space="preserve">
+    <value>画像内で範囲を指定し、新しい画像として切り出します。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractARegionSettingsCard.Header" xml:space="preserve">
+    <value>範囲を切り出す</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheExtractRegionWorkflowButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>範囲の切り出しツールを開きます</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CutoutAreaText.Text" xml:space="preserve">
+    <value>切り出し範囲</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UnwarpAQRCodeSettingsCard.Description" xml:space="preserve">
+    <value>角と位置合わせ点を指定して、曲がった QR コードのゆがみを補正します。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UnwarpAQRCodeSettingsCard.Header" xml:space="preserve">
+    <value>QR コードのゆがみを補正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheUnwarpWorkflowToButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>曲がった QR コードのゆがみを補正するツールを開きます</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickUnwarpPointsText.Text" xml:space="preserve">
+    <value>補正点を選ぶ</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleBlackPointText.Text" xml:space="preserve">
+    <value>黒点をサンプリング</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickTheDarkestMeaningfulPartText.Text" xml:space="preserve">
+    <value>コードや背景の中で黒の基準にしたい最も暗い部分をクリックします。選んだ色はすぐに適用されます。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickOnceOnTheImageInfoBar.Message" xml:space="preserve">
+    <value>画像を 1 回クリックして黒点を選びます。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleWhitePointText.Text" xml:space="preserve">
+    <value>白点をサンプリング</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickTheLightestMeaningfulPartText.Text" xml:space="preserve">
+    <value>コードや背景の中で白の基準にしたい最も明るい部分をクリックします。選んだ色はすぐに適用されます。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickOnceOnTheImageInfoBar2.Message" xml:space="preserve">
+    <value>画像を 1 回クリックして白点を選びます。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_StraightenAQRCodeText.Text" xml:space="preserve">
+    <value>QR コードの傾きを補正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_WorkThroughTheCornerSelectionText.Text" xml:space="preserve">
+    <value>順に角を選び、輪郭が確定したら補正を適用します。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickEachCornerOnTheInfoBar.Message" xml:space="preserve">
+    <value>画像上の角を順にクリックします。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CurrentStepSettingsCard.Header" xml:space="preserve">
+    <value>現在の手順</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BorderSizeSettingsCard.Header" xml:space="preserve">
+    <value>余白の幅</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BorderSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>検出しやすくするため、補正した画像の周囲に白い余白を追加します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectionSettingsCard.Header" xml:space="preserve">
+    <value>選択範囲</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearAllSelectedCornersAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>選択した角をすべて消去して最初からやり直します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearCornersText.Text" xml:space="preserve">
+    <value>角の選択をクリア</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UnwarpAQRCodeText.Text" xml:space="preserve">
+    <value>QR コードのゆがみを補正</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SetTheQRVersionClickText.Text" xml:space="preserve">
+    <value>QR コードのバージョンを設定し、各角と各位置合わせ点を順にクリックします。算出された位置でよければ［推定位置を使用］を選びます。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickOnTheImageToInfoBar.Message" xml:space="preserve">
+    <value>画像をクリックして各点を順に配置します。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_QRCodeVersionSettingsCard.Header" xml:space="preserve">
+    <value>QR コードのバージョン</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectTheQRCodeVersionSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>QR コードのバージョン（10～40）を選びます。バージョンが高いほど位置合わせ点が増えます。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PointLayoutText.Text" xml:space="preserve">
+    <value>点の配置</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CurrentStepSettingsCard2.Header" xml:space="preserve">
+    <value>現在の手順</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UseEstimatedPositionSettingsCard.Header" xml:space="preserve">
+    <value>推定位置を使用</value>
+  </data>
+  <data name="AdvancedToolsUserControl_AcceptTheCalculatedBilinearPositionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>現在の位置合わせ点に、双線形補間で算出した位置を使用します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UseEstimatedText.Text" xml:space="preserve">
+    <value>推定位置を使用</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PointsSettingsCard.Header" xml:space="preserve">
+    <value>点</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearAllPlacedPointsAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>配置した点をすべて消去して最初からやり直します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearAllPointsText.Text" xml:space="preserve">
+    <value>すべての点をクリア</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractARegionText.Text" xml:space="preserve">
+    <value>範囲を切り出す</value>
+  </data>
+  <data name="AdvancedToolsUserControl_DragOverTheImageToText.Text" xml:space="preserve">
+    <value>画像上をドラッグして範囲を選び、個別の読み取り項目として切り出します。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickAndDragOnTheInfoBar.Message" xml:space="preserve">
+    <value>画像上でクリックしてドラッグし、範囲を指定します。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectionStatusSettingsCard.Header" xml:space="preserve">
+    <value>選択状態</value>
+  </data>
+  <data name="AdvancedToolsUserControl_NoRegionSelectedYetText.Text" xml:space="preserve">
+    <value>範囲が選択されていません。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_RegionSelectedAndReadyToText.Text" xml:space="preserve">
+    <value>選択範囲を切り出せます。</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectionSettingsCard2.Header" xml:space="preserve">
+    <value>選択範囲</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearTheCurrentRegionSelectionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>現在の範囲選択を解除します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearSelectionText.Text" xml:space="preserve">
+    <value>選択を解除</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ResetAllQuickFixSettingsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>クイック補正の設定をすべて既定値に戻します</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ResetAllText.Text" xml:space="preserve">
+    <value>すべてリセット</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UndoIconAndTextHyperlinkButton.Text" xml:space="preserve">
+    <value>元に戻す</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UndoIconAndTextHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>最後に適用した変更を元に戻します（Ctrl+Z）</value>
+  </data>
+  <data name="AdvancedToolsUserControl_RedoIconAndTextHyperlinkButton.Text" xml:space="preserve">
+    <value>やり直す</value>
+  </data>
+  <data name="AdvancedToolsUserControl_RedoIconAndTextHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>最後に取り消した変更をやり直します（Ctrl+Y）</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton.Content" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>黒点のサンプリングをキャンセルし、ツール一覧に戻ります</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton2.Content" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton2.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>白点のサンプリングをキャンセルし、ツール一覧に戻ります</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyCorrectionButton.Content" xml:space="preserve">
+    <value>補正を適用</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyCorrectionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>遠近補正を適用し、ツール一覧に戻ります</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearCornersButton.Content" xml:space="preserve">
+    <value>角の選択をクリア</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton3.Content" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractTheSelectedRegionAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>選択範囲を切り出し、ツール一覧に戻ります</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractRegionText.Text" xml:space="preserve">
+    <value>範囲を切り出す</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearSelectionButton.Content" xml:space="preserve">
+    <value>選択を解除</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton4.Content" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyPolynomialUnwarpCorrectionAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>多項式によるゆがみ補正を適用し、ツール一覧に戻ります</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyUnwarpText.Text" xml:space="preserve">
+    <value>ゆがみ補正を適用</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearPointsButton.Content" xml:space="preserve">
+    <value>点をクリア</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton5.Content" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="BrandEditDialog_Dialog.Title" xml:space="preserve">
+    <value>ブランドの編集</value>
+  </data>
+  <data name="BrandEditDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="BrandEditDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="BrandEditDialog_BrandNameSettingsCard.Description" xml:space="preserve">
+    <value>このブランドの表示名</value>
+  </data>
+  <data name="BrandEditDialog_BrandNameSettingsCard.Header" xml:space="preserve">
+    <value>ブランド名</value>
+  </data>
+  <data name="BrandEditDialog_BrandNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>ブランド名</value>
+  </data>
+  <data name="BrandEditDialog_ForegroundColorSettingsCard.Description" xml:space="preserve">
+    <value>前景に任意の色を適用します</value>
+  </data>
+  <data name="BrandEditDialog_ForegroundColorSettingsCard.Header" xml:space="preserve">
+    <value>前景色</value>
+  </data>
+  <data name="BrandEditDialog_BackgroundColorSettingsCard.Description" xml:space="preserve">
+    <value>背景に任意の色を適用します</value>
+  </data>
+  <data name="BrandEditDialog_BackgroundColorSettingsCard.Header" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="BrandEditDialog_ErrorCorrectionSettingsCard.Description" xml:space="preserve">
+    <value>QR コードの誤り訂正レベルを設定します</value>
+  </data>
+  <data name="BrandEditDialog_ErrorCorrectionSettingsCard.Header" xml:space="preserve">
+    <value>誤り訂正</value>
+  </data>
+  <data name="BrandEditDialog_DesignSettingsExpander.Description" xml:space="preserve">
+    <value>フレーム、キャプション、パターン、アクセント色を含めます</value>
+  </data>
+  <data name="BrandEditDialog_DesignSettingsExpander.Header" xml:space="preserve">
+    <value>デザイン</value>
+  </data>
+  <data name="BrandEditDialog_StyleSettingsCard.Header" xml:space="preserve">
+    <value>スタイル</value>
+  </data>
+  <data name="BrandEditDialog_URLTextSettingsExpander.Description" xml:space="preserve">
+    <value>既定の URL またはテキストを含めます</value>
+  </data>
+  <data name="BrandEditDialog_URLTextSettingsExpander.Header" xml:space="preserve">
+    <value>URL / テキスト</value>
+  </data>
+  <data name="BrandEditDialog_ContentSettingsCard.Header" xml:space="preserve">
+    <value>内容</value>
+  </data>
+  <data name="BrandEditDialog_URLOrTextContentTextBox.PlaceholderText" xml:space="preserve">
+    <value>URL またはテキスト</value>
+  </data>
+  <data name="BrandEditDialog_LogoImageSettingsExpander.Description" xml:space="preserve">
+    <value>QR コードにロゴを重ねます</value>
+  </data>
+  <data name="BrandEditDialog_LogoImageSettingsExpander.Header" xml:space="preserve">
+    <value>ロゴ画像</value>
+  </data>
+  <data name="BrandEditDialog_ImageSettingsCard.Header" xml:space="preserve">
+    <value>画像</value>
+  </data>
+  <data name="BrandEditDialog_PickImageText.Text" xml:space="preserve">
+    <value>画像を選ぶ</value>
+  </data>
+  <data name="BrandEditDialog_RemoveLogoButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ロゴを削除</value>
+  </data>
+  <data name="BrandEditDialog_ImageSizeSettingsCard.Header" xml:space="preserve">
+    <value>画像サイズ</value>
+  </data>
+  <data name="BrandEditDialog_PaddingSettingsCard.Header" xml:space="preserve">
+    <value>余白</value>
+  </data>
+  <data name="BrandManagementControl_SaveAndManageBrandsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ブランドを保存・管理</value>
+  </data>
+  <data name="BrandManagementControl_BrandsText.Text" xml:space="preserve">
+    <value>ブランド</value>
+  </data>
+  <data name="BrandManagementControl_NoBrandsSavedYetText.Text" xml:space="preserve">
+    <value>保存済みのブランドはありません。</value>
+  </data>
+  <data name="BrandManagementControl_SaveAsBrandText.Text" xml:space="preserve">
+    <value>ブランドとして保存</value>
+  </data>
+  <data name="BrandManagementControl_SaveCurrentSettingsAsBrandText.Text" xml:space="preserve">
+    <value>現在の設定をブランドとして保存</value>
+  </data>
+  <data name="BrandManagementControl_BrandNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>ブランド名</value>
+  </data>
+  <data name="BrandManagementControl_ForegroundColorCheckBox.Content" xml:space="preserve">
+    <value>前景色</value>
+  </data>
+  <data name="BrandManagementControl_BackgroundColorCheckBox.Content" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="BrandManagementControl_ErrorCorrectionCheckBox.Content" xml:space="preserve">
+    <value>誤り訂正</value>
+  </data>
+  <data name="BrandManagementControl_DesignFrameAndPatternCheckBox.Content" xml:space="preserve">
+    <value>デザイン（フレームとパターン）</value>
+  </data>
+  <data name="BrandManagementControl_URLTextCheckBox.Content" xml:space="preserve">
+    <value>URL / テキスト</value>
+  </data>
+  <data name="BrandManagementControl_CenterImageCheckBox.Content" xml:space="preserve">
+    <value>中央の画像</value>
+  </data>
+  <data name="BrandManagementControl_SaveBrandText.Text" xml:space="preserve">
+    <value>ブランドを保存</value>
+  </data>
+  <data name="BrandManagementControl_LearnMoreAboutBrandsText.Text" xml:space="preserve">
+    <value>ブランドの詳細</value>
+  </data>
+  <data name="BrandPickerControl_SelectBrandDropDownButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ブランドを選ぶ</value>
+  </data>
+  <data name="BrandPickerControl_DefaultBrandSymbolIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>既定のブランド</value>
+  </data>
+  <data name="BrandPickerControl_SelectABrandText.Text" xml:space="preserve">
+    <value>ブランドを選ぶ</value>
+  </data>
+  <data name="BrandRowItem_BackgroundColorBorder.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="BrandRowItem_ForegroundColorQrCodeIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>前景色</value>
+  </data>
+  <data name="BrandRowItem_DefaultBrandFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>既定のブランド</value>
+  </data>
+  <data name="BrandRowItem_ErrorCorrectionLevelText.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>誤り訂正レベル</value>
+  </data>
+  <data name="BrandRowItem_TextText.Text" xml:space="preserve">
+    <value>テキスト</value>
+  </data>
+  <data name="BrandRowItem_BrandOptionsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ブランドのオプション</value>
+  </data>
+  <data name="BrandRowItem_EditMenuItem.Text" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="BrandRowItem_SetAsDefaultMenuItem.Text" xml:space="preserve">
+    <value>既定に設定</value>
+  </data>
+  <data name="BrandRowItem_DeleteMenuItem.Text" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="ColorPickerButton_ColorSegmentedItem.Content" xml:space="preserve">
+    <value>色</value>
+  </data>
+  <data name="ColorPickerButton_ImageSegmentedItem.Content" xml:space="preserve">
+    <value>画像</value>
+  </data>
+  <data name="ColorPickerButton_ListModePickerItem.Content" xml:space="preserve">
+    <value>一覧</value>
+  </data>
+  <data name="ColorPickerButton_BrandsText.Text" xml:space="preserve">
+    <value>ブランド</value>
+  </data>
+  <data name="ColorPickerButton_RecentColorsText.Text" xml:space="preserve">
+    <value>最近使用した色</value>
+  </data>
+  <data name="ColorPickerButton_SavedColorsEmptyStateText.Text" xml:space="preserve">
+    <value>ブランドや最近使用した色はありません。</value>
+  </data>
+  <data name="ColorPickerButton_ClipboardText.Text" xml:space="preserve">
+    <value>クリップボード</value>
+  </data>
+  <data name="CutOutImagesPaneContentControl_ImagesText.Text" xml:space="preserve">
+    <value>画像</value>
+  </data>
+  <data name="CutOutImagesPaneContentControl_ClosePaneButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ペインを閉じる</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_DecodingHistoryText.Text" xml:space="preserve">
+    <value>読み取り履歴</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_ClearAllDecodingHistoryHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>読み取り履歴をすべて消去</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_ClearText.Text" xml:space="preserve">
+    <value>消去</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_NoDecodingHistoryYetOpenText.Text" xml:space="preserve">
+    <value>読み取り履歴はありません。画像を開くか、貼り付けるか、撮影して読み取ってください。</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_RemoveMenuItem.Text" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="EmailBuilderDialog_Dialog.Title" xml:space="preserve">
+    <value>メールの作成</value>
+  </data>
+  <data name="EmailBuilderDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="EmailBuilderDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="EmailBuilderDialog_CreateAQRCodeThatText.Text" xml:space="preserve">
+    <value>宛先、件名、本文を入力した状態で既定のメール アプリを開く QR コードを作成します。</value>
+  </data>
+  <data name="EmailBuilderDialog_ToTextBox.Header" xml:space="preserve">
+    <value>宛先（必須）</value>
+  </data>
+  <data name="EmailBuilderDialog_ToTextBox.PlaceholderText" xml:space="preserve">
+    <value>recipient@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="EmailBuilderDialog_CCTextBox.Header" xml:space="preserve">
+    <value>CC</value>
+  </data>
+  <data name="EmailBuilderDialog_CCTextBox.PlaceholderText" xml:space="preserve">
+    <value>cc@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="EmailBuilderDialog_BCCTextBox.Header" xml:space="preserve">
+    <value>BCC</value>
+  </data>
+  <data name="EmailBuilderDialog_BCCTextBox.PlaceholderText" xml:space="preserve">
+    <value>bcc@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="EmailBuilderDialog_SubjectTextBox.Header" xml:space="preserve">
+    <value>件名</value>
+  </data>
+  <data name="EmailBuilderDialog_SubjectTextBox.PlaceholderText" xml:space="preserve">
+    <value>メールの件名を入力</value>
+  </data>
+  <data name="EmailBuilderDialog_BodyTextBox.Header" xml:space="preserve">
+    <value>本文</value>
+  </data>
+  <data name="EmailBuilderDialog_BodyTextBox.PlaceholderText" xml:space="preserve">
+    <value>メールの本文を入力</value>
+  </data>
+  <data name="EmailBuilderDialog_HowItWorksInfoBar.Message" xml:space="preserve">
+    <value>この QR コードを読み取ると、各項目が入力された状態で既定のメール アプリが開きます。送信前にメッセージを確認・編集できます。</value>
+  </data>
+  <data name="EmailBuilderDialog_HowItWorksInfoBar.Title" xml:space="preserve">
+    <value>使い方</value>
+  </data>
+  <data name="EmailBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>プレビュー</value>
+  </data>
+  <data name="FaqsContent_FrequentlyAskedQuestionsText.Text" xml:space="preserve">
+    <value>よくある質問</value>
+  </data>
+  <data name="FaqsContent_SearchForContentInTheAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>よくある質問を検索…</value>
+  </data>
+  <data name="FaqsContent_NoFAQsMatchTheSearchText.Text" xml:space="preserve">
+    <value>該当する質問が見つかりません。別のキーワードで検索するか、メールでお問い合わせください。</value>
+  </data>
+  <data name="FaqsContent_DonTSeeYourQuestionText.Text" xml:space="preserve">
+    <value>知りたいことが見つからない場合や、詳しい情報が必要な場合は、お気軽にメールでお問い合わせください。</value>
+  </data>
+  <data name="FaqsContent_EmailAQuestionIconAndTextButton.Text" xml:space="preserve">
+    <value>メールで質問する</value>
+  </data>
+  <data name="FeedbackDialog_Dialog.Title" xml:space="preserve">
+    <value>ご意見をお聞かせください</value>
+  </data>
+  <data name="FeedbackDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="FeedbackDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>メール アプリを開く</value>
+  </data>
+  <data name="FeedbackDialog_HiIMAnIndieText.Text" xml:space="preserve">
+    <value>こんにちは！このアプリを個人で開発しています。皆さんからのご意見は、不具合の把握やアプリの改善にとても役立ちます。うまく動かないところや改善のご提案があれば、ぜひお聞かせください。</value>
+  </data>
+  <data name="FeedbackDialog_FeedbackTextBox.Header" xml:space="preserve">
+    <value>メッセージ</value>
+  </data>
+  <data name="FeedbackDialog_FeedbackTextBox.PlaceholderText" xml:space="preserve">
+    <value>問題やご意見を入力…</value>
+  </data>
+  <data name="FeedbackDialog_JoeJoefinappsComText.Text" xml:space="preserve">
+    <value>joe@joefinapps.com</value>
+  </data>
+  <data name="FeedbackDialog_CopyEmailButton.Content" xml:space="preserve">
+    <value>コピー</value>
+  </data>
+  <data name="FeedbackDialog_OpenMailAppWillOpenText.Text" xml:space="preserve">
+    <value>［メール アプリを開く］を選ぶと、入力したメッセージが入った状態で既定のメール アプリが開きます。</value>
+  </data>
+  <data name="FolderPaneContentControl_FolderText.Text" xml:space="preserve">
+    <value>フォルダー</value>
+  </data>
+  <data name="FolderPaneContentControl_CloseFolderPaneButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>フォルダー ペインを閉じる</value>
+  </data>
+  <data name="FolderPaneContentControl_NoImageFilesFoundInText.Text" xml:space="preserve">
+    <value>このフォルダーに画像ファイルがありません。</value>
+  </data>
+  <data name="FolderPaneContentControl_SaveCutOutImageButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>切り出した画像を保存</value>
+  </data>
+  <data name="FolderPaneContentControl_DecodeAllImagesAndViewButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>すべての画像を読み取り、結果を一覧表で表示します</value>
+  </data>
+  <data name="FolderPaneContentControl_SummaryViewText.Text" xml:space="preserve">
+    <value>結果の一覧</value>
+  </data>
+  <data name="FolderPaneContentControl_DecodeEveryImageInTheButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>フォルダー内のすべての画像を読み取り、各画像と同じ場所に .txt ファイルを書き出します</value>
+  </data>
+  <data name="FolderPaneContentControl_DecodeAllExportTxtFilesText.Text" xml:space="preserve">
+    <value>すべて読み取って .txt にエクスポート</value>
+  </data>
+  <data name="GenerateIdsDialog_Dialog.Title" xml:space="preserve">
+    <value>ID の生成</value>
+  </data>
+  <data name="GenerateIdsDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="GenerateIdsDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="GenerateIdsDialog_GenerateOneRandomIDPerText.Text" xml:space="preserve">
+    <value>各行にランダムな ID を 1 つ生成し、現在のテキストに追加します。</value>
+  </data>
+  <data name="GenerateIdsDialog_CountNumberBox.Header" xml:space="preserve">
+    <value>ID の数</value>
+  </data>
+  <data name="GenerateIdsDialog_IDStyleComboBox.Header" xml:space="preserve">
+    <value>ID の形式</value>
+  </data>
+  <data name="GenerateIdsDialog_NanoIdLengthNumberBox.Header" xml:space="preserve">
+    <value>NanoID の長さ</value>
+  </data>
+  <data name="GenerateIdsDialog_TextBeforeEachIDTextBox.Header" xml:space="preserve">
+    <value>各 ID の前に付けるテキスト</value>
+  </data>
+  <data name="GenerateIdsDialog_TextBeforeEachIDTextBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="GenerateIdsDialog_TextAfterEachIDTextBox.Header" xml:space="preserve">
+    <value>各 ID の後に付けるテキスト</value>
+  </data>
+  <data name="GenerateIdsDialog_TextAfterEachIDTextBox.PlaceholderText" xml:space="preserve">
+    <value>?source=qr-code</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="GenerateIdsDialog_PreviewText.Text" xml:space="preserve">
+    <value>プレビュー</value>
+  </data>
+  <data name="GenerateIdsDialog_CheckYourSettingsInfoBar.Title" xml:space="preserve">
+    <value>設定を確認してください</value>
+  </data>
+  <data name="HistoryPaneContentControl_HistoryText.Text" xml:space="preserve">
+    <value>作成履歴</value>
+  </data>
+  <data name="HistoryPaneContentControl_SaveCurrentQRCodeToHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>現在の QR コードを履歴に保存</value>
+  </data>
+  <data name="HistoryPaneContentControl_SaveToHistoryText.Text" xml:space="preserve">
+    <value>履歴に保存</value>
+  </data>
+  <data name="HistoryPaneContentControl_NoHistoryYetSaveOrText.Text" xml:space="preserve">
+    <value>作成履歴はありません。QR コードを保存またはコピーすると、ここに表示されます。</value>
+  </data>
+  <data name="HistoryPaneContentControl_RemoveMenuItem.Text" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="ImageColorPickerControl_PickImageText.Text" xml:space="preserve">
+    <value>画像を選ぶ</value>
+  </data>
+  <data name="ImageColorPickerControl_NoImageLoadedText.Text" xml:space="preserve">
+    <value>画像が読み込まれていません</value>
+  </data>
+  <data name="ImageColorPickerControl_SuggestedColorsText.Text" xml:space="preserve">
+    <value>おすすめの色</value>
+  </data>
+  <data name="LicensesDialog_Dialog.Title" xml:space="preserve">
+    <value>オープン ソース ライセンス</value>
+  </data>
+  <data name="LicensesDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="LicensesDialog_ViewOnGitHubHyperlinkButton.Content" xml:space="preserve">
+    <value>GitHub で表示</value>
+  </data>
+  <data name="PrintSettingsDialog_Dialog.Title" xml:space="preserve">
+    <value>印刷設定</value>
+  </data>
+  <data name="PrintSettingsDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="PrintSettingsDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>印刷</value>
+  </data>
+  <data name="PrintSettingsDialog_SettingsScrollViewer.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>印刷設定</value>
+  </data>
+  <data name="PrintSettingsDialog_QuickPresetCombo.Header" xml:space="preserve">
+    <value>簡単設定</value>
+  </data>
+  <data name="PrintSettingsDialog_CustomComboBoxItem.Content" xml:space="preserve">
+    <value>カスタム</value>
+  </data>
+  <data name="PrintSettingsDialog_ProductLabelsComboBoxItem.Content" xml:space="preserve">
+    <value>商品ラベル</value>
+  </data>
+  <data name="PrintSettingsDialog_FlyersOrHandoutsComboBoxItem.Content" xml:space="preserve">
+    <value>チラシ・配布資料</value>
+  </data>
+  <data name="PrintSettingsDialog_TableTentsOrMenusComboBoxItem.Content" xml:space="preserve">
+    <value>卓上カード・メニュー</value>
+  </data>
+  <data name="PrintSettingsDialog_PostersOrSignsComboBoxItem.Content" xml:space="preserve">
+    <value>ポスター・案内表示</value>
+  </data>
+  <data name="PrintSettingsDialog_QuickPresetDescriptionTextBlock.Text" xml:space="preserve">
+    <value>一般的な QR コード印刷の用途を選ぶか、レイアウトを自由に設定します。</value>
+  </data>
+  <data name="PrintSettingsDialog_CodesPerPageCombo.Header" xml:space="preserve">
+    <value>1 ページあたりのコード数</value>
+  </data>
+  <data name="PrintSettingsDialog_AsManyFitComboBoxItem.Content" xml:space="preserve">
+    <value>収まるだけ配置</value>
+  </data>
+  <data name="PrintSettingsDialog_1PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>1 ページに 1 個</value>
+  </data>
+  <data name="PrintSettingsDialog_2PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>1 ページに 2 個</value>
+  </data>
+  <data name="PrintSettingsDialog_4PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>1 ページに 4 個</value>
+  </data>
+  <data name="PrintSettingsDialog_6PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>1 ページに 6 個</value>
+  </data>
+  <data name="PrintSettingsDialog_9PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>1 ページに 9 個</value>
+  </data>
+  <data name="PrintSettingsDialog_12PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>1 ページに 12 個</value>
+  </data>
+  <data name="PrintSettingsDialog_16PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>1 ページに 16 個</value>
+  </data>
+  <data name="PrintSettingsDialog_PageTypeCombo.Header" xml:space="preserve">
+    <value>用紙サイズ</value>
+  </data>
+  <data name="PrintSettingsDialog_LetterComboBoxItem.Content" xml:space="preserve">
+    <value>レター</value>
+  </data>
+  <data name="PrintSettingsDialog_LegalComboBoxItem.Content" xml:space="preserve">
+    <value>リーガル</value>
+  </data>
+  <data name="PrintSettingsDialog_StatementComboBoxItem.Content" xml:space="preserve">
+    <value>ステートメント</value>
+  </data>
+  <data name="PrintSettingsDialog_ExecutiveComboBoxItem.Content" xml:space="preserve">
+    <value>エグゼクティブ</value>
+  </data>
+  <data name="PrintSettingsDialog_TabloidComboBoxItem.Content" xml:space="preserve">
+    <value>タブロイド</value>
+  </data>
+  <data name="PrintSettingsDialog_LedgerComboBoxItem.Content" xml:space="preserve">
+    <value>レジャー</value>
+  </data>
+  <data name="PrintSettingsDialog_A3ComboBoxItem.Content" xml:space="preserve">
+    <value>A3</value>
+  </data>
+  <data name="PrintSettingsDialog_A4ComboBoxItem.Content" xml:space="preserve">
+    <value>A4</value>
+  </data>
+  <data name="PrintSettingsDialog_A5ComboBoxItem.Content" xml:space="preserve">
+    <value>A5</value>
+  </data>
+  <data name="PrintSettingsDialog_B4ComboBoxItem.Content" xml:space="preserve">
+    <value>B4</value>
+  </data>
+  <data name="PrintSettingsDialog_B5ComboBoxItem.Content" xml:space="preserve">
+    <value>B5</value>
+  </data>
+  <data name="PrintSettingsDialog_PageLayoutCombo.Header" xml:space="preserve">
+    <value>用紙の向き</value>
+  </data>
+  <data name="PrintSettingsDialog_PortraitComboBoxItem.Content" xml:space="preserve">
+    <value>縦</value>
+  </data>
+  <data name="PrintSettingsDialog_LandscapeComboBoxItem.Content" xml:space="preserve">
+    <value>横</value>
+  </data>
+  <data name="PrintSettingsDialog_ShowLabelsSwitch.Header" xml:space="preserve">
+    <value>ラベルを表示</value>
+  </data>
+  <data name="PrintSettingsDialog_ShowLabelsSwitch.OffContent" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="PrintSettingsDialog_ShowLabelsSwitch.OnContent" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="PrintSettingsDialog_CodeSizeMmBox.Header" xml:space="preserve">
+    <value>QR コードのサイズ（mm）</value>
+  </data>
+  <data name="PrintSettingsDialog_SpacingMmBox.Header" xml:space="preserve">
+    <value>間隔（mm）</value>
+  </data>
+  <data name="PrintSettingsDialog_MarginMmBox.Header" xml:space="preserve">
+    <value>ページの余白（mm）</value>
+  </data>
+  <data name="PrintSettingsDialog_PreviewText.Text" xml:space="preserve">
+    <value>プレビュー</value>
+  </data>
+  <data name="PrintSettingsDialog_FitPreviewButton.Content" xml:space="preserve">
+    <value>幅に合わせる</value>
+  </data>
+  <data name="PrintSettingsDialog_ZoomOutButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>縮小</value>
+  </data>
+  <data name="PrintSettingsDialog_ZoomInButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>拡大</value>
+  </data>
+  <data name="PrintSettingsDialog_PreviewScrollViewer.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>印刷プレビュー</value>
+  </data>
+  <data name="PrintSettingsDialog_UpdatingPDFPreviewText.Text" xml:space="preserve">
+    <value>PDF プレビューを更新中…</value>
+  </data>
+  <data name="QrCodeImageControl_SavePNGMenuItem.Text" xml:space="preserve">
+    <value>PNG で保存…</value>
+  </data>
+  <data name="QrCodeImageControl_CopyPNGMenuItem.Text" xml:space="preserve">
+    <value>PNG をコピー</value>
+  </data>
+  <data name="QrCodeImageControl_ShareMenuItem.Text" xml:space="preserve">
+    <value>共有…</value>
+  </data>
+  <data name="QrCodeImageControl_SaveSVGMenuItem.Text" xml:space="preserve">
+    <value>SVG で保存…</value>
+  </data>
+  <data name="QrCodeImageControl_CopySVGMenuItem.Text" xml:space="preserve">
+    <value>SVG をコピー</value>
+  </data>
+  <data name="QrCodeImageControl_CopySVGAsTextMenuItem.Text" xml:space="preserve">
+    <value>SVG をテキストとしてコピー</value>
+  </data>
+  <data name="QrCodeImageControl_UseCommonBrandMenuItem.Text" xml:space="preserve">
+    <value>共通のブランドを使用</value>
+  </data>
+  <data name="QrCodeImageControl_UseCurrentStyleMenuItem.Text" xml:space="preserve">
+    <value>現在のスタイルを使用</value>
+  </data>
+  <data name="QrCodeImageControl_ThisWarningCanBeDisabledInfoBar.Message" xml:space="preserve">
+    <value>QR コードの内容が URL ではありません</value>
+  </data>
+  <data name="QrCodeImageControl_ThisWarningCanBeDisabledInfoBar.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>この警告は設定で無効にできます</value>
+  </data>
+  <data name="QrCodeImageControl_HowWasThisCalculatedHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>計算方法を確認</value>
+  </data>
+  <data name="QrCodeImageControl_CopySizeMenuItem.Text" xml:space="preserve">
+    <value>サイズをコピー</value>
+  </data>
+  <data name="QrCodeImageControl_HideMinSizeTextMenuItem.Text" xml:space="preserve">
+    <value>最小サイズの表示を隠す</value>
+  </data>
+  <data name="QrCodeImageControl_YourCurrentDesignIsKeptText.Text" xml:space="preserve">
+    <value>現在のデザインは保持されるので、いつでも元に戻せます。</value>
+  </data>
+  <data name="QrCodeImageControl_MinimumSizeEstimatesAreUnavailableText.Text" xml:space="preserve">
+    <value>中央にロゴがある場合、最小サイズは推定できません。</value>
+  </data>
+  <data name="QrCodeImageControl_CopySizeMenuItem2.Text" xml:space="preserve">
+    <value>サイズをコピー</value>
+  </data>
+  <data name="QrCodeImageControl_AboutQRCodeSizingMenuItem.Text" xml:space="preserve">
+    <value>QR コードのサイズについて</value>
+  </data>
+  <data name="QrDesignDialog_Dialog.Title" xml:space="preserve">
+    <value>QR コードのデザイン</value>
+  </data>
+  <data name="QrDesignDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="QrDesignDialog_LivePreviewText.Text" xml:space="preserve">
+    <value>ライブ プレビュー</value>
+  </data>
+  <data name="QrDesignDialog_LivePreviewImage.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>現在の QR コード デザインのプレビュー</value>
+  </data>
+  <data name="QrDesignDialog_NoPreviewText.Text" xml:space="preserve">
+    <value>メイン ウィンドウに QR コードの内容を入力すると、ここにライブ プレビューが表示されます。</value>
+  </data>
+  <data name="QrDesignDialog_PreviewHelpText.Text" xml:space="preserve">
+    <value>変更はすぐに反映されます。［完了］を選ぶと QR コードの画面に戻ります。</value>
+  </data>
+  <data name="QrDesignDialog_PickALookThenMakeText.Text" xml:space="preserve">
+    <value>見た目を選び、好みに合わせて調整できます。QR コードの内容は変わりません。</value>
+  </data>
+  <data name="QrDesignDialog_PresetsSection.Text" xml:space="preserve">
+    <value>プリセット</value>
+  </data>
+  <data name="QrDesignDialog_PatternSection.Text" xml:space="preserve">
+    <value>パターン</value>
+  </data>
+  <data name="QrDesignDialog_FrameSection.Text" xml:space="preserve">
+    <value>フレーム</value>
+  </data>
+  <data name="QrDesignDialog_PreviewError.Title" xml:space="preserve">
+    <value>デザインのプレビューを表示できません</value>
+  </data>
+  <data name="QrDesignDialog_PresetGrid.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>統一感のあるデザイン プリセット</value>
+  </data>
+  <data name="QrDesignDialog_ModuleCombo.Header" xml:space="preserve">
+    <value>QR コードのパターン</value>
+  </data>
+  <data name="QrDesignDialog_EyeCombo.Header" xml:space="preserve">
+    <value>角の位置検出パターン</value>
+  </data>
+  <data name="QrDesignDialog_TheSmallTimingAndAlignmentText.Text" xml:space="preserve">
+    <value>読み取りやすくするため、小さなタイミング パターンと位置合わせパターンは四角いままです。</value>
+  </data>
+  <data name="QrDesignDialog_ClassicSquaresButton.Content" xml:space="preserve">
+    <value>標準の四角形</value>
+  </data>
+  <data name="QrDesignDialog_QRColorAndOpacityDropDownButton.Content" xml:space="preserve">
+    <value>QR コードの色と不透明度</value>
+  </data>
+  <data name="QrDesignDialog_QRColorAndOpacityColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>QR コードの色と不透明度</value>
+  </data>
+  <data name="QrDesignDialog_BackgroundColorAndOpacityDropDownButton.Content" xml:space="preserve">
+    <value>背景の色と不透明度</value>
+  </data>
+  <data name="QrDesignDialog_QRBackgroundColorAndOpacityColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>QR コードの背景色と不透明度</value>
+  </data>
+  <data name="QrDesignDialog_TransparentBackgroundsDependOnTheText.Text" xml:space="preserve">
+    <value>背景を透明にすると、見え方は QR コードを配置する面によって変わります。</value>
+  </data>
+  <data name="QrDesignDialog_FrameGrid.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>フレームの形</value>
+  </data>
+  <data name="QrDesignDialog_CaptionSuggestionCombo.Header" xml:space="preserve">
+    <value>キャプションの候補</value>
+  </data>
+  <data name="QrDesignDialog_LabelSourceCombo.Header" xml:space="preserve">
+    <value>ラベルの取得元</value>
+  </data>
+  <data name="QrDesignDialog_IconCombo.Header" xml:space="preserve">
+    <value>キャプションのアイコン</value>
+  </data>
+  <data name="QrDesignDialog_IndependentFrameColorToggleSwitch.Header" xml:space="preserve">
+    <value>フレームに別の色を使用</value>
+  </data>
+  <data name="QrDesignDialog_IndependentFrameColorToggleSwitch.OffContent" xml:space="preserve">
+    <value>QR コードの色を使用</value>
+  </data>
+  <data name="QrDesignDialog_IndependentFrameColorToggleSwitch.OnContent" xml:space="preserve">
+    <value>カスタム アクセント色</value>
+  </data>
+  <data name="QrDesignDialog_AccentColorDropDownButton.Content" xml:space="preserve">
+    <value>アクセント色</value>
+  </data>
+  <data name="QrDesignDialog_FrameAccentColorColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>フレームのアクセント色</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientToggleSwitch.Header" xml:space="preserve">
+    <value>フレームのグラデーション</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientToggleSwitch.OffContent" xml:space="preserve">
+    <value>単色</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientToggleSwitch.OnContent" xml:space="preserve">
+    <value>2 色のグラデーション</value>
+  </data>
+  <data name="QrDesignDialog_GradientEndColorDropDownButton.Content" xml:space="preserve">
+    <value>グラデーションの終了色</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientEndColorColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>フレームのグラデーションの終了色</value>
+  </data>
+  <data name="QrDesignDialog_PresetsUseAClearFourText.Text" xml:space="preserve">
+    <value>プリセットには 4 モジュール分の空白の余白があります。明るい背景に暗いコードを使い、印刷前に実際のサイズでスマートフォンで読み取れるか確認してください。</value>
+  </data>
+  <data name="QrDesignDialog_UndoPresetButton.Content" xml:space="preserve">
+    <value>プリセットの適用を元に戻す</value>
+  </data>
+  <data name="QrDesignDialog_SetDesignAsDefaultButton.Content" xml:space="preserve">
+    <value>既定のデザインに設定</value>
+  </data>
+  <data name="QrDesignGalleryControl_DesignButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>QR コードのデザイン</value>
+  </data>
+  <data name="QrDesignGalleryControl_DesignButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>QR コードのデザイン ツールを開きます</value>
+  </data>
+  <data name="QrDesignGalleryControl_DesignText.Text" xml:space="preserve">
+    <value>デザイン</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAsText.Text" xml:space="preserve">
+    <value>名前を付けて保存</value>
+  </data>
+  <data name="QrExportActionsControl_SaveCodeSAsPNGSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>コードを PNG ファイルとして保存</value>
+  </data>
+  <data name="QrExportActionsControl_PNGIconAndTextContent.ContentText" xml:space="preserve">
+    <value>PNG</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToFilesDefaultMenuItem.Text" xml:space="preserve">
+    <value>すべて個別ファイルに保存（既定）</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToZipMenuItem.Text" xml:space="preserve">
+    <value>すべて ZIP に保存</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllToClipboardMenuItem.Text" xml:space="preserve">
+    <value>すべてクリップボードにコピー</value>
+  </data>
+  <data name="QrExportActionsControl_SaveCodeSAsSVGSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>コードを SVG ファイルとして保存</value>
+  </data>
+  <data name="QrExportActionsControl_SVGIconAndTextContent.ContentText" xml:space="preserve">
+    <value>SVG</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToFilesDefaultMenuItem2.Text" xml:space="preserve">
+    <value>すべて個別ファイルに保存（既定）</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToZipMenuItem2.Text" xml:space="preserve">
+    <value>すべて ZIP に保存</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllToClipboardMenuItem2.Text" xml:space="preserve">
+    <value>すべてクリップボードにコピー</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllAsTextToMenuItem.Text" xml:space="preserve">
+    <value>すべてテキストとしてクリップボードにコピー</value>
+  </data>
+  <data name="QrExportActionsControl_SaveCodeSAsBothSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>コードを PNG と SVG の両方の形式で保存</value>
+  </data>
+  <data name="QrExportActionsControl_BothIconAndTextContent.ContentText" xml:space="preserve">
+    <value>両方</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToFilesDefaultMenuItem3.Text" xml:space="preserve">
+    <value>すべて個別ファイルに保存（既定）</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToZipMenuItem3.Text" xml:space="preserve">
+    <value>すべて ZIP に保存</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllToClipboardMenuItem3.Text" xml:space="preserve">
+    <value>すべてクリップボードにコピー</value>
+  </data>
+  <data name="QrExportActionsControl_PrintQRCodeSButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>QR コードを印刷</value>
+  </data>
+  <data name="QrExportActionsControl_PrintIconAndTextContent.ContentText" xml:space="preserve">
+    <value>印刷</value>
+  </data>
+  <data name="QrExportActionsControl_QuicklyShowOrHideExportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>エクスポート オプションをすばやく表示または非表示にします</value>
+  </data>
+  <data name="QrExportActionsControl_ShowSaveBothButtonToggleMenuFlyoutItem.Text" xml:space="preserve">
+    <value>［両方］ボタンを表示</value>
+  </data>
+  <data name="QrExportActionsControl_ShowPrintButtonToggleMenuFlyoutItem.Text" xml:space="preserve">
+    <value>［印刷］ボタンを表示</value>
+  </data>
+  <data name="QrLogoDesignerControl_AddImageToTheCenterSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>QR コードの中央に画像を追加します</value>
+  </data>
+  <data name="QrLogoDesignerControl_ImageSegmentedItem.Content" xml:space="preserve">
+    <value>画像</value>
+  </data>
+  <data name="QrLogoDesignerControl_EmojiSegmentedItem.Content" xml:space="preserve">
+    <value>絵文字</value>
+  </data>
+  <data name="QrLogoDesignerControl_NoImageSelectedText.Text" xml:space="preserve">
+    <value>画像が選択されていません</value>
+  </data>
+  <data name="QrLogoDesignerControl_PickImageText.Text" xml:space="preserve">
+    <value>画像を選ぶ</value>
+  </data>
+  <data name="QrLogoDesignerControl_PasteText.Text" xml:space="preserve">
+    <value>貼り付け</value>
+  </data>
+  <data name="QrLogoDesignerControl_RemoveImageButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>画像を削除</value>
+  </data>
+  <data name="QrLogoDesignerControl_UseOnDeviceAIToButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>デバイス上の AI でロゴ画像の背景を取り除きます</value>
+  </data>
+  <data name="QrLogoDesignerControl_EraseBackgroundText.Text" xml:space="preserve">
+    <value>背景を削除</value>
+  </data>
+  <data name="QrLogoDesignerControl_SolidText.Text" xml:space="preserve">
+    <value>単色</value>
+  </data>
+  <data name="QrLogoDesignerControl_3DText.Text" xml:space="preserve">
+    <value>3D</value>
+  </data>
+  <data name="QrLogoDesignerControl_ClearEmojiText.Text" xml:space="preserve">
+    <value>絵文字を消去</value>
+  </data>
+  <data name="QrLogoDesignerControl_CenterLogoSizeText.Text" xml:space="preserve">
+    <value>中央のロゴのサイズ</value>
+  </data>
+  <data name="QrLogoDesignerControl_AdjustTheLogoSizeRelativeSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>QR コードの大きさに対するロゴのサイズを調整します</value>
+  </data>
+  <data name="QrLogoDesignerControl_PercentText.Text" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="QrLogoDesignerControl_PaddingAroundCenterLogoText.Text" xml:space="preserve">
+    <value>中央のロゴの周囲の余白</value>
+  </data>
+  <data name="QrLogoDesignerControl_ScaleTheLogoImageToSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>領域に合わせてロゴ画像の大きさを調整します（正の値で余白を広げて縮小、負の値で拡大）</value>
+  </data>
+  <data name="QrLogoDesignerControl_PxText.Text" xml:space="preserve">
+    <value>ピクセル</value>
+  </data>
+  <data name="RemoveBackgroundDialog_Dialog.Title" xml:space="preserve">
+    <value>背景の削除</value>
+  </data>
+  <data name="RemoveBackgroundDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="RemoveBackgroundDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="RemoveBackgroundDialog_OriginalText.Text" xml:space="preserve">
+    <value>元の画像</value>
+  </data>
+  <data name="RemoveBackgroundDialog_BackgroundRemovedText.Text" xml:space="preserve">
+    <value>背景を削除した画像</value>
+  </data>
+  <data name="UrlBuilderDialog_Root.Title" xml:space="preserve">
+    <value>URL の作成</value>
+  </data>
+  <data name="UrlBuilderDialog_Root.CloseButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="UrlBuilderDialog_Root.PrimaryButtonText" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="UrlBuilderDialog_GoToThePreviousLineButton.AccessKey" xml:space="preserve">
+    <value>P</value>
+    <comment>A single access-key character. Do not use the same key for both line navigation buttons.</comment>
+  </data>
+  <data name="UrlBuilderDialog_GoToThePreviousLineButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>前の行に移動</value>
+  </data>
+  <data name="UrlBuilderDialog_PreviousText.Text" xml:space="preserve">
+    <value>前へ</value>
+  </data>
+  <data name="UrlBuilderDialog_GoToTheNextLineButton.AccessKey" xml:space="preserve">
+    <value>N</value>
+    <comment>A single access-key character. Do not use the same key for both line navigation buttons.</comment>
+  </data>
+  <data name="UrlBuilderDialog_GoToTheNextLineButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>次の行に移動</value>
+  </data>
+  <data name="UrlBuilderDialog_NextText.Text" xml:space="preserve">
+    <value>次へ</value>
+  </data>
+  <data name="UrlBuilderDialog_SchemeTextBox.Header" xml:space="preserve">
+    <value>スキーム</value>
+  </data>
+  <data name="UrlBuilderDialog_SchemeTextBox.PlaceholderText" xml:space="preserve">
+    <value>https</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_AuthorityTextBox.Header" xml:space="preserve">
+    <value>オーソリティ / ホスト</value>
+  </data>
+  <data name="UrlBuilderDialog_AuthorityTextBox.PlaceholderText" xml:space="preserve">
+    <value>example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_PathTextBox.Header" xml:space="preserve">
+    <value>パス</value>
+  </data>
+  <data name="UrlBuilderDialog_PathTextBox.PlaceholderText" xml:space="preserve">
+    <value>/products/qr codes</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_QueryParametersText.Text" xml:space="preserve">
+    <value>クエリ パラメーター</value>
+  </data>
+  <data name="UrlBuilderDialog_AddAQueryParameterButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>クエリ パラメーターを追加</value>
+  </data>
+  <data name="UrlBuilderDialog_AddParameterText.Text" xml:space="preserve">
+    <value>パラメーターを追加</value>
+  </data>
+  <data name="UrlBuilderDialog_NoQueryParametersYetText.Text" xml:space="preserve">
+    <value>クエリ パラメーターはありません</value>
+  </data>
+  <data name="UrlBuilderDialog_NameTextBox.Header" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="UrlBuilderDialog_NameTextBox.PlaceholderText" xml:space="preserve">
+    <value>utm_source</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_ValueTextBox.Header" xml:space="preserve">
+    <value>値</value>
+  </data>
+  <data name="UrlBuilderDialog_ValueTextBox.PlaceholderText" xml:space="preserve">
+    <value>newsletter</value>
+  </data>
+  <data name="UrlBuilderDialog_RemoveParameterHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>パラメーターを削除</value>
+  </data>
+  <data name="UrlBuilderDialog_FragmentTextBox.Header" xml:space="preserve">
+    <value>フラグメント</value>
+  </data>
+  <data name="UrlBuilderDialog_FragmentTextBox.PlaceholderText" xml:space="preserve">
+    <value>section-1</value>
+  </data>
+  <data name="UrlBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>プレビュー</value>
+  </data>
+  <data name="VCardBuilderDialog_Dialog.Title" xml:space="preserve">
+    <value>vCard の作成</value>
+  </data>
+  <data name="VCardBuilderDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="VCardBuilderDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="VCardBuilderDialog_StartWithTheCommonContactText.Text" xml:space="preserve">
+    <value>基本の連絡先情報を入力し、必要に応じて［+］で項目を追加します。</value>
+  </data>
+  <data name="VCardBuilderDialog_FormattedNameTextBox.Header" xml:space="preserve">
+    <value>表示名</value>
+  </data>
+  <data name="VCardBuilderDialog_FormattedNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>山田 花子</value>
+  </data>
+  <data name="VCardBuilderDialog_FirstNameTextBox.Header" xml:space="preserve">
+    <value>名</value>
+  </data>
+  <data name="VCardBuilderDialog_FirstNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>花子</value>
+  </data>
+  <data name="VCardBuilderDialog_LastNameTextBox.Header" xml:space="preserve">
+    <value>姓</value>
+  </data>
+  <data name="VCardBuilderDialog_LastNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>山田</value>
+  </data>
+  <data name="VCardBuilderDialog_MiddleTextBox.Header" xml:space="preserve">
+    <value>ミドル ネーム</value>
+  </data>
+  <data name="VCardBuilderDialog_PrefixTextBox.Header" xml:space="preserve">
+    <value>前置敬称</value>
+  </data>
+  <data name="VCardBuilderDialog_PrefixTextBox.PlaceholderText" xml:space="preserve">
+    <value>Dr.</value>
+  </data>
+  <data name="VCardBuilderDialog_SuffixTextBox.Header" xml:space="preserve">
+    <value>後置敬称</value>
+  </data>
+  <data name="VCardBuilderDialog_SuffixTextBox.PlaceholderText" xml:space="preserve">
+    <value>Jr.</value>
+  </data>
+  <data name="VCardBuilderDialog_OrganizationTextBox.Header" xml:space="preserve">
+    <value>組織</value>
+  </data>
+  <data name="VCardBuilderDialog_OrganizationTextBox.PlaceholderText" xml:space="preserve">
+    <value>Contoso</value>
+  </data>
+  <data name="VCardBuilderDialog_TitleTextBox.Header" xml:space="preserve">
+    <value>役職</value>
+  </data>
+  <data name="VCardBuilderDialog_TitleTextBox.PlaceholderText" xml:space="preserve">
+    <value>プロダクト マネージャー</value>
+  </data>
+  <data name="VCardBuilderDialog_MobilePhoneTextBox.Header" xml:space="preserve">
+    <value>携帯電話</value>
+  </data>
+  <data name="VCardBuilderDialog_MobilePhoneTextBox.PlaceholderText" xml:space="preserve">
+    <value>+1 555 0100</value>
+  </data>
+  <data name="VCardBuilderDialog_EmailTextBox.Header" xml:space="preserve">
+    <value>メール アドレス</value>
+  </data>
+  <data name="VCardBuilderDialog_EmailTextBox.PlaceholderText" xml:space="preserve">
+    <value>jane@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="VCardBuilderDialog_WebsiteTextBox.Header" xml:space="preserve">
+    <value>Web サイト</value>
+  </data>
+  <data name="VCardBuilderDialog_WebsiteTextBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="VCardBuilderDialog_AddAnOptionalVCardFieldButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>vCard に任意の項目を追加します</value>
+  </data>
+  <data name="VCardBuilderDialog_AddFieldText.Text" xml:space="preserve">
+    <value>項目を追加</value>
+  </data>
+  <data name="VCardBuilderDialog_WorkPhoneMenuItem.Text" xml:space="preserve">
+    <value>勤務先の電話</value>
+  </data>
+  <data name="VCardBuilderDialog_HomePhoneMenuItem.Text" xml:space="preserve">
+    <value>自宅の電話</value>
+  </data>
+  <data name="VCardBuilderDialog_NicknameMenuItem.Text" xml:space="preserve">
+    <value>ニックネーム</value>
+  </data>
+  <data name="VCardBuilderDialog_BirthdayMenuItem.Text" xml:space="preserve">
+    <value>誕生日</value>
+  </data>
+  <data name="VCardBuilderDialog_AddressMenuItem.Text" xml:space="preserve">
+    <value>住所</value>
+  </data>
+  <data name="VCardBuilderDialog_NoteMenuItem.Text" xml:space="preserve">
+    <value>メモ</value>
+  </data>
+  <data name="VCardBuilderDialog_WorkPhoneText.Text" xml:space="preserve">
+    <value>勤務先の電話</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveWorkPhoneHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>勤務先の電話を削除</value>
+  </data>
+  <data name="VCardBuilderDialog_15550101TextBox.PlaceholderText" xml:space="preserve">
+    <value>+1 555 0101</value>
+  </data>
+  <data name="VCardBuilderDialog_HomePhoneText.Text" xml:space="preserve">
+    <value>自宅の電話</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveHomePhoneHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>自宅の電話を削除</value>
+  </data>
+  <data name="VCardBuilderDialog_15550102TextBox.PlaceholderText" xml:space="preserve">
+    <value>+1 555 0102</value>
+  </data>
+  <data name="VCardBuilderDialog_NicknameText.Text" xml:space="preserve">
+    <value>ニックネーム</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveNicknameHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ニックネームを削除</value>
+  </data>
+  <data name="VCardBuilderDialog_JanieTextBox.PlaceholderText" xml:space="preserve">
+    <value>はなちゃん</value>
+  </data>
+  <data name="VCardBuilderDialog_BirthdayText.Text" xml:space="preserve">
+    <value>誕生日</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveBirthdayHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>誕生日を削除</value>
+  </data>
+  <data name="VCardBuilderDialog_19901021TextBox.PlaceholderText" xml:space="preserve">
+    <value>1990-10-21</value>
+  </data>
+  <data name="VCardBuilderDialog_AddressText.Text" xml:space="preserve">
+    <value>住所</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveAddressHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>住所を削除</value>
+  </data>
+  <data name="VCardBuilderDialog_StreetTextBox.Header" xml:space="preserve">
+    <value>町名・番地</value>
+  </data>
+  <data name="VCardBuilderDialog_CityTextBox.Header" xml:space="preserve">
+    <value>市区町村</value>
+  </data>
+  <data name="VCardBuilderDialog_StateRegionTextBox.Header" xml:space="preserve">
+    <value>都道府県・地域</value>
+  </data>
+  <data name="VCardBuilderDialog_PostalCodeTextBox.Header" xml:space="preserve">
+    <value>郵便番号</value>
+  </data>
+  <data name="VCardBuilderDialog_CountryTextBox.Header" xml:space="preserve">
+    <value>国</value>
+  </data>
+  <data name="VCardBuilderDialog_NoteText.Text" xml:space="preserve">
+    <value>メモ</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveNoteHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>メモを削除</value>
+  </data>
+  <data name="VCardBuilderDialog_AddContactNotesTextBox.PlaceholderText" xml:space="preserve">
+    <value>連絡先のメモを入力</value>
+  </data>
+  <data name="VCardBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>プレビュー</value>
+  </data>
+  <data name="WifiBuilderDialog_Dialog.Title" xml:space="preserve">
+    <value>Wi-Fi 接続用コードの作成</value>
+  </data>
+  <data name="WifiBuilderDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="WifiBuilderDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="WifiBuilderDialog_CreateAQRCodeThatText.Text" xml:space="preserve">
+    <value>標準の Wi-Fi データ形式に対応したスマートフォンなどの読み取り機器と、Wi-Fi の接続情報を共有する QR コードを作成します。</value>
+  </data>
+  <data name="WifiBuilderDialog_SsidTextBox.Header" xml:space="preserve">
+    <value>ネットワーク名（SSID）</value>
+  </data>
+  <data name="WifiBuilderDialog_SsidTextBox.PlaceholderText" xml:space="preserve">
+    <value>Contoso Guest</value>
+  </data>
+  <data name="WifiBuilderDialog_SecurityTypeComboBox.Header" xml:space="preserve">
+    <value>セキュリティの種類</value>
+  </data>
+  <data name="WifiBuilderDialog_WPAWPA2WPA3ComboBoxItem.Content" xml:space="preserve">
+    <value>WPA / WPA2 / WPA3</value>
+  </data>
+  <data name="WifiBuilderDialog_WEPLegacyComboBoxItem.Content" xml:space="preserve">
+    <value>WEP（旧式）</value>
+  </data>
+  <data name="WifiBuilderDialog_NoneOpenNetworkComboBoxItem.Content" xml:space="preserve">
+    <value>なし（オープン ネットワーク）</value>
+  </data>
+  <data name="WifiBuilderDialog_PasswordTextBox.Header" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="WifiBuilderDialog_PasswordTextBox.PlaceholderText" xml:space="preserve">
+    <value>Wi-Fi のパスワードを入力</value>
+  </data>
+  <data name="WifiBuilderDialog_ThisIsAHiddenNetworkCheckBox.Content" xml:space="preserve">
+    <value>非公開ネットワーク</value>
+  </data>
+  <data name="WifiBuilderDialog_OpenNetworkInfoBar.Message" xml:space="preserve">
+    <value>オープン ネットワークにパスワードはありません。多くのデバイスでは接続前にネットワークの詳細が表示されます。</value>
+  </data>
+  <data name="WifiBuilderDialog_OpenNetworkInfoBar.Title" xml:space="preserve">
+    <value>オープン ネットワーク</value>
+  </data>
+  <data name="WifiBuilderDialog_LegacySecurityInfoBar.Message" xml:space="preserve">
+    <value>WEP は古い方式で安全ではありません。非常に古い機器との互換性が必要な場合にのみ使用してください。</value>
+  </data>
+  <data name="WifiBuilderDialog_LegacySecurityInfoBar.Title" xml:space="preserve">
+    <value>旧式のセキュリティ</value>
+  </data>
+  <data name="WifiBuilderDialog_BeforeYouShareThisInfoBar.Message" xml:space="preserve">
+    <value>この QR コードを読み取ったり撮影したりした人は、誰でも Wi-Fi の接続情報を取得できます。新しい iPhone や Android デバイスでは通常認識されますが、古いカメラや一部の読み取りアプリでは元のテキストしか表示されない場合があります。</value>
+  </data>
+  <data name="WifiBuilderDialog_BeforeYouShareThisInfoBar.Title" xml:space="preserve">
+    <value>共有する前に</value>
+  </data>
+  <data name="WifiBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>プレビュー</value>
+  </data>
+  <data name="AboutQrCodesWebPage_BackToYourSimpleQRButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Simple QR Code Maker の設定に戻る</value>
+  </data>
+  <data name="AboutQrCodesWebPage_BackToSettingsText.Text" xml:space="preserve">
+    <value>設定に戻る</value>
+  </data>
+  <data name="DecodingPage_CloseAdvancedToolsButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>高度なツールを閉じる</value>
+  </data>
+  <data name="DecodingPage_CloseAdvancedToolsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>高度なツールを閉じる</value>
+  </data>
+  <data name="DecodingPage_CancelButton.Content" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="DecodingPage_OpenFilesIconAndTextButton.Text" xml:space="preserve">
+    <value>ファイルを開く…</value>
+  </data>
+  <data name="DecodingPage_OpenFilesIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>画像ファイルを 1 つ以上開き、バーコードを読み取ります</value>
+  </data>
+  <data name="DecodingPage_OpenFolderIconAndTextButton.Text" xml:space="preserve">
+    <value>フォルダーを開く…</value>
+  </data>
+  <data name="DecodingPage_OpenFolderIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>フォルダーを開き、すべての画像ファイルを参照して一括で読み取ります</value>
+  </data>
+  <data name="DecodingPage_PasteIconAndTextButton.Text" xml:space="preserve">
+    <value>貼り付け</value>
+  </data>
+  <data name="DecodingPage_PasteIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>クリップボードから画像またはファイルを貼り付けてバーコードの読み取りを試します</value>
+  </data>
+  <data name="DecodingPage_CameraIconAndTextButton.Text" xml:space="preserve">
+    <value>カメラ</value>
+  </data>
+  <data name="DecodingPage_CameraIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Windows のカメラを開き、読み取る写真を撮影します</value>
+  </data>
+  <data name="DecodingPage_SnipIconAndTextButton.Text" xml:space="preserve">
+    <value>画面切り取り</value>
+  </data>
+  <data name="DecodingPage_SnipIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Snipping Tool を開き、読み取り対象のスクリーンショットを撮影します</value>
+  </data>
+  <data name="DecodingPage_OpenFileMenuItem.Text" xml:space="preserve">
+    <value>ファイルを開く</value>
+  </data>
+  <data name="DecodingPage_OpenFileMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>元のファイルを開きます</value>
+  </data>
+  <data name="DecodingPage_SaveImageMenuItem.Text" xml:space="preserve">
+    <value>画像を保存…</value>
+  </data>
+  <data name="DecodingPage_SaveImageMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>読み取った画像をファイルに保存します</value>
+  </data>
+  <data name="DecodingPage_OpenContainingFolderMenuItem.Text" xml:space="preserve">
+    <value>ファイルの場所を開く</value>
+  </data>
+  <data name="DecodingPage_OpenContainingFolderMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ファイルがあるフォルダーを開きます</value>
+  </data>
+  <data name="DecodingPage_OpenPasteDropAnImageText.Text" xml:space="preserve">
+    <value>読み取る画像を開くか、ここに貼り付け・ドロップするか、撮影してください。</value>
+  </data>
+  <data name="DecodingPage_NoCodesInfoBar.Title" xml:space="preserve">
+    <value>コードが見つかりませんでした</value>
+  </data>
+  <data name="DecodingPage_UseAdvancedToolsToOpenText.Text" xml:space="preserve">
+    <value>検出しやすくするには、高度なツールからガイド付き補正を開くか、クイック補正を適用してください。</value>
+  </data>
+  <data name="DecodingPage_MakeCodesIconAndTextButton.Text" xml:space="preserve">
+    <value>コードを作成</value>
+  </data>
+  <data name="DecodingPage_MakeCodesIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>QR コードの作成に切り替えます</value>
+  </data>
+  <data name="DecodingPage_SettingsIconAndTextButton.Text" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="DecodingPage_SettingsIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Simple QR Code Maker の設定</value>
+  </data>
+  <data name="DecodingPage_NewDropDownButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>現在の画像を別の画像に置き換えます</value>
+  </data>
+  <data name="DecodingPage_NewText.Text" xml:space="preserve">
+    <value>新規</value>
+  </data>
+  <data name="DecodingPage_OpenFilesMenuItem.Text" xml:space="preserve">
+    <value>ファイルを開く…</value>
+  </data>
+  <data name="DecodingPage_OpenFolderMenuItem.Text" xml:space="preserve">
+    <value>フォルダーを開く…</value>
+  </data>
+  <data name="DecodingPage_PasteMenuItem.Text" xml:space="preserve">
+    <value>貼り付け</value>
+  </data>
+  <data name="DecodingPage_CameraMenuItem.Text" xml:space="preserve">
+    <value>カメラ</value>
+  </data>
+  <data name="DecodingPage_SnipMenuItem.Text" xml:space="preserve">
+    <value>画面切り取り</value>
+  </data>
+  <data name="DecodingPage_ShowOrHideAdvancedImageToggleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>高度な画像処理ツールを表示または非表示にします</value>
+  </data>
+  <data name="DecodingPage_AdvancedToolsText.Text" xml:space="preserve">
+    <value>高度なツール</value>
+  </data>
+  <data name="DecodingPage_EditThisTextAsAAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>このテキストを新しい QR コードとして編集します</value>
+  </data>
+  <data name="DecodingPage_CopyTheEncodedTextToAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>コードに含まれるテキストをクリップボードにコピーします</value>
+  </data>
+  <data name="DecodingPage_TryToGoToTheAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>URL を開きます</value>
+  </data>
+  <data name="DecodingPage_ShowHideImagesPanelAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>画像ペインを表示または非表示にします</value>
+  </data>
+  <data name="FolderSummaryPage_FolderSummaryText.Text" xml:space="preserve">
+    <value>フォルダーの結果一覧</value>
+  </data>
+  <data name="FolderSummaryPage_SaveResultsAsACSVButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>結果を CSV スプレッドシートとして保存します</value>
+  </data>
+  <data name="FolderSummaryPage_SaveSpreadsheetText.Text" xml:space="preserve">
+    <value>スプレッドシートを保存</value>
+  </data>
+  <data name="FolderSummaryPage_FileNameTableViewTemplateColumn.Header" xml:space="preserve">
+    <value>ファイル名</value>
+  </data>
+  <data name="FolderSummaryPage_OpenFileLinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>既定のアプリでこの画像を開きます</value>
+  </data>
+  <data name="FolderSummaryPage_OpenFileText.Text" xml:space="preserve">
+    <value>ファイルを開く ↗</value>
+  </data>
+  <data name="FolderSummaryPage_QRCodesTableViewTemplateColumn.Header" xml:space="preserve">
+    <value>QR コード</value>
+  </data>
+  <data name="FolderSummaryPage_ContentsTableViewTemplateColumn.Header" xml:space="preserve">
+    <value>内容</value>
+  </data>
+  <data name="MainPage_UrlImportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>テキストを追加またはインポートします</value>
+  </data>
+  <data name="MainPage_PasteMenuItem.Text" xml:space="preserve">
+    <value>貼り付け</value>
+  </data>
+  <data name="MainPage_BuildURLMenuItem.Text" xml:space="preserve">
+    <value>URL の作成</value>
+  </data>
+  <data name="MainPage_BuildVCardMenuItem.Text" xml:space="preserve">
+    <value>vCard の作成</value>
+  </data>
+  <data name="MainPage_BuildVCardMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>QR コードで連絡先情報を簡単に共有できる名刺を作成します</value>
+  </data>
+  <data name="MainPage_BuildWiFiMenuItem.Text" xml:space="preserve">
+    <value>Wi-Fi 接続用コードの作成</value>
+  </data>
+  <data name="MainPage_BuildWiFiMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ネットワークの接続情報を共有できる Wi-Fi 用 QR コードを作成します</value>
+  </data>
+  <data name="MainPage_BuildEmailMenuItem.Text" xml:space="preserve">
+    <value>メールの作成</value>
+  </data>
+  <data name="MainPage_BuildEmailMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>宛先、件名、本文を入力した状態でメールを開く QR コードを作成します</value>
+  </data>
+  <data name="MainPage_GenerateIDsMenuItem.Text" xml:space="preserve">
+    <value>ID の生成</value>
+  </data>
+  <data name="MainPage_OpenTextFileMenuItem.Text" xml:space="preserve">
+    <value>テキスト ファイルを開く</value>
+  </data>
+  <data name="MainPage_OpenSpreadsheetMenuItem.Text" xml:space="preserve">
+    <value>スプレッドシートを開く</value>
+  </data>
+  <data name="MainPage_MultiLineCodesToggleMenuFlyoutItem.Text" xml:space="preserve">
+    <value>行ごとにコードを作成</value>
+  </data>
+  <data name="MainPage_CodeColorColorPickerButton.ToolTipText" xml:space="preserve">
+    <value>コードの色</value>
+  </data>
+  <data name="MainPage_SetAsDefaultCodeColorMenuItem.Text" xml:space="preserve">
+    <value>既定のコード色に設定</value>
+  </data>
+  <data name="MainPage_BackgroundColorColorPickerButton.ToolTipText" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="MainPage_SetAsDefaultBackgroundColorMenuItem.Text" xml:space="preserve">
+    <value>既定の背景色に設定</value>
+  </data>
+  <data name="MainPage_LevelOfErrorCorrectionDropDownButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>誤り訂正レベル</value>
+  </data>
+  <data name="MainPage_SetAsDefaultErrorCorrectionMenuItem.Text" xml:space="preserve">
+    <value>既定の誤り訂正レベルに設定</value>
+  </data>
+  <data name="MainPage_WhatIsErrorCorrectionText.Text" xml:space="preserve">
+    <value>誤り訂正とは？</value>
+  </data>
+  <data name="MainPage_LoadMoreText.Text" xml:space="preserve">
+    <value>さらに読み込む</value>
+  </data>
+  <data name="MainPage_ReadCodesIconAndTextButton.Text" xml:space="preserve">
+    <value>コードを読み取る</value>
+  </data>
+  <data name="MainPage_ReadCodesIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>画像を開いてコードを読み取り、テキストを取り出します</value>
+  </data>
+  <data name="MainPage_SettingsIconAndTextButton.Text" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="MainPage_SettingsIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Simple QR Code Maker の設定</value>
+  </data>
+  <data name="MainPage_ScrollToCodesButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>QR コードのプレビューまでスクロールします</value>
+  </data>
+  <data name="MainPage_ScrollToCodesText.Text" xml:space="preserve">
+    <value>コードまでスクロール</value>
+  </data>
+  <data name="MainPage_OpenFolderHyperlinkButton.Content" xml:space="preserve">
+    <value>フォルダーを開く</value>
+  </data>
+  <data name="MainPage_SettingsIconAndTextHyperlinkButton.Text" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="MainPage_AddButtonTeachingTip.Title" xml:space="preserve">
+    <value>内容を追加するその他の方法</value>
+  </data>
+  <data name="MainPage_AddButtonTeachingTip.CloseButtonContent" xml:space="preserve">
+    <value>了解</value>
+  </data>
+  <data name="MainPage_AddButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>このメニューでは、テキストの貼り付け、URL、vCard、Wi-Fi、メール用 QR コードの作成、ファイルからのインポートができます。</value>
+  </data>
+  <data name="MainPage_HistoryButtonTeachingTip.Title" xml:space="preserve">
+    <value>QR コードの作成履歴</value>
+  </data>
+  <data name="MainPage_HistoryButtonTeachingTip.CloseButtonContent" xml:space="preserve">
+    <value>了解</value>
+  </data>
+  <data name="MainPage_HistoryButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>作成した QR コードはここに保存されます。以前のコードを復元するには、ツール バーの［作成履歴］を選びます。</value>
+  </data>
+  <data name="MainPage_BrandButtonTeachingTip.Title" xml:space="preserve">
+    <value>スタイルをブランドとして保存</value>
+  </data>
+  <data name="MainPage_BrandButtonTeachingTip.CloseButtonContent" xml:space="preserve">
+    <value>了解</value>
+  </data>
+  <data name="MainPage_BrandButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>このボタンで現在の色、ロゴ、設定に名前を付けてブランドとして保存すると、どの QR コードにもすぐに適用できます。</value>
+  </data>
+  <data name="MainPage_BrandUrlWarningTip.Title" xml:space="preserve">
+    <value>ブランド URL の競合</value>
+  </data>
+  <data name="MainPage_BrandUrlWarningTip.CloseButtonContent" xml:space="preserve">
+    <value>了解</value>
+  </data>
+  <data name="MainPage_BrandUrlWarningTip.Subtitle" xml:space="preserve">
+    <value>このブランドの URL と一致しない内容があります。競合時の動作は設定で変更できます。</value>
+  </data>
+  <data name="SettingsPage_RateAndReviewSettingsCard.Description" xml:space="preserve">
+    <value>アプリを気に入っていただけましたか？評価やご意見をお寄せください。</value>
+  </data>
+  <data name="SettingsPage_RateAndReviewSettingsCard.Header" xml:space="preserve">
+    <value>評価とレビュー</value>
+  </data>
+  <data name="SettingsPage_ThemeSettingsExpander.Description" xml:space="preserve">
+    <value>アプリのテーマを選びます</value>
+  </data>
+  <data name="SettingsPage_ThemeSettingsExpander.Header" xml:space="preserve">
+    <value>テーマ</value>
+  </data>
+  <data name="SettingsPage_QRCodeText.Text" xml:space="preserve">
+    <value>QR コード</value>
+  </data>
+  <data name="SettingsPage_LaunchModeSettingsExpander.Description" xml:space="preserve">
+    <value>アプリを QR コードの作成モードで開くか、読み取りモードで開くかを選びます</value>
+  </data>
+  <data name="SettingsPage_LaunchModeSettingsExpander.Header" xml:space="preserve">
+    <value>起動モード</value>
+  </data>
+  <data name="SettingsPage_CreatingQRCodesRadioButton.Content" xml:space="preserve">
+    <value>QR コードを作成</value>
+  </data>
+  <data name="SettingsPage_ReadingQRCodesRadioButton.Content" xml:space="preserve">
+    <value>QR コードを読み取る</value>
+  </data>
+  <data name="SettingsPage_MultiLineHandlingSettingsExpander.Description" xml:space="preserve">
+    <value>QR コードを作成するときに複数行のテキストをどう扱うかを設定します</value>
+  </data>
+  <data name="SettingsPage_MultiLineHandlingSettingsExpander.Header" xml:space="preserve">
+    <value>複数行の処理</value>
+  </data>
+  <data name="SettingsPage_OneCodeForEachLineRadioButton.Content" xml:space="preserve">
+    <value>行ごとに 1 つのコードを作成</value>
+  </data>
+  <data name="SettingsPage_MultiLineInSingleCodeRadioButton.Content" xml:space="preserve">
+    <value>複数行を 1 つのコードにまとめる</value>
+  </data>
+  <data name="SettingsPage_BaseTextSettingsCard.Description" xml:space="preserve">
+    <value>入力開始時と改行時に入るテキスト</value>
+  </data>
+  <data name="SettingsPage_BaseTextSettingsCard.Header" xml:space="preserve">
+    <value>基本テキスト</value>
+  </data>
+  <data name="SettingsPage_ExHttpsExampleComTextBox.PlaceholderText" xml:space="preserve">
+    <value>例：https://example.com/</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="SettingsPage_AutoBrandsSettingsCard.Description" xml:space="preserve">
+    <value>QR コードのベース URL とブランドの URL が一致すると、そのブランドを自動的に適用します</value>
+  </data>
+  <data name="SettingsPage_AutoBrandsSettingsCard.Header" xml:space="preserve">
+    <value>ブランドの自動適用</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch.OffContent" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch.OnContent" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesSettingsCard.Description" xml:space="preserve">
+    <value>認識された Web サイトのリンク用に色とロゴを提案します。テーマは選んだ場合にのみ適用されます。</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesSettingsCard.Header" xml:space="preserve">
+    <value>ブランド テーマを提案</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesToggleSwitch.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ブランド テーマを提案</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesToggleSwitch.OffContent" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesToggleSwitch.OnContent" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="SettingsPage_BrandURLOnPlainTextSettingsExpander.Description" xml:space="preserve">
+    <value>URL ではないプレーン テキストに、URL 付きブランドを適用するときの動作</value>
+  </data>
+  <data name="SettingsPage_BrandURLOnPlainTextSettingsExpander.Header" xml:space="preserve">
+    <value>プレーン テキストへのブランド URL の適用</value>
+  </data>
+  <data name="SettingsPage_IgnoreLeaveExistingContentUnchangedRadioButton.Content" xml:space="preserve">
+    <value>無視：既存の内容は変更しない</value>
+  </data>
+  <data name="SettingsPage_WarnDefaultShowAnInfoRadioButton.Content" xml:space="preserve">
+    <value>警告（既定）：情報バーを表示</value>
+  </data>
+  <data name="SettingsPage_AutoPrependAddBrandURLRadioButton.Content" xml:space="preserve">
+    <value>自動追加：各プレーン テキスト項目の先頭にブランド URL を付ける</value>
+  </data>
+  <data name="SettingsPage_BrandURLMismatchSettingsExpander.Description" xml:space="preserve">
+    <value>一致しない URL を含む内容に、URL 付きブランドを適用するときの動作</value>
+  </data>
+  <data name="SettingsPage_BrandURLMismatchSettingsExpander.Header" xml:space="preserve">
+    <value>ブランド URL の不一致</value>
+  </data>
+  <data name="SettingsPage_IgnoreKeepExistingURLsRadioButton.Content" xml:space="preserve">
+    <value>無視：既存の URL を保持</value>
+  </data>
+  <data name="SettingsPage_WarnDefaultShowAnInfoRadioButton2.Content" xml:space="preserve">
+    <value>警告（既定）：情報バーを表示</value>
+  </data>
+  <data name="SettingsPage_AutoFixReplaceNonMatchingRadioButton.Content" xml:space="preserve">
+    <value>自動修正：一致しない URL をブランド URL に置き換える</value>
+  </data>
+  <data name="SettingsPage_URLWarningsSettingsCard.Description" xml:space="preserve">
+    <value>QR コードの内容が URL ではない場合に警告を表示します</value>
+  </data>
+  <data name="SettingsPage_URLWarningsSettingsCard.Header" xml:space="preserve">
+    <value>URL の警告</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch2.OffContent" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch2.OnContent" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="SettingsPage_RedirectorWarningsSettingsCard.Description" xml:space="preserve">
+    <value>QR コードが bit.ly や qrco.de などの既知のリダイレクト サービスを使用している場合に警告します</value>
+  </data>
+  <data name="SettingsPage_RedirectorWarningsSettingsCard.Header" xml:space="preserve">
+    <value>リダイレクトの警告</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch3.OffContent" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch3.OnContent" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="SettingsPage_SafeRedirectorDomainsSettingsExpander.Description" xml:space="preserve">
+    <value>リダイレクトの警告バーで安全とマークしたドメイン</value>
+  </data>
+  <data name="SettingsPage_SafeRedirectorDomainsSettingsExpander.Header" xml:space="preserve">
+    <value>安全なリダイレクト ドメイン</value>
+  </data>
+  <data name="SettingsPage_KnownSafeDomainsSettingsCard.Header" xml:space="preserve">
+    <value>安全と確認したドメイン</value>
+  </data>
+  <data name="SettingsPage_RemoveButton.Content" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="SettingsPage_ClearAllButton.Content" xml:space="preserve">
+    <value>すべて消去</value>
+  </data>
+  <data name="SettingsPage_MinimumSizeTextSettingsCard.Description" xml:space="preserve">
+    <value>QR コードの最小サイズの表示を隠します</value>
+  </data>
+  <data name="SettingsPage_MinimumSizeTextSettingsCard.Header" xml:space="preserve">
+    <value>最小サイズの表示</value>
+  </data>
+  <data name="SettingsPage_ShowingToggleSwitch.OffContent" xml:space="preserve">
+    <value>表示</value>
+  </data>
+  <data name="SettingsPage_ShowingToggleSwitch.OnContent" xml:space="preserve">
+    <value>非表示</value>
+  </data>
+  <data name="SettingsPage_SaveBothButtonSettingsCard.Description" xml:space="preserve">
+    <value>PNG と SVG 用の［両方］ボタンを表示します</value>
+  </data>
+  <data name="SettingsPage_SaveBothButtonSettingsCard.Header" xml:space="preserve">
+    <value>［両方］ボタン</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch.OffContent" xml:space="preserve">
+    <value>非表示</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch.OnContent" xml:space="preserve">
+    <value>表示</value>
+  </data>
+  <data name="SettingsPage_PrintButtonSettingsCard.Description" xml:space="preserve">
+    <value>エクスポート操作に［印刷］ボタンを表示します</value>
+  </data>
+  <data name="SettingsPage_PrintButtonSettingsCard.Header" xml:space="preserve">
+    <value>［印刷］ボタン</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch2.OffContent" xml:space="preserve">
+    <value>非表示</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch2.OnContent" xml:space="preserve">
+    <value>表示</value>
+  </data>
+  <data name="SettingsPage_ZipSaveOptionsSettingsCard.Description" xml:space="preserve">
+    <value>エクスポート メニューに ZIP で保存するオプションを表示します</value>
+  </data>
+  <data name="SettingsPage_ZipSaveOptionsSettingsCard.Header" xml:space="preserve">
+    <value>ZIP での保存オプション</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch3.OffContent" xml:space="preserve">
+    <value>非表示</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch3.OnContent" xml:space="preserve">
+    <value>表示</value>
+  </data>
+  <data name="SettingsPage_MaxScanDistanceAtMinimumSettingsCard.Header" xml:space="preserve">
+    <value>最小サイズでの最大読み取り距離</value>
+  </data>
+  <data name="SettingsPage_QRPaddingSettingsCard.Header" xml:space="preserve">
+    <value>QR コードの余白</value>
+  </data>
+  <data name="SettingsPage_QuickSaveLocationSettingsExpander.Description" xml:space="preserve">
+    <value>フォルダーの選択を省略して、このフォルダーに直接保存します</value>
+  </data>
+  <data name="SettingsPage_QuickSaveLocationSettingsExpander.Header" xml:space="preserve">
+    <value>クイック保存先</value>
+  </data>
+  <data name="SettingsPage_FolderSettingsCard.Header" xml:space="preserve">
+    <value>フォルダー</value>
+  </data>
+  <data name="SettingsPage_NoFolderSelectedTextBox.PlaceholderText" xml:space="preserve">
+    <value>フォルダーが選択されていません</value>
+  </data>
+  <data name="SettingsPage_BrowseButton.Content" xml:space="preserve">
+    <value>参照…</value>
+  </data>
+  <data name="SettingsPage_ClearButton.Content" xml:space="preserve">
+    <value>消去</value>
+  </data>
+  <data name="SettingsPage_DefaultsText.Text" xml:space="preserve">
+    <value>既定値</value>
+  </data>
+  <data name="SettingsPage_QRCodeDefaultsSettingsExpander.Description" xml:space="preserve">
+    <value>ブランドが適用される前の、起動時の初期値です。メイン ページの右クリック メニューやフライアウトのボタンで設定できます。</value>
+  </data>
+  <data name="SettingsPage_QRCodeDefaultsSettingsExpander.Header" xml:space="preserve">
+    <value>QR コードの既定値</value>
+  </data>
+  <data name="SettingsPage_CodeColorSettingsCard.Header" xml:space="preserve">
+    <value>コードの色</value>
+  </data>
+  <data name="SettingsPage_ResetButton.Content" xml:space="preserve">
+    <value>リセット</value>
+  </data>
+  <data name="SettingsPage_BackgroundColorSettingsCard.Header" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="SettingsPage_ResetButton2.Content" xml:space="preserve">
+    <value>リセット</value>
+  </data>
+  <data name="SettingsPage_ErrorCorrectionSettingsCard.Header" xml:space="preserve">
+    <value>誤り訂正</value>
+  </data>
+  <data name="SettingsPage_ResetButton3.Content" xml:space="preserve">
+    <value>リセット</value>
+  </data>
+  <data name="SettingsPage_FrameAndPatternSettingsCard.Header" xml:space="preserve">
+    <value>フレームとパターン</value>
+  </data>
+  <data name="SettingsPage_ResetButton4.Content" xml:space="preserve">
+    <value>リセット</value>
+  </data>
+  <data name="SettingsPage_DataText.Text" xml:space="preserve">
+    <value>データ</value>
+  </data>
+  <data name="SettingsPage_ExportSettingsExpander.Description" xml:space="preserve">
+    <value>設定、履歴、ブランド、ロゴ画像をバックアップ用の ZIP ファイルに保存します</value>
+  </data>
+  <data name="SettingsPage_ExportSettingsExpander.Header" xml:space="preserve">
+    <value>エクスポート</value>
+  </data>
+  <data name="SettingsPage_ExportButton.Content" xml:space="preserve">
+    <value>エクスポート…</value>
+  </data>
+  <data name="SettingsPage_IncludeSettingsSettingsCard.Header" xml:space="preserve">
+    <value>設定を含める</value>
+  </data>
+  <data name="SettingsPage_IncludeBrandsSettingsCard.Header" xml:space="preserve">
+    <value>ブランドを含める</value>
+  </data>
+  <data name="SettingsPage_IncludeHistorySettingsCard.Header" xml:space="preserve">
+    <value>履歴を含める</value>
+  </data>
+  <data name="SettingsPage_ImportSettingsCard.Description" xml:space="preserve">
+    <value>バックアップ ZIP ファイルの設定、履歴、ブランド、ロゴ画像を結合します。バックアップにない既存の設定は保持されます。</value>
+  </data>
+  <data name="SettingsPage_ImportSettingsCard.Header" xml:space="preserve">
+    <value>インポート</value>
+  </data>
+  <data name="SettingsPage_ImportButton.Content" xml:space="preserve">
+    <value>インポート…</value>
+  </data>
+  <data name="SettingsPage_SimpleQRCodeMakerSettingsExpander.Header" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="SettingsPage_PrivacySettingsCard.Header" xml:space="preserve">
+    <value>プライバシー</value>
+  </data>
+  <data name="SettingsPage_LearnMoreSettingsCard.Header" xml:space="preserve">
+    <value>詳細情報</value>
+  </data>
+  <data name="SettingsPage_QRCodesOnWikipediaHyperlinkButton.Content" xml:space="preserve">
+    <value>Wikipedia の QR コードのページ</value>
+  </data>
+  <data name="SettingsPage_RateThisAppSettingsCard.Header" xml:space="preserve">
+    <value>このアプリを評価</value>
+  </data>
+  <data name="SettingsPage_MicrosoftStoreHyperlinkButton.Content" xml:space="preserve">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="SettingsPage_SourceCodeSettingsCard.Header" xml:space="preserve">
+    <value>ソース コード</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_CreatedBySettingsCard.Header" xml:space="preserve">
+    <value>開発者</value>
+  </data>
+  <data name="SettingsPage_TheJoeFinHyperlinkButton.Content" xml:space="preserve">
+    <value>TheJoeFin</value>
+  </data>
+  <data name="SettingsPage_MoreAppsByTheJoeFinSettingsExpander.Description" xml:space="preserve">
+    <value>同じ開発者によるその他の無料アプリ</value>
+  </data>
+  <data name="SettingsPage_MoreAppsByTheJoeFinSettingsExpander.Header" xml:space="preserve">
+    <value>TheJoeFin のその他のアプリ</value>
+  </data>
+  <data name="SettingsPage_SimpleIconFileMakerSettingsCard.Description" xml:space="preserve">
+    <value>アイコン ファイルの作成、編集、変換</value>
+  </data>
+  <data name="SettingsPage_SimpleIconFileMakerSettingsCard.Header" xml:space="preserve">
+    <value>Simple Icon File Maker</value>
+  </data>
+  <data name="SettingsPage_MicrosoftStoreHyperlinkButton2.Content" xml:space="preserve">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="SettingsPage_TextGrabSettingsCard.Description" xml:space="preserve">
+    <value>画面上のどこからでもテキストをコピー</value>
+  </data>
+  <data name="SettingsPage_TextGrabSettingsCard.Header" xml:space="preserve">
+    <value>Text Grab</value>
+  </data>
+  <data name="SettingsPage_MicrosoftStoreHyperlinkButton3.Content" xml:space="preserve">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="SettingsPage_WebsiteSettingsCard.Header" xml:space="preserve">
+    <value>Web サイト</value>
+  </data>
+  <data name="SettingsPage_JoeFinAppsComHyperlinkButton.Content" xml:space="preserve">
+    <value>JoeFinApps.com</value>
+  </data>
+  <data name="SettingsPage_LibrariesSettingsExpander.Description" xml:space="preserve">
+    <value>このアプリで使用しているオープン ソース ライブラリ</value>
+  </data>
+  <data name="SettingsPage_LibrariesSettingsExpander.Header" xml:space="preserve">
+    <value>ライブラリ</value>
+  </data>
+  <data name="SettingsPage_ViewLicensesButton.Content" xml:space="preserve">
+    <value>ライセンスを表示…</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitMvvmSettingsCard.Description" xml:space="preserve">
+    <value>MIT ライセンス</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitMvvmSettingsCard.Header" xml:space="preserve">
+    <value>CommunityToolkit.Mvvm</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton2.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitWinUISettingsCard.Description" xml:space="preserve">
+    <value>MIT ライセンス</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitWinUISettingsCard.Header" xml:space="preserve">
+    <value>CommunityToolkit WinUI</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton3.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_HumanizerSettingsCard.Description" xml:space="preserve">
+    <value>MIT ライセンス</value>
+  </data>
+  <data name="SettingsPage_HumanizerSettingsCard.Header" xml:space="preserve">
+    <value>Humanizer</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton4.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_MagickNETSettingsCard.Description" xml:space="preserve">
+    <value>Apache-2.0 ライセンス</value>
+  </data>
+  <data name="SettingsPage_MagickNETSettingsCard.Header" xml:space="preserve">
+    <value>Magick.NET</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton5.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_MicrosoftExtensionsHostingSettingsCard.Description" xml:space="preserve">
+    <value>MIT ライセンス</value>
+  </data>
+  <data name="SettingsPage_MicrosoftExtensionsHostingSettingsCard.Header" xml:space="preserve">
+    <value>Microsoft.Extensions.Hosting</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton6.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_MicrosoftGraphicsWin2DSettingsCard.Description" xml:space="preserve">
+    <value>MIT ライセンス</value>
+  </data>
+  <data name="SettingsPage_MicrosoftGraphicsWin2DSettingsCard.Header" xml:space="preserve">
+    <value>Microsoft.Graphics.Win2D</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton7.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_PdfPigSettingsCard.Description" xml:space="preserve">
+    <value>Apache-2.0 ライセンス</value>
+  </data>
+  <data name="SettingsPage_PdfPigSettingsCard.Header" xml:space="preserve">
+    <value>PdfPig</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton8.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WindowsAppSDKSettingsCard.Description" xml:space="preserve">
+    <value>MIT ライセンス</value>
+  </data>
+  <data name="SettingsPage_WindowsAppSDKSettingsCard.Header" xml:space="preserve">
+    <value>Windows App SDK</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton9.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WinUI3SettingsCard.Description" xml:space="preserve">
+    <value>MIT ライセンス</value>
+  </data>
+  <data name="SettingsPage_WinUI3SettingsCard.Header" xml:space="preserve">
+    <value>WinUI 3</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton10.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WinUITableViewSettingsCard.Description" xml:space="preserve">
+    <value>MIT ライセンス</value>
+  </data>
+  <data name="SettingsPage_WinUITableViewSettingsCard.Header" xml:space="preserve">
+    <value>WinUI.TableView</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton11.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WinUIExSettingsCard.Description" xml:space="preserve">
+    <value>MIT ライセンス</value>
+  </data>
+  <data name="SettingsPage_WinUIExSettingsCard.Header" xml:space="preserve">
+    <value>WinUIEx</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton12.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_XAMLBehaviorsSettingsCard.Description" xml:space="preserve">
+    <value>MIT ライセンス</value>
+  </data>
+  <data name="SettingsPage_XAMLBehaviorsSettingsCard.Header" xml:space="preserve">
+    <value>XAML Behaviors</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton13.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_ZXingNETSettingsCard.Description" xml:space="preserve">
+    <value>Apache-2.0 ライセンス</value>
+  </data>
+  <data name="SettingsPage_ZXingNETSettingsCard.Header" xml:space="preserve">
+    <value>ZXing.NET</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton14.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="ShellPage_MakeCodesNavItem.Content" xml:space="preserve">
+    <value>コードを作成</value>
+  </data>
+  <data name="ShellPage_ReadCodesNavItem.Content" xml:space="preserve">
+    <value>コードを読み取る</value>
+  </data>
+  <data name="ShellPage_FaqNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>QR コードに関するよくある質問</value>
+  </data>
+  <data name="ShellPage_HistoryNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>以前に作成した QR コードの履歴</value>
+  </data>
+  <data name="ShellPage_ShareNavItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>共有</value>
+  </data>
+  <data name="ShellPage_ShareNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>コンテンツまたは Simple QR Code Maker を共有します</value>
+  </data>
+  <data name="ShellPage_ShareContentMenuItem.Text" xml:space="preserve">
+    <value>内容を共有</value>
+  </data>
+  <data name="ShellPage_ShareAppMenuItem.Text" xml:space="preserve">
+    <value>アプリを共有</value>
+  </data>
+  <data name="ShellPage_SettingsNavItem.Content" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="ShellPage_SettingsNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Simple QR Code Maker の設定</value>
+  </data>
+  <data name="ShellPage_SharePane.Title" xml:space="preserve">
+    <value>Simple QR Code Maker を共有</value>
+  </data>
+  <data name="ShellPage_LinkToTheMicrosoftStoreText.Text" xml:space="preserve">
+    <value>Microsoft Store へのリンク</value>
+  </data>
+  <data name="ShellPage_VisitText.Text" xml:space="preserve">
+    <value>リンクを開く</value>
+  </data>
+  <data name="ShellPage_CopyText.Text" xml:space="preserve">
+    <value>コピー</value>
+  </data>
+  <data name="ShellPage_ShareErrorBar.Title" xml:space="preserve">
+    <value>内容を共有できませんでした</value>
+  </data>
+  <data name="SpreadsheetImportPage_HeaderRowSettingsCard.Description" xml:space="preserve">
+    <value>最初の行を列名として使うかどうかを選びます。</value>
+  </data>
+  <data name="SpreadsheetImportPage_HeaderRowSettingsCard.Header" xml:space="preserve">
+    <value>見出し行</value>
+  </data>
+  <data name="SpreadsheetImportPage_GenerateIDsAndSaveBackSettingsExpander.Header" xml:space="preserve">
+    <value>ID を生成して書き戻す</value>
+  </data>
+  <data name="SpreadsheetImportPage_IDStyleSettingsCard.Header" xml:space="preserve">
+    <value>ID の形式</value>
+  </data>
+  <data name="SpreadsheetImportPage_NanoIDLengthSettingsCard.Description" xml:space="preserve">
+    <value>ID の形式が NanoID の場合のみ使用します。</value>
+  </data>
+  <data name="SpreadsheetImportPage_NanoIDLengthSettingsCard.Header" xml:space="preserve">
+    <value>NanoID の長さ</value>
+  </data>
+  <data name="SpreadsheetImportPage_ColumnToImportSettingsCard.Header" xml:space="preserve">
+    <value>インポートする列</value>
+  </data>
+  <data name="SpreadsheetImportPage_TextBeforeImportedLineSettingsCard.Description" xml:space="preserve">
+    <value>各行の先頭に追加する任意のテキストです。</value>
+  </data>
+  <data name="SpreadsheetImportPage_TextBeforeImportedLineSettingsCard.Header" xml:space="preserve">
+    <value>各行の前に付けるテキスト</value>
+  </data>
+  <data name="SpreadsheetImportPage_ExHttpsTextBox.PlaceholderText" xml:space="preserve">
+    <value>例：https://</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="SpreadsheetImportPage_TextAfterImportedLineSettingsCard.Description" xml:space="preserve">
+    <value>各行の末尾に追加する任意のテキストです。</value>
+  </data>
+  <data name="SpreadsheetImportPage_TextAfterImportedLineSettingsCard.Header" xml:space="preserve">
+    <value>各行の後に付けるテキスト</value>
+  </data>
+  <data name="SpreadsheetImportPage_ExSourceQrCodeTextBox.PlaceholderText" xml:space="preserve">
+    <value>例：?source=qr-code</value>
+  </data>
+  <data name="SpreadsheetImportPage_RemoveDuplicatesSettingsCard.Description" xml:space="preserve">
+    <value>前後のテキストを付けた後、重複しない値だけをインポートします。</value>
+  </data>
+  <data name="SpreadsheetImportPage_RemoveDuplicatesSettingsCard.Header" xml:space="preserve">
+    <value>重複を削除</value>
+  </data>
+  <data name="SpreadsheetImportPage_PreviewText.Text" xml:space="preserve">
+    <value>プレビュー</value>
+  </data>
+  <data name="Main_InputExample" xml:space="preserve">
+    <value>例：http://www.example.com</value>
+  </data>
+  <data name="Main_InputExampleFormat" xml:space="preserve">
+    <value>例：{0}</value>
+    <comment>{0} = placeholdersList[random.Next(placeholdersList.Length)]</comment>
+  </data>
+  <data name="Main_CodeCopied" xml:space="preserve">
+    <value>QR コードをクリップボードにコピーしました</value>
+  </data>
+  <data name="Main_MarkRedirectorSafe" xml:space="preserve">
+    <value>「{0}」を安全としてマーク</value>
+    <comment>{0} = CurrentRedirectorWarningDomain</comment>
+  </data>
+  <data name="Frame_FallbackHelp" xml:space="preserve">
+    <value>内容の概要を取得できないときに使用します。</value>
+  </data>
+  <data name="Frame_FallbackLabel" xml:space="preserve">
+    <value>代替ラベルのテキスト</value>
+  </data>
+  <data name="Frame_BannerText" xml:space="preserve">
+    <value>バナーのテキスト</value>
+  </data>
+  <data name="Frame_CalloutText" xml:space="preserve">
+    <value>吹き出しのテキスト</value>
+  </data>
+  <data name="Frame_LabelText" xml:space="preserve">
+    <value>ラベルのテキスト</value>
+  </data>
+  <data name="Main_EmojiRenderFailed" xml:space="preserve">
+    <value>選択した絵文字を表示できませんでした</value>
+  </data>
+  <data name="Correction_Low" xml:space="preserve">
+    <value>低 7%</value>
+  </data>
+  <data name="Correction_Medium" xml:space="preserve">
+    <value>中 15%</value>
+  </data>
+  <data name="Correction_Quarter" xml:space="preserve">
+    <value>準高 25%</value>
+  </data>
+  <data name="Correction_High" xml:space="preserve">
+    <value>高 30%</value>
+  </data>
+  <data name="Main_EmojiStyleColor" xml:space="preserve">
+    <value>選択中のスタイル：3D</value>
+  </data>
+  <data name="Main_EmojiStyleSolid" xml:space="preserve">
+    <value>選択中のスタイル：白黒</value>
+  </data>
+  <data name="Main_BulkClipboardLimit" xml:space="preserve">
+    <value>QR コードが {0} 個を超える場合は、クリップボードに一括コピーできません。個別ファイルまたは ZIP に保存してください。</value>
+    <comment>{0} = LargeBatchThreshold</comment>
+  </data>
+  <data name="Main_PreviewSingle" xml:space="preserve">
+    <value>プレビューを 1 件表示しています。</value>
+  </data>
+  <data name="Main_PreviewAll" xml:space="preserve">
+    <value>プレビューを全 {0} 件表示しています。</value>
+    <comment>{0} = RequestedCodeCount</comment>
+  </data>
+  <data name="Main_PreviewPartial" xml:space="preserve">
+    <value>プレビューを {1} 件中 {0} 件表示しています。</value>
+    <comment>{0} = LoadedPreviewCount; {1} = RequestedCodeCount</comment>
+  </data>
+  <data name="Main_BulkSaving" xml:space="preserve">
+    <value>QR コードを保存中（{1} 件中 {0} 件）…</value>
+    <comment>{0} = BulkOperationCompletedItemCount; {1} = BulkOperationTotalItemCount</comment>
+  </data>
+  <data name="Main_CommonBrandFailed" xml:space="preserve">
+    <value>共通のブランドを変更できませんでした</value>
+  </data>
+  <data name="Main_CommonBrandFailedHelp" xml:space="preserve">
+    <value>色とロゴを適用できませんでした。より短い URL を試すか、現在のスタイルを使用してください。</value>
+  </data>
+  <data name="Main_GenerationFailed" xml:space="preserve">
+    <value>QR コードの作成エラー</value>
+  </data>
+  <data name="Main_ContentTooLong" xml:space="preserve">
+    <value>入力したテキストは QR コードに収まりません。より短いテキストを入力してください。</value>
+  </data>
+  <data name="Main_SomeContentTooLong" xml:space="preserve">
+    <value>QR コードに収まらないテキスト項目はスキップされました。</value>
+  </data>
+  <data name="Redirector_Detected" xml:space="preserve">
+    <value>既知のリダイレクト サービスを検出</value>
+  </data>
+  <data name="Main_RedirectorBatchWarning" xml:space="preserve">
+    <value>このセットには、既知のリダイレクト サービスを使う URL が {0} 件あります。最初の検出：{1}。</value>
+    <comment>{0} = unsafeRedirectorCount; {1} = host</comment>
+  </data>
+  <data name="Main_RedirectorWarning" xml:space="preserve">
+    <value>この URL は既知のリダイレクト サービス {0} を使用しています。コードを読み取った人は、リンクを開くまで最終的な移動先を確認できない場合があります。</value>
+    <comment>{0} = host</comment>
+  </data>
+  <data name="Main_BrandNonUrl" xml:space="preserve">
+    <value>URL ではない内容を検出</value>
+  </data>
+  <data name="Main_BrandNonUrlHelp" xml:space="preserve">
+    <value>このブランドには URL が設定されていますが、一部の項目はプレーン テキストです。ブランド URL の動作は設定で変更できます。</value>
+  </data>
+  <data name="Main_BrandUrlMismatch" xml:space="preserve">
+    <value>URL がブランドと一致しません</value>
+  </data>
+  <data name="Main_BrandUrlMismatchHelp" xml:space="preserve">
+    <value>一部の URL がこのブランドの URL と一致しません。競合時の動作は設定で変更できます。</value>
+  </data>
+  <data name="Main_ClipboardNoImage" xml:space="preserve">
+    <value>クリップボードに画像がありません</value>
+  </data>
+  <data name="Main_ClipboardLogoFailed" xml:space="preserve">
+    <value>クリップボードから画像を読み込めませんでした</value>
+  </data>
+  <data name="Main_FileReadFailedHelp" xml:space="preserve">
+    <value>選択したファイルを読み取れませんでした</value>
+  </data>
+  <data name="Main_FileReadFailed" xml:space="preserve">
+    <value>ファイルの読み取りエラー</value>
+  </data>
+  <data name="Main_ExcelUnavailableHelp" xml:space="preserve">
+    <value>CSV と TSV はインポートできます。Excel ブックをインポートするには Microsoft Excel をインストールしてください。</value>
+  </data>
+  <data name="Main_ExcelUnavailable" xml:space="preserve">
+    <value>Excel ブックを使用できません</value>
+  </data>
+  <data name="Main_SpreadsheetReadFailed" xml:space="preserve">
+    <value>スプレッドシートの読み取りエラー</value>
+  </data>
+  <data name="Main_NoSpreadsheetDataHelp" xml:space="preserve">
+    <value>選択したスプレッドシートにデータがありませんでした。</value>
+  </data>
+  <data name="Main_NoSpreadsheetData" xml:space="preserve">
+    <value>インポートするデータがありません</value>
+  </data>
+  <data name="Main_BulkClipboardDisabled" xml:space="preserve">
+    <value>クリップボードへの一括コピーは無効です</value>
+  </data>
+  <data name="Main_CopyFailed" xml:space="preserve">
+    <value>QR コードをクリップボードにコピーできませんでした</value>
+  </data>
+  <data name="Main_NothingToCopy" xml:space="preserve">
+    <value>クリップボードにコピーする QR コードがありません</value>
+  </data>
+  <data name="Main_PngCopied" xml:space="preserve">
+    <value>PNG 形式の QR コードをクリップボードにコピーしました</value>
+  </data>
+  <data name="Main_PngsCopied" xml:space="preserve">
+    <value>PNG 形式の QR コードを {0} 個クリップボードにコピーしました</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_PngClipboardFailed" xml:space="preserve">
+    <value>QR コードの PNG をクリップボード用に準備できませんでした</value>
+  </data>
+  <data name="Main_SvgCopied" xml:space="preserve">
+    <value>SVG 形式の QR コードをクリップボードにコピーしました</value>
+  </data>
+  <data name="Main_SvgsCopied" xml:space="preserve">
+    <value>SVG 形式の QR コードを {0} 個クリップボードにコピーしました</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_SvgClipboardFailed" xml:space="preserve">
+    <value>QR コードの SVG をクリップボード用に準備できませんでした</value>
+  </data>
+  <data name="Main_SvgTextsCopied" xml:space="preserve">
+    <value>QR コード {0} 個分の SVG テキストをクリップボードにコピーしました</value>
+    <comment>{0} = textStrings.Count</comment>
+  </data>
+  <data name="Main_SvgTextClipboardFailed" xml:space="preserve">
+    <value>SVG テキストをクリップボード用に準備できませんでした</value>
+  </data>
+  <data name="Main_CopyStatusTitle" xml:space="preserve">
+    <value>コピー通知のタイトル</value>
+  </data>
+  <data name="Main_BrandSaved" xml:space="preserve">
+    <value>ブランドを保存しました</value>
+  </data>
+  <data name="Main_BrandSavedDetail" xml:space="preserve">
+    <value>「{0}」を保存しました</value>
+    <comment>{0} = brand.Name</comment>
+  </data>
+  <data name="Main_BrandUpdated" xml:space="preserve">
+    <value>ブランドを更新しました</value>
+  </data>
+  <data name="Main_BrandUpdatedDetail" xml:space="preserve">
+    <value>「{0}」を更新しました</value>
+    <comment>{0} = edited.Name</comment>
+  </data>
+  <data name="Main_PngSaved" xml:space="preserve">
+    <value>QR コードを PNG で保存しました</value>
+  </data>
+  <data name="Main_PngsSaved" xml:space="preserve">
+    <value>QR コードを {0} 個 PNG で保存しました</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_PngZipSaved" xml:space="preserve">
+    <value>PNG 形式の QR コードを ZIP に保存しました</value>
+  </data>
+  <data name="Main_PngsZipSaved" xml:space="preserve">
+    <value>PNG 形式の QR コードを {0} 個 ZIP に保存しました</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_SvgSaved" xml:space="preserve">
+    <value>QR コードを SVG で保存しました</value>
+  </data>
+  <data name="Main_SvgsSaved" xml:space="preserve">
+    <value>QR コードを {0} 個 SVG で保存しました</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_SvgZipSaved" xml:space="preserve">
+    <value>SVG 形式の QR コードを ZIP に保存しました</value>
+  </data>
+  <data name="Main_SvgsZipSaved" xml:space="preserve">
+    <value>SVG 形式の QR コードを {0} 個 ZIP に保存しました</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothSaved" xml:space="preserve">
+    <value>QR コードを PNG と SVG で保存しました</value>
+  </data>
+  <data name="Main_BothMultipleSaved" xml:space="preserve">
+    <value>QR コードを {0} 個 PNG と SVG で保存しました</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothZipSaved" xml:space="preserve">
+    <value>QR コードの PNG と SVG を ZIP に保存しました</value>
+  </data>
+  <data name="Main_BothMultipleZipSaved" xml:space="preserve">
+    <value>QR コード {0} 個分の PNG と SVG を ZIP に保存しました</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothCopied" xml:space="preserve">
+    <value>QR コードを PNG と SVG の両方でクリップボードにコピーしました</value>
+  </data>
+  <data name="Main_BothMultipleCopied" xml:space="preserve">
+    <value>QR コードを {0} 個 PNG と SVG の両方でクリップボードにコピーしました</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothClipboardFailed" xml:space="preserve">
+    <value>QR コードをクリップボード用に準備できませんでした</value>
+  </data>
+  <data name="Main_LogoLoadFailedHelp" xml:space="preserve">
+    <value>選択した画像を読み込めませんでした</value>
+  </data>
+  <data name="Main_LogoLoadFailed" xml:space="preserve">
+    <value>ロゴの読み込みエラー</value>
+  </data>
+  <data name="Main_ExportFailed" xml:space="preserve">
+    <value>QR コードを保存できませんでした</value>
+  </data>
+  <data name="Main_ExportFilesFailedHelp" xml:space="preserve">
+    <value>選択した QR コードをファイルに保存できませんでした。</value>
+  </data>
+  <data name="Main_ExportZipFailedHelp" xml:space="preserve">
+    <value>選択した QR コードを ZIP アーカイブに保存できませんでした。</value>
+  </data>
+  <data name="Main_SavedToFolder" xml:space="preserve">
+    <value>保存先：{0}</value>
+    <comment>{0} = folderPath</comment>
+  </data>
+  <data name="Frame_Caption" xml:space="preserve">
+    <value>キャプション</value>
+  </data>
+  <data name="Logo_SizePercent" xml:space="preserve">
+    <value>{0}%</value>
+    <comment>{0} = LogoSize</comment>
+  </data>
+  <data name="Logo_PaddingPixels" xml:space="preserve">
+    <value>{0} ピクセル</value>
+    <comment>{0} = LogoPadding</comment>
+  </data>
+  <data name="Settings_DefaultMaxScanDistance" xml:space="preserve">
+    <value>36 インチまたは 1 m</value>
+  </data>
+  <data name="Settings_DefaultForeground" xml:space="preserve">
+    <value>システムの既定値：黒</value>
+  </data>
+  <data name="Settings_DefaultBackground" xml:space="preserve">
+    <value>システムの既定値：白</value>
+  </data>
+  <data name="Settings_CorrectionLow" xml:space="preserve">
+    <value>L — 低 7%</value>
+  </data>
+  <data name="Settings_CorrectionMedium" xml:space="preserve">
+    <value>M — 中 15%</value>
+  </data>
+  <data name="Settings_CorrectionQuarter" xml:space="preserve">
+    <value>Q — 準高 25%</value>
+  </data>
+  <data name="Settings_CorrectionHigh" xml:space="preserve">
+    <value>H — 高 30%</value>
+  </data>
+  <data name="Settings_DefaultCorrection" xml:space="preserve">
+    <value>システムの既定値：M（中 15%）</value>
+  </data>
+  <data name="Settings_DefaultFrame" xml:space="preserve">
+    <value>システムの既定値：標準、フレームなし</value>
+  </data>
+  <data name="Settings_NoSafeDomains" xml:space="preserve">
+    <value>安全なドメインはありません。リダイレクトの警告バーから安全としてマークできます。</value>
+  </data>
+  <data name="Settings_ScanDistanceMeters" xml:space="preserve">
+    <value>{0} メートル</value>
+    <comment>{0} = value</comment>
+  </data>
+  <data name="Settings_ScanDistanceMeter" xml:space="preserve">
+    <value>{0} メートル</value>
+    <comment>{0} = value</comment>
+  </data>
+  <data name="Settings_ScanDistanceFeet" xml:space="preserve">
+    <value>{0} フィート</value>
+    <comment>{0} = Math.Round(value * 3, 1)</comment>
+  </data>
+  <data name="Settings_ScanDistanceInches" xml:space="preserve">
+    <value>{0} インチ</value>
+    <comment>{0} = Math.Round(value * 36, 0)</comment>
+  </data>
+  <data name="Settings_PaddingModules" xml:space="preserve">
+    <value>{0:0} モジュール</value>
+    <comment>{0} = QrPaddingModules</comment>
+  </data>
+  <data name="Settings_PrintSizingReliable" xml:space="preserve">
+    <value>{0}。この設定では印刷サイズを適切に算出できます。</value>
+    <comment>{0} = QrPaddingDescription</comment>
+  </data>
+  <data name="Settings_PrintSizingDisabled" xml:space="preserve">
+    <value>{0}。余白が 1～4 モジュールの範囲外では、印刷サイズの算出は無効です。</value>
+    <comment>{0} = QrPaddingDescription</comment>
+  </data>
+  <data name="Settings_BackupNothingToExport" xml:space="preserve">
+    <value>エクスポートする項目を 1 つ以上選んでください。</value>
+  </data>
+  <data name="FileType_ZipArchive" xml:space="preserve">
+    <value>ZIP アーカイブ</value>
+  </data>
+  <data name="Settings_BackupExportComplete" xml:space="preserve">
+    <value>エクスポートが完了しました。</value>
+  </data>
+  <data name="Settings_BackupImportComplete" xml:space="preserve">
+    <value>インポートが完了しました。メイン画面に戻ると、履歴とブランドが再読み込みされます。</value>
+  </data>
+  <data name="Settings_BackupInvalid" xml:space="preserve">
+    <value>インポートに失敗しました。選んだファイルは有効なバックアップ ZIP ではありません。</value>
+  </data>
+  <data name="Feedback_EmailSubject" xml:space="preserve">
+    <value>Simple QR Code Maker へのフィードバック</value>
+  </data>
+  <data name="Feedback_CopyDone" xml:space="preserve">
+    <value>コピーしました</value>
+  </data>
+  <data name="Feedback_Copy" xml:space="preserve">
+    <value>コピー</value>
+  </data>
+  <data name="Licenses_Unavailable" xml:space="preserve">
+    <value>［ライセンスの本文を表示できません。https://www.apache.org/licenses/LICENSE-2.0 を参照してください］</value>
+  </data>
+  <data name="Licenses_Mit" xml:space="preserve">
+    <value>MIT ライセンス</value>
+  </data>
+  <data name="Licenses_Apache20" xml:space="preserve">
+    <value>Apache-2.0 ライセンス</value>
+  </data>
+  <data name="Share_OneQrCode" xml:space="preserve">
+    <value>QR コード</value>
+  </data>
+  <data name="Share_MultipleQrCodes" xml:space="preserve">
+    <value>QR コード</value>
+  </data>
+  <data name="Share_DecodedCodes" xml:space="preserve">
+    <value>読み取ったコード</value>
+  </data>
+  <data name="Share_PrepareContentFailed" xml:space="preserve">
+    <value>共有する内容を準備できませんでした。もう一度お試しください。</value>
+  </data>
+  <data name="Shell_SearchBrandKind" xml:space="preserve">
+    <value>ブランド</value>
+  </data>
+  <data name="Shell_SearchHistoryKind" xml:space="preserve">
+    <value>作成履歴</value>
+  </data>
+  <data name="Shell_SearchFaqKind" xml:space="preserve">
+    <value>よくある質問</value>
+  </data>
+  <data name="Shell_SearchHistorySaved" xml:space="preserve">
+    <value>保存日時：{0}</value>
+    <comment>{0} = item.SaveDateAsString</comment>
+  </data>
+  <data name="Shell_SearchHistoryKindSaved" xml:space="preserve">
+    <value>{0} - 保存日時：{1}</value>
+    <comment>{0} = item.ContentKindLabel; {1} = item.SaveDateAsString</comment>
+  </data>
+  <data name="Shell_SearchSavedBrand" xml:space="preserve">
+    <value>保存済みのブランド</value>
+  </data>
+  <data name="Shell_SearchDefaultBrand" xml:space="preserve">
+    <value>既定のブランド - {0}</value>
+    <comment>{0} = description</comment>
+  </data>
+  <data name="FileType_Csv" xml:space="preserve">
+    <value>CSV ファイル</value>
+  </data>
+  <data name="Spreadsheet_IdNotSaved" xml:space="preserve">
+    <value>生成した ID はスプレッドシートに書き戻されません。</value>
+  </data>
+  <data name="Spreadsheet_Review" xml:space="preserve">
+    <value>検出した行を確認して、インポートする列を選んでください。</value>
+  </data>
+  <data name="Spreadsheet_ReviewFile" xml:space="preserve">
+    <value>「{0}」を確認して、インポートする列を選んでください。</value>
+    <comment>{0} = SourceFileName</comment>
+  </data>
+  <data name="Spreadsheet_SaveIdsAndImport" xml:space="preserve">
+    <value>ID を保存して選択した列をインポート</value>
+  </data>
+  <data name="Spreadsheet_Import" xml:space="preserve">
+    <value>選択した列をインポート</value>
+  </data>
+  <data name="Spreadsheet_IdsSaved" xml:space="preserve">
+    <value>ID をスプレッドシートに保存しました</value>
+  </data>
+  <data name="Spreadsheet_IdsSavedFile" xml:space="preserve">
+    <value>生成した ID を「{0}」に書き戻しました。</value>
+    <comment>{0} = SourceFileName</comment>
+  </data>
+  <data name="Spreadsheet_SaveFailedHelp" xml:space="preserve">
+    <value>生成した ID をスプレッドシートに書き戻せませんでした。ファイルを別のアプリで開いている場合は閉じてから、もう一度お試しください。</value>
+  </data>
+  <data name="Spreadsheet_SaveFailed" xml:space="preserve">
+    <value>スプレッドシートを保存できませんでした</value>
+  </data>
+  <data name="Spreadsheet_Empty" xml:space="preserve">
+    <value>データが見つかりませんでした</value>
+  </data>
+  <data name="Spreadsheet_EmptyNoWriteback" xml:space="preserve">
+    <value>データが見つからないため、生成した ID は書き戻されません。</value>
+  </data>
+  <data name="Spreadsheet_RowCountLimited" xml:space="preserve">
+    <value>ファイル内に {0} 行（先頭の {1} 行をプレビュー）</value>
+    <comment>{0} = _dataRows.Count; {1} = PreviewRowLimit</comment>
+  </data>
+  <data name="Spreadsheet_IdNeedsRows" xml:space="preserve">
+    <value>データ行がないため、生成した ID を書き込めません。</value>
+  </data>
+  <data name="Spreadsheet_IdsAlreadyPresent" xml:space="preserve">
+    <value>既存の「{0}」列ではすべての行に値が入っています。既存の ID は変更されません。</value>
+    <comment>{0} = _headers[_idColumnIndex]</comment>
+  </data>
+  <data name="Spreadsheet_InvalidNanoIdLength" xml:space="preserve">
+    <value>生成した ID を保存する前に、NanoID の長さを整数で入力してください。</value>
+  </data>
+  <data name="GenerateIds_PreviewLimited" xml:space="preserve">
+    <value>生成した {1} 個の ID のうち、先頭の {0} 個を表示しています。</value>
+    <comment>{0} = previewCount; {1} = count</comment>
+  </data>
+  <data name="GenerateIds_InvalidCount" xml:space="preserve">
+    <value>生成する ID の数を整数で入力してください。</value>
+  </data>
+  <data name="GenerateIds_InvalidNanoIdLength" xml:space="preserve">
+    <value>NanoID の長さを整数で入力してください。</value>
+  </data>
+  <data name="UrlBuilder_LineNavigation" xml:space="preserve">
+    <value>{1} 行中 {0} 行目</value>
+    <comment>{0} = _currentLineIndex + 1; {1} = _lines.Count</comment>
+  </data>
+  <data name="RemoveBackground_Preparing" xml:space="preserve">
+    <value>AI モデルを準備中…</value>
+  </data>
+  <data name="RemoveBackground_Unavailable" xml:space="preserve">
+    <value>このデバイスでは背景の削除を利用できません。</value>
+  </data>
+  <data name="RemoveBackground_InProgress" xml:space="preserve">
+    <value>背景を削除中…</value>
+  </data>
+  <data name="RemoveBackground_Success" xml:space="preserve">
+    <value>背景を削除しました</value>
+  </data>
+  <data name="Read_ResultTitle" xml:space="preserve">
+    <value>QR コードの内容</value>
+  </data>
+  <data name="Read_ClipboardImage" xml:space="preserve">
+    <value>クリップボードの画像</value>
+  </data>
+  <data name="Read_CameraCapture" xml:space="preserve">
+    <value>カメラで撮影した写真</value>
+  </data>
+  <data name="Read_SnippingToolCapture" xml:space="preserve">
+    <value>Snipping Tool で切り取った画像</value>
+  </data>
+  <data name="Read_ExtractingRegion" xml:space="preserve">
+    <value>範囲を切り出し中…</value>
+  </data>
+  <data name="Read_CutOutLabel" xml:space="preserve">
+    <value>切り出し {0}</value>
+    <comment>{0} = cutOutNumber</comment>
+  </data>
+  <data name="Read_OriginalLabel" xml:space="preserve">
+    <value>元の画像</value>
+  </data>
+  <data name="Read_RegionLabel" xml:space="preserve">
+    <value>範囲 {0}</value>
+    <comment>{0} = regionNumber</comment>
+  </data>
+  <data name="FileType_Png" xml:space="preserve">
+    <value>PNG 画像</value>
+  </data>
+  <data name="Read_RedirectorWarning" xml:space="preserve">
+    <value>このコードは既知のリダイレクト サービス {0} を指しています。リダイレクト後まで最終的な移動先がわからないため、開くときは注意してください。</value>
+    <comment>{0} = classification.Host</comment>
+  </data>
+  <data name="Read_OpeningCamera" xml:space="preserve">
+    <value>カメラを起動中…</value>
+  </data>
+  <data name="Read_TakingPicture" xml:space="preserve">
+    <value>撮影中…</value>
+  </data>
+  <data name="Read_ProcessingImage" xml:space="preserve">
+    <value>画像を処理中…</value>
+  </data>
+  <data name="Read_CameraUnavailable" xml:space="preserve">
+    <value>カメラを利用できません</value>
+  </data>
+  <data name="Read_ApplyingAdjustments" xml:space="preserve">
+    <value>調整を適用中…</value>
+  </data>
+  <data name="Read_OpeningClipboardImage" xml:space="preserve">
+    <value>クリップボードから画像を開いています…</value>
+  </data>
+  <data name="Read_NoImageToPaste" xml:space="preserve">
+    <value>貼り付ける画像がありません</value>
+  </data>
+  <data name="Read_NoImageToPasteHelp" xml:space="preserve">
+    <value>画像、対応する画像ファイル、またはそのファイルの完全なパスをコピーして、もう一度お試しください。</value>
+  </data>
+  <data name="Read_PasteFailed" xml:space="preserve">
+    <value>画像を貼り付けられませんでした</value>
+  </data>
+  <data name="Read_OpeningImage" xml:space="preserve">
+    <value>画像を開いています…</value>
+  </data>
+  <data name="Read_LargeFolder" xml:space="preserve">
+    <value>画像が多いフォルダー</value>
+  </data>
+  <data name="Read_LargeFolderConfirmation" xml:space="preserve">
+    <value>このフォルダーには画像ファイルが {0} 個あります。すべての読み取りや結果の一覧表示などの一括処理には時間がかかる場合があります。続行しますか？</value>
+    <comment>{0} = imageFiles.Count</comment>
+  </data>
+  <data name="Common_Continue" xml:space="preserve">
+    <value>続行</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Read_BatchProgress" xml:space="preserve">
+    <value>{1} 件中 {0} 件目を処理中：{2}</value>
+    <comment>{0} = current; {1} = total; {2} = fileItem.FileName</comment>
+  </data>
+  <data name="Read_MultipleOpenProgress" xml:space="preserve">
+    <value>画像を開いています（{1} 個中 {0} 個目）…</value>
+    <comment>{0} = index + 1; {1} = pickedFiles.Count</comment>
+  </data>
+  <data name="Read_UnsupportedImage" xml:space="preserve">
+    <value>{0}：対応していない画像ファイルです。</value>
+    <comment>{0} = pickedItem.Name</comment>
+  </data>
+  <data name="Read_SomeFilesFailed" xml:space="preserve">
+    <value>一部のファイルを開けませんでした</value>
+  </data>
+  <data name="Advanced_NoAlignmentPoints" xml:space="preserve">
+    <value>角 4 点、位置合わせ点なし</value>
+  </data>
+  <data name="Advanced_UnwarpSetup" xml:space="preserve">
+    <value>バージョンを設定して、ゆがみ補正ツールを開きます。</value>
+  </data>
+  <data name="Advanced_UnwarpReady" xml:space="preserve">
+    <value>すべての点を配置しました。［ゆがみ補正を適用］をクリックしてください。</value>
+  </data>
+  <data name="Advanced_UnwarpNextCorner" xml:space="preserve">
+    <value>画像の 4 つの角のうち {0} 番目（{1}）をクリックします。</value>
+    <comment>{0} = next.OrderIndex + 1; {1} = next.Label</comment>
+  </data>
+  <data name="Advanced_UnwarpNextAlignment" xml:space="preserve">
+    <value>位置合わせ点 {1} 個のうち {0} 番目（{2}）をクリックするか、［推定位置を使用］を選びます。</value>
+    <comment>{0} = alignIndex; {1} = alignments.Count; {2} = next.Label</comment>
+  </data>
+  <data name="Advanced_SelectTopLeft" xml:space="preserve">
+    <value>1. 左上の角を選ぶ</value>
+  </data>
+  <data name="Advanced_SelectTopRight" xml:space="preserve">
+    <value>2. 右上の角を選ぶ</value>
+  </data>
+  <data name="Advanced_SelectBottomRight" xml:space="preserve">
+    <value>3. 右下の角を選ぶ</value>
+  </data>
+  <data name="Advanced_SelectBottomLeft" xml:space="preserve">
+    <value>4. 左下の角を選ぶ</value>
+  </data>
+  <data name="Advanced_CornersSelected" xml:space="preserve">
+    <value>すべての角を選びました。補正を適用して続行してください。</value>
+  </data>
+  <data name="Read_NoCodesContact" xml:space="preserve">
+    <value>コードがないか、内容を読み取れなかった可能性があります。アプリの不具合と思われる場合は、Joe@JoeFinApps.com までメールでお知らせください。</value>
+  </data>
+  <data name="Read_NoCodesAdvancedTools" xml:space="preserve">
+    <value>QR コードは検出されませんでした。高度なツールで範囲を切り出したり、グレースケール、コントラスト、遠近補正などで画像を調整したりすると、読み取りやすくなる場合があります。</value>
+  </data>
+  <data name="Design_LabelManualText" xml:space="preserve">
+    <value>手入力のテキスト</value>
+  </data>
+  <data name="Design_LabelContentSummary" xml:space="preserve">
+    <value>内容の概要</value>
+  </data>
+  <data name="Design_CaptionScanMe" xml:space="preserve">
+    <value>読み取ってください</value>
+  </data>
+  <data name="Design_CaptionJoinWifi" xml:space="preserve">
+    <value>Wi-Fi に接続</value>
+  </data>
+  <data name="Design_CaptionContact" xml:space="preserve">
+    <value>連絡先を保存</value>
+  </data>
+  <data name="Design_CaptionViewMenu" xml:space="preserve">
+    <value>メニューを見る</value>
+  </data>
+  <data name="Design_CaptionTickets" xml:space="preserve">
+    <value>チケットを入手</value>
+  </data>
+  <data name="Design_CaptionSayHello" xml:space="preserve">
+    <value>ごあいさつ</value>
+  </data>
+  <data name="Design_NoFrame" xml:space="preserve">
+    <value>フレームなし</value>
+  </data>
+  <data name="Design_PreviewErrorHelp" xml:space="preserve">
+    <value>デザインを閉じて開き直し、プレビューを再読み込みしてください。</value>
+  </data>
+  <data name="Design_OpenFailed" xml:space="preserve">
+    <value>デザイン ツールを開けませんでした</value>
+  </data>
+  <data name="Design_OpenFailedHelp" xml:space="preserve">
+    <value>ほかのダイアログを閉じて、もう一度お試しください。</value>
+  </data>
+  <data name="Colors_Foreground" xml:space="preserve">
+    <value>前景</value>
+  </data>
+  <data name="Colors_Background" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="Colors_Empty" xml:space="preserve">
+    <value>（空）</value>
+  </data>
+  <data name="Colors_ListItem" xml:space="preserve">
+    <value>{0}、{1}</value>
+    <comment>{0} = prefix; {1} = NormalizeSource(source)</comment>
+  </data>
+  <data name="Preview_RestoreStyle" xml:space="preserve">
+    <value>{0} の代わりに現在のスタイルに戻す</value>
+    <comment>{0} = CommonBrandName</comment>
+  </data>
+  <data name="Preview_UseBrand" xml:space="preserve">
+    <value>{0} のブランドを使用</value>
+    <comment>{0} = CommonBrandName</comment>
+  </data>
+  <data name="Preview_RestoreStyleHelp" xml:space="preserve">
+    <value>{0} の色とロゴが適用されています。元のスタイルに戻せます。</value>
+    <comment>{0} = CommonBrand?.Name</comment>
+  </data>
+  <data name="Preview_UseBrandHelp" xml:space="preserve">
+    <value>この QR コードに {0} の色とロゴを使用します。</value>
+    <comment>{0} = CommonBrand?.Name</comment>
+  </data>
+  <data name="Preview_MinimumSize" xml:space="preserve">
+    <value>最小サイズ</value>
+  </data>
+  <data name="Preview_SizingUnavailable" xml:space="preserve">
+    <value>印刷サイズを算出できません</value>
+  </data>
+  <data name="Preview_MinimumSizeCopyFailed" xml:space="preserve">
+    <value>正確な最小サイズを取得できません</value>
+  </data>
+  <data name="Preview_PaddingSizingHelp" xml:space="preserve">
+    <value>余白が 1～4 モジュールの範囲外では、余白がないか広すぎる QR コードの読み取りやすさが大きく変わるため、印刷サイズを確実に算出できません。</value>
+  </data>
+  <data name="Preview_TransparencySizingHelp" xml:space="preserve">
+    <value>QR コードに透明色を使用すると、最小サイズは印刷面によって変わるため、正確な値をコピーできません。</value>
+  </data>
+  <data name="Preview_ContrastSizingHelp" xml:space="preserve">
+    <value>色のコントラストが低すぎるため、最小サイズを適切に推奨できません。</value>
+  </data>
+  <data name="Preview_DistanceSizingHelp" xml:space="preserve">
+    <value>選択した最大読み取り距離では、最小サイズを適切に推奨できません。</value>
+  </data>
+  <data name="Preview_NoSizingHelp" xml:space="preserve">
+    <value>この QR コードにはコピーできる正確な最小サイズがありません。</value>
+  </data>
+  <data name="Preview_SizeCopied" xml:space="preserve">
+    <value>QR コードのサイズをクリップボードにコピーしました</value>
+  </data>
+  <data name="Preview_CopyFailed" xml:space="preserve">
+    <value>QR コードをクリップボードにコピーできませんでした</value>
+  </data>
+  <data name="Preview_NothingToCopy" xml:space="preserve">
+    <value>クリップボードにコピーする QR コードがありません</value>
+  </data>
+  <data name="Preview_ShareFailed" xml:space="preserve">
+    <value>QR コードを共有できませんでした</value>
+  </data>
+  <data name="Preview_SvgTextCopied" xml:space="preserve">
+    <value>QR コードの SVG テキストをクリップボードにコピーしました</value>
+  </data>
+  <data name="FileType_Svg" xml:space="preserve">
+    <value>SVG 画像</value>
+  </data>
+  <data name="Preview_PngSaved" xml:space="preserve">
+    <value>QR コードを PNG で保存しました</value>
+  </data>
+  <data name="FileType_ZipExport" xml:space="preserve">
+    <value>ZIP アーカイブ</value>
+  </data>
+  <data name="Print_ZoomPercent" xml:space="preserve">
+    <value>{0}%</value>
+    <comment>{0} = Math.Round(PreviewScrollViewer.ZoomFactor * 100)</comment>
+  </data>
+  <data name="Print_WaitForPreview" xml:space="preserve">
+    <value>PDF プレビューの読み込みが完了してから印刷してください。</value>
+  </data>
+  <data name="Print_QrSize" xml:space="preserve">
+    <value>QR コードのサイズ</value>
+  </data>
+  <data name="Print_Spacing" xml:space="preserve">
+    <value>間隔</value>
+  </data>
+  <data name="Print_Margin" xml:space="preserve">
+    <value>ページの余白</value>
+  </data>
+  <data name="Print_LengthHeader" xml:space="preserve">
+    <value>{0}（{1}）</value>
+    <comment>{0} = title; {1} = lengthUnitSuffix</comment>
+  </data>
+  <data name="Print_LengthValue" xml:space="preserve">
+    <value>{0:0.##} {1}</value>
+    <comment>{0} = displayValue; {1} = lengthUnitSuffix</comment>
+  </data>
+  <data name="Print_PresetProductLabelsHelp" xml:space="preserve">
+    <value>パッケージ、棚札、備品ラベルなど、近くから読み取る小さな QR コードです。</value>
+  </data>
+  <data name="Print_PresetFlyersHelp" xml:space="preserve">
+    <value>同封物、チラシ、請求書、1 ページの配布資料などに適した中サイズの QR コードです。</value>
+  </data>
+  <data name="Print_PresetMenusHelp" xml:space="preserve">
+    <value>飲食店のメニュー、卓上ディスプレイ、カウンターの案内カードなどに適した大きめの QR コードです。</value>
+  </data>
+  <data name="Print_PresetPostersHelp" xml:space="preserve">
+    <value>ドア、壁、ポスター、イベントの案内表示などに使える、大きな QR コードを 1 つ配置します。</value>
+  </data>
+  <data name="Print_PresetCustomHelp" xml:space="preserve">
+    <value>一般的な QR コード印刷の用途を選ぶか、レイアウトを自由に設定します。</value>
+  </data>
+  <data name="Settings_AppVersion" xml:space="preserve">
+    <value>{0} - {1}</value>
+    <comment>{0} = app display name; {1} = installed version.</comment>
+  </data>
+  <data name="Settings_BackupExportFailed" xml:space="preserve">
+    <value>エクスポートに失敗しました。バックアップ ZIP を保存できませんでした。</value>
+  </data>
+  <data name="Settings_BackupImportFailed" xml:space="preserve">
+    <value>インポートに失敗しました。バックアップ ZIP を読み取れませんでした。</value>
+  </data>
+  <data name="RemoveBackground_Failed" xml:space="preserve">
+    <value>背景を削除できませんでした。もう一度お試しください。</value>
+  </data>
+  <data name="Read_CameraUnavailableHelp" xml:space="preserve">
+    <value>Windows がカメラを起動できませんでした。設定でカメラへのアクセス許可を確認して、もう一度お試しください。</value>
+  </data>
+  <data name="Read_PasteFailedHelp" xml:space="preserve">
+    <value>クリップボードの画像を開けませんでした。</value>
+  </data>
+  <data name="Read_OpenImageFailed" xml:space="preserve">
+    <value>{0}：画像を開けませんでした。</value>
+    <comment>{0} = original file name.</comment>
+  </data>
+  <data name="Preview_ShareFailedHelp" xml:space="preserve">
+    <value>この QR コードを共有用に準備できませんでした。もう一度お試しください。</value>
+  </data>
+  <data name="Print_PreviewStartFailed" xml:space="preserve">
+    <value>PDF プレビューを開始できませんでした。</value>
+  </data>
+  <data name="Print_PreviewGenerationFailed" xml:space="preserve">
+    <value>PDF プレビューを生成できませんでした。印刷設定を確認して、もう一度お試しください。</value>
+  </data>
+  <data name="Print_JobFailed" xml:space="preserve">
+    <value>生成した PDF をプリンターに送信できませんでした。</value>
+  </data>
+  <data name="Read_UnknownSource" xml:space="preserve">
+    <value>不明なソース</value>
+  </data>
+  <data name="Read_HistoryNoCodes" xml:space="preserve">
+    <value>（コードが見つかりませんでした）</value>
+  </data>
+  <data name="Read_HistoryAdditionalCodes" xml:space="preserve">
+    <value> （ほか {0} 件）</value>
+    <comment>Leading space separates this count from the first decoded result. {0} = additional decoded codes.</comment>
+  </data>
+  <data name="History_KindVCard" xml:space="preserve">
+    <value>vCard</value>
+    <comment>Name of a contact-card format. Do not translate the format name.</comment>
+  </data>
+  <data name="History_KindWifi" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="History_KindEmail" xml:space="preserve">
+    <value>メール</value>
+  </data>
+  <data name="History_FallbackContact" xml:space="preserve">
+    <value>vCard の連絡先</value>
+  </data>
+  <data name="History_FallbackNetwork" xml:space="preserve">
+    <value>Wi-Fi ネットワーク</value>
+  </data>
+  <data name="Spreadsheet_ColumnNumber" xml:space="preserve">
+    <value>列 {0}</value>
+    <comment>{0} = 1-based display column number. Not a workbook header.</comment>
+  </data>
+  <data name="Spreadsheet_RowCount_One" xml:space="preserve">
+    <value>ファイル内に {0} 行</value>
+    <comment>{0} = row count.</comment>
+  </data>
+  <data name="Spreadsheet_RowCount_Other" xml:space="preserve">
+    <value>ファイル内に {0} 行</value>
+    <comment>{0} = row count.</comment>
+  </data>
+  <data name="Spreadsheet_ImportCount_One" xml:space="preserve">
+    <value>「{1}」から {0} 件の値をインポートします</value>
+    <comment>{0} = count; {1} = column name.</comment>
+  </data>
+  <data name="Spreadsheet_ImportCount_Other" xml:space="preserve">
+    <value>「{1}」から {0} 件の値をインポートします</value>
+    <comment>{0} = count; {1} = column name.</comment>
+  </data>
+  <data name="Spreadsheet_HeaderlessWriteback_One" xml:space="preserve">
+    <value>見出し行が無効なので、末尾に列を追加し、{0} 行に {1} 件の値を書き込みます。</value>
+    <comment>{0} = row count; {1} = ID format.</comment>
+  </data>
+  <data name="Spreadsheet_HeaderlessWriteback_Other" xml:space="preserve">
+    <value>見出し行が無効なので、末尾に列を追加し、{0} 行に {1} 件の値を書き込みます。</value>
+    <comment>{0} = row count; {1} = ID format.</comment>
+  </data>
+  <data name="Spreadsheet_NewIdColumn_One" xml:space="preserve">
+    <value>新しい「{2}」列を追加し、{0} 行に {1} 件の値を書き込みます。ほかの列のセルは変更されません。</value>
+    <comment>{0} = row count; {1} = ID format; {2} = invariant header.</comment>
+  </data>
+  <data name="Spreadsheet_NewIdColumn_Other" xml:space="preserve">
+    <value>新しい「{2}」列を追加し、{0} 行に {1} 件の値を書き込みます。ほかの列のセルは変更されません。</value>
+    <comment>{0} = row count; {1} = ID format; {2} = invariant header.</comment>
+  </data>
+  <data name="Spreadsheet_FillIdColumn_One" xml:space="preserve">
+    <value>「{1}」の空白セル {0} 個を {2} で埋めます。既存の ID は変更されません。</value>
+    <comment>{0} = cell count; {1} = column name; {2} = ID format.</comment>
+  </data>
+  <data name="Spreadsheet_FillIdColumn_Other" xml:space="preserve">
+    <value>「{1}」の空白セル {0} 個を {2} で埋めます。既存の ID は変更されません。</value>
+    <comment>{0} = cell count; {1} = column name; {2} = ID format.</comment>
+  </data>
+  <data name="GenerateIds_PreviewAll_One" xml:space="preserve">
+    <value>生成した ID をすべて表示しています（{0} 個）。</value>
+    <comment>{0} = ID count.</comment>
+  </data>
+  <data name="GenerateIds_PreviewAll_Other" xml:space="preserve">
+    <value>生成した ID をすべて表示しています（{0} 個）。</value>
+    <comment>{0} = ID count.</comment>
+  </data>
+  <data name="GenerateIds_FormatGuid" xml:space="preserve">
+    <value>GUID</value>
+    <comment>Identifier type. Do not translate the acronym.</comment>
+  </data>
+  <data name="GenerateIds_FormatGuidCompact" xml:space="preserve">
+    <value>ハイフンなしの GUID</value>
+    <comment>GUID is an identifier format; only translate "without dashes".</comment>
+  </data>
+  <data name="GenerateIds_FormatNanoId" xml:space="preserve">
+    <value>NanoID</value>
+    <comment>Identifier type. Do not translate the name.</comment>
+  </data>
+  <data name="Advanced_AlignmentPointCount_One" xml:space="preserve">
+    <value>角 4 点と位置合わせ点 {0} 個</value>
+    <comment>{0} = alignment point count.</comment>
+  </data>
+  <data name="Advanced_AlignmentPointCount_Other" xml:space="preserve">
+    <value>角 4 点と位置合わせ点 {0} 個</value>
+    <comment>{0} = alignment point count.</comment>
+  </data>
+  <data name="Advanced_CornerTopLeft" xml:space="preserve">
+    <value>左上</value>
+    <comment>Abbreviation for the top-left corner, not a direction-sensitive reading-order label.</comment>
+  </data>
+  <data name="Advanced_CornerTopRight" xml:space="preserve">
+    <value>右上</value>
+    <comment>Abbreviation for the top-right corner.</comment>
+  </data>
+  <data name="Advanced_CornerBottomRight" xml:space="preserve">
+    <value>右下</value>
+    <comment>Abbreviation for the bottom-right corner.</comment>
+  </data>
+  <data name="Advanced_CornerBottomLeft" xml:space="preserve">
+    <value>左下</value>
+    <comment>Abbreviation for the bottom-left corner.</comment>
+  </data>
+  <data name="Advanced_AlignmentMarker" xml:space="preserve">
+    <value>A{0}</value>
+    <comment>Compact image overlay for an alignment point. {0} = marker number.</comment>
+  </data>
+  <data name="Preview_MinimumSizeAndContent" xml:space="preserve">
+    <value>推奨最小サイズ：{0}、{1}</value>
+    <comment>{0} = formatted size; {1} = QR content. Narrator label.</comment>
+  </data>
+  <data name="Preview_MetadataAndContent" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>{0} = status or sizing text; {1} = QR content. Narrator label.</comment>
+  </data>
+  <data name="Preview_SizeInches" xml:space="preserve">
+    <value>{0:F2} × {0:F2} インチ</value>
+    <comment>{0} = side length in inches.</comment>
+  </data>
+  <data name="Preview_SizeCentimeters" xml:space="preserve">
+    <value>{0:F2} × {0:F2} cm</value>
+    <comment>{0} = side length in centimeters.</comment>
+  </data>
+  <data name="Preview_SizeTransparency" xml:space="preserve">
+    <value>透明色を使う場合、正確な最小サイズは印刷面によって変わります。</value>
+  </data>
+  <data name="Preview_SizePadding" xml:space="preserve">
+    <value>余白 {0} は予測可能な 1～4 モジュールの範囲外です。余白がないか広すぎる QR コードは読み取りやすさが大きく変わるため、印刷サイズを確実に算出できません。</value>
+    <comment>{0} = padding in QR modules.</comment>
+  </data>
+  <data name="Preview_SizeContrast" xml:space="preserve">
+    <value>色のコントラストが低すぎます</value>
+  </data>
+  <data name="Preview_SizeDistance" xml:space="preserve">
+    <value>選択した最大距離では計算できませんでした。</value>
+  </data>
+  <data name="Package_TileShortName" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="Package_ShareTargetName" xml:space="preserve">
+    <value>QR コードの読み取り・作成</value>
+  </data>
+  <data name="Faq_WhatIsAQRCode_Question" xml:space="preserve">
+    <value>QR コードとは？</value>
+  </data>
+  <data name="Faq_WhatIsAQRCode_Answer" xml:space="preserve">
+    <value>QR コードは、テキストをコンピューターが読み取りやすい形にしたものです。正確には、情報を符号化するための二次元バーコードの一種です。テキストの表示や URL を開くなど、さまざまな用途がありますが、最も一般的なのは Web サイトを開くことです。</value>
+  </data>
+  <data name="Faq_WhatDoesQRStandFor_Question" xml:space="preserve">
+    <value>QR は何の略ですか？</value>
+  </data>
+  <data name="Faq_WhatDoesQRStandFor_Answer" xml:space="preserve">
+    <value>Quick Response（素早い応答）の略です。</value>
+  </data>
+  <data name="Faq_WhyCanQRCodesBeDangerous_Question" xml:space="preserve">
+    <value>QR コードにどのような危険がありますか？</value>
+  </data>
+  <data name="Faq_WhyCanQRCodesBeDangerous_Answer" xml:space="preserve">
+    <value>QR コードは Web サイトをすばやく開くのによく使われますが、コードを見ただけではどの Web サイトが入っているのかわかりません。また、URL が別のサイトにリダイレクトされる場合、その URL の管理者はコードを読み取った人の移動先をいつでも変えられます。</value>
+  </data>
+  <data name="Faq_AreTheseDynamicQRCodes_Question" xml:space="preserve">
+    <value>このアプリで作る QR コードは動的ですか？</value>
+  </data>
+  <data name="Faq_AreTheseDynamicQRCodes_Answer" xml:space="preserve">
+    <value>QR コード自体は動的ではありません。動的な QR コードを作るには、別のリンクにリダイレクトする URL を使います。リダイレクトを行う外部サーバーが必要です。移動先を変更できる外部サイトや、ご自身で管理するサイトを利用できます。</value>
+  </data>
+  <data name="Faq_HowCanYouTellIfAQRCodeIsDynamic_Question" xml:space="preserve">
+    <value>QR コードが動的かどうかを見分けるには？</value>
+  </data>
+  <data name="Faq_HowCanYouTellIfAQRCodeIsDynamic_Answer" xml:space="preserve">
+    <value>最終的に開いた Web サイトと、QR コードの内容を比べます。例えば、スマートフォンで読み取ると https://www.example.com が開くのに、このアプリで読むと http://JoeFinApps.com/123 のようにまったく別の URL が表示される場合、動的な QR コードであるか、少なくとも QR コード内のドメインでリダイレクトされています。</value>
+  </data>
+  <data name="Faq_WhatIsATwoDimensionalBarcode_Question" xml:space="preserve">
+    <value>二次元バーコードとは？</value>
+  </data>
+  <data name="Faq_WhatIsATwoDimensionalBarcode_Answer" xml:space="preserve">
+    <value>バーコードは、情報を機械で読み取りやすい形式に変換したものです。多くの商品にある、幅の異なる線が一列に並んだバーコードは、データが一列だけなので一次元バーコードと呼ばれます。二次元バーコードは複数行にわたる模様でデータを表します。データは必ずしも左から右、上から下に並ぶわけではなく、種類ごとに独自の方法で折り返したり詰め込んだりします。</value>
+  </data>
+  <data name="Faq_HowToReadAQRCode_Question" xml:space="preserve">
+    <value>QR コードを読み取るには？</value>
+  </data>
+  <data name="Faq_HowToReadAQRCode_Answer" xml:space="preserve">
+    <value>QR コードを読み取るには、二次元バーコードに対応した機器やアプリが必要です。Android、iOS、Windows の標準カメラ アプリはいずれも QR コードの読み取りに対応しています。アプリを開いてカメラをコードに向けるだけで、コードが自動的に認識され、対応する操作が行われます。ただし、開いた Web ページの URL が QR コードに含まれる URL と同じとは限りません。実際の内容を確認するには、このアプリの［コードを読み取る］ページで画像を開くか、クリップボードから貼り付けてください。</value>
+  </data>
+  <data name="Faq_WhatIsTheURLBuilder_Question" xml:space="preserve">
+    <value>URL 作成ツールとは？</value>
+  </data>
+  <data name="Faq_WhatIsTheURLBuilder_Answer" xml:space="preserve">
+    <value>URL をすべて手入力する代わりに、主な構成要素を組み合わせて Web アドレスを作成するツールです。スキーム、ホスト、ポート、パス、フラグメント、クエリ パラメーターを指定すると、アプリが QR コード用の URL に組み立てます。入力ミスを防ぎたい場合や、トラッキング用のパラメーターを付けたり、同じ構造のリンクを複数作ったりする場合に便利です。</value>
+  </data>
+  <data name="Faq_WhatIsAVCardQRCode_Question" xml:space="preserve">
+    <value>vCard の QR コードとは？</value>
+  </data>
+  <data name="Faq_WhatIsAVCardQRCode_Answer" xml:space="preserve">
+    <value>vCard の QR コードは、氏名、会社、電話番号、メール アドレス、Web サイト、住所などの連絡先情報を、多くのスマートフォンや連絡先アプリが理解できる形式で格納します。読み取ったデバイスでは、情報を手入力せずに新しい連絡先として登録できます。連絡先をすばやく保存してもらいたいときに、名刺、イベントの名札、案内表示などに使うと便利です。</value>
+  </data>
+  <data name="Faq_WhatIsAWiFiQRCode_Question" xml:space="preserve">
+    <value>Wi-Fi 接続用の QR コードとは？</value>
+  </data>
+  <data name="Faq_WhatIsAWiFiQRCode_Answer" xml:space="preserve">
+    <value>Wi-Fi 接続用の QR コードは、ネットワーク名、セキュリティの種類、パスワード、必要に応じて非公開ネットワークの指定を、多くのスマートフォンが認識できる標準のテキスト形式で格納します。新しい iPhone や Android ではそのまま接続できる場合がありますが、古いカメラや一部の読み取りアプリでは元のテキストしか表示されないことがあります。コードを読み取ったり撮影したりした人は誰でも接続情報を取得できるため、公開しても問題ない場所でのみ共有してください。WEP は古い方式で安全ではありません。企業向けの Wi-Fi では通常、この簡易な QR 形式で扱える以上の情報が必要です。</value>
+  </data>
+  <data name="Faq_HowDoIMakeAWiFiQRCode_Question" xml:space="preserve">
+    <value>Wi-Fi 接続用の QR コードを作るには？</value>
+  </data>
+  <data name="Faq_HowDoIMakeAWiFiQRCode_Answer" xml:space="preserve">
+    <value>ゲストがパスワードを入力せずにネットワークへ接続できるようにするには、Wi-Fi 接続用コードの作成ツールを使います。ネットワーク名を入力し、セキュリティの種類を選び、必要であればパスワードを入力します。実際に非公開のネットワークだけを非公開として指定してください。アプリが標準の Wi-Fi 接続用テキストを作成し、QR コードに変換します。</value>
+  </data>
+  <data name="Faq_WhatIsTheErrorCorrectionLevel_Question" xml:space="preserve">
+    <value>誤り訂正レベルとは？</value>
+  </data>
+  <data name="Faq_WhatIsTheErrorCorrectionLevel_Answer" xml:space="preserve">
+    <value>QR コードは、破損や読み取り環境の影響で一部が見えなくなっても、読み取れる場合があります。どれだけ見えなくなっても読み取れるかを示すのが誤り訂正レベルです。レベルを上げると欠損に強くなりますが、QR コードに含まれるデータが増えるため、最小サイズも大きくなります。</value>
+  </data>
+  <data name="Faq_HowDoesAddingAnImageAffectTheQRCode_Question" xml:space="preserve">
+    <value>画像を追加すると QR コードにどんな影響がありますか？</value>
+  </data>
+  <data name="Faq_HowDoesAddingAnImageAffectTheQRCode_Answer" xml:space="preserve">
+    <value>このアプリでロゴなどの画像を追加すると、QR コードの中央に画像が重なり、データの一部が隠れます。誤り訂正が必要なのはこのためです。誤り訂正によって、一部が隠れてもコードを読み取れます。誤り訂正レベルが高いほど、ロゴで隠れても読み取れる範囲が広がります。ロゴを追加するときは高めのレベルを使い、実際に読み取れることを十分に確認してください。</value>
+  </data>
+  <data name="Faq_HowIsTheCenterImageStoredInSVGFiles_Question" xml:space="preserve">
+    <value>中央の画像は SVG ファイルにどのように保存されますか？</value>
+  </data>
+  <data name="Faq_HowIsTheCenterImageStoredInSVGFiles_Answer" xml:space="preserve">
+    <value>中央に画像のある QR コードを SVG として保存すると、画像は Base64 でエンコードされて SVG に直接埋め込まれます。画像データはすべてテキストに変換され、SVG ファイルだけで完結します。元の画像を別に保管する必要がなく、画像への参照切れを心配せずに QR コードを共有したり使ったりできます。中央の画像はベクターではなくラスター画像（PNG）として保存されるので、大きく拡大すると画素が目立つ場合があります。ベクターの QR コード本体は拡大しても鮮明です。</value>
+  </data>
+  <data name="Faq_HowToPutAnImageInsideOfTheCenterOfAQRCode_Question" xml:space="preserve">
+    <value>QR コードの中央に画像を置くには？</value>
+  </data>
+  <data name="Faq_HowToPutAnImageInsideOfTheCenterOfAQRCode_Answer" xml:space="preserve">
+    <value>ツール バーの中央画像（ロゴ）ボタンでアプリ内から追加するか、ロゴ付きのブランドを保存します。画像ボタンでデバイス上の PNG または JPG を選び、フライアウトのスライダーでサイズ（7～30%）と余白（-20～+20 px）を調整します。画像が QR コードの中央に重なるので、高い誤り訂正レベル（Q または H）を強くおすすめします。完成したコードを読み取れるか必ず確認してください。</value>
+  </data>
+  <data name="Faq_HowIsMinimumSizeCalculated_Question" xml:space="preserve">
+    <value>最小サイズはどのように計算されますか？</value>
+  </data>
+  <data name="Faq_HowIsMinimumSizeCalculated_Answer" xml:space="preserve">
+    <value>QR コードの最小サイズは実験データに基づいて計算されます。600 dpi のレーザー プリンターで白い紙にさまざまなサイズの QR コードを印刷し、読み取って、サイズと読み取り距離の関係を求めました。前景と背景のコントラストも計算に含まれます。一方でも透明色を使うと、印刷面によって実際のコントラストが変わるため、正確な最小サイズは表示されません。</value>
+  </data>
+  <data name="Faq_HowCanIChangeTheMaximumScanDistance_Question" xml:space="preserve">
+    <value>最大読み取り距離を変えるには？</value>
+  </data>
+  <data name="Faq_HowCanIChangeTheMaximumScanDistance_Answer" xml:space="preserve">
+    <value>最小サイズの QR コードを読み取れると推定される最大距離は、設定で変更できます。費用のかかる発注や設置の前には、必ず実際の使用環境でお試しください。</value>
+  </data>
+  <data name="Faq_WhatIsTheContrastRatio_Question" xml:space="preserve">
+    <value>コントラスト比とは？</value>
+  </data>
+  <data name="Faq_WhatIsTheContrastRatio_Answer" xml:space="preserve">
+    <value>コントラスト比は、対象を見分けるための明るさや色の違いを表します。QR コードでは、前景色と背景色の違いです。コントラスト比が高いほど読み取りやすくなり、推奨される最小値は 2.5:1 です。透明色を使う場合、実際のコントラストは QR コードを重ねる印刷面によって変わります。</value>
+  </data>
+  <data name="Faq_AtTheMinimumSizeHowFarAwayCanAQRCodeBeScanned_Question" xml:space="preserve">
+    <value>最小サイズの QR コードはどのくらい離れて読み取れますか？</value>
+  </data>
+  <data name="Faq_AtTheMinimumSizeHowFarAwayCanAQRCodeBeScanned_Answer" xml:space="preserve">
+    <value>最小サイズで印刷した QR コードの最大読み取り距離の目安は 36 インチ（約 1 メートル）です。照明や反射、コードの破損などによって読み取りやすさが変わり、読み取れないこともあります。</value>
+  </data>
+  <data name="Faq_WhatIfIPrintTheQRCodeSmallerThanTheMinimumSize_Question" xml:space="preserve">
+    <value>最小サイズより小さく印刷するとどうなりますか？</value>
+  </data>
+  <data name="Faq_WhatIfIPrintTheQRCodeSmallerThanTheMinimumSize_Answer" xml:space="preserve">
+    <value>読み取り距離は QR コードのサイズに比例します。たとえば、サイズを 2 倍にすると読み取り距離も 2 倍になり、半分にすると読み取り距離も半分になります。</value>
+  </data>
+  <data name="Faq_WhatTypeOfScannerOrPhoneCameraIsExpectedWhenPrintingAtTheMinimumSize_Question" xml:space="preserve">
+    <value>最小サイズで印刷したとき、どのような機器で読み取れますか？</value>
+  </data>
+  <data name="Faq_WhatTypeOfScannerOrPhoneCameraIsExpectedWhenPrintingAtTheMinimumSize_Answer" xml:space="preserve">
+    <value>読み取り実験には iPhone 13 のメイン カメラ（12 メガピクセル、MP）と iOS 標準の読み取りアプリを使いました。2018 年より後に発売された一般的な Android または iOS スマートフォンなら、既定の最小サイズの QR コードを 1 メートルの距離から読み取れるはずです。</value>
+  </data>
+  <data name="Faq_WillTheScanningAlwaysWorkIfMinimumSizeIsFollowed_Question" xml:space="preserve">
+    <value>最小サイズを守れば必ず読み取れますか？</value>
+  </data>
+  <data name="Faq_WillTheScanningAlwaysWorkIfMinimumSizeIsFollowed_Answer" xml:space="preserve">
+    <value>いいえ。最小サイズは、十分な明るさ、光沢のない印刷面、比較的新しい読み取り機器など、良好な条件を想定しています。</value>
+  </data>
+  <data name="Faq_WhyDoWeHaveToUseQRCodes_Question" xml:space="preserve">
+    <value>なぜ QR コードを使うのですか？</value>
+  </data>
+  <data name="Faq_WhyDoWeHaveToUseQRCodes_Answer" xml:space="preserve">
+    <value>URL の手入力は手間がかかります。カメラで読み取る方が簡単で確実です。</value>
+  </data>
+  <data name="Faq_AreQRCodesEvilAndOrDumb_Question" xml:space="preserve">
+    <value>QR コードは邪悪ですか、それともお間抜けですか？</value>
+  </data>
+  <data name="Faq_AreQRCodesEvilAndOrDumb_Answer" xml:space="preserve">
+    <value>ちょっと両方です。でも、Web サイトに案内するには便利です。</value>
+  </data>
+  <data name="Faq_WhyMightQRCodeDetectionFail_Question" xml:space="preserve">
+    <value>QR コードを検出できないのはなぜですか？</value>
+  </data>
+  <data name="Faq_WhyMightQRCodeDetectionFail_Answer" xml:space="preserve">
+    <value>画像のぼけや解像度の低さ、反射や影で一部が見えない、印刷サイズが小さすぎる、前景と背景のコントラストが低い、コードが傷ついているか一部が覆われているなど、さまざまな原因があります。極端な角度から読み取ると、コードがゆがんで検出できない場合もあります。</value>
+  </data>
+  <data name="Faq_HowCanIImproveQRCodeDetectionInThisApp_Question" xml:space="preserve">
+    <value>このアプリで QR コードを検出しやすくするには？</value>
+  </data>
+  <data name="Faq_HowCanIImproveQRCodeDetectionInThisApp_Answer" xml:space="preserve">
+    <value>QR コードが検出されない場合は、読み取りページの高度なツールをお試しください。グレースケール変換、コントラストの強調、遠近補正などで画像を調整できます。QR コードの周囲に絞って画像を切り出すことも有効です。画像が鮮明で十分に明るく、QR コードが画面内である程度の大きさを占めていることを確認してください。</value>
+  </data>
+  <data name="Faq_WhatIsABrand_Question" xml:space="preserve">
+    <value>ブランドとは？</value>
+  </data>
+  <data name="Faq_WhatIsABrand_Answer" xml:space="preserve">
+    <value>ブランドとは、QR コードの設定を保存したプリセットです。前景色、背景色、誤り訂正レベル、URL やテキスト、中央のロゴ画像を自由に組み合わせて保存できます。保存したブランドを適用すると設定がすぐに復元され、毎回設定し直さなくても同じスタイルの QR コードを作れます。</value>
+  </data>
+  <data name="Faq_HowDoICreateABrand_Question" xml:space="preserve">
+    <value>ブランドを作るには？</value>
+  </data>
+  <data name="Faq_HowDoICreateABrand_Answer" xml:space="preserve">
+    <value>ツール バーのブックマーク アイコンをクリックしてブランドのフライアウトを開きます。［ブランドとして保存］をクリックし、名前を付けて、保存したい設定（前景色、背景色、誤り訂正レベル、URL / テキスト、中央の画像）にチェックを入れます。［ブランドを保存］をクリックすると、選んだ設定の現在の値が保存されます。</value>
+  </data>
+  <data name="Faq_HowDoIApplyABrand_Question" xml:space="preserve">
+    <value>ブランドを適用するには？</value>
+  </data>
+  <data name="Faq_HowDoIApplyABrand_Answer" xml:space="preserve">
+    <value>ブランドのフライアウトを開き、一覧から保存済みのブランドを選びます。そのブランドの設定がすぐに適用されます。ブランドを既定にすると、アプリを開くたびに設定が自動的に読み込まれます。一覧でブランドを右クリックし、［既定に設定］を選びます。</value>
+  </data>
+  <data name="Faq_WhatDoesTheDefaultBrandSettingDo_Question" xml:space="preserve">
+    <value>ブランドを既定に設定するとどうなりますか？</value>
+  </data>
+  <data name="Faq_WhatDoesTheDefaultBrandSettingDo_Answer" xml:space="preserve">
+    <value>既定のブランドの設定は、アプリの起動時に自動的に適用されます。既定にできるブランドは一度に 1 つだけです。ブランドのフライアウトでブランドを右クリックし、［既定に設定］を選びます。現在の既定のブランドを右クリックして同じ項目を選ぶと解除できます。</value>
+  </data>
+  <data name="Faq_CanABrandStoreACenterLogoImage_Question" xml:space="preserve">
+    <value>ブランドに中央のロゴ画像を保存できますか？</value>
+  </data>
+  <data name="Faq_CanABrandStoreACenterLogoImage_Answer" xml:space="preserve">
+    <value>はい。ツール バーの中央画像ボタンでロゴ画像を読み込み、サイズと余白を調整します。ブランドのフライアウトから［ブランドとして保存］を選び、［中央の画像］にチェックを入れて保存します。ブランドには画像ファイルのパスが保存されます。後からファイルを移動または削除すると、そのブランドでロゴを適用できなくなります。</value>
+  </data>
+  <data name="Faq_ShowMe" xml:space="preserve">
+    <value>手順を見る</value>
+  </data>
+  <data name="Faq_TopicSize" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="Faq_TopicErrorCorrection" xml:space="preserve">
+    <value>誤り訂正</value>
+  </data>
+  <data name="Faq_TopicBrands" xml:space="preserve">
+    <value>ブランド</value>
+  </data>
+  <data name="Faq_TopicDetection" xml:space="preserve">
+    <value>検出</value>
+  </data>
+  <data name="DecodingPage_DetectionHelpLink.Content" xml:space="preserve">
+    <value>読み取れない理由</value>
+  </data>
+  <data name="Emoji_Smile" xml:space="preserve">
+    <value>微笑み</value>
+  </data>
+  <data name="Emoji_Grin" xml:space="preserve">
+    <value>歯を見せて笑う</value>
+  </data>
+  <data name="Emoji_Laugh" xml:space="preserve">
+    <value>大笑い</value>
+  </data>
+  <data name="Emoji_ROFL" xml:space="preserve">
+    <value>笑い転げる</value>
+  </data>
+  <data name="Emoji_Happy" xml:space="preserve">
+    <value>にっこり</value>
+  </data>
+  <data name="Emoji_Cool" xml:space="preserve">
+    <value>クール</value>
+  </data>
+  <data name="Emoji_Wow" xml:space="preserve">
+    <value>びっくり</value>
+  </data>
+  <data name="Emoji_Love" xml:space="preserve">
+    <value>ハートの目</value>
+  </data>
+  <data name="Emoji_Adore" xml:space="preserve">
+    <value>大好き</value>
+  </data>
+  <data name="Emoji_Celebrate" xml:space="preserve">
+    <value>お祝い</value>
+  </data>
+  <data name="Emoji_Robot" xml:space="preserve">
+    <value>ロボット</value>
+  </data>
+  <data name="Emoji_Like" xml:space="preserve">
+    <value>いいね</value>
+  </data>
+  <data name="Emoji_Applause" xml:space="preserve">
+    <value>拍手</value>
+  </data>
+  <data name="Emoji_Thanks" xml:space="preserve">
+    <value>ありがとう</value>
+  </data>
+  <data name="Emoji_Crown" xml:space="preserve">
+    <value>王冠</value>
+  </data>
+  <data name="Emoji_Rocket" xml:space="preserve">
+    <value>ロケット</value>
+  </data>
+  <data name="Emoji_Star" xml:space="preserve">
+    <value>星</value>
+  </data>
+  <data name="Emoji_Lightning" xml:space="preserve">
+    <value>稲妻</value>
+  </data>
+  <data name="Emoji_Shine" xml:space="preserve">
+    <value>輝く星</value>
+  </data>
+  <data name="Emoji_Alert" xml:space="preserve">
+    <value>注意</value>
+  </data>
+  <data name="Emoji_Question" xml:space="preserve">
+    <value>疑問符</value>
+  </data>
+  <data name="Emoji_Fire" xml:space="preserve">
+    <value>炎</value>
+  </data>
+  <data name="Emoji_Idea" xml:space="preserve">
+    <value>ひらめき</value>
+  </data>
+  <data name="Emoji_Gem" xml:space="preserve">
+    <value>宝石</value>
+  </data>
+  <data name="Emoji_Check" xml:space="preserve">
+    <value>チェック</value>
+  </data>
+  <data name="Emoji_Heart" xml:space="preserve">
+    <value>ハート</value>
+  </data>
+  <data name="Emoji_PurpleHeart" xml:space="preserve">
+    <value>紫のハート</value>
+  </data>
+  <data name="Emoji_Target" xml:space="preserve">
+    <value>的</value>
+  </data>
+  <data name="Emoji_Party" xml:space="preserve">
+    <value>パーティー</value>
+  </data>
+  <data name="Emoji_Trophy" xml:space="preserve">
+    <value>トロフィー</value>
+  </data>
+  <data name="Emoji_GoldMedal" xml:space="preserve">
+    <value>金メダル</value>
+  </data>
+  <data name="Emoji_Package" xml:space="preserve">
+    <value>荷物</value>
+  </data>
+  <data name="Emoji_Announcement" xml:space="preserve">
+    <value>お知らせ</value>
+  </data>
+  <data name="Emoji_Growth" xml:space="preserve">
+    <value>成長</value>
+  </data>
+  <data name="Emoji_Cart" xml:space="preserve">
+    <value>買い物カート</value>
+  </data>
+  <data name="Emoji_Briefcase" xml:space="preserve">
+    <value>ブリーフケース</value>
+  </data>
+  <data name="Emoji_Money" xml:space="preserve">
+    <value>お金</value>
+  </data>
+  <data name="Emoji_Coffee" xml:space="preserve">
+    <value>コーヒー</value>
+  </data>
+  <data name="Emoji_Time" xml:space="preserve">
+    <value>時間</value>
+  </data>
+  <data name="Emoji_Clock" xml:space="preserve">
+    <value>時計</value>
+  </data>
+  <data name="Emoji_Donut" xml:space="preserve">
+    <value>ドーナツ</value>
+  </data>
+  <data name="Emoji_Gift" xml:space="preserve">
+    <value>プレゼント</value>
+  </data>
+  <data name="Emoji_Music" xml:space="preserve">
+    <value>音楽</value>
+  </data>
+  <data name="Emoji_Gaming" xml:space="preserve">
+    <value>ゲーム</value>
+  </data>
+  <data name="Emoji_Camera" xml:space="preserve">
+    <value>カメラ</value>
+  </data>
+  <data name="Emoji_Movie" xml:space="preserve">
+    <value>映画</value>
+  </data>
+  <data name="Emoji_Brain" xml:space="preserve">
+    <value>脳</value>
+  </data>
+  <data name="Emoji_Person" xml:space="preserve">
+    <value>人物</value>
+  </data>
+  <data name="Emoji_Contacts" xml:space="preserve">
+    <value>連絡先</value>
+  </data>
+  <data name="Emoji_ContactCard" xml:space="preserve">
+    <value>連絡先カード</value>
+  </data>
+  <data name="Emoji_Pin" xml:space="preserve">
+    <value>ピン</value>
+  </data>
+  <data name="Emoji_Phone" xml:space="preserve">
+    <value>携帯電話</value>
+  </data>
+  <data name="Emoji_Telephone" xml:space="preserve">
+    <value>固定電話</value>
+  </data>
+  <data name="Emoji_Email" xml:space="preserve">
+    <value>メール</value>
+  </data>
+  <data name="Emoji_Envelope" xml:space="preserve">
+    <value>封筒</value>
+  </data>
+  <data name="Emoji_Home" xml:space="preserve">
+    <value>自宅</value>
+  </data>
+  <data name="Emoji_House" xml:space="preserve">
+    <value>家</value>
+  </data>
+  <data name="Emoji_Office" xml:space="preserve">
+    <value>オフィス</value>
+  </data>
+  <data name="Emoji_Laptop" xml:space="preserve">
+    <value>ノート PC</value>
+  </data>
+  <data name="Emoji_Globe" xml:space="preserve">
+    <value>地球</value>
+  </data>
+  <data name="Emoji_WiFi" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="Emoji_Rainbow" xml:space="preserve">
+    <value>虹</value>
+  </data>
+  <data name="Emoji_Sunflower" xml:space="preserve">
+    <value>ひまわり</value>
+  </data>
+  <data name="Emoji_Cat" xml:space="preserve">
+    <value>猫</value>
+  </data>
+  <data name="Emoji_Dog" xml:space="preserve">
+    <value>犬</value>
+  </data>
+  <data name="Emoji_Fox" xml:space="preserve">
+    <value>キツネ</value>
+  </data>
+  <data name="Emoji_Panda" xml:space="preserve">
+    <value>パンダ</value>
+  </data>
+  <data name="Emoji_Pizza" xml:space="preserve">
+    <value>ピザ</value>
+  </data>
+  <data name="Emoji_Burger" xml:space="preserve">
+    <value>ハンバーガー</value>
+  </data>
+  <data name="Emoji_Fries" xml:space="preserve">
+    <value>フライドポテト</value>
+  </data>
+  <data name="Emoji_Strawberry" xml:space="preserve">
+    <value>いちご</value>
+  </data>
+  <data name="Emoji_Sparkles" xml:space="preserve">
+    <value>きらめき</value>
+  </data>
+  <data name="Emoji_Lock" xml:space="preserve">
+    <value>鍵</value>
+  </data>
+  <data name="Emoji_Bell" xml:space="preserve">
+    <value>ベル</value>
+  </data>
+  <data name="Emoji_Shield" xml:space="preserve">
+    <value>盾</value>
+  </data>
+  <data name="FramePreset_None_Short" xml:space="preserve">
+    <value>フレーム</value>
+  </data>
+  <data name="FramePreset_None_Description" xml:space="preserve">
+    <value>フレームなし</value>
+  </data>
+  <data name="FramePreset_BottomLabel_Short" xml:space="preserve">
+    <value>ラベル</value>
+  </data>
+  <data name="FramePreset_BottomLabel_Description" xml:space="preserve">
+    <value>下部のラベル</value>
+  </data>
+  <data name="FramePreset_BottomLabel_Caption" xml:space="preserve">
+    <value>読み取ってください</value>
+  </data>
+  <data name="FramePreset_RoundedFrame_Short" xml:space="preserve">
+    <value>角丸</value>
+  </data>
+  <data name="FramePreset_RoundedFrame_Description" xml:space="preserve">
+    <value>角丸フレーム</value>
+  </data>
+  <data name="FramePreset_RoundedFrame_Caption" xml:space="preserve">
+    <value>ここをスキャン</value>
+  </data>
+  <data name="FramePreset_CornerCallout_Short" xml:space="preserve">
+    <value>吹き出し</value>
+  </data>
+  <data name="FramePreset_CornerCallout_Description" xml:space="preserve">
+    <value>角の吹き出し</value>
+  </data>
+  <data name="FramePreset_CornerCallout_Caption" xml:space="preserve">
+    <value>QR コードを読み取る</value>
+  </data>
+  <data name="FramePreset_SpeechBubble_Short" xml:space="preserve">
+    <value>バブル</value>
+  </data>
+  <data name="FramePreset_SpeechBubble_Description" xml:space="preserve">
+    <value>会話の吹き出し</value>
+  </data>
+  <data name="FramePreset_SpeechBubble_Caption" xml:space="preserve">
+    <value>読み取ってください</value>
+  </data>
+  <data name="FramePreset_Ticket_Short" xml:space="preserve">
+    <value>チケット</value>
+  </data>
+  <data name="FramePreset_Ticket_Description" xml:space="preserve">
+    <value>イベント チケット</value>
+  </data>
+  <data name="FramePreset_Ticket_Caption" xml:space="preserve">
+    <value>チケットを入手</value>
+  </data>
+  <data name="FramePreset_Sticker_Short" xml:space="preserve">
+    <value>ステッカー</value>
+  </data>
+  <data name="FramePreset_Sticker_Description" xml:space="preserve">
+    <value>ポップなステッカー</value>
+  </data>
+  <data name="FramePreset_Sticker_Caption" xml:space="preserve">
+    <value>開いてみて</value>
+  </data>
+  <data name="FramePreset_ScallopedBadge_Short" xml:space="preserve">
+    <value>バッジ</value>
+  </data>
+  <data name="FramePreset_ScallopedBadge_Description" xml:space="preserve">
+    <value>波形の縁のバッジ</value>
+  </data>
+  <data name="FramePreset_ScallopedBadge_Caption" xml:space="preserve">
+    <value>読み取ってください</value>
+  </data>
+  <data name="FramePreset_Polaroid_Short" xml:space="preserve">
+    <value>写真</value>
+  </data>
+  <data name="FramePreset_Polaroid_Description" xml:space="preserve">
+    <value>キャプション付きカード</value>
+  </data>
+  <data name="FramePreset_Polaroid_Caption" xml:space="preserve">
+    <value>思い出を残そう</value>
+  </data>
+  <data name="FramePreset_Burst_Short" xml:space="preserve">
+    <value>バースト</value>
+  </data>
+  <data name="FramePreset_Burst_Description" xml:space="preserve">
+    <value>漫画風のバースト</value>
+  </data>
+  <data name="FramePreset_Burst_Caption" xml:space="preserve">
+    <value>試してみて！</value>
+  </data>
+  <data name="DesignPreset_Classic_Name" xml:space="preserve">
+    <value>クラシック</value>
+  </data>
+  <data name="DesignPreset_Classic_Description" xml:space="preserve">
+    <value>くっきりとシンプルで、どんな用途にも使えます。</value>
+  </data>
+  <data name="DesignPreset_Bubblegum_Name" xml:space="preserve">
+    <value>バブルガム</value>
+  </data>
+  <data name="DesignPreset_Bubblegum_Description" xml:space="preserve">
+    <value>キャンディーカラーの吹き出しに、プラム色のドット。</value>
+  </data>
+  <data name="DesignPreset_Bubblegum_Caption" xml:space="preserve">
+    <value>ごあいさつ</value>
+  </data>
+  <data name="DesignPreset_GigTicket_Name" xml:space="preserve">
+    <value>ライブ チケット</value>
+  </data>
+  <data name="DesignPreset_GigTicket_Description" xml:space="preserve">
+    <value>夕焼け色の縁取りをあしらった入場券。</value>
+  </data>
+  <data name="DesignPreset_GigTicket_Caption" xml:space="preserve">
+    <value>チケットを入手</value>
+  </data>
+  <data name="DesignPreset_Cafe_Name" xml:space="preserve">
+    <value>カフェ</value>
+  </data>
+  <data name="DesignPreset_Cafe_Description" xml:space="preserve">
+    <value>やわらかな角と、温かみのある紙の色合い。</value>
+  </data>
+  <data name="DesignPreset_Cafe_Caption" xml:space="preserve">
+    <value>メニューを見る</value>
+  </data>
+  <data name="DesignPreset_PopSticker_Name" xml:space="preserve">
+    <value>ポップ ステッカー</value>
+  </data>
+  <data name="DesignPreset_PopSticker_Description" xml:space="preserve">
+    <value>ライム色、丸い角の位置検出パターン、大きくずらした影。</value>
+  </data>
+  <data name="DesignPreset_PopSticker_Caption" xml:space="preserve">
+    <value>開いてみて</value>
+  </data>
+  <data name="DesignPreset_Festival_Name" xml:space="preserve">
+    <value>フェスティバル</value>
+  </data>
+  <data name="DesignPreset_Festival_Description" xml:space="preserve">
+    <value>明るく弾ける、元気な漫画風デザイン。</value>
+  </data>
+  <data name="DesignPreset_Festival_Caption" xml:space="preserve">
+    <value>一緒に楽しもう！</value>
+  </data>
+  <data name="DesignPreset_Ocean_Name" xml:space="preserve">
+    <value>オーシャン</value>
+  </data>
+  <data name="DesignPreset_Ocean_Description" xml:space="preserve">
+    <value>さわやかな青のグラデーションを使ったターコイズ色のバッジ。</value>
+  </data>
+  <data name="DesignPreset_Ocean_Caption" xml:space="preserve">
+    <value>飛び込もう</value>
+  </data>
+  <data name="DesignPreset_Postcard_Name" xml:space="preserve">
+    <value>ポストカード</value>
+  </data>
+  <data name="DesignPreset_Postcard_Description" xml:space="preserve">
+    <value>自分らしいメッセージを届ける、落ち着いた青のフレーム。</value>
+  </data>
+  <data name="DesignPreset_Postcard_Caption" xml:space="preserve">
+    <value>また連絡してね</value>
+  </data>
+  <data name="Design_Module_Square" xml:space="preserve">
+    <value>四角</value>
+  </data>
+  <data name="Design_Module_Rounded" xml:space="preserve">
+    <value>角丸</value>
+  </data>
+  <data name="Design_Module_Dots" xml:space="preserve">
+    <value>ドット</value>
+  </data>
+  <data name="Design_Eye_Square" xml:space="preserve">
+    <value>四角</value>
+  </data>
+  <data name="Design_Eye_Rounded" xml:space="preserve">
+    <value>角丸</value>
+  </data>
+  <data name="Design_Eye_Circle" xml:space="preserve">
+    <value>円</value>
+  </data>
+  <data name="Design_Icon_None" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="Design_Icon_Arrow" xml:space="preserve">
+    <value>矢印</value>
+  </data>
+  <data name="Design_Icon_WiFi" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="Design_Icon_Contact" xml:space="preserve">
+    <value>連絡先</value>
+  </data>
+  <data name="Design_Icon_Link" xml:space="preserve">
+    <value>リンク</value>
+  </data>
+  <data name="App_FlowDirection" xml:space="preserve">
+    <value>LeftToRight</value>
+    <comment>WinUI enum value: choose LeftToRight or RightToLeft for the language. Do not translate the enum name.</comment>
+  </data>
+  <data name="Colors_PickColor" xml:space="preserve">
+    <value>色を選ぶ</value>
+  </data>
+  <data name="Colors_PasteClipboard" xml:space="preserve">
+    <value>クリップボードから色を貼り付け</value>
+  </data>
+  <data name="Colors_PasteClipboardValue" xml:space="preserve">
+    <value>クリップボードから {0} を貼り付け</value>
+    <comment>{0} is the color's hexadecimal or RGB value. Accessible label and tooltip.</comment>
+  </data>
+  <data name="Licenses_MitCopyrightNote" xml:space="preserve">
+    <value>注：このライブラリの著作権年と著作権者は GitHub リポジトリに記載されています。著作権表示の全文を確認するには、上の［GitHub で表示］を選んでください。</value>
+  </data>
+  <data name="PrintSettingsDialog_InitialZoom.Text" xml:space="preserve">
+    <value>100%</value>
+    <comment>The initial zoom before the preview loads.</comment>
+  </data>
+  <data name="Print_DocumentTitle" xml:space="preserve">
+    <value>QR コード</value>
+    <comment>Title of the PDF and the corresponding Windows print job.</comment>
+  </data>
+</root>

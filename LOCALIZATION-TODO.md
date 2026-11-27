@@ -2,7 +2,7 @@
 
 This source audit covers all seven routes in `PageService`, plus their dialogs, flyouts, shared controls, and Windows integrations. Paths below are relative to the `Simple QR Code Maker` app project unless another project is named.
 
-The extraction is in source, and both pseudo locales can be generated for Debug. The remaining work is the manual desktop pass and then the pilot translations.
+The extraction and translated catalogs are in source, and both pseudo locales can be generated for Debug. Installed-app and Store-listing checks are separate.
 
 ## Step 1 - Extract hard-coded copy into the English resource file
 
@@ -67,4 +67,5 @@ Preview output goes under `bin\pseudo\<locale>` and is isolated from regular bui
 
 ## Step 3 - Translate and ship
 
-- [ ] Pilot French (`fr-FR`), Spanish (`es-ES`), and Japanese (`ja-JP`). Agree on terminology, add `Strings\<locale>\Resources.resw` catalogs, and update count formatting for each locale's plural rules. Verify key and placeholder parity, access keys, installed language selection, and fallback before widening coverage. Localize the Store listing separately.
+- [x] Add `Strings\<locale>\Resources.resw` catalogs for Spanish (`es-ES`), Portuguese (Brazil) (`pt-BR`), French (`fr-FR`), German (`de-DE`), Japanese (`ja-JP`), Simplified Chinese (`zh-CN`), Hindi (`hi-IN`), and Arabic (`ar`). Keep `en-US` as the fallback and use right-to-left flow for Arabic.
+- [ ] Review translated layouts, access keys, and installed language selection on the desktop, including Arabic text direction and fallback. Localize the Store listing separately.
