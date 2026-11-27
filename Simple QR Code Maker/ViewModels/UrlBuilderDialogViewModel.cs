@@ -41,7 +41,7 @@ public sealed partial class UrlBuilderDialogViewModel : ObservableRecipient
 
     public bool CanGoNext => _currentLineIndex < _lines.Count - 1;
 
-    public string CurrentLineLabel => $"Line {_currentLineIndex + 1} of {_lines.Count}";
+    public string CurrentLineLabel => "UrlBuilder_LineNavigation".FormatLocalized(_currentLineIndex + 1, _lines.Count);
 
     public Visibility LineNavigationVisibility => HasMultipleLines ? Visibility.Visible : Visibility.Collapsed;
 

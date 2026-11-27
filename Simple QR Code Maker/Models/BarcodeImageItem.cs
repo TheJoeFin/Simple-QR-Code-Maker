@@ -75,12 +75,12 @@ public partial class BarcodeImageItem : ObservableRecipient
         : null;
 
     public string CommonBrandActionName => IsCommonBranded
-        ? $"Restore current style instead of {CommonBrandName}"
-        : $"Use {CommonBrandName} brand";
+        ? "Preview_RestoreStyle".FormatLocalized(CommonBrandName)
+        : "Preview_UseBrand".FormatLocalized(CommonBrandName);
 
     public string CommonBrandToolTip => IsCommonBranded
-        ? $"{CommonBrand?.Name} colors and logo applied. Restore your current style."
-        : $"Use {CommonBrand?.Name} colors and logo for this QR Code.";
+        ? "Preview_RestoreStyleHelp".FormatLocalized(CommonBrand?.Name)
+        : "Preview_UseBrandHelp".FormatLocalized(CommonBrand?.Name);
 
     public QRCode QRCodeDetails => BarcodeHelpers.EncodeQrCode(CodeAsText, ErrorCorrection);
 
@@ -100,9 +100,10 @@ public partial class BarcodeImageItem : ObservableRecipient
             if (sizeRecommendation.Kind == QrCodeSizeRecommendationKind.TransparencyDependent)
                 return CodeAsText;
 
+            string sizeText = LocalizedDisplay.SizeRecommendation(sizeRecommendation);
             return sizeRecommendation.IsExact
-                ? $"Smallest recommended size {sizeRecommendation.Text}, {CodeAsText}"
-                : $"{sizeRecommendation.Text} {CodeAsText}";
+                ? "Preview_MinimumSizeAndContent".FormatLocalized(sizeText, CodeAsText)
+                : "Preview_MetadataAndContent".FormatLocalized(sizeText, CodeAsText);
         }
     }
 
@@ -110,9 +111,9 @@ public partial class BarcodeImageItem : ObservableRecipient
     public partial Visibility SizeTextVisible { get; set; } = Visibility.Visible;
     public double MaxSizeScaleFactor { get; set; }
 
-    public string SizeRecommendationTitle => SizeRecommendation.IsExact ? "Minimum size" : "Print sizing unavailable";
+    public string SizeRecommendationTitle => SizeRecommendation.IsExact ? "Preview_MinimumSize".GetLocalized() : "Preview_SizingUnavailable".GetLocalized();
 
-    public string SizeRecommendationText => SizeRecommendation.Text;
+    public string SizeRecommendationText => LocalizedDisplay.SizeRecommendation(SizeRecommendation);
 
     public bool CanCopySizeText => SizeRecommendation.IsExact;
 
@@ -177,7 +178,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     [RelayCommand]
     private void FaqButton()
     {
-        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, "Size"));
+        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, topic: FaqTopic.Size));
     }
 
     [RelayCommand]
@@ -190,24 +191,24 @@ public partial class BarcodeImageItem : ObservableRecipient
             (string title, string message, InfoBarSeverity severity) = sizeRecommendation.Kind switch
             {
                 QrCodeSizeRecommendationKind.PaddingDependent => (
-                    "Exact minimum size unavailable",
-                    "Print sizing is unavailable because padding outside 1-4 modules makes borderless and heavy-border QR Codes scan too variably for reliable prediction.",
+                    "Preview_MinimumSizeCopyFailed".GetLocalized(),
+                    "Preview_PaddingSizingHelp".GetLocalized(),
                     InfoBarSeverity.Informational),
                 QrCodeSizeRecommendationKind.TransparencyDependent => (
-                    "Exact minimum size unavailable",
-                    "Transparent QR colors depend on the final print surface, so there is no exact minimum size to copy.",
+                    "Preview_MinimumSizeCopyFailed".GetLocalized(),
+                    "Preview_TransparencySizingHelp".GetLocalized(),
                     InfoBarSeverity.Informational),
                 QrCodeSizeRecommendationKind.LowContrast => (
-                    "Exact minimum size unavailable",
-                    "Color contrast is too low to produce a reliable minimum size recommendation.",
+                    "Preview_MinimumSizeCopyFailed".GetLocalized(),
+                    "Preview_ContrastSizingHelp".GetLocalized(),
                     InfoBarSeverity.Warning),
                 QrCodeSizeRecommendationKind.Error => (
-                    "Exact minimum size unavailable",
-                    "The selected maximum scan distance does not produce a reliable minimum size recommendation.",
+                    "Preview_MinimumSizeCopyFailed".GetLocalized(),
+                    "Preview_DistanceSizingHelp".GetLocalized(),
                     InfoBarSeverity.Warning),
                 _ => (
-                    "Exact minimum size unavailable",
-                    "There is no exact minimum size to copy for this QR Code.",
+                    "Preview_MinimumSizeCopyFailed".GetLocalized(),
+                    "Preview_NoSizingHelp".GetLocalized(),
                     InfoBarSeverity.Informational)
             };
 
@@ -221,7 +222,7 @@ public partial class BarcodeImageItem : ObservableRecipient
         DataPackage dataPackage = new();
         dataPackage.SetText(SizeRecommendationText);
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
-        WeakReferenceMessenger.Default.Send(new RequestShowMessage("QR Code size copied to the clipboard", string.Empty, InfoBarSeverity.Success));
+        WeakReferenceMessenger.Default.Send(new RequestShowMessage("Preview_SizeCopied".GetLocalized(), string.Empty, InfoBarSeverity.Success));
     }
 
     [RelayCommand]
@@ -247,7 +248,7 @@ public partial class BarcodeImageItem : ObservableRecipient
     {
         if (CodeAsBitmap is null)
         {
-            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to copy QR Code to the clipboard", "No QR Code to copy to the clipboard", InfoBarSeverity.Error));
+            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Preview_CopyFailed".GetLocalized(), "Preview_NothingToCopy".GetLocalized(), InfoBarSeverity.Error));
             return;
         }
 
@@ -262,7 +263,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
         if (files.Count == 0)
         {
-            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to copy QR Code to the clipboard", "No QR Code to copy to the clipboard", InfoBarSeverity.Error));
+            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Preview_CopyFailed".GetLocalized(), "Preview_NothingToCopy".GetLocalized(), InfoBarSeverity.Error));
             return;
         }
 
@@ -270,7 +271,7 @@ public partial class BarcodeImageItem : ObservableRecipient
         dataPackage.SetStorageItems(files);
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
 
-        WeakReferenceMessenger.Default.Send(new RequestShowMessage("PNG QR Code copied to the clipboard", string.Empty, InfoBarSeverity.Success));
+        WeakReferenceMessenger.Default.Send(new RequestShowMessage("Main_PngCopied".GetLocalized(), string.Empty, InfoBarSeverity.Success));
         WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
     }
 
@@ -289,7 +290,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
         if (files.Count == 0)
         {
-            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to copy QR Code to the clipboard", "No QR Code to copy to the clipboard", InfoBarSeverity.Error));
+            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Preview_CopyFailed".GetLocalized(), "Preview_NothingToCopy".GetLocalized(), InfoBarSeverity.Error));
             return;
         }
 
@@ -297,7 +298,7 @@ public partial class BarcodeImageItem : ObservableRecipient
         dataPackage.SetStorageItems(files);
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
 
-        WeakReferenceMessenger.Default.Send(new RequestShowMessage("SVG QR Code copied to the clipboard", string.Empty, InfoBarSeverity.Success));
+        WeakReferenceMessenger.Default.Send(new RequestShowMessage("Main_SvgCopied".GetLocalized(), string.Empty, InfoBarSeverity.Success));
         WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
     }
 
@@ -312,7 +313,7 @@ public partial class BarcodeImageItem : ObservableRecipient
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Failed to share QR Code: {ex}");
-            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to share QR Code", ex.Message, InfoBarSeverity.Error));
+            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Preview_ShareFailed".GetLocalized(), "Preview_ShareFailedHelp".GetLocalized(), InfoBarSeverity.Error));
         }
     }
 
@@ -323,7 +324,7 @@ public partial class BarcodeImageItem : ObservableRecipient
 
         if (string.IsNullOrWhiteSpace(svgAsText))
         {
-            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Failed to copy QR Code to the clipboard", "No QR Code to copy to the clipboard", InfoBarSeverity.Error));
+            WeakReferenceMessenger.Default.Send(new RequestShowMessage("Preview_CopyFailed".GetLocalized(), "Preview_NothingToCopy".GetLocalized(), InfoBarSeverity.Error));
             return;
         }
 
@@ -331,7 +332,7 @@ public partial class BarcodeImageItem : ObservableRecipient
         dataPackage.SetText(svgAsText);
         Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
 
-        WeakReferenceMessenger.Default.Send(new RequestShowMessage("SVG Text of QR Code copied to the clipboard", string.Empty, InfoBarSeverity.Success));
+        WeakReferenceMessenger.Default.Send(new RequestShowMessage("Preview_SvgTextCopied".GetLocalized(), string.Empty, InfoBarSeverity.Success));
         WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
     }
 
@@ -347,11 +348,11 @@ public partial class BarcodeImageItem : ObservableRecipient
             case FileKind.None:
                 break;
             case FileKind.PNG:
-                savePicker.FileTypeChoices.Add("PNG Image", [".png"]);
+                savePicker.FileTypeChoices.Add("FileType_Png".GetLocalized(), [".png"]);
                 savePicker.DefaultFileExtension = ".png";
                 break;
             case FileKind.SVG:
-                savePicker.FileTypeChoices.Add("SVG Image", [".svg"]);
+                savePicker.FileTypeChoices.Add("FileType_Svg".GetLocalized(), [".svg"]);
                 savePicker.DefaultFileExtension = ".svg";
                 break;
             default:
@@ -377,7 +378,7 @@ public partial class BarcodeImageItem : ObservableRecipient
                     return;
 
                 await CodeAsBitmap.SavePngToStorageFile(file);
-                WeakReferenceMessenger.Default.Send(new RequestShowMessage("PNG QR Code Saved!", string.Empty, InfoBarSeverity.Success));
+                WeakReferenceMessenger.Default.Send(new RequestShowMessage("Preview_PngSaved".GetLocalized(), string.Empty, InfoBarSeverity.Success));
                 WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
                 break;
             case FileKind.SVG:
@@ -385,7 +386,7 @@ public partial class BarcodeImageItem : ObservableRecipient
                     ForegroundColor.ToSystemDrawingColor(),
                     BackgroundColor.ToSystemDrawingColor(),
                     ErrorCorrection);
-                WeakReferenceMessenger.Default.Send(new RequestShowMessage("PNG QR Code Saved!", string.Empty, InfoBarSeverity.Success));
+                WeakReferenceMessenger.Default.Send(new RequestShowMessage("Preview_PngSaved".GetLocalized(), string.Empty, InfoBarSeverity.Success));
                 WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
                 break;
             default:

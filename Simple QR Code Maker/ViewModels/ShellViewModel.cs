@@ -240,10 +240,10 @@ public partial class ShellViewModel : ObservableRecipient
             .Select(item => new TitleBarSearchResult
             {
                 Kind = TitleBarSearchResultKind.History,
-                Title = Truncate(item.DisplayText),
+                Title = Truncate(LocalizedDisplay.HistoryText(item)),
                 Subtitle = string.IsNullOrWhiteSpace(item.ContentKindLabel)
-                    ? $"Saved {item.SaveDateAsString}"
-                    : $"{item.ContentKindLabel} - Saved {item.SaveDateAsString}",
+                    ? "Shell_SearchHistorySaved".FormatLocalized(item.SaveDateAsString)
+                    : "Shell_SearchHistoryKindSaved".FormatLocalized(LocalizedDisplay.ContentKindName(item.ContentKind), item.SaveDateAsString),
                 SearchText = item.CodesContent,
                 HistoryItem = item,
             });
@@ -268,11 +268,11 @@ public partial class ShellViewModel : ObservableRecipient
     private static string GetBrandSubtitle(BrandItem brandItem)
     {
         string description = string.IsNullOrWhiteSpace(brandItem.UrlContent)
-            ? "Saved brand"
+            ? "Shell_SearchSavedBrand".GetLocalized()
             : Truncate(brandItem.UrlContent);
 
         if (brandItem.IsDefault)
-            return $"Default brand - {description}";
+            return "Shell_SearchDefaultBrand".FormatLocalized(description);
 
         return description;
     }

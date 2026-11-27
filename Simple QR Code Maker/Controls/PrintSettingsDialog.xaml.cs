@@ -11,6 +11,8 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
 
+using Simple_QR_Code_Maker.Helpers;
+
 namespace Simple_QR_Code_Maker.Controls;
 
 public sealed partial class PrintSettingsDialog : ContentDialog
@@ -115,7 +117,8 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         }
         catch (Exception ex)
         {
-            ShowPreviewError($"Couldn't start the PDF preview. {ex.Message}");
+            Debug.WriteLine($"Couldn't start the PDF preview: {ex}");
+            ShowPreviewError("Print_PreviewStartFailed".GetLocalized());
         }
     }
 
@@ -210,7 +213,7 @@ public sealed partial class PrintSettingsDialog : ContentDialog
 
     private void PreviewScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
     {
-        PreviewZoomTextBlock.Text = $"{Math.Round(PreviewScrollViewer.ZoomFactor * 100)}%";
+        PreviewZoomTextBlock.Text = "Print_ZoomPercent".FormatLocalized(Math.Round(PreviewScrollViewer.ZoomFactor * 100));
     }
 
     private void QueuePreviewRefresh()
@@ -286,7 +289,8 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         catch (Exception ex)
         {
             TryDeleteUncommittedPdf(pdfPath);
-            ShowPreviewError($"Couldn't generate the PDF preview. {ex.Message}");
+            Debug.WriteLine($"Couldn't generate the PDF preview: {ex}");
+            ShowPreviewError("Print_PreviewGenerationFailed".GetLocalized());
         }
     }
 
@@ -379,7 +383,7 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         if (currentPdfPath is null)
         {
             args.Cancel = true;
-            ShowPreviewError("Wait for the PDF preview to finish loading before printing.");
+            ShowPreviewError("Print_WaitForPreview".GetLocalized());
             return;
         }
 
@@ -393,7 +397,8 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         }
         catch (Exception ex)
         {
-            ShowPreviewError($"Couldn't send the generated PDF to the printer. {ex.Message}");
+            Debug.WriteLine($"Couldn't send the generated PDF to the printer: {ex}");
+            ShowPreviewError("Print_JobFailed".GetLocalized());
         }
         finally
         {
@@ -440,9 +445,9 @@ public sealed partial class PrintSettingsDialog : ContentDialog
 
     private void ConfigureLengthInputs(PrintJobSettings settings)
     {
-        CodeSizeMmBox.Header = GetLengthHeader("QR size");
-        SpacingMmBox.Header = GetLengthHeader("Spacing");
-        MarginMmBox.Header = GetLengthHeader("Page margin");
+        CodeSizeMmBox.Header = GetLengthHeader("Print_QrSize".GetLocalized());
+        SpacingMmBox.Header = GetLengthHeader("Print_Spacing".GetLocalized());
+        MarginMmBox.Header = GetLengthHeader("Print_Margin".GetLocalized());
 
         ConfigureLengthBox(CodeSizeMmBox, settings.CodeSizeMm, PrintJobSettings.MinimumCodeSizeMm, PrintJobSettings.MaximumCodeSizeMm);
         ConfigureLengthBox(SpacingMmBox, settings.SpacingMm, PrintJobSettings.MinimumSpacingMm, PrintJobSettings.MaximumSpacingMm);
@@ -457,7 +462,7 @@ public sealed partial class PrintSettingsDialog : ContentDialog
         box.Value = ToDisplayLength(valueMm);
     }
 
-    private string GetLengthHeader(string title) => $"{title} ({lengthUnitSuffix})";
+    private string GetLengthHeader(string title) => "Print_LengthHeader".FormatLocalized(title, lengthUnitSuffix);
 
     private double ToDisplayLength(double millimeters)
     {
@@ -615,18 +620,18 @@ public sealed partial class PrintSettingsDialog : ContentDialog
     {
         QuickPresetDescriptionTextBlock.Text = QuickPresetCombo.SelectedIndex switch
         {
-            1 => "Small, close-range QR Codes for packaging, shelf tags, and asset labels.",
-            2 => "Medium QR Codes for inserts, flyers, invoices, and one-page handouts.",
-            3 => "Larger QR Codes for restaurant menus, tabletop displays, and counter cards.",
-            4 => "Single large QR Codes for doors, walls, posters, and event signage.",
-            _ => "Choose a common QR printing scenario or keep the layout fully custom.",
+            1 => "Print_PresetProductLabelsHelp".GetLocalized(),
+            2 => "Print_PresetFlyersHelp".GetLocalized(),
+            3 => "Print_PresetMenusHelp".GetLocalized(),
+            4 => "Print_PresetPostersHelp".GetLocalized(),
+            _ => "Print_PresetCustomHelp".GetLocalized(),
         };
     }
 
     private string FormatLength(double millimeters)
     {
         double displayValue = ToDisplayLength(millimeters);
-        return $"{displayValue:0.##} {lengthUnitSuffix}";
+        return "Print_LengthValue".FormatLocalized(displayValue, lengthUnitSuffix);
     }
 
     private void SynchronizeLengthInputs(PrintJobSettings settings)

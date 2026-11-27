@@ -86,7 +86,7 @@ public sealed partial class MainPage : Page
     private void WhatIsErrorCorrection_Click(object sender, RoutedEventArgs e)
     {
         ErrorCorrectionFlyout.Hide();
-        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, "error correction"));
+        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, topic: FaqTopic.ErrorCorrection));
     }
 
     private void VCardSingleCodeDefault_Click(object sender, RoutedEventArgs e)

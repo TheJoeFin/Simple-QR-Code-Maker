@@ -80,15 +80,14 @@
                                                 <controls:AdvancedToolsUserControl x:Name="AdvancedToolsPanel" />
                                             </Border>
                                             <Button
+                                                x:Uid="DecodingPage_CloseAdvancedToolsButton"
                                                 Width="32"
                                                 Height="32"
                                                 Margin="0,28,20,0"
                                                 Padding="6"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Top"
-                                                AutomationProperties.Name="Close advanced tools"
                                                 Command="{x:Bind ViewModel.ToggleAdvancedToolsCommand}"
-                                                ToolTipService.ToolTip="Close advanced tools"
                                                 Visibility="{x:Bind ViewModel.IsAdvancedToolsVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                                 <Viewbox>
                                                     <SymbolIcon Symbol="ClosePane" />
@@ -130,9 +129,9 @@
                                                     Style="{StaticResource BodyStrongTextBlockStyle}"
                                                     Text="{x:Bind ViewModel.LoadingMessage, Mode=OneWay}" />
                                                 <Button
+                                                    x:Uid="DecodingPage_CancelButton"
                                                     HorizontalAlignment="Center"
                                                     Command="{x:Bind ViewModel.CancelBatchOperationCommand, Mode=OneWay}"
-                                                    Content="Cancel"
                                                     Visibility="{x:Bind ViewModel.IsCancellableOperationRunning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                             </StackPanel>
                                         </Grid>
@@ -161,22 +160,20 @@
                                                     Orientation="Horizontal"
                                                     Spacing="10">
                                                     <controls:IconAndTextButton
+                                                        x:Uid="DecodingPage_OpenFilesIconAndTextButton"
                                                         Width="140"
                                                         Command="{x:Bind ViewModel.OpenNewFileCommand}"
                                                         IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                                        Text="Open Files..."
-                                                        ToolTipService.ToolTip="Open one or more image files to decode their barcodes"
                                                         Visibility="{x:Bind ViewModel.HasImage, Mode=OneWay, ConverterParameter=true, Converter={StaticResource BoolToVisibilityConverter}}">
                                                         <controls:IconAndTextButton.IconSource>
                                                             <SymbolIconSource Symbol="OpenFile" />
                                                         </controls:IconAndTextButton.IconSource>
                                                     </controls:IconAndTextButton>
                                                     <controls:IconAndTextButton
+                                                        x:Uid="DecodingPage_OpenFolderIconAndTextButton"
                                                         Width="150"
                                                         Command="{x:Bind ViewModel.OpenFolderCommand}"
                                                         IsEnabled="{x:Bind ViewModel.OpenFolderCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                                        Text="Open Folder..."
-                                                        ToolTipService.ToolTip="Open a folder to browse and batch-decode all image files in it"
                                                         Visibility="{x:Bind ViewModel.HasImage, Mode=OneWay, ConverterParameter=true, Converter={StaticResource BoolToVisibilityConverter}}">
                                                         <controls:IconAndTextButton.IconSource>
                                                             <SymbolIconSource Symbol="Folder" />
@@ -189,31 +186,28 @@
                                                     Orientation="Horizontal"
                                                     Spacing="10">
                                                     <controls:IconAndTextButton
+                                                        x:Uid="DecodingPage_PasteIconAndTextButton"
                                                         Width="85"
                                                         Click="PasteImageButton_Click"
-                                                        IsEnabled="{x:Bind ViewModel.CanPasteImage, Mode=OneWay}"
-                                                        Text="Paste"
-                                                        ToolTipService.ToolTip="Paste an image or file from your clipboard to try to decode the barcodes">
+                                                        IsEnabled="{x:Bind ViewModel.CanPasteImage, Mode=OneWay}">
                                                         <controls:IconAndTextButton.IconSource>
                                                             <SymbolIconSource Symbol="Paste" />
                                                         </controls:IconAndTextButton.IconSource>
                                                     </controls:IconAndTextButton>
                                                     <controls:IconAndTextButton
+                                                        x:Uid="DecodingPage_CameraIconAndTextButton"
                                                         Width="110"
                                                         Command="{x:Bind ViewModel.CapturePhotoCommand}"
-                                                        IsEnabled="{x:Bind ViewModel.CapturePhotoCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                                        Text="Camera"
-                                                        ToolTipService.ToolTip="Open the Windows camera to capture a photo for decoding">
+                                                        IsEnabled="{x:Bind ViewModel.CapturePhotoCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                                                         <controls:IconAndTextButton.IconSource>
                                                             <SymbolIconSource Symbol="Camera" />
                                                         </controls:IconAndTextButton.IconSource>
                                                     </controls:IconAndTextButton>
                                                     <controls:IconAndTextButton
+                                                        x:Uid="DecodingPage_SnipIconAndTextButton"
                                                         Width="85"
                                                         Command="{x:Bind ViewModel.LaunchSnippingToolCommand}"
-                                                        IsEnabled="{x:Bind ViewModel.LaunchSnippingToolCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                                        Text="Snip"
-                                                        ToolTipService.ToolTip="Open the Snipping Tool to capture a screenshot for decoding">
+                                                        IsEnabled="{x:Bind ViewModel.LaunchSnippingToolCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                                                         <controls:IconAndTextButton.IconSource>
                                                             <SymbolIconSource Symbol="Trim" />
                                                         </controls:IconAndTextButton.IconSource>
@@ -256,27 +250,24 @@
                                                         <DropDownButton.Flyout>
                                                             <MenuFlyout>
                                                                 <MenuFlyoutItem
+                                                                    x:Uid="DecodingPage_OpenFileMenuItem"
                                                                     Command="{x:Bind ViewModel.OpenCurrentSourceFileCommand}"
-                                                                    Text="Open File"
-                                                                    ToolTipService.ToolTip="Open source file"
                                                                     Visibility="{x:Bind ViewModel.CanOpenCurrentSourceFile, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                                                     <MenuFlyoutItem.Icon>
                                                                         <SymbolIcon Symbol="OpenFile" />
                                                                     </MenuFlyoutItem.Icon>
                                                                 </MenuFlyoutItem>
                                                                 <MenuFlyoutItem
+                                                                    x:Uid="DecodingPage_SaveImageMenuItem"
                                                                     Command="{x:Bind ViewModel.SaveCurrentDecodedImageCommand}"
-                                                                    Text="Save Image..."
-                                                                    ToolTipService.ToolTip="Save decoded image to a file"
                                                                     Visibility="{x:Bind ViewModel.CanSaveCurrentDecodedImage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                                                     <MenuFlyoutItem.Icon>
                                                                         <SymbolIcon Symbol="Save" />
                                                                     </MenuFlyoutItem.Icon>
                                                                 </MenuFlyoutItem>
                                                                 <MenuFlyoutItem
+                                                                    x:Uid="DecodingPage_OpenContainingFolderMenuItem"
                                                                     Command="{x:Bind ViewModel.OpenCurrentContainingFolderCommand}"
-                                                                    Text="Open Containing Folder"
-                                                                    ToolTipService.ToolTip="Open containing folder"
                                                                     Visibility="{x:Bind ViewModel.CanOpenCurrentContainingFolder, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                                                     <MenuFlyoutItem.Icon>
                                                                         <SymbolIcon Symbol="Folder" />
@@ -310,8 +301,8 @@
                                                                 <controls:ScanIcon />
                                                             </Viewbox>
                                                             <TextBlock
+                                                                x:Uid="DecodingPage_OpenPasteDropAnImageText"
                                                                 HorizontalAlignment="Center"
-                                                                Text="Open, paste, drop an image here, or capture an image to decode."
                                                                 TextAlignment="Center"
                                                                 TextWrapping="WrapWholeWords"
                                                                 Visibility="Collapsed" />
@@ -403,7 +394,7 @@
                                                 <!--  Warning InfoBar (below image, shown when no codes found)  -->
                                                 <InfoBar
                                                     x:Name="NoCodesInfoBar"
-                                                    Title="No codes found"
+                                                    x:Uid="DecodingPage_NoCodesInfoBar"
                                                     Grid.Row="1"
                                                     MaxWidth="400"
                                                     Margin="20,0"
@@ -415,18 +406,13 @@
                                                     Visibility="{x:Bind ViewModel.HasImage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                                     <StackPanel Margin="0,0,0,12" Spacing="8">
                                                         <TextBlock
+                                                            x:Uid="DecodingPage_UseAdvancedToolsToOpenText"
                                                             IsTextSelectionEnabled="True"
-                                                            Text="Use Advanced Tools to open a guided workflow or apply quick image fixes to improve detection."
                                                             TextWrapping="Wrap" />
-                                                        <StackPanel Orientation="Horizontal" Spacing="4">
-                                                            <TextBlock VerticalAlignment="Center" Text="FAQs about why decoding might not work" />
-                                                            <HyperlinkButton
-                                                                Padding="0"
-                                                                VerticalAlignment="Center"
-                                                                Command="{x:Bind ViewModel.OpenFaqWithSearchCommand}"
-                                                                CommandParameter="detection"
-                                                                Content="here" />
-                                                        </StackPanel>
+                                                        <HyperlinkButton
+                                                            x:Uid="DecodingPage_DetectionHelpLink"
+                                                            Padding="0"
+                                                            Command="{x:Bind ViewModel.OpenDetectionFaqCommand}" />
                                                     </StackPanel>
                                                 </InfoBar>
                                             </Grid>
@@ -441,18 +427,16 @@
                                                 Spacing="10">
                                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                                     <controls:IconAndTextButton
+                                                        x:Uid="DecodingPage_MakeCodesIconAndTextButton"
                                                         Command="{x:Bind ViewModel.GoToCreateQrCodesCommand}"
-                                                        Text="Make Codes"
-                                                        ToolTipService.ToolTip="Switch to making QR Codes"
                                                         Visibility="{x:Bind ViewModel.ShowMainNavigationButtons, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                                         <controls:IconAndTextButton.Icon>
                                                             <controls:QrCodeIcon />
                                                         </controls:IconAndTextButton.Icon>
                                                     </controls:IconAndTextButton>
                                                     <controls:IconAndTextButton
+                                                        x:Uid="DecodingPage_SettingsIconAndTextButton"
                                                         Command="{x:Bind ViewModel.GoToSettingsCommand}"
-                                                        Text="Settings"
-                                                        ToolTipService.ToolTip="Simple QR Code Maker Settings"
                                                         Visibility="{x:Bind ViewModel.ShowMainNavigationButtons, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                                         <controls:IconAndTextButton.Icon>
                                                             <SymbolIcon Symbol="Setting" />
@@ -461,51 +445,51 @@
 
                                                     <DropDownButton
                                                         Name="NewDropDownButton"
-                                                        ToolTipService.ToolTip="Replace current image with something new"
+                                                        x:Uid="DecodingPage_NewDropDownButton"
                                                         Visibility="{x:Bind ViewModel.HasImage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                                         <DropDownButton.Content>
                                                             <StackPanel Orientation="Horizontal">
-                                                                <TextBlock>New</TextBlock>
+                                                                <TextBlock x:Uid="DecodingPage_NewText" />
                                                             </StackPanel>
                                                         </DropDownButton.Content>
                                                         <DropDownButton.Flyout>
                                                             <MenuFlyout>
                                                                 <MenuFlyoutItem
+                                                                    x:Uid="DecodingPage_OpenFilesMenuItem"
                                                                     Command="{x:Bind ViewModel.OpenNewFileCommand}"
-                                                                    IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                                                    Text="Open Files...">
+                                                                    IsEnabled="{x:Bind ViewModel.OpenNewFileCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                                                                     <MenuFlyoutItem.Icon>
                                                                         <SymbolIcon Symbol="OpenFile" />
                                                                     </MenuFlyoutItem.Icon>
                                                                 </MenuFlyoutItem>
                                                                 <MenuFlyoutItem
+                                                                    x:Uid="DecodingPage_OpenFolderMenuItem"
                                                                     Command="{x:Bind ViewModel.OpenFolderCommand}"
-                                                                    IsEnabled="{x:Bind ViewModel.OpenFolderCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                                                    Text="Open Folder...">
+                                                                    IsEnabled="{x:Bind ViewModel.OpenFolderCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                                                                     <MenuFlyoutItem.Icon>
                                                                         <SymbolIcon Symbol="Folder" />
                                                                     </MenuFlyoutItem.Icon>
                                                                 </MenuFlyoutItem>
                                                                 <MenuFlyoutItem
+                                                                    x:Uid="DecodingPage_PasteMenuItem"
                                                                     Click="PasteImageButton_Click"
-                                                                    IsEnabled="{x:Bind ViewModel.CanPasteImage, Mode=OneWay}"
-                                                                    Text="Paste">
+                                                                    IsEnabled="{x:Bind ViewModel.CanPasteImage, Mode=OneWay}">
                                                                     <MenuFlyoutItem.Icon>
                                                                         <SymbolIcon Symbol="Paste" />
                                                                     </MenuFlyoutItem.Icon>
                                                                 </MenuFlyoutItem>
                                                                 <MenuFlyoutItem
+                                                                    x:Uid="DecodingPage_CameraMenuItem"
                                                                     Command="{x:Bind ViewModel.CapturePhotoCommand}"
-                                                                    IsEnabled="{x:Bind ViewModel.CapturePhotoCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                                                    Text="Camera">
+                                                                    IsEnabled="{x:Bind ViewModel.CapturePhotoCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                                                                     <MenuFlyoutItem.Icon>
                                                                         <SymbolIcon Symbol="Camera" />
                                                                     </MenuFlyoutItem.Icon>
                                                                 </MenuFlyoutItem>
                                                                 <MenuFlyoutItem
+                                                                    x:Uid="DecodingPage_SnipMenuItem"
                                                                     Command="{x:Bind ViewModel.LaunchSnippingToolCommand}"
-                                                                    IsEnabled="{x:Bind ViewModel.LaunchSnippingToolCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                                                    Text="Snip">
+                                                                    IsEnabled="{x:Bind ViewModel.LaunchSnippingToolCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                                                                     <MenuFlyoutItem.Icon>
                                                                         <SymbolIcon Symbol="Trim" />
                                                                     </MenuFlyoutItem.Icon>
@@ -514,12 +498,12 @@
                                                         </DropDownButton.Flyout>
                                                     </DropDownButton>
                                                     <ToggleButton
+                                                        x:Uid="DecodingPage_ShowOrHideAdvancedImageToggleButton"
                                                         IsChecked="{x:Bind ViewModel.IsAdvancedToolsVisible, Mode=TwoWay}"
-                                                        ToolTipService.ToolTip="Show or hide advanced image-processing workflows"
                                                         Visibility="{x:Bind ViewModel.HasImage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                                             <SymbolIcon Symbol="Repair" />
-                                                            <TextBlock Text="Advanced Tools" />
+                                                            <TextBlock x:Uid="DecodingPage_AdvancedToolsText" />
                                                         </StackPanel>
                                                     </ToggleButton>
                                                 </StackPanel>
@@ -558,21 +542,21 @@
                                                         Orientation="Horizontal"
                                                         Spacing="12">
                                                         <AppBarButton
+                                                            x:Uid="DecodingPage_EditThisTextAsAAppBarButton"
                                                             Command="{x:Bind ViewModel.EditQrCodeCommand}"
                                                             Icon="Edit"
-                                                            IsCompact="True"
-                                                            ToolTipService.ToolTip="Edit this text as a new QR Code" />
+                                                            IsCompact="True" />
                                                         <AppBarButton
+                                                            x:Uid="DecodingPage_CopyTheEncodedTextToAppBarButton"
                                                             Command="{x:Bind ViewModel.AddMessageToClipboardCommand}"
                                                             Icon="Copy"
-                                                            IsCompact="True"
-                                                            ToolTipService.ToolTip="Copy the encoded text to the clipboard" />
+                                                            IsCompact="True" />
                                                         <AppBarButton
+                                                            x:Uid="DecodingPage_TryToGoToTheAppBarButton"
                                                             Command="{x:Bind ViewModel.TryLaunchLinkCommand}"
                                                             Icon="Go"
                                                             IsCompact="True"
-                                                            IsEnabled="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay, Converter={StaticResource HasURL}}"
-                                                            ToolTipService.ToolTip="Try to go to the URL" />
+                                                            IsEnabled="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay, Converter={StaticResource HasURL}}" />
                                                     </StackPanel>
                                                 </StackPanel>
                                             </InfoBar>
@@ -581,11 +565,11 @@
 
                                         <!--  Images panel toggle button (top left)  -->
                                         <AppBarButton
+                                            x:Uid="DecodingPage_ShowHideImagesPanelAppBarButton"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Top"
                                             Command="{x:Bind ViewModel.ToggleLeftPaneCommand}"
                                             IsCompact="True"
-                                            ToolTipService.ToolTip="Show/hide images panel"
                                             Visibility="{x:Bind ViewModel.HasLeftPaneContent, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                             <SymbolIcon Symbol="Pictures" />
                                         </AppBarButton>

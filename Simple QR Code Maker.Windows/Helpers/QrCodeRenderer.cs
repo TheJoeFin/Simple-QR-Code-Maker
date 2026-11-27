@@ -782,57 +782,34 @@ public static partial class QrCodeRenderer
     {
         if (foreground.A < 255 || background.A < 255)
         {
-            return new QrCodeSizeRecommendation(
-                QrCodeSizeRecommendationKind.TransparencyDependent,
-                "Exact minimum size depends on the final print surface when transparency is used.");
+            return new(QrCodeSizeRecommendationKind.TransparencyDependent);
         }
 
         if (!IsSizeRecommendationAvailableForPadding(qrPaddingModules))
         {
-            int normalizedQrPaddingModules = NormalizeQrPaddingModules(qrPaddingModules);
-            return new QrCodeSizeRecommendation(
-                QrCodeSizeRecommendationKind.PaddingDependent,
-                $"Padding {normalizedQrPaddingModules} is outside the predictable 1-4 module range. Borderless and heavy-border QR Codes scan too variably for reliable print sizing.");
+            return new(QrCodeSizeRecommendationKind.PaddingDependent, PaddingModules: NormalizeQrPaddingModules(qrPaddingModules));
         }
 
-        bool isMetric = RegionInfo.CurrentRegion.IsMetric;
         double smallestSide = SmallestCodeSide(distance, numberOfBlocks, qrPaddingModules);
 
         if (smallestSide == 0)
         {
-            return new QrCodeSizeRecommendation(
-                QrCodeSizeRecommendationKind.Error,
-                "Error at selected max distance.");
+            return new(QrCodeSizeRecommendationKind.Error);
         }
 
         double contrastRatio = ColorHelpers.GetContrastRatio(foreground, background);
 
         if (contrastRatio < 2.5)
         {
-            return new QrCodeSizeRecommendation(
-                QrCodeSizeRecommendationKind.LowContrast,
-                "Color contrast too low");
+            return new(QrCodeSizeRecommendationKind.LowContrast);
         }
 
         if (!TryGetMinimumRecommendedSideMillimeters(distance, numberOfBlocks, foreground, background, out double minimumSideMillimeters, qrPaddingModules))
         {
-            return new QrCodeSizeRecommendation(
-                QrCodeSizeRecommendationKind.Error,
-                "Error at selected max distance.");
+            return new(QrCodeSizeRecommendationKind.Error);
         }
 
-        if (!isMetric)
-        {
-            double smallestSideInches = minimumSideMillimeters / 25.4;
-            return new QrCodeSizeRecommendation(
-                QrCodeSizeRecommendationKind.Exact,
-                $"{smallestSideInches:F2} x {smallestSideInches:F2} in");
-        }
-
-        double smallestSideCm = minimumSideMillimeters / 10.0;
-        return new QrCodeSizeRecommendation(
-            QrCodeSizeRecommendationKind.Exact,
-            $"{smallestSideCm:F2} x {smallestSideCm:F2} cm");
+        return new(QrCodeSizeRecommendationKind.Exact, minimumSideMillimeters);
     }
 
     public static SvgImage GetSvgQrCodeForText(string text, ErrorCorrectionLevel correctionLevel, System.Drawing.Color foreground, System.Drawing.Color background, Bitmap? logoImage = null, double logoSizePercentage = 20.0, double logoPaddingPixels = 8.0, string? logoSvgContent = null, double qrPaddingModules = 2.0, QrFramePreset framePreset = QrFramePreset.None, string? frameText = null, QrCodeAppearance? appearance = null)

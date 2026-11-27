@@ -9,11 +9,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
     xmlns:settingsControls="using:CommunityToolkit.WinUI.Controls"
-    Title="Edit Brand"
-    CloseButtonText="Cancel"
+    x:Uid="BrandEditDialog_Dialog"
     DefaultButton="Primary"
     IsPrimaryButtonEnabled="{x:Bind ViewModel.IsNameValid, Mode=OneWay}"
-    PrimaryButtonText="Save"
     mc:Ignorable="d">
 
     <ContentDialog.Resources>
@@ -31,20 +29,18 @@
         <StackPanel Spacing="4">
 
             <!--  Brand Name  -->
-            <settingsControls:SettingsCard Description="Display name for this brand" Header="Brand Name">
+            <settingsControls:SettingsCard x:Uid="BrandEditDialog_BrandNameSettingsCard">
                 <settingsControls:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE8AC;" />
                 </settingsControls:SettingsCard.HeaderIcon>
                 <TextBox
+                    x:Uid="BrandEditDialog_BrandNameTextBox"
                     MinWidth="200"
-                    PlaceholderText="Brand name"
-                    Text="{x:Bind ViewModel.EditName,
-                                  Mode=TwoWay,
-                                  UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{x:Bind ViewModel.EditName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </settingsControls:SettingsCard>
 
             <!--  Foreground color  -->
-            <settingsControls:SettingsCard Description="Apply a custom foreground color" Header="Foreground color">
+            <settingsControls:SettingsCard x:Uid="BrandEditDialog_ForegroundColorSettingsCard">
                 <settingsControls:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE790;" />
                 </settingsControls:SettingsCard.HeaderIcon>
@@ -53,23 +49,18 @@
                     Orientation="Horizontal"
                     Spacing="12">
                     <controls:ColorPickerButton
-                        DefaultImagePath="{x:Bind ViewModel.LogoPath,
-                                                  Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IncludeForeground,
-                                            Mode=OneWay,
-                                            Converter={StaticResource BoolToVisibility}}"
-                        Color="{x:Bind ViewModel.ForegroundColor,
-                                       Mode=TwoWay}" />
+                        DefaultImagePath="{x:Bind ViewModel.LogoPath, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IncludeForeground, Mode=OneWay, Converter={StaticResource BoolToVisibility}}"
+                        Color="{x:Bind ViewModel.ForegroundColor, Mode=TwoWay}" />
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.IncludeForeground,
-                                      Mode=TwoWay}"
+                        IsOn="{x:Bind ViewModel.IncludeForeground, Mode=TwoWay}"
                         OffContent=""
                         OnContent="" />
                 </StackPanel>
             </settingsControls:SettingsCard>
 
             <!--  Background color  -->
-            <settingsControls:SettingsCard Description="Apply a custom background color" Header="Background color">
+            <settingsControls:SettingsCard x:Uid="BrandEditDialog_BackgroundColorSettingsCard">
                 <settingsControls:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE771;" />
                 </settingsControls:SettingsCard.HeaderIcon>
@@ -78,23 +69,18 @@
                     Orientation="Horizontal"
                     Spacing="12">
                     <controls:ColorPickerButton
-                        DefaultImagePath="{x:Bind ViewModel.LogoPath,
-                                                  Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IncludeBackground,
-                                            Mode=OneWay,
-                                            Converter={StaticResource BoolToVisibility}}"
-                        Color="{x:Bind ViewModel.BackgroundColor,
-                                       Mode=TwoWay}" />
+                        DefaultImagePath="{x:Bind ViewModel.LogoPath, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IncludeBackground, Mode=OneWay, Converter={StaticResource BoolToVisibility}}"
+                        Color="{x:Bind ViewModel.BackgroundColor, Mode=TwoWay}" />
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.IncludeBackground,
-                                      Mode=TwoWay}"
+                        IsOn="{x:Bind ViewModel.IncludeBackground, Mode=TwoWay}"
                         OffContent=""
                         OnContent="" />
                 </StackPanel>
             </settingsControls:SettingsCard>
 
             <!--  Error correction  -->
-            <settingsControls:SettingsCard Description="Set QR code error correction level" Header="Error correction">
+            <settingsControls:SettingsCard x:Uid="BrandEditDialog_ErrorCorrectionSettingsCard">
                 <settingsControls:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE8D8;" />
                 </settingsControls:SettingsCard.HeaderIcon>
@@ -103,13 +89,9 @@
                     Orientation="Horizontal"
                     Spacing="12">
                     <ComboBox
-                        ItemsSource="{x:Bind ViewModel.AllCorrectionLevels,
-                                             Mode=OneWay}"
-                        SelectedIndex="{x:Bind ViewModel.SelectedCorrectionIndex,
-                                               Mode=TwoWay}"
-                        Visibility="{x:Bind ViewModel.IncludeErrorCorrection,
-                                            Mode=OneWay,
-                                            Converter={StaticResource BoolToVisibility}}">
+                        ItemsSource="{x:Bind ViewModel.AllCorrectionLevels, Mode=OneWay}"
+                        SelectedIndex="{x:Bind ViewModel.SelectedCorrectionIndex, Mode=TwoWay}"
+                        Visibility="{x:Bind ViewModel.IncludeErrorCorrection, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="models:ErrorCorrectionOptions">
                                 <TextBlock Text="{x:Bind Description}" />
@@ -117,23 +99,16 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.IncludeErrorCorrection,
-                                      Mode=TwoWay}"
+                        IsOn="{x:Bind ViewModel.IncludeErrorCorrection, Mode=TwoWay}"
                         OffContent=""
                         OnContent="" />
                 </StackPanel>
             </settingsControls:SettingsCard>
 
             <!--  Frame  -->
-            <settingsControls:SettingsExpander
-                Description="Include the frame, caption, pattern, and accent colors"
-                Header="Design"
-                IsExpanded="{x:Bind ViewModel.IncludeFrame,
-                                    Mode=OneWay}">
+            <settingsControls:SettingsExpander x:Uid="BrandEditDialog_DesignSettingsExpander" IsExpanded="{x:Bind ViewModel.IncludeFrame, Mode=OneWay}">
                 <settingsControls:SettingsExpander.HeaderIcon>
-                    <SymbolIcon
-                        RenderTransformOrigin="0.5,0.5"
-                        Symbol="CalendarDay">
+                    <SymbolIcon RenderTransformOrigin="0.5,0.5" Symbol="CalendarDay">
                         <SymbolIcon.RenderTransform>
                             <ScaleTransform ScaleY="-1" />
                         </SymbolIcon.RenderTransform>
@@ -141,19 +116,16 @@
                 </settingsControls:SettingsExpander.HeaderIcon>
                 <settingsControls:SettingsExpander.Content>
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.IncludeFrame,
-                                      Mode=TwoWay}"
+                        IsOn="{x:Bind ViewModel.IncludeFrame, Mode=TwoWay}"
                         OffContent=""
                         OnContent="" />
                 </settingsControls:SettingsExpander.Content>
                 <settingsControls:SettingsExpander.Items>
-                    <settingsControls:SettingsCard Header="Style">
+                    <settingsControls:SettingsCard x:Uid="BrandEditDialog_StyleSettingsCard">
                         <ComboBox
                             MinWidth="200"
-                            ItemsSource="{x:Bind ViewModel.AllFramePresets,
-                                                 Mode=OneWay}"
-                            SelectedIndex="{x:Bind ViewModel.SelectedFramePresetIndex,
-                                                   Mode=TwoWay}">
+                            ItemsSource="{x:Bind ViewModel.AllFramePresets, Mode=OneWay}"
+                            SelectedIndex="{x:Bind ViewModel.SelectedFramePresetIndex, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="models:QrFramePresetOption">
                                     <TextBlock Text="{x:Bind Description}" />
@@ -164,65 +136,48 @@
                     <settingsControls:SettingsCard
                         Description="{x:Bind ViewModel.FrameTextDescription, Mode=OneWay}"
                         Header="{x:Bind ViewModel.FrameTextHeader, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IsFrameTextVisible,
-                                             Mode=OneWay,
-                                            Converter={StaticResource BoolToVisibility}}">
+                        Visibility="{x:Bind ViewModel.IsFrameTextVisible, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                         <TextBox
                             MinWidth="200"
-                            PlaceholderText="{x:Bind ViewModel.FrameTextPlaceholder,
-                                                     Mode=OneWay}"
-                            Text="{x:Bind ViewModel.EditFrameText,
-                                          Mode=TwoWay,
-                                          UpdateSourceTrigger=PropertyChanged}" />
+                            PlaceholderText="{x:Bind ViewModel.FrameTextPlaceholder, Mode=OneWay}"
+                            Text="{x:Bind ViewModel.EditFrameText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </settingsControls:SettingsCard>
                 </settingsControls:SettingsExpander.Items>
             </settingsControls:SettingsExpander>
 
             <!--  URL / text  -->
-            <settingsControls:SettingsExpander
-                Description="Include default URL or text content"
-                Header="URL / text"
-                IsExpanded="{x:Bind ViewModel.IncludeUrl,
-                                    Mode=OneWay}">
+            <settingsControls:SettingsExpander x:Uid="BrandEditDialog_URLTextSettingsExpander" IsExpanded="{x:Bind ViewModel.IncludeUrl, Mode=OneWay}">
                 <settingsControls:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xE71B;" />
                 </settingsControls:SettingsExpander.HeaderIcon>
                 <settingsControls:SettingsExpander.Content>
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.IncludeUrl,
-                                      Mode=TwoWay}"
+                        IsOn="{x:Bind ViewModel.IncludeUrl, Mode=TwoWay}"
                         OffContent=""
                         OnContent="" />
                 </settingsControls:SettingsExpander.Content>
                 <settingsControls:SettingsExpander.Items>
-                    <settingsControls:SettingsCard Header="Content">
+                    <settingsControls:SettingsCard x:Uid="BrandEditDialog_ContentSettingsCard">
                         <TextBox
+                            x:Uid="BrandEditDialog_URLOrTextContentTextBox"
                             MinWidth="250"
-                            PlaceholderText="URL or text content"
-                            Text="{x:Bind ViewModel.UrlContent,
-                                          Mode=TwoWay,
-                                          UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{x:Bind ViewModel.UrlContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </settingsControls:SettingsCard>
                 </settingsControls:SettingsExpander.Items>
             </settingsControls:SettingsExpander>
 
             <!--  Logo image  -->
-            <settingsControls:SettingsExpander
-                Description="Overlay a logo on the QR code"
-                Header="Logo image"
-                IsExpanded="{x:Bind ViewModel.IncludeLogo,
-                                    Mode=OneWay}">
+            <settingsControls:SettingsExpander x:Uid="BrandEditDialog_LogoImageSettingsExpander" IsExpanded="{x:Bind ViewModel.IncludeLogo, Mode=OneWay}">
                 <settingsControls:SettingsExpander.HeaderIcon>
                     <SymbolIcon Symbol="Pictures" />
                 </settingsControls:SettingsExpander.HeaderIcon>
                 <ToggleSwitch
-                    IsOn="{x:Bind ViewModel.IncludeLogo,
-                                  Mode=TwoWay}"
+                    IsOn="{x:Bind ViewModel.IncludeLogo, Mode=TwoWay}"
                     OffContent=""
                     OnContent="" />
                 <settingsControls:SettingsExpander.Items>
                     <!--  Image picker  -->
-                    <settingsControls:SettingsCard Header="Image">
+                    <settingsControls:SettingsCard x:Uid="BrandEditDialog_ImageSettingsCard">
                         <StackPanel
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
@@ -233,10 +188,7 @@
                                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4"
-                                    Visibility="{x:Bind ViewModel.LogoPath,
-                                                        Converter={StaticResource NullToVisibility},
-                                                        ConverterParameter=Inverted,
-                                                        Mode=OneWay}">
+                                    Visibility="{x:Bind ViewModel.LogoPath, Converter={StaticResource NullToVisibility}, ConverterParameter=Inverted, Mode=OneWay}">
                                     <Viewbox Width="20" Height="20">
                                         <SymbolIcon Symbol="Pictures" />
                                     </Viewbox>
@@ -245,36 +197,30 @@
                                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4"
-                                    Visibility="{x:Bind ViewModel.LogoPath,
-                                                        Converter={StaticResource NullToVisibility},
-                                                        Mode=OneWay}">
+                                    Visibility="{x:Bind ViewModel.LogoPath, Converter={StaticResource NullToVisibility}, Mode=OneWay}">
                                     <Image
                                         MaxWidth="44"
                                         MaxHeight="44"
-                                        Source="{x:Bind ViewModel.LogoPath,
-                                                        Converter={StaticResource FilePathToImage},
-                                                        Mode=OneWay}"
+                                        Source="{x:Bind ViewModel.LogoPath, Converter={StaticResource FilePathToImage}, Mode=OneWay}"
                                         Stretch="Uniform" />
                                 </Border>
                             </Grid>
                             <Button Command="{x:Bind ViewModel.SelectLogoCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <SymbolIcon Symbol="Pictures" />
-                                    <TextBlock Text="Pick Image" />
+                                    <TextBlock x:Uid="BrandEditDialog_PickImageText" />
                                 </StackPanel>
                             </Button>
                             <Button
+                                x:Uid="BrandEditDialog_RemoveLogoButton"
                                 Command="{x:Bind ViewModel.ClearLogoCommand}"
-                                ToolTipService.ToolTip="Remove logo"
-                                Visibility="{x:Bind ViewModel.LogoPath,
-                                                    Converter={StaticResource NullToVisibility},
-                                                    Mode=OneWay}">
+                                Visibility="{x:Bind ViewModel.LogoPath, Converter={StaticResource NullToVisibility}, Mode=OneWay}">
                                 <SymbolIcon Symbol="Cancel" />
                             </Button>
                         </StackPanel>
                     </settingsControls:SettingsCard>
                     <!--  Size slider  -->
-                    <settingsControls:SettingsCard Description="{x:Bind ViewModel.LogoSizeDescription, Mode=OneWay}" Header="Image Size">
+                    <settingsControls:SettingsCard x:Uid="BrandEditDialog_ImageSizeSettingsCard" Description="{x:Bind ViewModel.LogoSizeDescription, Mode=OneWay}">
                         <Slider
                             MinWidth="200"
                             Maximum="30"
@@ -282,11 +228,10 @@
                             StepFrequency="1"
                             TickFrequency="5"
                             TickPlacement="BottomRight"
-                            Value="{x:Bind ViewModel.LogoSize,
-                                           Mode=TwoWay}" />
+                            Value="{x:Bind ViewModel.LogoSize, Mode=TwoWay}" />
                     </settingsControls:SettingsCard>
                     <!--  Padding slider  -->
-                    <settingsControls:SettingsCard Description="{x:Bind ViewModel.LogoPaddingDescription, Mode=OneWay}" Header="Padding">
+                    <settingsControls:SettingsCard x:Uid="BrandEditDialog_PaddingSettingsCard" Description="{x:Bind ViewModel.LogoPaddingDescription, Mode=OneWay}">
                         <Slider
                             MinWidth="200"
                             Maximum="20"
@@ -294,8 +239,7 @@
                             StepFrequency="1"
                             TickFrequency="8"
                             TickPlacement="BottomRight"
-                            Value="{x:Bind ViewModel.LogoPadding,
-                                           Mode=TwoWay}" />
+                            Value="{x:Bind ViewModel.LogoPadding, Mode=TwoWay}" />
                     </settingsControls:SettingsCard>
                 </settingsControls:SettingsExpander.Items>
             </settingsControls:SettingsExpander>

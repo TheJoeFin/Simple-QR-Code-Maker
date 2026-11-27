@@ -86,7 +86,7 @@ public sealed partial class BrandManagementControl : UserControl
     private void LearnMoreAboutBrands_Click(object sender, RoutedEventArgs e)
     {
         BrandFlyout.Hide();
-        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, "brand"));
+        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, topic: FaqTopic.Brands));
     }
 
     private bool TryApplySelectedBrand(ListView listView)

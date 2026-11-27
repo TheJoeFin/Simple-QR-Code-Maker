@@ -1,4 +1,5 @@
 using Microsoft.UI.Xaml.Controls;
+using Simple_QR_Code_Maker.Helpers;
 using Windows.Foundation;
 
 namespace Simple_QR_Code_Maker.Models;
@@ -21,7 +22,7 @@ public class DecodingNavigationState
 
     public bool IsInfoBarShowing { get; init; }
 
-    public string DecodedContentInfoBarTitle { get; init; } = "QR Code Content";
+    public string DecodedContentInfoBarTitle { get; init; } = "Read_ResultTitle".GetLocalized();
 
     public InfoBarSeverity DecodedContentInfoBarSeverity { get; init; } = InfoBarSeverity.Informational;
 
@@ -105,6 +106,8 @@ public class DecodingImageNavigationState
     public bool IsNoCodesWarningDismissed { get; init; }
 
     public string Label { get; init; } = string.Empty;
+
+    public string CutOutFileSuffix { get; init; } = string.Empty;
 
     public string ParentFileName { get; init; } = string.Empty;
 

@@ -9,12 +9,25 @@ public class RequestPaneChange
 
     public string SearchText { get; set; }
 
-    public RequestPaneChange(MainViewPanes pane, PaneState requestState, string searchText = "")
+    public FaqTopic Topic { get; }
+
+    public RequestPaneChange(MainViewPanes pane, PaneState requestState, string searchText = "", FaqTopic topic = FaqTopic.None)
     {
         Pane = pane;
         RequestState = requestState;
         SearchText = searchText;
+        Topic = topic;
     }
+}
+
+[Flags]
+public enum FaqTopic
+{
+    None = 0,
+    Size = 1,
+    ErrorCorrection = 2,
+    Brands = 4,
+    Detection = 8
 }
 
 public enum MainViewPanes

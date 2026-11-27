@@ -123,10 +123,6 @@
   <data name="AppDescription" xml:space="preserve">
     <value>Simple QR Code Maker</value>
   </data>
-  <data name="Main_Title.Text" xml:space="preserve">
-    <value>Main</value>
-    <comment>Page title for MainPage</comment>
-  </data>
   <data name="QrDesign_NoBackground.Content" xml:space="preserve">
     <value>No background</value>
   </data>
@@ -135,9 +131,6 @@
   </data>
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>Personalization</value>
-  </data>
-  <data name="Settings_Theme.Text" xml:space="preserve">
-    <value>Theme</value>
   </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
     <value>Light</value>
@@ -151,22 +144,12 @@
   <data name="Settings_About.Text" xml:space="preserve">
     <value>About this application</value>
   </data>
-  <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>Simple QR Code Maker is an app for making QR Codes.</value>
-  </data>
   <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
     <value>Privacy Statement</value>
-  </data>
-  <data name="SettingsPage_PrivacyTermsLink.NavigateUri" xml:space="preserve">
-    <value>https://github.com/TheJoeFin/Simple-QR-Code-Maker/blob/master/PRIVACY</value>
   </data>
   <data name="Settings_Title.Text" xml:space="preserve">
     <value>Settings</value>
     <comment>Page title for SettingsPage</comment>
-  </data>
-  <data name="Decoding_Title.Text" xml:space="preserve">
-    <value>Reading Codes</value>
-    <comment>Page title for DecodingPage</comment>
   </data>
   <data name="WebView_Loading.Text" xml:space="preserve">
     <value>Loading...</value>
@@ -200,5 +183,3883 @@
   </data>
   <data name="OpenInBrowserButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Open in browser</value>
+  </data>
+  <data name="AdvancedToolsUserControl_AdvancedDecodingText.Text" xml:space="preserve">
+    <value>Advanced decoding</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ChooseAFocusedWorkflowOrText.Text" xml:space="preserve">
+    <value>Choose a focused workflow or make quick image adjustments before decoding.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_QuickFixesSettingsExpander.Description" xml:space="preserve">
+    <value>Make quick, non-guided image adjustments.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_QuickFixesSettingsExpander.Header" xml:space="preserve">
+    <value>Quick fixes</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OneTapFixesSettingsCard.Header" xml:space="preserve">
+    <value>One-tap fixes</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ConvertTheImageToGrayscaleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Convert the image to grayscale for better QR code detection</value>
+  </data>
+  <data name="AdvancedToolsUserControl_GrayscaleText.Text" xml:space="preserve">
+    <value>Grayscale</value>
+  </data>
+  <data name="AdvancedToolsUserControl_InvertImageColorsWhenTheButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Invert image colors when the code is lighter than its background</value>
+  </data>
+  <data name="AdvancedToolsUserControl_InvertText.Text" xml:space="preserve">
+    <value>Invert</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ContrastSettingsCard.Header" xml:space="preserve">
+    <value>Contrast</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ContrastSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Increase or decrease contrast to separate the code from its background</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BlackPointSettingsCard.Header" xml:space="preserve">
+    <value>Black point</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BlackPointSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Set how dark a pixel needs to be before it becomes black</value>
+  </data>
+  <data name="AdvancedToolsUserControl_WhitePointSettingsCard.Header" xml:space="preserve">
+    <value>White point</value>
+  </data>
+  <data name="AdvancedToolsUserControl_WhitePointSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Set how bright a pixel needs to be before it becomes white</value>
+  </data>
+  <data name="AdvancedToolsUserControl_AddBorderSettingsCard.Header" xml:space="preserve">
+    <value>Add border</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BorderPercentSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Add a white border sized as a percentage of the image width (e.g. 10 = 10% border on each side)</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyQuickFixesSettingsCard.Header" xml:space="preserve">
+    <value>Apply quick fixes</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyTheCurrentQuickFixButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Apply the current quick-fix settings to the image</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyQuickFixesText.Text" xml:space="preserve">
+    <value>Apply quick fixes</value>
+  </data>
+  <data name="AdvancedToolsUserControl_GuidedWorkflowsSettingsExpander.Description" xml:space="preserve">
+    <value>Open a focused tool flow and return here when finished.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_GuidedWorkflowsSettingsExpander.Header" xml:space="preserve">
+    <value>Guided workflows</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleBlackPointSettingsCard.Description" xml:space="preserve">
+    <value>Click a dark pixel and apply that sample immediately.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleBlackPointSettingsCard.Header" xml:space="preserve">
+    <value>Sample black point</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheBlackPointSamplingButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open the black-point sampling workflow</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickBlackPointText.Text" xml:space="preserve">
+    <value>Pick Black Point</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleWhitePointSettingsCard.Description" xml:space="preserve">
+    <value>Click a light pixel and apply that sample immediately.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleWhitePointSettingsCard.Header" xml:space="preserve">
+    <value>Sample white point</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheWhitePointSamplingButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open the white-point sampling workflow</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickWhitePointText.Text" xml:space="preserve">
+    <value>Pick White Point</value>
+  </data>
+  <data name="AdvancedToolsUserControl_StraightenAQRCodeSettingsCard.Description" xml:space="preserve">
+    <value>Mark all four corners, then apply the correction.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_StraightenAQRCodeSettingsCard.Header" xml:space="preserve">
+    <value>Straighten a QR code</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenThePerspectiveCorrectionWorkflowButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open the perspective correction workflow</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickCodeCornersText.Text" xml:space="preserve">
+    <value>Pick Code Corners</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractARegionSettingsCard.Description" xml:space="preserve">
+    <value>Draw a region on the image, then extract it as a new image.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractARegionSettingsCard.Header" xml:space="preserve">
+    <value>Extract a region</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheExtractRegionWorkflowButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open the extract-region workflow</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CutoutAreaText.Text" xml:space="preserve">
+    <value>Cutout area</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UnwarpAQRCodeSettingsCard.Description" xml:space="preserve">
+    <value>Mark corners and alignment points to unwarp a curved or bent QR code.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UnwarpAQRCodeSettingsCard.Header" xml:space="preserve">
+    <value>Unwarp a QR code</value>
+  </data>
+  <data name="AdvancedToolsUserControl_OpenTheUnwarpWorkflowToButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open the unwarp workflow to correct warped or curved QR codes</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PickUnwarpPointsText.Text" xml:space="preserve">
+    <value>Pick Unwarp Points</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleBlackPointText.Text" xml:space="preserve">
+    <value>Sample black point</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickTheDarkestMeaningfulPartText.Text" xml:space="preserve">
+    <value>Click the darkest meaningful part of the code or background. The sample is applied as soon as you pick it.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickOnceOnTheImageInfoBar.Message" xml:space="preserve">
+    <value>Click once on the image to choose the black point.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SampleWhitePointText.Text" xml:space="preserve">
+    <value>Sample white point</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickTheLightestMeaningfulPartText.Text" xml:space="preserve">
+    <value>Click the lightest meaningful part of the code or background. The sample is applied as soon as you pick it.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickOnceOnTheImageInfoBar2.Message" xml:space="preserve">
+    <value>Click once on the image to choose the white point.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_StraightenAQRCodeText.Text" xml:space="preserve">
+    <value>Straighten a QR code</value>
+  </data>
+  <data name="AdvancedToolsUserControl_WorkThroughTheCornerSelectionText.Text" xml:space="preserve">
+    <value>Work through the corner selection steps, then apply the correction when the outline is complete.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickEachCornerOnTheInfoBar.Message" xml:space="preserve">
+    <value>Click each corner on the image in order.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CurrentStepSettingsCard.Header" xml:space="preserve">
+    <value>Current step</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BorderSizeSettingsCard.Header" xml:space="preserve">
+    <value>Border size</value>
+  </data>
+  <data name="AdvancedToolsUserControl_BorderSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Add white padding around the corrected image to improve detection</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectionSettingsCard.Header" xml:space="preserve">
+    <value>Selection</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearAllSelectedCornersAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Clear all selected corners and start over</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearCornersText.Text" xml:space="preserve">
+    <value>Clear corners</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UnwarpAQRCodeText.Text" xml:space="preserve">
+    <value>Unwarp a QR code</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SetTheQRVersionClickText.Text" xml:space="preserve">
+    <value>Set the QR version, click each corner then each alignment point. Use Estimated to accept calculated positions.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickOnTheImageToInfoBar.Message" xml:space="preserve">
+    <value>Click on the image to place each point in order.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_QRCodeVersionSettingsCard.Header" xml:space="preserve">
+    <value>QR Code Version</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectTheQRCodeVersionSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Select the QR code version (10–40). Higher versions have more alignment points.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PointLayoutText.Text" xml:space="preserve">
+    <value>Point layout</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CurrentStepSettingsCard2.Header" xml:space="preserve">
+    <value>Current step</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UseEstimatedPositionSettingsCard.Header" xml:space="preserve">
+    <value>Use estimated position</value>
+  </data>
+  <data name="AdvancedToolsUserControl_AcceptTheCalculatedBilinearPositionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Accept the calculated (bilinear) position for the current alignment point</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UseEstimatedText.Text" xml:space="preserve">
+    <value>Use Estimated</value>
+  </data>
+  <data name="AdvancedToolsUserControl_PointsSettingsCard.Header" xml:space="preserve">
+    <value>Points</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearAllPlacedPointsAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Clear all placed points and start over</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearAllPointsText.Text" xml:space="preserve">
+    <value>Clear all points</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractARegionText.Text" xml:space="preserve">
+    <value>Extract a region</value>
+  </data>
+  <data name="AdvancedToolsUserControl_DragOverTheImageToText.Text" xml:space="preserve">
+    <value>Drag over the image to select a region, then extract it into its own decoding item.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClickAndDragOnTheInfoBar.Message" xml:space="preserve">
+    <value>Click and drag on the image to draw a region.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectionStatusSettingsCard.Header" xml:space="preserve">
+    <value>Selection status</value>
+  </data>
+  <data name="AdvancedToolsUserControl_NoRegionSelectedYetText.Text" xml:space="preserve">
+    <value>No region selected yet.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_RegionSelectedAndReadyToText.Text" xml:space="preserve">
+    <value>Region selected and ready to extract.</value>
+  </data>
+  <data name="AdvancedToolsUserControl_SelectionSettingsCard2.Header" xml:space="preserve">
+    <value>Selection</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearTheCurrentRegionSelectionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Clear the current region selection</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearSelectionText.Text" xml:space="preserve">
+    <value>Clear selection</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ResetAllQuickFixSettingsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reset all quick-fix settings to their defaults</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ResetAllText.Text" xml:space="preserve">
+    <value>Reset all</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UndoIconAndTextHyperlinkButton.Text" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="AdvancedToolsUserControl_UndoIconAndTextHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Undo the last applied change (Ctrl+Z)</value>
+  </data>
+  <data name="AdvancedToolsUserControl_RedoIconAndTextHyperlinkButton.Text" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="AdvancedToolsUserControl_RedoIconAndTextHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Redo the last undone change (Ctrl+Y)</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Cancel black-point sampling and return to the tool list</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton2.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton2.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Cancel white-point sampling and return to the tool list</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyCorrectionButton.Content" xml:space="preserve">
+    <value>Apply correction</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyCorrectionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Apply the perspective correction and return to the tool list</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearCornersButton.Content" xml:space="preserve">
+    <value>Clear corners</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton3.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractTheSelectedRegionAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Extract the selected region and return to the tool list</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ExtractRegionText.Text" xml:space="preserve">
+    <value>Extract region</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearSelectionButton.Content" xml:space="preserve">
+    <value>Clear selection</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton4.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyPolynomialUnwarpCorrectionAndButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Apply polynomial unwarp correction and return to the tool list</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ApplyUnwarpText.Text" xml:space="preserve">
+    <value>Apply Unwarp</value>
+  </data>
+  <data name="AdvancedToolsUserControl_ClearPointsButton.Content" xml:space="preserve">
+    <value>Clear points</value>
+  </data>
+  <data name="AdvancedToolsUserControl_CancelButton5.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="BrandEditDialog_Dialog.Title" xml:space="preserve">
+    <value>Edit Brand</value>
+  </data>
+  <data name="BrandEditDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="BrandEditDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="BrandEditDialog_BrandNameSettingsCard.Description" xml:space="preserve">
+    <value>Display name for this brand</value>
+  </data>
+  <data name="BrandEditDialog_BrandNameSettingsCard.Header" xml:space="preserve">
+    <value>Brand Name</value>
+  </data>
+  <data name="BrandEditDialog_BrandNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Brand name</value>
+  </data>
+  <data name="BrandEditDialog_ForegroundColorSettingsCard.Description" xml:space="preserve">
+    <value>Apply a custom foreground color</value>
+  </data>
+  <data name="BrandEditDialog_ForegroundColorSettingsCard.Header" xml:space="preserve">
+    <value>Foreground color</value>
+  </data>
+  <data name="BrandEditDialog_BackgroundColorSettingsCard.Description" xml:space="preserve">
+    <value>Apply a custom background color</value>
+  </data>
+  <data name="BrandEditDialog_BackgroundColorSettingsCard.Header" xml:space="preserve">
+    <value>Background color</value>
+  </data>
+  <data name="BrandEditDialog_ErrorCorrectionSettingsCard.Description" xml:space="preserve">
+    <value>Set QR code error correction level</value>
+  </data>
+  <data name="BrandEditDialog_ErrorCorrectionSettingsCard.Header" xml:space="preserve">
+    <value>Error correction</value>
+  </data>
+  <data name="BrandEditDialog_DesignSettingsExpander.Description" xml:space="preserve">
+    <value>Include the frame, caption, pattern, and accent colors</value>
+  </data>
+  <data name="BrandEditDialog_DesignSettingsExpander.Header" xml:space="preserve">
+    <value>Design</value>
+  </data>
+  <data name="BrandEditDialog_StyleSettingsCard.Header" xml:space="preserve">
+    <value>Style</value>
+  </data>
+  <data name="BrandEditDialog_URLTextSettingsExpander.Description" xml:space="preserve">
+    <value>Include default URL or text content</value>
+  </data>
+  <data name="BrandEditDialog_URLTextSettingsExpander.Header" xml:space="preserve">
+    <value>URL / text</value>
+  </data>
+  <data name="BrandEditDialog_ContentSettingsCard.Header" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="BrandEditDialog_URLOrTextContentTextBox.PlaceholderText" xml:space="preserve">
+    <value>URL or text content</value>
+  </data>
+  <data name="BrandEditDialog_LogoImageSettingsExpander.Description" xml:space="preserve">
+    <value>Overlay a logo on the QR code</value>
+  </data>
+  <data name="BrandEditDialog_LogoImageSettingsExpander.Header" xml:space="preserve">
+    <value>Logo image</value>
+  </data>
+  <data name="BrandEditDialog_ImageSettingsCard.Header" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="BrandEditDialog_PickImageText.Text" xml:space="preserve">
+    <value>Pick Image</value>
+  </data>
+  <data name="BrandEditDialog_RemoveLogoButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove logo</value>
+  </data>
+  <data name="BrandEditDialog_ImageSizeSettingsCard.Header" xml:space="preserve">
+    <value>Image Size</value>
+  </data>
+  <data name="BrandEditDialog_PaddingSettingsCard.Header" xml:space="preserve">
+    <value>Padding</value>
+  </data>
+  <data name="BrandManagementControl_SaveAndManageBrandsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Save and manage Brands</value>
+  </data>
+  <data name="BrandManagementControl_BrandsText.Text" xml:space="preserve">
+    <value>Brands</value>
+  </data>
+  <data name="BrandManagementControl_NoBrandsSavedYetText.Text" xml:space="preserve">
+    <value>No brands saved yet.</value>
+  </data>
+  <data name="BrandManagementControl_SaveAsBrandText.Text" xml:space="preserve">
+    <value>Save as brand</value>
+  </data>
+  <data name="BrandManagementControl_SaveCurrentSettingsAsBrandText.Text" xml:space="preserve">
+    <value>Save current settings as brand</value>
+  </data>
+  <data name="BrandManagementControl_BrandNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Brand name</value>
+  </data>
+  <data name="BrandManagementControl_ForegroundColorCheckBox.Content" xml:space="preserve">
+    <value>Foreground color</value>
+  </data>
+  <data name="BrandManagementControl_BackgroundColorCheckBox.Content" xml:space="preserve">
+    <value>Background color</value>
+  </data>
+  <data name="BrandManagementControl_ErrorCorrectionCheckBox.Content" xml:space="preserve">
+    <value>Error correction</value>
+  </data>
+  <data name="BrandManagementControl_DesignFrameAndPatternCheckBox.Content" xml:space="preserve">
+    <value>Design (frame and pattern)</value>
+  </data>
+  <data name="BrandManagementControl_URLTextCheckBox.Content" xml:space="preserve">
+    <value>URL / text</value>
+  </data>
+  <data name="BrandManagementControl_CenterImageCheckBox.Content" xml:space="preserve">
+    <value>Center image</value>
+  </data>
+  <data name="BrandManagementControl_SaveBrandText.Text" xml:space="preserve">
+    <value>Save Brand</value>
+  </data>
+  <data name="BrandManagementControl_LearnMoreAboutBrandsText.Text" xml:space="preserve">
+    <value>Learn more about Brands</value>
+  </data>
+  <data name="BrandPickerControl_SelectBrandDropDownButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Select brand</value>
+  </data>
+  <data name="BrandPickerControl_DefaultBrandSymbolIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Default brand</value>
+  </data>
+  <data name="BrandPickerControl_SelectABrandText.Text" xml:space="preserve">
+    <value>Select a brand</value>
+  </data>
+  <data name="BrandRowItem_BackgroundColorBorder.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Background Color</value>
+  </data>
+  <data name="BrandRowItem_ForegroundColorQrCodeIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Foreground Color</value>
+  </data>
+  <data name="BrandRowItem_DefaultBrandFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Default brand</value>
+  </data>
+  <data name="BrandRowItem_ErrorCorrectionLevelText.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Error Correction Level</value>
+  </data>
+  <data name="BrandRowItem_TextText.Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="BrandRowItem_BrandOptionsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Brand options</value>
+  </data>
+  <data name="BrandRowItem_EditMenuItem.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="BrandRowItem_SetAsDefaultMenuItem.Text" xml:space="preserve">
+    <value>Set as default</value>
+  </data>
+  <data name="BrandRowItem_DeleteMenuItem.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ColorPickerButton_ColorSegmentedItem.Content" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="ColorPickerButton_ImageSegmentedItem.Content" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="ColorPickerButton_ListModePickerItem.Content" xml:space="preserve">
+    <value>List</value>
+  </data>
+  <data name="ColorPickerButton_BrandsText.Text" xml:space="preserve">
+    <value>Brands</value>
+  </data>
+  <data name="ColorPickerButton_RecentColorsText.Text" xml:space="preserve">
+    <value>Recent colors</value>
+  </data>
+  <data name="ColorPickerButton_SavedColorsEmptyStateText.Text" xml:space="preserve">
+    <value>No brands or recent colors yet.</value>
+  </data>
+  <data name="ColorPickerButton_ClipboardText.Text" xml:space="preserve">
+    <value>Clipboard</value>
+  </data>
+  <data name="CutOutImagesPaneContentControl_ImagesText.Text" xml:space="preserve">
+    <value>Images</value>
+  </data>
+  <data name="CutOutImagesPaneContentControl_ClosePaneButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Close pane</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_DecodingHistoryText.Text" xml:space="preserve">
+    <value>Decoding History</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_ClearAllDecodingHistoryHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Clear all decoding history</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_ClearText.Text" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_NoDecodingHistoryYetOpenText.Text" xml:space="preserve">
+    <value>No decoding history yet. Open, paste, or capture an image to decode.</value>
+  </data>
+  <data name="DecodingHistoryPaneContentControl_RemoveMenuItem.Text" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="EmailBuilderDialog_Dialog.Title" xml:space="preserve">
+    <value>Build Email</value>
+  </data>
+  <data name="EmailBuilderDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="EmailBuilderDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="EmailBuilderDialog_CreateAQRCodeThatText.Text" xml:space="preserve">
+    <value>Create a QR Code that opens the default mail app with prefilled recipient, subject, and body fields.</value>
+  </data>
+  <data name="EmailBuilderDialog_ToTextBox.Header" xml:space="preserve">
+    <value>To (required)</value>
+  </data>
+  <data name="EmailBuilderDialog_ToTextBox.PlaceholderText" xml:space="preserve">
+    <value>recipient@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="EmailBuilderDialog_CCTextBox.Header" xml:space="preserve">
+    <value>CC</value>
+  </data>
+  <data name="EmailBuilderDialog_CCTextBox.PlaceholderText" xml:space="preserve">
+    <value>cc@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="EmailBuilderDialog_BCCTextBox.Header" xml:space="preserve">
+    <value>BCC</value>
+  </data>
+  <data name="EmailBuilderDialog_BCCTextBox.PlaceholderText" xml:space="preserve">
+    <value>bcc@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="EmailBuilderDialog_SubjectTextBox.Header" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="EmailBuilderDialog_SubjectTextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter the email subject</value>
+  </data>
+  <data name="EmailBuilderDialog_BodyTextBox.Header" xml:space="preserve">
+    <value>Body</value>
+  </data>
+  <data name="EmailBuilderDialog_BodyTextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter the email body</value>
+  </data>
+  <data name="EmailBuilderDialog_HowItWorksInfoBar.Message" xml:space="preserve">
+    <value>Scanning this QR Code opens the default mail app with these fields pre-filled. The recipient can review and edit the message before sending.</value>
+  </data>
+  <data name="EmailBuilderDialog_HowItWorksInfoBar.Title" xml:space="preserve">
+    <value>How it works</value>
+  </data>
+  <data name="EmailBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="FaqsContent_FrequentlyAskedQuestionsText.Text" xml:space="preserve">
+    <value>Frequently Asked Questions</value>
+  </data>
+  <data name="FaqsContent_SearchForContentInTheAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>Search for content in the FAQs...</value>
+  </data>
+  <data name="FaqsContent_NoFAQsMatchTheSearchText.Text" xml:space="preserve">
+    <value>No FAQs match the search, try a different term, or send an email</value>
+  </data>
+  <data name="FaqsContent_DonTSeeYourQuestionText.Text" xml:space="preserve">
+    <value>Don&apos;t see your question or need more information? Feel free to email me and I&apos;ll get you an answer</value>
+  </data>
+  <data name="FaqsContent_EmailAQuestionIconAndTextButton.Text" xml:space="preserve">
+    <value>Email a Question</value>
+  </data>
+  <data name="FeedbackDialog_Dialog.Title" xml:space="preserve">
+    <value>Share Your Feedback</value>
+  </data>
+  <data name="FeedbackDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="FeedbackDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>Open Mail App</value>
+  </data>
+  <data name="FeedbackDialog_HiIMAnIndieText.Text" xml:space="preserve">
+    <value>Hi! I&apos;m an indie developer, and feedback from users is the best way for me to understand issues and improve the app. If something isn&apos;t working right or you have a suggestion, I&apos;d love to hear from you!</value>
+  </data>
+  <data name="FeedbackDialog_FeedbackTextBox.Header" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="FeedbackDialog_FeedbackTextBox.PlaceholderText" xml:space="preserve">
+    <value>Describe the issue or share your thoughts...</value>
+  </data>
+  <data name="FeedbackDialog_JoeJoefinappsComText.Text" xml:space="preserve">
+    <value>joe@joefinapps.com</value>
+  </data>
+  <data name="FeedbackDialog_CopyEmailButton.Content" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="FeedbackDialog_OpenMailAppWillOpenText.Text" xml:space="preserve">
+    <value>&apos;Open Mail App&apos; will open your default email client with your message pre-filled.</value>
+  </data>
+  <data name="FolderPaneContentControl_FolderText.Text" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="FolderPaneContentControl_CloseFolderPaneButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Close folder pane</value>
+  </data>
+  <data name="FolderPaneContentControl_NoImageFilesFoundInText.Text" xml:space="preserve">
+    <value>No image files found in this folder.</value>
+  </data>
+  <data name="FolderPaneContentControl_SaveCutOutImageButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Save cut-out image</value>
+  </data>
+  <data name="FolderPaneContentControl_DecodeAllImagesAndViewButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Decode all images and view a summary table of results</value>
+  </data>
+  <data name="FolderPaneContentControl_SummaryViewText.Text" xml:space="preserve">
+    <value>Summary View</value>
+  </data>
+  <data name="FolderPaneContentControl_DecodeEveryImageInTheButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Decode every image in the folder and write a .txt file next to each one</value>
+  </data>
+  <data name="FolderPaneContentControl_DecodeAllExportTxtFilesText.Text" xml:space="preserve">
+    <value>Decode All &amp; Export .txt Files</value>
+  </data>
+  <data name="GenerateIdsDialog_Dialog.Title" xml:space="preserve">
+    <value>Generate IDs</value>
+  </data>
+  <data name="GenerateIdsDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="GenerateIdsDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="GenerateIdsDialog_GenerateOneRandomIDPerText.Text" xml:space="preserve">
+    <value>Generate one random ID per line and add them into the current text.</value>
+  </data>
+  <data name="GenerateIdsDialog_CountNumberBox.Header" xml:space="preserve">
+    <value>How many IDs</value>
+  </data>
+  <data name="GenerateIdsDialog_IDStyleComboBox.Header" xml:space="preserve">
+    <value>ID style</value>
+  </data>
+  <data name="GenerateIdsDialog_NanoIdLengthNumberBox.Header" xml:space="preserve">
+    <value>NanoID length</value>
+  </data>
+  <data name="GenerateIdsDialog_TextBeforeEachIDTextBox.Header" xml:space="preserve">
+    <value>Text before each ID</value>
+  </data>
+  <data name="GenerateIdsDialog_TextBeforeEachIDTextBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="GenerateIdsDialog_TextAfterEachIDTextBox.Header" xml:space="preserve">
+    <value>Text after each ID</value>
+  </data>
+  <data name="GenerateIdsDialog_TextAfterEachIDTextBox.PlaceholderText" xml:space="preserve">
+    <value>?source=qr-code</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="GenerateIdsDialog_PreviewText.Text" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="GenerateIdsDialog_CheckYourSettingsInfoBar.Title" xml:space="preserve">
+    <value>Check your settings</value>
+  </data>
+  <data name="HistoryPaneContentControl_HistoryText.Text" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="HistoryPaneContentControl_SaveCurrentQRCodeToHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Save current QR code to history</value>
+  </data>
+  <data name="HistoryPaneContentControl_SaveToHistoryText.Text" xml:space="preserve">
+    <value>Save to history</value>
+  </data>
+  <data name="HistoryPaneContentControl_NoHistoryYetSaveOrText.Text" xml:space="preserve">
+    <value>No history yet. Save or copy a QR code to see it here.</value>
+  </data>
+  <data name="HistoryPaneContentControl_RemoveMenuItem.Text" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="ImageColorPickerControl_PickImageText.Text" xml:space="preserve">
+    <value>Pick Image</value>
+  </data>
+  <data name="ImageColorPickerControl_NoImageLoadedText.Text" xml:space="preserve">
+    <value>No image loaded</value>
+  </data>
+  <data name="ImageColorPickerControl_SuggestedColorsText.Text" xml:space="preserve">
+    <value>Suggested colors</value>
+  </data>
+  <data name="LicensesDialog_Dialog.Title" xml:space="preserve">
+    <value>Open Source Licenses</value>
+  </data>
+  <data name="LicensesDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="LicensesDialog_ViewOnGitHubHyperlinkButton.Content" xml:space="preserve">
+    <value>View on GitHub</value>
+  </data>
+  <data name="PrintSettingsDialog_Dialog.Title" xml:space="preserve">
+    <value>Print Settings</value>
+  </data>
+  <data name="PrintSettingsDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="PrintSettingsDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="PrintSettingsDialog_SettingsScrollViewer.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Print settings</value>
+  </data>
+  <data name="PrintSettingsDialog_QuickPresetCombo.Header" xml:space="preserve">
+    <value>Quick setup</value>
+  </data>
+  <data name="PrintSettingsDialog_CustomComboBoxItem.Content" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="PrintSettingsDialog_ProductLabelsComboBoxItem.Content" xml:space="preserve">
+    <value>Product labels</value>
+  </data>
+  <data name="PrintSettingsDialog_FlyersOrHandoutsComboBoxItem.Content" xml:space="preserve">
+    <value>Flyers or handouts</value>
+  </data>
+  <data name="PrintSettingsDialog_TableTentsOrMenusComboBoxItem.Content" xml:space="preserve">
+    <value>Table tents or menus</value>
+  </data>
+  <data name="PrintSettingsDialog_PostersOrSignsComboBoxItem.Content" xml:space="preserve">
+    <value>Posters or signs</value>
+  </data>
+  <data name="PrintSettingsDialog_QuickPresetDescriptionTextBlock.Text" xml:space="preserve">
+    <value>Choose a common QR printing scenario or keep the layout fully custom.</value>
+  </data>
+  <data name="PrintSettingsDialog_CodesPerPageCombo.Header" xml:space="preserve">
+    <value>Codes per page</value>
+  </data>
+  <data name="PrintSettingsDialog_AsManyFitComboBoxItem.Content" xml:space="preserve">
+    <value>As many fit</value>
+  </data>
+  <data name="PrintSettingsDialog_1PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>1 per page</value>
+  </data>
+  <data name="PrintSettingsDialog_2PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>2 per page</value>
+  </data>
+  <data name="PrintSettingsDialog_4PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>4 per page</value>
+  </data>
+  <data name="PrintSettingsDialog_6PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>6 per page</value>
+  </data>
+  <data name="PrintSettingsDialog_9PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>9 per page</value>
+  </data>
+  <data name="PrintSettingsDialog_12PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>12 per page</value>
+  </data>
+  <data name="PrintSettingsDialog_16PerPageComboBoxItem.Content" xml:space="preserve">
+    <value>16 per page</value>
+  </data>
+  <data name="PrintSettingsDialog_PageTypeCombo.Header" xml:space="preserve">
+    <value>Page type</value>
+  </data>
+  <data name="PrintSettingsDialog_LetterComboBoxItem.Content" xml:space="preserve">
+    <value>Letter</value>
+  </data>
+  <data name="PrintSettingsDialog_LegalComboBoxItem.Content" xml:space="preserve">
+    <value>Legal</value>
+  </data>
+  <data name="PrintSettingsDialog_StatementComboBoxItem.Content" xml:space="preserve">
+    <value>Statement</value>
+  </data>
+  <data name="PrintSettingsDialog_ExecutiveComboBoxItem.Content" xml:space="preserve">
+    <value>Executive</value>
+  </data>
+  <data name="PrintSettingsDialog_TabloidComboBoxItem.Content" xml:space="preserve">
+    <value>Tabloid</value>
+  </data>
+  <data name="PrintSettingsDialog_LedgerComboBoxItem.Content" xml:space="preserve">
+    <value>Ledger</value>
+  </data>
+  <data name="PrintSettingsDialog_A3ComboBoxItem.Content" xml:space="preserve">
+    <value>A3</value>
+  </data>
+  <data name="PrintSettingsDialog_A4ComboBoxItem.Content" xml:space="preserve">
+    <value>A4</value>
+  </data>
+  <data name="PrintSettingsDialog_A5ComboBoxItem.Content" xml:space="preserve">
+    <value>A5</value>
+  </data>
+  <data name="PrintSettingsDialog_B4ComboBoxItem.Content" xml:space="preserve">
+    <value>B4</value>
+  </data>
+  <data name="PrintSettingsDialog_B5ComboBoxItem.Content" xml:space="preserve">
+    <value>B5</value>
+  </data>
+  <data name="PrintSettingsDialog_PageLayoutCombo.Header" xml:space="preserve">
+    <value>Page layout</value>
+  </data>
+  <data name="PrintSettingsDialog_PortraitComboBoxItem.Content" xml:space="preserve">
+    <value>Portrait</value>
+  </data>
+  <data name="PrintSettingsDialog_LandscapeComboBoxItem.Content" xml:space="preserve">
+    <value>Landscape</value>
+  </data>
+  <data name="PrintSettingsDialog_ShowLabelsSwitch.Header" xml:space="preserve">
+    <value>Show labels</value>
+  </data>
+  <data name="PrintSettingsDialog_ShowLabelsSwitch.OffContent" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="PrintSettingsDialog_ShowLabelsSwitch.OnContent" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="PrintSettingsDialog_CodeSizeMmBox.Header" xml:space="preserve">
+    <value>QR size (mm)</value>
+  </data>
+  <data name="PrintSettingsDialog_SpacingMmBox.Header" xml:space="preserve">
+    <value>Spacing (mm)</value>
+  </data>
+  <data name="PrintSettingsDialog_MarginMmBox.Header" xml:space="preserve">
+    <value>Page margin (mm)</value>
+  </data>
+  <data name="PrintSettingsDialog_PreviewText.Text" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="PrintSettingsDialog_FitPreviewButton.Content" xml:space="preserve">
+    <value>Fit width</value>
+  </data>
+  <data name="PrintSettingsDialog_ZoomOutButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Zoom out</value>
+  </data>
+  <data name="PrintSettingsDialog_ZoomInButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Zoom in</value>
+  </data>
+  <data name="PrintSettingsDialog_PreviewScrollViewer.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Print preview</value>
+  </data>
+  <data name="PrintSettingsDialog_UpdatingPDFPreviewText.Text" xml:space="preserve">
+    <value>Updating PDF preview...</value>
+  </data>
+  <data name="QrCodeImageControl_SavePNGMenuItem.Text" xml:space="preserve">
+    <value>Save PNG...</value>
+  </data>
+  <data name="QrCodeImageControl_CopyPNGMenuItem.Text" xml:space="preserve">
+    <value>Copy PNG</value>
+  </data>
+  <data name="QrCodeImageControl_ShareMenuItem.Text" xml:space="preserve">
+    <value>Share...</value>
+  </data>
+  <data name="QrCodeImageControl_SaveSVGMenuItem.Text" xml:space="preserve">
+    <value>Save SVG...</value>
+  </data>
+  <data name="QrCodeImageControl_CopySVGMenuItem.Text" xml:space="preserve">
+    <value>Copy SVG</value>
+  </data>
+  <data name="QrCodeImageControl_CopySVGAsTextMenuItem.Text" xml:space="preserve">
+    <value>Copy SVG as Text</value>
+  </data>
+  <data name="QrCodeImageControl_UseCommonBrandMenuItem.Text" xml:space="preserve">
+    <value>Use common brand</value>
+  </data>
+  <data name="QrCodeImageControl_UseCurrentStyleMenuItem.Text" xml:space="preserve">
+    <value>Use current style</value>
+  </data>
+  <data name="QrCodeImageControl_ThisWarningCanBeDisabledInfoBar.Message" xml:space="preserve">
+    <value>QR Code not a URL</value>
+  </data>
+  <data name="QrCodeImageControl_ThisWarningCanBeDisabledInfoBar.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>This warning can be disabled in settings</value>
+  </data>
+  <data name="QrCodeImageControl_HowWasThisCalculatedHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>How was this calculated?</value>
+  </data>
+  <data name="QrCodeImageControl_CopySizeMenuItem.Text" xml:space="preserve">
+    <value>Copy Size</value>
+  </data>
+  <data name="QrCodeImageControl_HideMinSizeTextMenuItem.Text" xml:space="preserve">
+    <value>Hide min. size text</value>
+  </data>
+  <data name="QrCodeImageControl_YourCurrentDesignIsKeptText.Text" xml:space="preserve">
+    <value>Your current design is kept, so you can switch back anytime.</value>
+  </data>
+  <data name="QrCodeImageControl_MinimumSizeEstimatesAreUnavailableText.Text" xml:space="preserve">
+    <value>Minimum-size estimates are unavailable with a center logo.</value>
+  </data>
+  <data name="QrCodeImageControl_CopySizeMenuItem2.Text" xml:space="preserve">
+    <value>Copy Size</value>
+  </data>
+  <data name="QrCodeImageControl_AboutQRCodeSizingMenuItem.Text" xml:space="preserve">
+    <value>About QR Code sizing</value>
+  </data>
+  <data name="QrDesignDialog_Dialog.Title" xml:space="preserve">
+    <value>QR code design</value>
+  </data>
+  <data name="QrDesignDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="QrDesignDialog_LivePreviewText.Text" xml:space="preserve">
+    <value>Live preview</value>
+  </data>
+  <data name="QrDesignDialog_LivePreviewImage.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Current QR code design preview</value>
+  </data>
+  <data name="QrDesignDialog_NoPreviewText.Text" xml:space="preserve">
+    <value>Enter QR content in the main window to see a live preview here.</value>
+  </data>
+  <data name="QrDesignDialog_PreviewHelpText.Text" xml:space="preserve">
+    <value>Changes apply immediately. Choose Done to return to your QR codes.</value>
+  </data>
+  <data name="QrDesignDialog_PickALookThenMakeText.Text" xml:space="preserve">
+    <value>Pick a look, then make it your own. Your QR content stays the same.</value>
+  </data>
+  <data name="QrDesignDialog_PresetsSection.Text" xml:space="preserve">
+    <value>Presets</value>
+  </data>
+  <data name="QrDesignDialog_PatternSection.Text" xml:space="preserve">
+    <value>Pattern</value>
+  </data>
+  <data name="QrDesignDialog_FrameSection.Text" xml:space="preserve">
+    <value>Frame</value>
+  </data>
+  <data name="QrDesignDialog_PreviewError.Title" xml:space="preserve">
+    <value>Design previews unavailable</value>
+  </data>
+  <data name="QrDesignDialog_PresetGrid.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Coordinated design presets</value>
+  </data>
+  <data name="QrDesignDialog_ModuleCombo.Header" xml:space="preserve">
+    <value>QR pattern</value>
+  </data>
+  <data name="QrDesignDialog_EyeCombo.Header" xml:space="preserve">
+    <value>Corner eyes</value>
+  </data>
+  <data name="QrDesignDialog_TheSmallTimingAndAlignmentText.Text" xml:space="preserve">
+    <value>The small timing and alignment patterns stay square to help scanners read your code.</value>
+  </data>
+  <data name="QrDesignDialog_ClassicSquaresButton.Content" xml:space="preserve">
+    <value>Classic squares</value>
+  </data>
+  <data name="QrDesignDialog_QRColorAndOpacityDropDownButton.Content" xml:space="preserve">
+    <value>QR color and opacity</value>
+  </data>
+  <data name="QrDesignDialog_QRColorAndOpacityColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>QR color and opacity</value>
+  </data>
+  <data name="QrDesignDialog_BackgroundColorAndOpacityDropDownButton.Content" xml:space="preserve">
+    <value>Background color and opacity</value>
+  </data>
+  <data name="QrDesignDialog_QRBackgroundColorAndOpacityColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>QR background color and opacity</value>
+  </data>
+  <data name="QrDesignDialog_TransparentBackgroundsDependOnTheText.Text" xml:space="preserve">
+    <value>Transparent backgrounds depend on the surface where you place the QR code.</value>
+  </data>
+  <data name="QrDesignDialog_FrameGrid.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Frame shapes</value>
+  </data>
+  <data name="QrDesignDialog_CaptionSuggestionCombo.Header" xml:space="preserve">
+    <value>Caption ideas</value>
+  </data>
+  <data name="QrDesignDialog_LabelSourceCombo.Header" xml:space="preserve">
+    <value>Label source</value>
+  </data>
+  <data name="QrDesignDialog_IconCombo.Header" xml:space="preserve">
+    <value>Caption icon</value>
+  </data>
+  <data name="QrDesignDialog_IndependentFrameColorToggleSwitch.Header" xml:space="preserve">
+    <value>Independent frame color</value>
+  </data>
+  <data name="QrDesignDialog_IndependentFrameColorToggleSwitch.OffContent" xml:space="preserve">
+    <value>Use QR code color</value>
+  </data>
+  <data name="QrDesignDialog_IndependentFrameColorToggleSwitch.OnContent" xml:space="preserve">
+    <value>Custom accent</value>
+  </data>
+  <data name="QrDesignDialog_AccentColorDropDownButton.Content" xml:space="preserve">
+    <value>Accent color</value>
+  </data>
+  <data name="QrDesignDialog_FrameAccentColorColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Frame accent color</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientToggleSwitch.Header" xml:space="preserve">
+    <value>Frame gradient</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientToggleSwitch.OffContent" xml:space="preserve">
+    <value>Solid color</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientToggleSwitch.OnContent" xml:space="preserve">
+    <value>Two-color gradient</value>
+  </data>
+  <data name="QrDesignDialog_GradientEndColorDropDownButton.Content" xml:space="preserve">
+    <value>Gradient end color</value>
+  </data>
+  <data name="QrDesignDialog_FrameGradientEndColorColorPicker.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Frame gradient end color</value>
+  </data>
+  <data name="QrDesignDialog_PresetsUseAClearFourText.Text" xml:space="preserve">
+    <value>Presets use a clear four-module margin. Keep the code dark on a light background, and try the final size with your phone before printing.</value>
+  </data>
+  <data name="QrDesignDialog_UndoPresetButton.Content" xml:space="preserve">
+    <value>Undo preset</value>
+  </data>
+  <data name="QrDesignDialog_SetDesignAsDefaultButton.Content" xml:space="preserve">
+    <value>Set design as default</value>
+  </data>
+  <data name="QrDesignGalleryControl_DesignButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>QR code design</value>
+  </data>
+  <data name="QrDesignGalleryControl_DesignButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open the QR code designer</value>
+  </data>
+  <data name="QrDesignGalleryControl_DesignText.Text" xml:space="preserve">
+    <value>Design</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAsText.Text" xml:space="preserve">
+    <value>Save as</value>
+  </data>
+  <data name="QrExportActionsControl_SaveCodeSAsPNGSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Save code(s) as PNG files</value>
+  </data>
+  <data name="QrExportActionsControl_PNGIconAndTextContent.ContentText" xml:space="preserve">
+    <value>PNG</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToFilesDefaultMenuItem.Text" xml:space="preserve">
+    <value>Save all to files (default)</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToZipMenuItem.Text" xml:space="preserve">
+    <value>Save all to zip</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllToClipboardMenuItem.Text" xml:space="preserve">
+    <value>Copy all to clipboard</value>
+  </data>
+  <data name="QrExportActionsControl_SaveCodeSAsSVGSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Save code(s) as SVG files</value>
+  </data>
+  <data name="QrExportActionsControl_SVGIconAndTextContent.ContentText" xml:space="preserve">
+    <value>SVG</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToFilesDefaultMenuItem2.Text" xml:space="preserve">
+    <value>Save all to files (default)</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToZipMenuItem2.Text" xml:space="preserve">
+    <value>Save all to zip</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllToClipboardMenuItem2.Text" xml:space="preserve">
+    <value>Copy all to clipboard</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllAsTextToMenuItem.Text" xml:space="preserve">
+    <value>Copy all as text to clipboard</value>
+  </data>
+  <data name="QrExportActionsControl_SaveCodeSAsBothSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Save code(s) as both PNG and SVG files</value>
+  </data>
+  <data name="QrExportActionsControl_BothIconAndTextContent.ContentText" xml:space="preserve">
+    <value>Both</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToFilesDefaultMenuItem3.Text" xml:space="preserve">
+    <value>Save all to files (default)</value>
+  </data>
+  <data name="QrExportActionsControl_SaveAllToZipMenuItem3.Text" xml:space="preserve">
+    <value>Save all to zip</value>
+  </data>
+  <data name="QrExportActionsControl_CopyAllToClipboardMenuItem3.Text" xml:space="preserve">
+    <value>Copy all to clipboard</value>
+  </data>
+  <data name="QrExportActionsControl_PrintQRCodeSButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Print QR code(s)</value>
+  </data>
+  <data name="QrExportActionsControl_PrintIconAndTextContent.ContentText" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="QrExportActionsControl_QuicklyShowOrHideExportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Quickly show or hide export options</value>
+  </data>
+  <data name="QrExportActionsControl_ShowSaveBothButtonToggleMenuFlyoutItem.Text" xml:space="preserve">
+    <value>Show Save Both button</value>
+  </data>
+  <data name="QrExportActionsControl_ShowPrintButtonToggleMenuFlyoutItem.Text" xml:space="preserve">
+    <value>Show Print button</value>
+  </data>
+  <data name="QrLogoDesignerControl_AddImageToTheCenterSplitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Add image to the center of the QR Code</value>
+  </data>
+  <data name="QrLogoDesignerControl_ImageSegmentedItem.Content" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="QrLogoDesignerControl_EmojiSegmentedItem.Content" xml:space="preserve">
+    <value>Emoji</value>
+  </data>
+  <data name="QrLogoDesignerControl_NoImageSelectedText.Text" xml:space="preserve">
+    <value>No image selected</value>
+  </data>
+  <data name="QrLogoDesignerControl_PickImageText.Text" xml:space="preserve">
+    <value>Pick Image</value>
+  </data>
+  <data name="QrLogoDesignerControl_PasteText.Text" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="QrLogoDesignerControl_RemoveImageButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove image</value>
+  </data>
+  <data name="QrLogoDesignerControl_UseOnDeviceAIToButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Use on-device AI to remove the background from the logo image</value>
+  </data>
+  <data name="QrLogoDesignerControl_EraseBackgroundText.Text" xml:space="preserve">
+    <value>Erase Background</value>
+  </data>
+  <data name="QrLogoDesignerControl_SolidText.Text" xml:space="preserve">
+    <value>Solid</value>
+  </data>
+  <data name="QrLogoDesignerControl_3DText.Text" xml:space="preserve">
+    <value>3D</value>
+  </data>
+  <data name="QrLogoDesignerControl_ClearEmojiText.Text" xml:space="preserve">
+    <value>Clear Emoji</value>
+  </data>
+  <data name="QrLogoDesignerControl_CenterLogoSizeText.Text" xml:space="preserve">
+    <value>Center Logo Size</value>
+  </data>
+  <data name="QrLogoDesignerControl_AdjustTheLogoSizeRelativeSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Adjust the logo size relative to the size of the QR Code</value>
+  </data>
+  <data name="QrLogoDesignerControl_PercentText.Text" xml:space="preserve">
+    <value>percent</value>
+  </data>
+  <data name="QrLogoDesignerControl_PaddingAroundCenterLogoText.Text" xml:space="preserve">
+    <value>Padding around center logo</value>
+  </data>
+  <data name="QrLogoDesignerControl_ScaleTheLogoImageToSlider.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Scale the logo image to fit it better in the space (positive = smaller logo with space, negative = larger logo)</value>
+  </data>
+  <data name="QrLogoDesignerControl_PxText.Text" xml:space="preserve">
+    <value>px</value>
+  </data>
+  <data name="RemoveBackgroundDialog_Dialog.Title" xml:space="preserve">
+    <value>Remove Background</value>
+  </data>
+  <data name="RemoveBackgroundDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="RemoveBackgroundDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="RemoveBackgroundDialog_OriginalText.Text" xml:space="preserve">
+    <value>Original</value>
+  </data>
+  <data name="RemoveBackgroundDialog_BackgroundRemovedText.Text" xml:space="preserve">
+    <value>Background Removed</value>
+  </data>
+  <data name="UrlBuilderDialog_Root.Title" xml:space="preserve">
+    <value>Build URL</value>
+  </data>
+  <data name="UrlBuilderDialog_Root.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="UrlBuilderDialog_Root.PrimaryButtonText" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="UrlBuilderDialog_GoToThePreviousLineButton.AccessKey" xml:space="preserve">
+    <value>P</value>
+    <comment>A single access-key character. Do not use the same key for both line navigation buttons.</comment>
+  </data>
+  <data name="UrlBuilderDialog_GoToThePreviousLineButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Go to the previous line</value>
+  </data>
+  <data name="UrlBuilderDialog_PreviousText.Text" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="UrlBuilderDialog_GoToTheNextLineButton.AccessKey" xml:space="preserve">
+    <value>N</value>
+    <comment>A single access-key character. Do not use the same key for both line navigation buttons.</comment>
+  </data>
+  <data name="UrlBuilderDialog_GoToTheNextLineButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Go to the next line</value>
+  </data>
+  <data name="UrlBuilderDialog_NextText.Text" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="UrlBuilderDialog_SchemeTextBox.Header" xml:space="preserve">
+    <value>Scheme</value>
+  </data>
+  <data name="UrlBuilderDialog_SchemeTextBox.PlaceholderText" xml:space="preserve">
+    <value>https</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_AuthorityTextBox.Header" xml:space="preserve">
+    <value>Authority / host</value>
+  </data>
+  <data name="UrlBuilderDialog_AuthorityTextBox.PlaceholderText" xml:space="preserve">
+    <value>example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_PathTextBox.Header" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="UrlBuilderDialog_PathTextBox.PlaceholderText" xml:space="preserve">
+    <value>/products/qr codes</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_QueryParametersText.Text" xml:space="preserve">
+    <value>Query parameters</value>
+  </data>
+  <data name="UrlBuilderDialog_AddAQueryParameterButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Add a query parameter</value>
+  </data>
+  <data name="UrlBuilderDialog_AddParameterText.Text" xml:space="preserve">
+    <value>Add parameter</value>
+  </data>
+  <data name="UrlBuilderDialog_NoQueryParametersYetText.Text" xml:space="preserve">
+    <value>No query parameters yet</value>
+  </data>
+  <data name="UrlBuilderDialog_NameTextBox.Header" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="UrlBuilderDialog_NameTextBox.PlaceholderText" xml:space="preserve">
+    <value>utm_source</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="UrlBuilderDialog_ValueTextBox.Header" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="UrlBuilderDialog_ValueTextBox.PlaceholderText" xml:space="preserve">
+    <value>newsletter</value>
+  </data>
+  <data name="UrlBuilderDialog_RemoveParameterHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove parameter</value>
+  </data>
+  <data name="UrlBuilderDialog_FragmentTextBox.Header" xml:space="preserve">
+    <value>Fragment</value>
+  </data>
+  <data name="UrlBuilderDialog_FragmentTextBox.PlaceholderText" xml:space="preserve">
+    <value>section-1</value>
+  </data>
+  <data name="UrlBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="VCardBuilderDialog_Dialog.Title" xml:space="preserve">
+    <value>Build vCard</value>
+  </data>
+  <data name="VCardBuilderDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="VCardBuilderDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="VCardBuilderDialog_StartWithTheCommonContactText.Text" xml:space="preserve">
+    <value>Start with the common contact fields, then use + to add optional details.</value>
+  </data>
+  <data name="VCardBuilderDialog_FormattedNameTextBox.Header" xml:space="preserve">
+    <value>Formatted name</value>
+  </data>
+  <data name="VCardBuilderDialog_FormattedNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Jane Doe</value>
+  </data>
+  <data name="VCardBuilderDialog_FirstNameTextBox.Header" xml:space="preserve">
+    <value>First name</value>
+  </data>
+  <data name="VCardBuilderDialog_FirstNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Jane</value>
+  </data>
+  <data name="VCardBuilderDialog_LastNameTextBox.Header" xml:space="preserve">
+    <value>Last name</value>
+  </data>
+  <data name="VCardBuilderDialog_LastNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Doe</value>
+  </data>
+  <data name="VCardBuilderDialog_MiddleTextBox.Header" xml:space="preserve">
+    <value>Middle</value>
+  </data>
+  <data name="VCardBuilderDialog_PrefixTextBox.Header" xml:space="preserve">
+    <value>Prefix</value>
+  </data>
+  <data name="VCardBuilderDialog_PrefixTextBox.PlaceholderText" xml:space="preserve">
+    <value>Dr.</value>
+  </data>
+  <data name="VCardBuilderDialog_SuffixTextBox.Header" xml:space="preserve">
+    <value>Suffix</value>
+  </data>
+  <data name="VCardBuilderDialog_SuffixTextBox.PlaceholderText" xml:space="preserve">
+    <value>Jr.</value>
+  </data>
+  <data name="VCardBuilderDialog_OrganizationTextBox.Header" xml:space="preserve">
+    <value>Organization</value>
+  </data>
+  <data name="VCardBuilderDialog_OrganizationTextBox.PlaceholderText" xml:space="preserve">
+    <value>Contoso</value>
+  </data>
+  <data name="VCardBuilderDialog_TitleTextBox.Header" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="VCardBuilderDialog_TitleTextBox.PlaceholderText" xml:space="preserve">
+    <value>Product Manager</value>
+  </data>
+  <data name="VCardBuilderDialog_MobilePhoneTextBox.Header" xml:space="preserve">
+    <value>Mobile phone</value>
+  </data>
+  <data name="VCardBuilderDialog_MobilePhoneTextBox.PlaceholderText" xml:space="preserve">
+    <value>+1 555 0100</value>
+  </data>
+  <data name="VCardBuilderDialog_EmailTextBox.Header" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="VCardBuilderDialog_EmailTextBox.PlaceholderText" xml:space="preserve">
+    <value>jane@example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="VCardBuilderDialog_WebsiteTextBox.Header" xml:space="preserve">
+    <value>Website</value>
+  </data>
+  <data name="VCardBuilderDialog_WebsiteTextBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="VCardBuilderDialog_AddAnOptionalVCardFieldButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Add an optional vCard field</value>
+  </data>
+  <data name="VCardBuilderDialog_AddFieldText.Text" xml:space="preserve">
+    <value>Add field</value>
+  </data>
+  <data name="VCardBuilderDialog_WorkPhoneMenuItem.Text" xml:space="preserve">
+    <value>Work phone</value>
+  </data>
+  <data name="VCardBuilderDialog_HomePhoneMenuItem.Text" xml:space="preserve">
+    <value>Home phone</value>
+  </data>
+  <data name="VCardBuilderDialog_NicknameMenuItem.Text" xml:space="preserve">
+    <value>Nickname</value>
+  </data>
+  <data name="VCardBuilderDialog_BirthdayMenuItem.Text" xml:space="preserve">
+    <value>Birthday</value>
+  </data>
+  <data name="VCardBuilderDialog_AddressMenuItem.Text" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="VCardBuilderDialog_NoteMenuItem.Text" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="VCardBuilderDialog_WorkPhoneText.Text" xml:space="preserve">
+    <value>Work phone</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveWorkPhoneHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove work phone</value>
+  </data>
+  <data name="VCardBuilderDialog_15550101TextBox.PlaceholderText" xml:space="preserve">
+    <value>+1 555 0101</value>
+  </data>
+  <data name="VCardBuilderDialog_HomePhoneText.Text" xml:space="preserve">
+    <value>Home phone</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveHomePhoneHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove home phone</value>
+  </data>
+  <data name="VCardBuilderDialog_15550102TextBox.PlaceholderText" xml:space="preserve">
+    <value>+1 555 0102</value>
+  </data>
+  <data name="VCardBuilderDialog_NicknameText.Text" xml:space="preserve">
+    <value>Nickname</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveNicknameHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove nickname</value>
+  </data>
+  <data name="VCardBuilderDialog_JanieTextBox.PlaceholderText" xml:space="preserve">
+    <value>Janie</value>
+  </data>
+  <data name="VCardBuilderDialog_BirthdayText.Text" xml:space="preserve">
+    <value>Birthday</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveBirthdayHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove birthday</value>
+  </data>
+  <data name="VCardBuilderDialog_19901021TextBox.PlaceholderText" xml:space="preserve">
+    <value>1990-10-21</value>
+  </data>
+  <data name="VCardBuilderDialog_AddressText.Text" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveAddressHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove address</value>
+  </data>
+  <data name="VCardBuilderDialog_StreetTextBox.Header" xml:space="preserve">
+    <value>Street</value>
+  </data>
+  <data name="VCardBuilderDialog_CityTextBox.Header" xml:space="preserve">
+    <value>City</value>
+  </data>
+  <data name="VCardBuilderDialog_StateRegionTextBox.Header" xml:space="preserve">
+    <value>State / region</value>
+  </data>
+  <data name="VCardBuilderDialog_PostalCodeTextBox.Header" xml:space="preserve">
+    <value>Postal code</value>
+  </data>
+  <data name="VCardBuilderDialog_CountryTextBox.Header" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="VCardBuilderDialog_NoteText.Text" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="VCardBuilderDialog_RemoveNoteHyperlinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove note</value>
+  </data>
+  <data name="VCardBuilderDialog_AddContactNotesTextBox.PlaceholderText" xml:space="preserve">
+    <value>Add contact notes</value>
+  </data>
+  <data name="VCardBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="WifiBuilderDialog_Dialog.Title" xml:space="preserve">
+    <value>Build WiFi</value>
+  </data>
+  <data name="WifiBuilderDialog_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="WifiBuilderDialog_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="WifiBuilderDialog_CreateAQRCodeThatText.Text" xml:space="preserve">
+    <value>Create a QR Code that shares WiFi credentials for phones and other scanners that understand the standard WiFi payload format.</value>
+  </data>
+  <data name="WifiBuilderDialog_SsidTextBox.Header" xml:space="preserve">
+    <value>Network name (SSID)</value>
+  </data>
+  <data name="WifiBuilderDialog_SsidTextBox.PlaceholderText" xml:space="preserve">
+    <value>Contoso Guest</value>
+  </data>
+  <data name="WifiBuilderDialog_SecurityTypeComboBox.Header" xml:space="preserve">
+    <value>Security type</value>
+  </data>
+  <data name="WifiBuilderDialog_WPAWPA2WPA3ComboBoxItem.Content" xml:space="preserve">
+    <value>WPA / WPA2 / WPA3</value>
+  </data>
+  <data name="WifiBuilderDialog_WEPLegacyComboBoxItem.Content" xml:space="preserve">
+    <value>WEP (Legacy)</value>
+  </data>
+  <data name="WifiBuilderDialog_NoneOpenNetworkComboBoxItem.Content" xml:space="preserve">
+    <value>None (Open network)</value>
+  </data>
+  <data name="WifiBuilderDialog_PasswordTextBox.Header" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="WifiBuilderDialog_PasswordTextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter the WiFi password</value>
+  </data>
+  <data name="WifiBuilderDialog_ThisIsAHiddenNetworkCheckBox.Content" xml:space="preserve">
+    <value>This is a hidden network</value>
+  </data>
+  <data name="WifiBuilderDialog_OpenNetworkInfoBar.Message" xml:space="preserve">
+    <value>Open networks do not use a password, and many devices will still show the network details before joining.</value>
+  </data>
+  <data name="WifiBuilderDialog_OpenNetworkInfoBar.Title" xml:space="preserve">
+    <value>Open network</value>
+  </data>
+  <data name="WifiBuilderDialog_LegacySecurityInfoBar.Message" xml:space="preserve">
+    <value>WEP is obsolete and insecure. Only use it if you need compatibility with very old equipment.</value>
+  </data>
+  <data name="WifiBuilderDialog_LegacySecurityInfoBar.Title" xml:space="preserve">
+    <value>Legacy security</value>
+  </data>
+  <data name="WifiBuilderDialog_BeforeYouShareThisInfoBar.Message" xml:space="preserve">
+    <value>Anyone who scans or photographs this QR Code can recover the WiFi credentials. Newer iPhone and Android devices usually recognize it, but older cameras and some third-party scanners may only show the raw text.</value>
+  </data>
+  <data name="WifiBuilderDialog_BeforeYouShareThisInfoBar.Title" xml:space="preserve">
+    <value>Before you share this</value>
+  </data>
+  <data name="WifiBuilderDialog_PreviewTextBox.Header" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="AboutQrCodesWebPage_BackToYourSimpleQRButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Back to your Simple QR Code Maker Settings</value>
+  </data>
+  <data name="AboutQrCodesWebPage_BackToSettingsText.Text" xml:space="preserve">
+    <value>Back to Settings</value>
+  </data>
+  <data name="DecodingPage_CloseAdvancedToolsButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Close advanced tools</value>
+  </data>
+  <data name="DecodingPage_CloseAdvancedToolsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Close advanced tools</value>
+  </data>
+  <data name="DecodingPage_CancelButton.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="DecodingPage_OpenFilesIconAndTextButton.Text" xml:space="preserve">
+    <value>Open Files...</value>
+  </data>
+  <data name="DecodingPage_OpenFilesIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open one or more image files to decode their barcodes</value>
+  </data>
+  <data name="DecodingPage_OpenFolderIconAndTextButton.Text" xml:space="preserve">
+    <value>Open Folder...</value>
+  </data>
+  <data name="DecodingPage_OpenFolderIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open a folder to browse and batch-decode all image files in it</value>
+  </data>
+  <data name="DecodingPage_PasteIconAndTextButton.Text" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="DecodingPage_PasteIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Paste an image or file from your clipboard to try to decode the barcodes</value>
+  </data>
+  <data name="DecodingPage_CameraIconAndTextButton.Text" xml:space="preserve">
+    <value>Camera</value>
+  </data>
+  <data name="DecodingPage_CameraIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open the Windows camera to capture a photo for decoding</value>
+  </data>
+  <data name="DecodingPage_SnipIconAndTextButton.Text" xml:space="preserve">
+    <value>Snip</value>
+  </data>
+  <data name="DecodingPage_SnipIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open the Snipping Tool to capture a screenshot for decoding</value>
+  </data>
+  <data name="DecodingPage_OpenFileMenuItem.Text" xml:space="preserve">
+    <value>Open File</value>
+  </data>
+  <data name="DecodingPage_OpenFileMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open source file</value>
+  </data>
+  <data name="DecodingPage_SaveImageMenuItem.Text" xml:space="preserve">
+    <value>Save Image...</value>
+  </data>
+  <data name="DecodingPage_SaveImageMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Save decoded image to a file</value>
+  </data>
+  <data name="DecodingPage_OpenContainingFolderMenuItem.Text" xml:space="preserve">
+    <value>Open Containing Folder</value>
+  </data>
+  <data name="DecodingPage_OpenContainingFolderMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open containing folder</value>
+  </data>
+  <data name="DecodingPage_OpenPasteDropAnImageText.Text" xml:space="preserve">
+    <value>Open, paste, drop an image here, or capture an image to decode.</value>
+  </data>
+  <data name="DecodingPage_NoCodesInfoBar.Title" xml:space="preserve">
+    <value>No codes found</value>
+  </data>
+  <data name="DecodingPage_UseAdvancedToolsToOpenText.Text" xml:space="preserve">
+    <value>Use Advanced Tools to open a guided workflow or apply quick image fixes to improve detection.</value>
+  </data>
+  <data name="DecodingPage_MakeCodesIconAndTextButton.Text" xml:space="preserve">
+    <value>Make Codes</value>
+  </data>
+  <data name="DecodingPage_MakeCodesIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Switch to making QR Codes</value>
+  </data>
+  <data name="DecodingPage_SettingsIconAndTextButton.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="DecodingPage_SettingsIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Simple QR Code Maker Settings</value>
+  </data>
+  <data name="DecodingPage_NewDropDownButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Replace current image with something new</value>
+  </data>
+  <data name="DecodingPage_NewText.Text" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="DecodingPage_OpenFilesMenuItem.Text" xml:space="preserve">
+    <value>Open Files...</value>
+  </data>
+  <data name="DecodingPage_OpenFolderMenuItem.Text" xml:space="preserve">
+    <value>Open Folder...</value>
+  </data>
+  <data name="DecodingPage_PasteMenuItem.Text" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="DecodingPage_CameraMenuItem.Text" xml:space="preserve">
+    <value>Camera</value>
+  </data>
+  <data name="DecodingPage_SnipMenuItem.Text" xml:space="preserve">
+    <value>Snip</value>
+  </data>
+  <data name="DecodingPage_ShowOrHideAdvancedImageToggleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Show or hide advanced image-processing workflows</value>
+  </data>
+  <data name="DecodingPage_AdvancedToolsText.Text" xml:space="preserve">
+    <value>Advanced Tools</value>
+  </data>
+  <data name="DecodingPage_EditThisTextAsAAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Edit this text as a new QR Code</value>
+  </data>
+  <data name="DecodingPage_CopyTheEncodedTextToAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Copy the encoded text to the clipboard</value>
+  </data>
+  <data name="DecodingPage_TryToGoToTheAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Try to go to the URL</value>
+  </data>
+  <data name="DecodingPage_ShowHideImagesPanelAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Show/hide images panel</value>
+  </data>
+  <data name="FolderSummaryPage_FolderSummaryText.Text" xml:space="preserve">
+    <value>Folder Summary</value>
+  </data>
+  <data name="FolderSummaryPage_SaveResultsAsACSVButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Save results as a CSV spreadsheet</value>
+  </data>
+  <data name="FolderSummaryPage_SaveSpreadsheetText.Text" xml:space="preserve">
+    <value>Save Spreadsheet</value>
+  </data>
+  <data name="FolderSummaryPage_FileNameTableViewTemplateColumn.Header" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="FolderSummaryPage_OpenFileLinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open this image in its default app</value>
+  </data>
+  <data name="FolderSummaryPage_OpenFileText.Text" xml:space="preserve">
+    <value>Open file ↗</value>
+  </data>
+  <data name="FolderSummaryPage_QRCodesTableViewTemplateColumn.Header" xml:space="preserve">
+    <value>QR Codes</value>
+  </data>
+  <data name="FolderSummaryPage_ContentsTableViewTemplateColumn.Header" xml:space="preserve">
+    <value>Contents</value>
+  </data>
+  <data name="MainPage_UrlImportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Add or import text</value>
+  </data>
+  <data name="MainPage_PasteMenuItem.Text" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="MainPage_BuildURLMenuItem.Text" xml:space="preserve">
+    <value>Build URL</value>
+  </data>
+  <data name="MainPage_BuildVCardMenuItem.Text" xml:space="preserve">
+    <value>Build vCard</value>
+  </data>
+  <data name="MainPage_BuildVCardMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Build business cards to easily share contact information through QR Codes</value>
+  </data>
+  <data name="MainPage_BuildWiFiMenuItem.Text" xml:space="preserve">
+    <value>Build WiFi</value>
+  </data>
+  <data name="MainPage_BuildWiFiMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Build a WiFi QR Code that can share network credentials</value>
+  </data>
+  <data name="MainPage_BuildEmailMenuItem.Text" xml:space="preserve">
+    <value>Build Email</value>
+  </data>
+  <data name="MainPage_BuildEmailMenuItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Build an email QR Code with prefilled recipient, subject, and body</value>
+  </data>
+  <data name="MainPage_GenerateIDsMenuItem.Text" xml:space="preserve">
+    <value>Generate IDs</value>
+  </data>
+  <data name="MainPage_OpenTextFileMenuItem.Text" xml:space="preserve">
+    <value>Open text file</value>
+  </data>
+  <data name="MainPage_OpenSpreadsheetMenuItem.Text" xml:space="preserve">
+    <value>Open spreadsheet</value>
+  </data>
+  <data name="MainPage_MultiLineCodesToggleMenuFlyoutItem.Text" xml:space="preserve">
+    <value>Multi line codes</value>
+  </data>
+  <data name="MainPage_CodeColorColorPickerButton.ToolTipText" xml:space="preserve">
+    <value>Code Color</value>
+  </data>
+  <data name="MainPage_SetAsDefaultCodeColorMenuItem.Text" xml:space="preserve">
+    <value>Set as default code color</value>
+  </data>
+  <data name="MainPage_BackgroundColorColorPickerButton.ToolTipText" xml:space="preserve">
+    <value>Background Color</value>
+  </data>
+  <data name="MainPage_SetAsDefaultBackgroundColorMenuItem.Text" xml:space="preserve">
+    <value>Set as default background color</value>
+  </data>
+  <data name="MainPage_LevelOfErrorCorrectionDropDownButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Level of Error Correction</value>
+  </data>
+  <data name="MainPage_SetAsDefaultErrorCorrectionMenuItem.Text" xml:space="preserve">
+    <value>Set as default error correction</value>
+  </data>
+  <data name="MainPage_WhatIsErrorCorrectionText.Text" xml:space="preserve">
+    <value>What is error correction?</value>
+  </data>
+  <data name="MainPage_LoadMoreText.Text" xml:space="preserve">
+    <value>Load more</value>
+  </data>
+  <data name="MainPage_ReadCodesIconAndTextButton.Text" xml:space="preserve">
+    <value>Read Codes</value>
+  </data>
+  <data name="MainPage_ReadCodesIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open an image to read and extract text from any codes</value>
+  </data>
+  <data name="MainPage_SettingsIconAndTextButton.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="MainPage_SettingsIconAndTextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Simple QR Code Maker Settings</value>
+  </data>
+  <data name="MainPage_ScrollToCodesButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Scroll to the QR Code preview</value>
+  </data>
+  <data name="MainPage_ScrollToCodesText.Text" xml:space="preserve">
+    <value>Scroll to codes</value>
+  </data>
+  <data name="MainPage_OpenFolderHyperlinkButton.Content" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="MainPage_SettingsIconAndTextHyperlinkButton.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="MainPage_AddButtonTeachingTip.Title" xml:space="preserve">
+    <value>More ways to add content</value>
+  </data>
+  <data name="MainPage_AddButtonTeachingTip.CloseButtonContent" xml:space="preserve">
+    <value>Got it</value>
+  </data>
+  <data name="MainPage_AddButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Open this menu to paste text, build URL, vCard, WiFi, or Email QR codes, or import from a file.</value>
+  </data>
+  <data name="MainPage_HistoryButtonTeachingTip.Title" xml:space="preserve">
+    <value>Your QR code history</value>
+  </data>
+  <data name="MainPage_HistoryButtonTeachingTip.CloseButtonContent" xml:space="preserve">
+    <value>Got it</value>
+  </data>
+  <data name="MainPage_HistoryButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Previously generated QR codes are saved here. Tap History in the toolbar to restore a previous code.</value>
+  </data>
+  <data name="MainPage_BrandButtonTeachingTip.Title" xml:space="preserve">
+    <value>Save your style as a brand</value>
+  </data>
+  <data name="MainPage_BrandButtonTeachingTip.CloseButtonContent" xml:space="preserve">
+    <value>Got it</value>
+  </data>
+  <data name="MainPage_BrandButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Use this button to save your current colors, logo, and settings as a named brand — then apply it to any QR code instantly.</value>
+  </data>
+  <data name="MainPage_BrandUrlWarningTip.Title" xml:space="preserve">
+    <value>Brand URL conflict</value>
+  </data>
+  <data name="MainPage_BrandUrlWarningTip.CloseButtonContent" xml:space="preserve">
+    <value>Got it</value>
+  </data>
+  <data name="MainPage_BrandUrlWarningTip.Subtitle" xml:space="preserve">
+    <value>Some content doesn&apos;t match this brand&apos;s URL. You can change how brands handle URL conflicts in Settings.</value>
+  </data>
+  <data name="SettingsPage_RateAndReviewSettingsCard.Description" xml:space="preserve">
+    <value>Enjoying the app? Rate it or send me feedback!</value>
+  </data>
+  <data name="SettingsPage_RateAndReviewSettingsCard.Header" xml:space="preserve">
+    <value>Rate and Review</value>
+  </data>
+  <data name="SettingsPage_ThemeSettingsExpander.Description" xml:space="preserve">
+    <value>Select the app theme</value>
+  </data>
+  <data name="SettingsPage_ThemeSettingsExpander.Header" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SettingsPage_QRCodeText.Text" xml:space="preserve">
+    <value>QR Code</value>
+  </data>
+  <data name="SettingsPage_LaunchModeSettingsExpander.Description" xml:space="preserve">
+    <value>Choose whether the app opens in QR code creation or QR code reading mode</value>
+  </data>
+  <data name="SettingsPage_LaunchModeSettingsExpander.Header" xml:space="preserve">
+    <value>Launch mode</value>
+  </data>
+  <data name="SettingsPage_CreatingQRCodesRadioButton.Content" xml:space="preserve">
+    <value>Creating QR Codes</value>
+  </data>
+  <data name="SettingsPage_ReadingQRCodesRadioButton.Content" xml:space="preserve">
+    <value>Reading QR Codes</value>
+  </data>
+  <data name="SettingsPage_MultiLineHandlingSettingsExpander.Description" xml:space="preserve">
+    <value>How to handle multiple lines when making QR Codes</value>
+  </data>
+  <data name="SettingsPage_MultiLineHandlingSettingsExpander.Header" xml:space="preserve">
+    <value>Multi-line handling</value>
+  </data>
+  <data name="SettingsPage_OneCodeForEachLineRadioButton.Content" xml:space="preserve">
+    <value>One code for each line</value>
+  </data>
+  <data name="SettingsPage_MultiLineInSingleCodeRadioButton.Content" xml:space="preserve">
+    <value>Multi-Line in single code</value>
+  </data>
+  <data name="SettingsPage_BaseTextSettingsCard.Description" xml:space="preserve">
+    <value>Starting text, at start and for newlines</value>
+  </data>
+  <data name="SettingsPage_BaseTextSettingsCard.Header" xml:space="preserve">
+    <value>Base text</value>
+  </data>
+  <data name="SettingsPage_ExHttpsExampleComTextBox.PlaceholderText" xml:space="preserve">
+    <value>ex: https://example.com/</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="SettingsPage_AutoBrandsSettingsCard.Description" xml:space="preserve">
+    <value>Automatically apply a matching brand when a QR Code&apos;s base URL matches a brand&apos;s URL</value>
+  </data>
+  <data name="SettingsPage_AutoBrandsSettingsCard.Header" xml:space="preserve">
+    <value>Auto brands</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch.OffContent" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch.OnContent" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesSettingsCard.Description" xml:space="preserve">
+    <value>Suggest colors and logos for recognized website links. Themes are only applied when you choose them.</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesSettingsCard.Header" xml:space="preserve">
+    <value>Recommend using brand themes</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesToggleSwitch.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Recommend using brand themes</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesToggleSwitch.OffContent" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="SettingsPage_RecommendUsingBrandThemesToggleSwitch.OnContent" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="SettingsPage_BrandURLOnPlainTextSettingsExpander.Description" xml:space="preserve">
+    <value>Action when applying a brand with a URL to non-URL plain text content</value>
+  </data>
+  <data name="SettingsPage_BrandURLOnPlainTextSettingsExpander.Header" xml:space="preserve">
+    <value>Brand URL on plain text items</value>
+  </data>
+  <data name="SettingsPage_IgnoreLeaveExistingContentUnchangedRadioButton.Content" xml:space="preserve">
+    <value>Ignore — leave existing content unchanged</value>
+  </data>
+  <data name="SettingsPage_WarnDefaultShowAnInfoRadioButton.Content" xml:space="preserve">
+    <value>Warn (default) — show an info bar</value>
+  </data>
+  <data name="SettingsPage_AutoPrependAddBrandURLRadioButton.Content" xml:space="preserve">
+    <value>Auto-prepend — add brand URL before each plain text item</value>
+  </data>
+  <data name="SettingsPage_BrandURLMismatchSettingsExpander.Description" xml:space="preserve">
+    <value>Action when applying a brand with a URL to content containing non-matching URLs</value>
+  </data>
+  <data name="SettingsPage_BrandURLMismatchSettingsExpander.Header" xml:space="preserve">
+    <value>Brand URL mismatch</value>
+  </data>
+  <data name="SettingsPage_IgnoreKeepExistingURLsRadioButton.Content" xml:space="preserve">
+    <value>Ignore — keep existing URLs</value>
+  </data>
+  <data name="SettingsPage_WarnDefaultShowAnInfoRadioButton2.Content" xml:space="preserve">
+    <value>Warn (default) — show an info bar</value>
+  </data>
+  <data name="SettingsPage_AutoFixReplaceNonMatchingRadioButton.Content" xml:space="preserve">
+    <value>Auto-fix — replace non-matching URLs with the brand URL</value>
+  </data>
+  <data name="SettingsPage_URLWarningsSettingsCard.Description" xml:space="preserve">
+    <value>Show warnings when QR Codes are not URLs</value>
+  </data>
+  <data name="SettingsPage_URLWarningsSettingsCard.Header" xml:space="preserve">
+    <value>URL warnings</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch2.OffContent" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch2.OnContent" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="SettingsPage_RedirectorWarningsSettingsCard.Description" xml:space="preserve">
+    <value>Warn when QR Codes use a known redirector such as bit.ly or qrco.de</value>
+  </data>
+  <data name="SettingsPage_RedirectorWarningsSettingsCard.Header" xml:space="preserve">
+    <value>Redirector warnings</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch3.OffContent" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="SettingsPage_OffToggleSwitch3.OnContent" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="SettingsPage_SafeRedirectorDomainsSettingsExpander.Description" xml:space="preserve">
+    <value>Domains you have marked as safe from the redirector warning info bar</value>
+  </data>
+  <data name="SettingsPage_SafeRedirectorDomainsSettingsExpander.Header" xml:space="preserve">
+    <value>Safe redirector domains</value>
+  </data>
+  <data name="SettingsPage_KnownSafeDomainsSettingsCard.Header" xml:space="preserve">
+    <value>Known safe domains</value>
+  </data>
+  <data name="SettingsPage_RemoveButton.Content" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="SettingsPage_ClearAllButton.Content" xml:space="preserve">
+    <value>Clear all</value>
+  </data>
+  <data name="SettingsPage_MinimumSizeTextSettingsCard.Description" xml:space="preserve">
+    <value>Hide the minimum size text on QR codes</value>
+  </data>
+  <data name="SettingsPage_MinimumSizeTextSettingsCard.Header" xml:space="preserve">
+    <value>Minimum size text</value>
+  </data>
+  <data name="SettingsPage_ShowingToggleSwitch.OffContent" xml:space="preserve">
+    <value>Showing</value>
+  </data>
+  <data name="SettingsPage_ShowingToggleSwitch.OnContent" xml:space="preserve">
+    <value>Hidden</value>
+  </data>
+  <data name="SettingsPage_SaveBothButtonSettingsCard.Description" xml:space="preserve">
+    <value>Show the &apos;Save Both&apos; button for PNG and SVG</value>
+  </data>
+  <data name="SettingsPage_SaveBothButtonSettingsCard.Header" xml:space="preserve">
+    <value>Save Both button</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch.OffContent" xml:space="preserve">
+    <value>Hidden</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch.OnContent" xml:space="preserve">
+    <value>Showing</value>
+  </data>
+  <data name="SettingsPage_PrintButtonSettingsCard.Description" xml:space="preserve">
+    <value>Show the Print button with the export actions</value>
+  </data>
+  <data name="SettingsPage_PrintButtonSettingsCard.Header" xml:space="preserve">
+    <value>Print button</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch2.OffContent" xml:space="preserve">
+    <value>Hidden</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch2.OnContent" xml:space="preserve">
+    <value>Showing</value>
+  </data>
+  <data name="SettingsPage_ZipSaveOptionsSettingsCard.Description" xml:space="preserve">
+    <value>Show zip save options in the export menus</value>
+  </data>
+  <data name="SettingsPage_ZipSaveOptionsSettingsCard.Header" xml:space="preserve">
+    <value>Zip save options</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch3.OffContent" xml:space="preserve">
+    <value>Hidden</value>
+  </data>
+  <data name="SettingsPage_HiddenToggleSwitch3.OnContent" xml:space="preserve">
+    <value>Showing</value>
+  </data>
+  <data name="SettingsPage_MaxScanDistanceAtMinimumSettingsCard.Header" xml:space="preserve">
+    <value>Max scan distance at minimum size</value>
+  </data>
+  <data name="SettingsPage_QRPaddingSettingsCard.Header" xml:space="preserve">
+    <value>QR padding</value>
+  </data>
+  <data name="SettingsPage_QuickSaveLocationSettingsExpander.Description" xml:space="preserve">
+    <value>Skip the folder picker and save directly to this folder</value>
+  </data>
+  <data name="SettingsPage_QuickSaveLocationSettingsExpander.Header" xml:space="preserve">
+    <value>Quick save location</value>
+  </data>
+  <data name="SettingsPage_FolderSettingsCard.Header" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="SettingsPage_NoFolderSelectedTextBox.PlaceholderText" xml:space="preserve">
+    <value>No folder selected</value>
+  </data>
+  <data name="SettingsPage_BrowseButton.Content" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="SettingsPage_ClearButton.Content" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="SettingsPage_DefaultsText.Text" xml:space="preserve">
+    <value>Defaults</value>
+  </data>
+  <data name="SettingsPage_QRCodeDefaultsSettingsExpander.Description" xml:space="preserve">
+    <value>Starting values each session, before any brand is applied. Set these from the main page using right-click or the flyout buttons.</value>
+  </data>
+  <data name="SettingsPage_QRCodeDefaultsSettingsExpander.Header" xml:space="preserve">
+    <value>QR code defaults</value>
+  </data>
+  <data name="SettingsPage_CodeColorSettingsCard.Header" xml:space="preserve">
+    <value>Code color</value>
+  </data>
+  <data name="SettingsPage_ResetButton.Content" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="SettingsPage_BackgroundColorSettingsCard.Header" xml:space="preserve">
+    <value>Background color</value>
+  </data>
+  <data name="SettingsPage_ResetButton2.Content" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="SettingsPage_ErrorCorrectionSettingsCard.Header" xml:space="preserve">
+    <value>Error correction</value>
+  </data>
+  <data name="SettingsPage_ResetButton3.Content" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="SettingsPage_FrameAndPatternSettingsCard.Header" xml:space="preserve">
+    <value>Frame and pattern</value>
+  </data>
+  <data name="SettingsPage_ResetButton4.Content" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="SettingsPage_DataText.Text" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="SettingsPage_ExportSettingsExpander.Description" xml:space="preserve">
+    <value>Save settings, history, brands, and logo images to a zip backup file</value>
+  </data>
+  <data name="SettingsPage_ExportSettingsExpander.Header" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="SettingsPage_ExportButton.Content" xml:space="preserve">
+    <value>Export...</value>
+  </data>
+  <data name="SettingsPage_IncludeSettingsSettingsCard.Header" xml:space="preserve">
+    <value>Include settings</value>
+  </data>
+  <data name="SettingsPage_IncludeBrandsSettingsCard.Header" xml:space="preserve">
+    <value>Include brands</value>
+  </data>
+  <data name="SettingsPage_IncludeHistorySettingsCard.Header" xml:space="preserve">
+    <value>Include history</value>
+  </data>
+  <data name="SettingsPage_ImportSettingsCard.Description" xml:space="preserve">
+    <value>Merge settings, history, brands, and logo images from a backup zip file. Existing settings not in the backup are kept.</value>
+  </data>
+  <data name="SettingsPage_ImportSettingsCard.Header" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="SettingsPage_ImportButton.Content" xml:space="preserve">
+    <value>Import...</value>
+  </data>
+  <data name="SettingsPage_SimpleQRCodeMakerSettingsExpander.Header" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="SettingsPage_PrivacySettingsCard.Header" xml:space="preserve">
+    <value>Privacy</value>
+  </data>
+  <data name="SettingsPage_LearnMoreSettingsCard.Header" xml:space="preserve">
+    <value>Learn more</value>
+  </data>
+  <data name="SettingsPage_QRCodesOnWikipediaHyperlinkButton.Content" xml:space="preserve">
+    <value>QR Codes on Wikipedia</value>
+  </data>
+  <data name="SettingsPage_RateThisAppSettingsCard.Header" xml:space="preserve">
+    <value>Rate this app</value>
+  </data>
+  <data name="SettingsPage_MicrosoftStoreHyperlinkButton.Content" xml:space="preserve">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="SettingsPage_SourceCodeSettingsCard.Header" xml:space="preserve">
+    <value>Source code</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_CreatedBySettingsCard.Header" xml:space="preserve">
+    <value>Created by</value>
+  </data>
+  <data name="SettingsPage_TheJoeFinHyperlinkButton.Content" xml:space="preserve">
+    <value>TheJoeFin</value>
+  </data>
+  <data name="SettingsPage_MoreAppsByTheJoeFinSettingsExpander.Description" xml:space="preserve">
+    <value>Other free apps by the same developer</value>
+  </data>
+  <data name="SettingsPage_MoreAppsByTheJoeFinSettingsExpander.Header" xml:space="preserve">
+    <value>More apps by TheJoeFin</value>
+  </data>
+  <data name="SettingsPage_SimpleIconFileMakerSettingsCard.Description" xml:space="preserve">
+    <value>Create, edit, and convert icon files</value>
+  </data>
+  <data name="SettingsPage_SimpleIconFileMakerSettingsCard.Header" xml:space="preserve">
+    <value>Simple Icon File Maker</value>
+  </data>
+  <data name="SettingsPage_MicrosoftStoreHyperlinkButton2.Content" xml:space="preserve">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="SettingsPage_TextGrabSettingsCard.Description" xml:space="preserve">
+    <value>Copy text from anywhere on your screen</value>
+  </data>
+  <data name="SettingsPage_TextGrabSettingsCard.Header" xml:space="preserve">
+    <value>Text Grab</value>
+  </data>
+  <data name="SettingsPage_MicrosoftStoreHyperlinkButton3.Content" xml:space="preserve">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="SettingsPage_WebsiteSettingsCard.Header" xml:space="preserve">
+    <value>Website</value>
+  </data>
+  <data name="SettingsPage_JoeFinAppsComHyperlinkButton.Content" xml:space="preserve">
+    <value>JoeFinApps.com</value>
+  </data>
+  <data name="SettingsPage_LibrariesSettingsExpander.Description" xml:space="preserve">
+    <value>Open source libraries used in this app</value>
+  </data>
+  <data name="SettingsPage_LibrariesSettingsExpander.Header" xml:space="preserve">
+    <value>Libraries</value>
+  </data>
+  <data name="SettingsPage_ViewLicensesButton.Content" xml:space="preserve">
+    <value>View licenses...</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitMvvmSettingsCard.Description" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitMvvmSettingsCard.Header" xml:space="preserve">
+    <value>CommunityToolkit.Mvvm</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton2.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitWinUISettingsCard.Description" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="SettingsPage_CommunityToolkitWinUISettingsCard.Header" xml:space="preserve">
+    <value>CommunityToolkit WinUI</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton3.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_HumanizerSettingsCard.Description" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="SettingsPage_HumanizerSettingsCard.Header" xml:space="preserve">
+    <value>Humanizer</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton4.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_MagickNETSettingsCard.Description" xml:space="preserve">
+    <value>Apache-2.0 License</value>
+  </data>
+  <data name="SettingsPage_MagickNETSettingsCard.Header" xml:space="preserve">
+    <value>Magick.NET</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton5.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_MicrosoftExtensionsHostingSettingsCard.Description" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="SettingsPage_MicrosoftExtensionsHostingSettingsCard.Header" xml:space="preserve">
+    <value>Microsoft.Extensions.Hosting</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton6.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_MicrosoftGraphicsWin2DSettingsCard.Description" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="SettingsPage_MicrosoftGraphicsWin2DSettingsCard.Header" xml:space="preserve">
+    <value>Microsoft.Graphics.Win2D</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton7.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_PdfPigSettingsCard.Description" xml:space="preserve">
+    <value>Apache-2.0 License</value>
+  </data>
+  <data name="SettingsPage_PdfPigSettingsCard.Header" xml:space="preserve">
+    <value>PdfPig</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton8.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WindowsAppSDKSettingsCard.Description" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="SettingsPage_WindowsAppSDKSettingsCard.Header" xml:space="preserve">
+    <value>Windows App SDK</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton9.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WinUI3SettingsCard.Description" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="SettingsPage_WinUI3SettingsCard.Header" xml:space="preserve">
+    <value>WinUI 3</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton10.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WinUITableViewSettingsCard.Description" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="SettingsPage_WinUITableViewSettingsCard.Header" xml:space="preserve">
+    <value>WinUI.TableView</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton11.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_WinUIExSettingsCard.Description" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="SettingsPage_WinUIExSettingsCard.Header" xml:space="preserve">
+    <value>WinUIEx</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton12.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_XAMLBehaviorsSettingsCard.Description" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="SettingsPage_XAMLBehaviorsSettingsCard.Header" xml:space="preserve">
+    <value>XAML Behaviors</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton13.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="SettingsPage_ZXingNETSettingsCard.Description" xml:space="preserve">
+    <value>Apache-2.0 License</value>
+  </data>
+  <data name="SettingsPage_ZXingNETSettingsCard.Header" xml:space="preserve">
+    <value>ZXing.NET</value>
+  </data>
+  <data name="SettingsPage_GitHubHyperlinkButton14.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="ShellPage_MakeCodesNavItem.Content" xml:space="preserve">
+    <value>Make Codes</value>
+  </data>
+  <data name="ShellPage_ReadCodesNavItem.Content" xml:space="preserve">
+    <value>Read Codes</value>
+  </data>
+  <data name="ShellPage_FaqNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Frequently Asked Questions about QR Codes</value>
+  </data>
+  <data name="ShellPage_HistoryNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>History of previously generated QR Codes</value>
+  </data>
+  <data name="ShellPage_ShareNavItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="ShellPage_ShareNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Share content or Simple QR Code Maker</value>
+  </data>
+  <data name="ShellPage_ShareContentMenuItem.Text" xml:space="preserve">
+    <value>Share content</value>
+  </data>
+  <data name="ShellPage_ShareAppMenuItem.Text" xml:space="preserve">
+    <value>Share app</value>
+  </data>
+  <data name="ShellPage_SettingsNavItem.Content" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="ShellPage_SettingsNavItem.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Simple QR Code Maker Settings</value>
+  </data>
+  <data name="ShellPage_SharePane.Title" xml:space="preserve">
+    <value>Share Simple QR Code Maker</value>
+  </data>
+  <data name="ShellPage_LinkToTheMicrosoftStoreText.Text" xml:space="preserve">
+    <value>Link to the Microsoft Store</value>
+  </data>
+  <data name="ShellPage_VisitText.Text" xml:space="preserve">
+    <value>Visit</value>
+  </data>
+  <data name="ShellPage_CopyText.Text" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="ShellPage_ShareErrorBar.Title" xml:space="preserve">
+    <value>Failed to share content</value>
+  </data>
+  <data name="SpreadsheetImportPage_HeaderRowSettingsCard.Description" xml:space="preserve">
+    <value>Choose whether the first row should be used as the column names.</value>
+  </data>
+  <data name="SpreadsheetImportPage_HeaderRowSettingsCard.Header" xml:space="preserve">
+    <value>Header row</value>
+  </data>
+  <data name="SpreadsheetImportPage_GenerateIDsAndSaveBackSettingsExpander.Header" xml:space="preserve">
+    <value>Generate IDs and save back</value>
+  </data>
+  <data name="SpreadsheetImportPage_IDStyleSettingsCard.Header" xml:space="preserve">
+    <value>ID style</value>
+  </data>
+  <data name="SpreadsheetImportPage_NanoIDLengthSettingsCard.Description" xml:space="preserve">
+    <value>Only used when ID style is NanoID.</value>
+  </data>
+  <data name="SpreadsheetImportPage_NanoIDLengthSettingsCard.Header" xml:space="preserve">
+    <value>NanoID length</value>
+  </data>
+  <data name="SpreadsheetImportPage_ColumnToImportSettingsCard.Header" xml:space="preserve">
+    <value>Column to import</value>
+  </data>
+  <data name="SpreadsheetImportPage_TextBeforeImportedLineSettingsCard.Description" xml:space="preserve">
+    <value>Optional text to add before each imported line.</value>
+  </data>
+  <data name="SpreadsheetImportPage_TextBeforeImportedLineSettingsCard.Header" xml:space="preserve">
+    <value>Text before imported line</value>
+  </data>
+  <data name="SpreadsheetImportPage_ExHttpsTextBox.PlaceholderText" xml:space="preserve">
+    <value>ex: https://</value>
+    <comment>A field hint. Keep the URL syntax and domain valid.</comment>
+  </data>
+  <data name="SpreadsheetImportPage_TextAfterImportedLineSettingsCard.Description" xml:space="preserve">
+    <value>Optional text to add after each imported line.</value>
+  </data>
+  <data name="SpreadsheetImportPage_TextAfterImportedLineSettingsCard.Header" xml:space="preserve">
+    <value>Text after imported line</value>
+  </data>
+  <data name="SpreadsheetImportPage_ExSourceQrCodeTextBox.PlaceholderText" xml:space="preserve">
+    <value>ex: ?source=qr-code</value>
+  </data>
+  <data name="SpreadsheetImportPage_RemoveDuplicatesSettingsCard.Description" xml:space="preserve">
+    <value>Only import unique values after applying any before/after text.</value>
+  </data>
+  <data name="SpreadsheetImportPage_RemoveDuplicatesSettingsCard.Header" xml:space="preserve">
+    <value>Remove duplicates</value>
+  </data>
+  <data name="SpreadsheetImportPage_PreviewText.Text" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="Main_InputExample" xml:space="preserve">
+    <value>ex: http://www.example.com</value>
+  </data>
+  <data name="Main_InputExampleFormat" xml:space="preserve">
+    <value>ex: {0}</value>
+    <comment>{0} = placeholdersList[random.Next(placeholdersList.Length)]</comment>
+  </data>
+  <data name="Main_CodeCopied" xml:space="preserve">
+    <value>QR Code copied to clipboard</value>
+  </data>
+  <data name="Main_MarkRedirectorSafe" xml:space="preserve">
+    <value>Mark &apos;{0}&apos; as safe</value>
+    <comment>{0} = CurrentRedirectorWarningDomain</comment>
+  </data>
+  <data name="Frame_FallbackHelp" xml:space="preserve">
+    <value>Used when no content summary can be derived.</value>
+  </data>
+  <data name="Frame_FallbackLabel" xml:space="preserve">
+    <value>Fallback label text</value>
+  </data>
+  <data name="Frame_BannerText" xml:space="preserve">
+    <value>Banner text</value>
+  </data>
+  <data name="Frame_CalloutText" xml:space="preserve">
+    <value>Callout text</value>
+  </data>
+  <data name="Frame_LabelText" xml:space="preserve">
+    <value>Label text</value>
+  </data>
+  <data name="Main_EmojiRenderFailed" xml:space="preserve">
+    <value>Failed to render the selected emoji</value>
+  </data>
+  <data name="Correction_Low" xml:space="preserve">
+    <value>Low 7%</value>
+  </data>
+  <data name="Correction_Medium" xml:space="preserve">
+    <value>Medium 15%</value>
+  </data>
+  <data name="Correction_Quarter" xml:space="preserve">
+    <value>Quarter 25%</value>
+  </data>
+  <data name="Correction_High" xml:space="preserve">
+    <value>High 30%</value>
+  </data>
+  <data name="Main_EmojiStyleColor" xml:space="preserve">
+    <value>Selected style: 3D</value>
+  </data>
+  <data name="Main_EmojiStyleSolid" xml:space="preserve">
+    <value>Selected style: Black/White</value>
+  </data>
+  <data name="Main_BulkClipboardLimit" xml:space="preserve">
+    <value>Bulk clipboard is disabled when more than {0} QR Codes are requested. Save to files or ZIP instead.</value>
+    <comment>{0} = LargeBatchThreshold</comment>
+  </data>
+  <data name="Main_PreviewSingle" xml:space="preserve">
+    <value>Showing 1 preview.</value>
+  </data>
+  <data name="Main_PreviewAll" xml:space="preserve">
+    <value>Showing all {0} previews.</value>
+    <comment>{0} = RequestedCodeCount</comment>
+  </data>
+  <data name="Main_PreviewPartial" xml:space="preserve">
+    <value>Showing {0} of {1} previews.</value>
+    <comment>{0} = LoadedPreviewCount; {1} = RequestedCodeCount</comment>
+  </data>
+  <data name="Main_BulkSaving" xml:space="preserve">
+    <value>Saving {0} of {1} QR Codes...</value>
+    <comment>{0} = BulkOperationCompletedItemCount; {1} = BulkOperationTotalItemCount</comment>
+  </data>
+  <data name="Main_CommonBrandFailed" xml:space="preserve">
+    <value>Could not change the common brand</value>
+  </data>
+  <data name="Main_CommonBrandFailedHelp" xml:space="preserve">
+    <value>The colors and logo could not be applied. Try a shorter URL or use your current style.</value>
+  </data>
+  <data name="Main_GenerationFailed" xml:space="preserve">
+    <value>Error creating QR Code</value>
+  </data>
+  <data name="Main_ContentTooLong" xml:space="preserve">
+    <value>The text you entered is too long for a QR Code. Please try a shorter text.</value>
+  </data>
+  <data name="Main_SomeContentTooLong" xml:space="preserve">
+    <value>Some text entries were too long for a QR Code and were skipped.</value>
+  </data>
+  <data name="Redirector_Detected" xml:space="preserve">
+    <value>Known redirector detected</value>
+  </data>
+  <data name="Main_RedirectorBatchWarning" xml:space="preserve">
+    <value>This set includes {0} URLs that use known redirectors. First detected: {1}.</value>
+    <comment>{0} = unsafeRedirectorCount; {1} = host</comment>
+  </data>
+  <data name="Main_RedirectorWarning" xml:space="preserve">
+    <value>This URL uses {0}, which is a known redirector. People scanning the code may not see the final destination until after it opens.</value>
+    <comment>{0} = host</comment>
+  </data>
+  <data name="Main_BrandNonUrl" xml:space="preserve">
+    <value>Non-URL content detected</value>
+  </data>
+  <data name="Main_BrandNonUrlHelp" xml:space="preserve">
+    <value>This brand has a URL but some items are plain text. Change brand URL behavior in Settings.</value>
+  </data>
+  <data name="Main_BrandUrlMismatch" xml:space="preserve">
+    <value>URL doesn&apos;t match brand</value>
+  </data>
+  <data name="Main_BrandUrlMismatchHelp" xml:space="preserve">
+    <value>Some URLs don&apos;t match this brand&apos;s URL. Change brand URL conflict behavior in Settings.</value>
+  </data>
+  <data name="Main_ClipboardNoImage" xml:space="preserve">
+    <value>Clipboard does not contain an image</value>
+  </data>
+  <data name="Main_ClipboardLogoFailed" xml:space="preserve">
+    <value>Failed to load the image from the clipboard</value>
+  </data>
+  <data name="Main_FileReadFailedHelp" xml:space="preserve">
+    <value>Could not read the selected file</value>
+  </data>
+  <data name="Main_FileReadFailed" xml:space="preserve">
+    <value>Error reading file</value>
+  </data>
+  <data name="Main_ExcelUnavailableHelp" xml:space="preserve">
+    <value>CSV and TSV imports are available. Install Microsoft Excel to import Excel workbooks.</value>
+  </data>
+  <data name="Main_ExcelUnavailable" xml:space="preserve">
+    <value>Excel workbooks unavailable</value>
+  </data>
+  <data name="Main_SpreadsheetReadFailed" xml:space="preserve">
+    <value>Error reading spreadsheet</value>
+  </data>
+  <data name="Main_NoSpreadsheetDataHelp" xml:space="preserve">
+    <value>The selected spreadsheet did not contain any data.</value>
+  </data>
+  <data name="Main_NoSpreadsheetData" xml:space="preserve">
+    <value>Nothing to import</value>
+  </data>
+  <data name="Main_BulkClipboardDisabled" xml:space="preserve">
+    <value>Bulk clipboard disabled</value>
+  </data>
+  <data name="Main_CopyFailed" xml:space="preserve">
+    <value>Failed to copy QR Codes to the clipboard</value>
+  </data>
+  <data name="Main_NothingToCopy" xml:space="preserve">
+    <value>No QR Codes to copy to the clipboard</value>
+  </data>
+  <data name="Main_PngCopied" xml:space="preserve">
+    <value>PNG QR Code copied to the clipboard</value>
+  </data>
+  <data name="Main_PngsCopied" xml:space="preserve">
+    <value>{0} PNG QR Codes copied to the clipboard</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_PngClipboardFailed" xml:space="preserve">
+    <value>Could not prepare the PNG QR Codes for the clipboard</value>
+  </data>
+  <data name="Main_SvgCopied" xml:space="preserve">
+    <value>SVG QR Code copied to the clipboard</value>
+  </data>
+  <data name="Main_SvgsCopied" xml:space="preserve">
+    <value>{0} SVG QR Codes copied to the clipboard</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_SvgClipboardFailed" xml:space="preserve">
+    <value>Could not prepare the SVG QR Codes for the clipboard</value>
+  </data>
+  <data name="Main_SvgTextsCopied" xml:space="preserve">
+    <value>{0} Text of SVGs QR Codes copied to the clipboard</value>
+    <comment>{0} = textStrings.Count</comment>
+  </data>
+  <data name="Main_SvgTextClipboardFailed" xml:space="preserve">
+    <value>Could not prepare the SVG text for the clipboard</value>
+  </data>
+  <data name="Main_CopyStatusTitle" xml:space="preserve">
+    <value>Copy infoBar title</value>
+  </data>
+  <data name="Main_BrandSaved" xml:space="preserve">
+    <value>Brand saved</value>
+  </data>
+  <data name="Main_BrandSavedDetail" xml:space="preserve">
+    <value>&quot;{0}&quot; has been saved</value>
+    <comment>{0} = brand.Name</comment>
+  </data>
+  <data name="Main_BrandUpdated" xml:space="preserve">
+    <value>Brand updated</value>
+  </data>
+  <data name="Main_BrandUpdatedDetail" xml:space="preserve">
+    <value>&quot;{0}&quot; has been updated</value>
+    <comment>{0} = edited.Name</comment>
+  </data>
+  <data name="Main_PngSaved" xml:space="preserve">
+    <value>PNG QR Code saved!</value>
+  </data>
+  <data name="Main_PngsSaved" xml:space="preserve">
+    <value>{0} PNG QR Codes saved!</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_PngZipSaved" xml:space="preserve">
+    <value>PNG QR Code saved to zip!</value>
+  </data>
+  <data name="Main_PngsZipSaved" xml:space="preserve">
+    <value>{0} PNG QR Codes saved to zip!</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_SvgSaved" xml:space="preserve">
+    <value>SVG QR Code saved!</value>
+  </data>
+  <data name="Main_SvgsSaved" xml:space="preserve">
+    <value>{0} SVG QR Codes saved!</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_SvgZipSaved" xml:space="preserve">
+    <value>SVG QR Code saved to zip!</value>
+  </data>
+  <data name="Main_SvgsZipSaved" xml:space="preserve">
+    <value>{0} SVG QR Codes saved to zip!</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothSaved" xml:space="preserve">
+    <value>PNG and SVG QR Code saved!</value>
+  </data>
+  <data name="Main_BothMultipleSaved" xml:space="preserve">
+    <value>{0} PNG and SVG QR Codes saved!</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothZipSaved" xml:space="preserve">
+    <value>PNG and SVG QR Code saved to zip!</value>
+  </data>
+  <data name="Main_BothMultipleZipSaved" xml:space="preserve">
+    <value>{0} PNG and SVG QR Codes saved to zip!</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothCopied" xml:space="preserve">
+    <value>PNG and SVG QR Code copied to the clipboard</value>
+  </data>
+  <data name="Main_BothMultipleCopied" xml:space="preserve">
+    <value>{0} PNG and SVG QR Codes copied to the clipboard</value>
+    <comment>{0} = requestedCodes.Length</comment>
+  </data>
+  <data name="Main_BothClipboardFailed" xml:space="preserve">
+    <value>Could not prepare the QR Codes for the clipboard</value>
+  </data>
+  <data name="Main_LogoLoadFailedHelp" xml:space="preserve">
+    <value>Failed to load the selected image</value>
+  </data>
+  <data name="Main_LogoLoadFailed" xml:space="preserve">
+    <value>Error loading logo</value>
+  </data>
+  <data name="Main_ExportFailed" xml:space="preserve">
+    <value>Failed to save QR Codes</value>
+  </data>
+  <data name="Main_ExportFilesFailedHelp" xml:space="preserve">
+    <value>Could not save the requested QR Codes to files.</value>
+  </data>
+  <data name="Main_ExportZipFailedHelp" xml:space="preserve">
+    <value>Could not save the requested QR Codes to a ZIP archive.</value>
+  </data>
+  <data name="Main_SavedToFolder" xml:space="preserve">
+    <value>Saved to {0}</value>
+    <comment>{0} = folderPath</comment>
+  </data>
+  <data name="Frame_Caption" xml:space="preserve">
+    <value>Caption</value>
+  </data>
+  <data name="Logo_SizePercent" xml:space="preserve">
+    <value>{0} percent</value>
+    <comment>{0} = LogoSize</comment>
+  </data>
+  <data name="Logo_PaddingPixels" xml:space="preserve">
+    <value>{0} px</value>
+    <comment>{0} = LogoPadding</comment>
+  </data>
+  <data name="Settings_DefaultMaxScanDistance" xml:space="preserve">
+    <value>36in or 1m</value>
+  </data>
+  <data name="Settings_DefaultForeground" xml:space="preserve">
+    <value>System default — black</value>
+  </data>
+  <data name="Settings_DefaultBackground" xml:space="preserve">
+    <value>System default — white</value>
+  </data>
+  <data name="Settings_CorrectionLow" xml:space="preserve">
+    <value>L — Low 7%</value>
+  </data>
+  <data name="Settings_CorrectionMedium" xml:space="preserve">
+    <value>M — Medium 15%</value>
+  </data>
+  <data name="Settings_CorrectionQuarter" xml:space="preserve">
+    <value>Q — Quarter 25%</value>
+  </data>
+  <data name="Settings_CorrectionHigh" xml:space="preserve">
+    <value>H — High 30%</value>
+  </data>
+  <data name="Settings_DefaultCorrection" xml:space="preserve">
+    <value>System default — M (Medium 15%)</value>
+  </data>
+  <data name="Settings_DefaultFrame" xml:space="preserve">
+    <value>System default — classic, no frame</value>
+  </data>
+  <data name="Settings_NoSafeDomains" xml:space="preserve">
+    <value>No safe domains yet. Use the redirector warning info bar to mark one as safe.</value>
+  </data>
+  <data name="Settings_ScanDistanceMeters" xml:space="preserve">
+    <value>{0} meters</value>
+    <comment>{0} = value</comment>
+  </data>
+  <data name="Settings_ScanDistanceMeter" xml:space="preserve">
+    <value>{0} meter</value>
+    <comment>{0} = value</comment>
+  </data>
+  <data name="Settings_ScanDistanceFeet" xml:space="preserve">
+    <value>{0} feet</value>
+    <comment>{0} = Math.Round(value * 3, 1)</comment>
+  </data>
+  <data name="Settings_ScanDistanceInches" xml:space="preserve">
+    <value>{0} inches</value>
+    <comment>{0} = Math.Round(value * 36, 0)</comment>
+  </data>
+  <data name="Settings_PaddingModules" xml:space="preserve">
+    <value>{0:0} modules</value>
+    <comment>{0} = QrPaddingModules</comment>
+  </data>
+  <data name="Settings_PrintSizingReliable" xml:space="preserve">
+    <value>{0}. Print sizing stays reliable at this setting.</value>
+    <comment>{0} = QrPaddingDescription</comment>
+  </data>
+  <data name="Settings_PrintSizingDisabled" xml:space="preserve">
+    <value>{0}. Print sizing is disabled outside 1-4 modules.</value>
+    <comment>{0} = QrPaddingDescription</comment>
+  </data>
+  <data name="Settings_BackupNothingToExport" xml:space="preserve">
+    <value>Select at least one item to export.</value>
+  </data>
+  <data name="FileType_ZipArchive" xml:space="preserve">
+    <value>Zip Archive</value>
+  </data>
+  <data name="Settings_BackupExportComplete" xml:space="preserve">
+    <value>Export complete.</value>
+  </data>
+  <data name="Settings_BackupImportComplete" xml:space="preserve">
+    <value>Import complete. Return to the main screen to reload history and brands.</value>
+  </data>
+  <data name="Settings_BackupInvalid" xml:space="preserve">
+    <value>Import failed: The selected file is not a valid backup ZIP.</value>
+  </data>
+  <data name="Feedback_EmailSubject" xml:space="preserve">
+    <value>Simple QR Code Maker Feedback</value>
+  </data>
+  <data name="Feedback_CopyDone" xml:space="preserve">
+    <value>Copied!</value>
+  </data>
+  <data name="Feedback_Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Licenses_Unavailable" xml:space="preserve">
+    <value>[License text unavailable — see https://www.apache.org/licenses/LICENSE-2.0]</value>
+  </data>
+  <data name="Licenses_Mit" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="Licenses_Apache20" xml:space="preserve">
+    <value>Apache-2.0 License</value>
+  </data>
+  <data name="Share_OneQrCode" xml:space="preserve">
+    <value>QR Code</value>
+  </data>
+  <data name="Share_MultipleQrCodes" xml:space="preserve">
+    <value>QR Codes</value>
+  </data>
+  <data name="Share_DecodedCodes" xml:space="preserve">
+    <value>Decoded codes</value>
+  </data>
+  <data name="Share_PrepareContentFailed" xml:space="preserve">
+    <value>Could not prepare content for sharing. Please try again.</value>
+  </data>
+  <data name="Shell_SearchBrandKind" xml:space="preserve">
+    <value>Brand</value>
+  </data>
+  <data name="Shell_SearchHistoryKind" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="Shell_SearchFaqKind" xml:space="preserve">
+    <value>FAQ</value>
+  </data>
+  <data name="Shell_SearchHistorySaved" xml:space="preserve">
+    <value>Saved {0}</value>
+    <comment>{0} = item.SaveDateAsString</comment>
+  </data>
+  <data name="Shell_SearchHistoryKindSaved" xml:space="preserve">
+    <value>{0} - Saved {1}</value>
+    <comment>{0} = item.ContentKindLabel; {1} = item.SaveDateAsString</comment>
+  </data>
+  <data name="Shell_SearchSavedBrand" xml:space="preserve">
+    <value>Saved brand</value>
+  </data>
+  <data name="Shell_SearchDefaultBrand" xml:space="preserve">
+    <value>Default brand - {0}</value>
+    <comment>{0} = description</comment>
+  </data>
+  <data name="FileType_Csv" xml:space="preserve">
+    <value>CSV File</value>
+  </data>
+  <data name="Spreadsheet_IdNotSaved" xml:space="preserve">
+    <value>Generated IDs will not be written back to the spreadsheet.</value>
+  </data>
+  <data name="Spreadsheet_Review" xml:space="preserve">
+    <value>Review the detected rows and choose a column to import.</value>
+  </data>
+  <data name="Spreadsheet_ReviewFile" xml:space="preserve">
+    <value>Review &quot;{0}&quot; and choose a column to import.</value>
+    <comment>{0} = SourceFileName</comment>
+  </data>
+  <data name="Spreadsheet_SaveIdsAndImport" xml:space="preserve">
+    <value>Save IDs and import selected column</value>
+  </data>
+  <data name="Spreadsheet_Import" xml:space="preserve">
+    <value>Import selected column</value>
+  </data>
+  <data name="Spreadsheet_IdsSaved" xml:space="preserve">
+    <value>IDs saved to spreadsheet</value>
+  </data>
+  <data name="Spreadsheet_IdsSavedFile" xml:space="preserve">
+    <value>Generated IDs were saved back to &quot;{0}&quot;.</value>
+    <comment>{0} = SourceFileName</comment>
+  </data>
+  <data name="Spreadsheet_SaveFailedHelp" xml:space="preserve">
+    <value>Could not save the generated IDs back to the spreadsheet. Close the file if it is open elsewhere and try again.</value>
+  </data>
+  <data name="Spreadsheet_SaveFailed" xml:space="preserve">
+    <value>Could not save spreadsheet</value>
+  </data>
+  <data name="Spreadsheet_Empty" xml:space="preserve">
+    <value>No data found</value>
+  </data>
+  <data name="Spreadsheet_EmptyNoWriteback" xml:space="preserve">
+    <value>Generated IDs will not be written back because no data was found.</value>
+  </data>
+  <data name="Spreadsheet_RowCountLimited" xml:space="preserve">
+    <value>{0} rows in file (preview shows first {1})</value>
+    <comment>{0} = _dataRows.Count; {1} = PreviewRowLimit</comment>
+  </data>
+  <data name="Spreadsheet_IdNeedsRows" xml:space="preserve">
+    <value>Generated IDs cannot be written because there are no data rows.</value>
+  </data>
+  <data name="Spreadsheet_IdsAlreadyPresent" xml:space="preserve">
+    <value>The existing &quot;{0}&quot; column already has values in every row. Existing IDs will be preserved.</value>
+    <comment>{0} = _headers[_idColumnIndex]</comment>
+  </data>
+  <data name="Spreadsheet_InvalidNanoIdLength" xml:space="preserve">
+    <value>Enter a whole-number NanoID length before saving generated IDs.</value>
+  </data>
+  <data name="GenerateIds_PreviewLimited" xml:space="preserve">
+    <value>Showing the first {0} of {1} generated IDs.</value>
+    <comment>{0} = previewCount; {1} = count</comment>
+  </data>
+  <data name="GenerateIds_InvalidCount" xml:space="preserve">
+    <value>Enter a whole number of IDs to generate.</value>
+  </data>
+  <data name="GenerateIds_InvalidNanoIdLength" xml:space="preserve">
+    <value>Enter a whole-number NanoID length.</value>
+  </data>
+  <data name="UrlBuilder_LineNavigation" xml:space="preserve">
+    <value>Line {0} of {1}</value>
+    <comment>{0} = _currentLineIndex + 1; {1} = _lines.Count</comment>
+  </data>
+  <data name="RemoveBackground_Preparing" xml:space="preserve">
+    <value>Preparing AI model…</value>
+  </data>
+  <data name="RemoveBackground_Unavailable" xml:space="preserve">
+    <value>Background removal is not available on this device.</value>
+  </data>
+  <data name="RemoveBackground_InProgress" xml:space="preserve">
+    <value>Removing background…</value>
+  </data>
+  <data name="RemoveBackground_Success" xml:space="preserve">
+    <value>Background removed successfully</value>
+  </data>
+  <data name="Read_ResultTitle" xml:space="preserve">
+    <value>QR Code Content</value>
+  </data>
+  <data name="Read_ClipboardImage" xml:space="preserve">
+    <value>Clipboard image</value>
+  </data>
+  <data name="Read_CameraCapture" xml:space="preserve">
+    <value>Camera capture</value>
+  </data>
+  <data name="Read_SnippingToolCapture" xml:space="preserve">
+    <value>Snipping Tool capture</value>
+  </data>
+  <data name="Read_ExtractingRegion" xml:space="preserve">
+    <value>Extracting region…</value>
+  </data>
+  <data name="Read_CutOutLabel" xml:space="preserve">
+    <value>Cut-out {0}</value>
+    <comment>{0} = cutOutNumber</comment>
+  </data>
+  <data name="Read_OriginalLabel" xml:space="preserve">
+    <value>Original</value>
+  </data>
+  <data name="Read_RegionLabel" xml:space="preserve">
+    <value>Region {0}</value>
+    <comment>{0} = regionNumber</comment>
+  </data>
+  <data name="FileType_Png" xml:space="preserve">
+    <value>PNG Image</value>
+  </data>
+  <data name="Read_RedirectorWarning" xml:space="preserve">
+    <value>This code points to {0}, which is a known redirector. Open it carefully because the final destination is hidden until after the redirect.</value>
+    <comment>{0} = classification.Host</comment>
+  </data>
+  <data name="Read_OpeningCamera" xml:space="preserve">
+    <value>Opening camera…</value>
+  </data>
+  <data name="Read_TakingPicture" xml:space="preserve">
+    <value>Taking picture…</value>
+  </data>
+  <data name="Read_ProcessingImage" xml:space="preserve">
+    <value>Processing image…</value>
+  </data>
+  <data name="Read_CameraUnavailable" xml:space="preserve">
+    <value>Camera unavailable</value>
+  </data>
+  <data name="Read_ApplyingAdjustments" xml:space="preserve">
+    <value>Applying adjustments…</value>
+  </data>
+  <data name="Read_OpeningClipboardImage" xml:space="preserve">
+    <value>Opening image from clipboard…</value>
+  </data>
+  <data name="Read_NoImageToPaste" xml:space="preserve">
+    <value>No image to paste</value>
+  </data>
+  <data name="Read_NoImageToPasteHelp" xml:space="preserve">
+    <value>Copy an image, a supported image file, or its full file path, then try again.</value>
+  </data>
+  <data name="Read_PasteFailed" xml:space="preserve">
+    <value>Could not paste image</value>
+  </data>
+  <data name="Read_OpeningImage" xml:space="preserve">
+    <value>Opening image…</value>
+  </data>
+  <data name="Read_LargeFolder" xml:space="preserve">
+    <value>Large folder</value>
+  </data>
+  <data name="Read_LargeFolderConfirmation" xml:space="preserve">
+    <value>This folder contains {0} image files. Batch operations like &quot;Decode All&quot; or &quot;Summary View&quot; may take a while. Continue?</value>
+    <comment>{0} = imageFiles.Count</comment>
+  </data>
+  <data name="Common_Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Read_BatchProgress" xml:space="preserve">
+    <value>Processing {0} of {1}: {2}</value>
+    <comment>{0} = current; {1} = total; {2} = fileItem.FileName</comment>
+  </data>
+  <data name="Read_MultipleOpenProgress" xml:space="preserve">
+    <value>Opening image {0} of {1}…</value>
+    <comment>{0} = index + 1; {1} = pickedFiles.Count</comment>
+  </data>
+  <data name="Read_UnsupportedImage" xml:space="preserve">
+    <value>{0}: Not a supported image file.</value>
+    <comment>{0} = pickedItem.Name</comment>
+  </data>
+  <data name="Read_SomeFilesFailed" xml:space="preserve">
+    <value>Some files could not be opened</value>
+  </data>
+  <data name="Advanced_NoAlignmentPoints" xml:space="preserve">
+    <value>4 corners, no alignment points</value>
+  </data>
+  <data name="Advanced_UnwarpSetup" xml:space="preserve">
+    <value>Set the version and open the unwarp workflow.</value>
+  </data>
+  <data name="Advanced_UnwarpReady" xml:space="preserve">
+    <value>All points placed — click Apply Unwarp.</value>
+  </data>
+  <data name="Advanced_UnwarpNextCorner" xml:space="preserve">
+    <value>Click corner {0} of 4 on the image ({1}).</value>
+    <comment>{0} = next.OrderIndex + 1; {1} = next.Label</comment>
+  </data>
+  <data name="Advanced_UnwarpNextAlignment" xml:space="preserve">
+    <value>Click alignment point {0} of {1} ({2}), or use Estimated.</value>
+    <comment>{0} = alignIndex; {1} = alignments.Count; {2} = next.Label</comment>
+  </data>
+  <data name="Advanced_SelectTopLeft" xml:space="preserve">
+    <value>1. Select Top-Left corner</value>
+  </data>
+  <data name="Advanced_SelectTopRight" xml:space="preserve">
+    <value>2. Select Top-Right corner</value>
+  </data>
+  <data name="Advanced_SelectBottomRight" xml:space="preserve">
+    <value>3. Select Bottom-Right corner</value>
+  </data>
+  <data name="Advanced_SelectBottomLeft" xml:space="preserve">
+    <value>4. Select Bottom-Left corner</value>
+  </data>
+  <data name="Advanced_CornersSelected" xml:space="preserve">
+    <value>All corners selected. Apply correction to continue.</value>
+  </data>
+  <data name="Read_NoCodesContact" xml:space="preserve">
+    <value>Could be there are none present or content failed to read. If you believe this is an issue with the app, please email Joe@JoeFinApps.com</value>
+  </data>
+  <data name="Read_NoCodesAdvancedTools" xml:space="preserve">
+    <value>No QR codes detected. Try using the Advanced Tools to isolate and improve detection with image adjustments like grayscale, contrast, and perspective correction.</value>
+  </data>
+  <data name="Design_LabelManualText" xml:space="preserve">
+    <value>Manual text</value>
+  </data>
+  <data name="Design_LabelContentSummary" xml:space="preserve">
+    <value>Content summary</value>
+  </data>
+  <data name="Design_CaptionScanMe" xml:space="preserve">
+    <value>Scan Me</value>
+  </data>
+  <data name="Design_CaptionJoinWifi" xml:space="preserve">
+    <value>Join Wi-Fi</value>
+  </data>
+  <data name="Design_CaptionContact" xml:space="preserve">
+    <value>Save my contact</value>
+  </data>
+  <data name="Design_CaptionViewMenu" xml:space="preserve">
+    <value>View the menu</value>
+  </data>
+  <data name="Design_CaptionTickets" xml:space="preserve">
+    <value>Get tickets</value>
+  </data>
+  <data name="Design_CaptionSayHello" xml:space="preserve">
+    <value>Say hello!</value>
+  </data>
+  <data name="Design_NoFrame" xml:space="preserve">
+    <value>No frame</value>
+  </data>
+  <data name="Design_PreviewErrorHelp" xml:space="preserve">
+    <value>Close and reopen Design to try loading previews again.</value>
+  </data>
+  <data name="Design_OpenFailed" xml:space="preserve">
+    <value>Unable to open designer</value>
+  </data>
+  <data name="Design_OpenFailedHelp" xml:space="preserve">
+    <value>Please close any other dialog and try again.</value>
+  </data>
+  <data name="Colors_Foreground" xml:space="preserve">
+    <value>Foreground</value>
+  </data>
+  <data name="Colors_Background" xml:space="preserve">
+    <value>Background</value>
+  </data>
+  <data name="Colors_Empty" xml:space="preserve">
+    <value>(empty)</value>
+  </data>
+  <data name="Colors_ListItem" xml:space="preserve">
+    <value>{0}, {1}</value>
+    <comment>{0} = prefix; {1} = NormalizeSource(source)</comment>
+  </data>
+  <data name="Preview_RestoreStyle" xml:space="preserve">
+    <value>Restore current style instead of {0}</value>
+    <comment>{0} = CommonBrandName</comment>
+  </data>
+  <data name="Preview_UseBrand" xml:space="preserve">
+    <value>Use {0} brand</value>
+    <comment>{0} = CommonBrandName</comment>
+  </data>
+  <data name="Preview_RestoreStyleHelp" xml:space="preserve">
+    <value>{0} colors and logo applied. Restore your current style.</value>
+    <comment>{0} = CommonBrand?.Name</comment>
+  </data>
+  <data name="Preview_UseBrandHelp" xml:space="preserve">
+    <value>Use {0} colors and logo for this QR Code.</value>
+    <comment>{0} = CommonBrand?.Name</comment>
+  </data>
+  <data name="Preview_MinimumSize" xml:space="preserve">
+    <value>Minimum size</value>
+  </data>
+  <data name="Preview_SizingUnavailable" xml:space="preserve">
+    <value>Print sizing unavailable</value>
+  </data>
+  <data name="Preview_MinimumSizeCopyFailed" xml:space="preserve">
+    <value>Exact minimum size unavailable</value>
+  </data>
+  <data name="Preview_PaddingSizingHelp" xml:space="preserve">
+    <value>Print sizing is unavailable because padding outside 1-4 modules makes borderless and heavy-border QR Codes scan too variably for reliable prediction.</value>
+  </data>
+  <data name="Preview_TransparencySizingHelp" xml:space="preserve">
+    <value>Transparent QR colors depend on the final print surface, so there is no exact minimum size to copy.</value>
+  </data>
+  <data name="Preview_ContrastSizingHelp" xml:space="preserve">
+    <value>Color contrast is too low to produce a reliable minimum size recommendation.</value>
+  </data>
+  <data name="Preview_DistanceSizingHelp" xml:space="preserve">
+    <value>The selected maximum scan distance does not produce a reliable minimum size recommendation.</value>
+  </data>
+  <data name="Preview_NoSizingHelp" xml:space="preserve">
+    <value>There is no exact minimum size to copy for this QR Code.</value>
+  </data>
+  <data name="Preview_SizeCopied" xml:space="preserve">
+    <value>QR Code size copied to the clipboard</value>
+  </data>
+  <data name="Preview_CopyFailed" xml:space="preserve">
+    <value>Failed to copy QR Code to the clipboard</value>
+  </data>
+  <data name="Preview_NothingToCopy" xml:space="preserve">
+    <value>No QR Code to copy to the clipboard</value>
+  </data>
+  <data name="Preview_ShareFailed" xml:space="preserve">
+    <value>Failed to share QR Code</value>
+  </data>
+  <data name="Preview_SvgTextCopied" xml:space="preserve">
+    <value>SVG Text of QR Code copied to the clipboard</value>
+  </data>
+  <data name="FileType_Svg" xml:space="preserve">
+    <value>SVG Image</value>
+  </data>
+  <data name="Preview_PngSaved" xml:space="preserve">
+    <value>PNG QR Code Saved!</value>
+  </data>
+  <data name="FileType_ZipExport" xml:space="preserve">
+    <value>ZIP Archive</value>
+  </data>
+  <data name="Print_ZoomPercent" xml:space="preserve">
+    <value>{0}%</value>
+    <comment>{0} = Math.Round(PreviewScrollViewer.ZoomFactor * 100)</comment>
+  </data>
+  <data name="Print_WaitForPreview" xml:space="preserve">
+    <value>Wait for the PDF preview to finish loading before printing.</value>
+  </data>
+  <data name="Print_QrSize" xml:space="preserve">
+    <value>QR size</value>
+  </data>
+  <data name="Print_Spacing" xml:space="preserve">
+    <value>Spacing</value>
+  </data>
+  <data name="Print_Margin" xml:space="preserve">
+    <value>Page margin</value>
+  </data>
+  <data name="Print_LengthHeader" xml:space="preserve">
+    <value>{0} ({1})</value>
+    <comment>{0} = title; {1} = lengthUnitSuffix</comment>
+  </data>
+  <data name="Print_LengthValue" xml:space="preserve">
+    <value>{0:0.##} {1}</value>
+    <comment>{0} = displayValue; {1} = lengthUnitSuffix</comment>
+  </data>
+  <data name="Print_PresetProductLabelsHelp" xml:space="preserve">
+    <value>Small, close-range QR Codes for packaging, shelf tags, and asset labels.</value>
+  </data>
+  <data name="Print_PresetFlyersHelp" xml:space="preserve">
+    <value>Medium QR Codes for inserts, flyers, invoices, and one-page handouts.</value>
+  </data>
+  <data name="Print_PresetMenusHelp" xml:space="preserve">
+    <value>Larger QR Codes for restaurant menus, tabletop displays, and counter cards.</value>
+  </data>
+  <data name="Print_PresetPostersHelp" xml:space="preserve">
+    <value>Single large QR Codes for doors, walls, posters, and event signage.</value>
+  </data>
+  <data name="Print_PresetCustomHelp" xml:space="preserve">
+    <value>Choose a common QR printing scenario or keep the layout fully custom.</value>
+  </data>
+  <data name="Settings_AppVersion" xml:space="preserve">
+    <value>{0} - {1}</value>
+    <comment>{0} = app display name; {1} = installed version.</comment>
+  </data>
+  <data name="Settings_BackupExportFailed" xml:space="preserve">
+    <value>Export failed. Could not save the backup ZIP.</value>
+  </data>
+  <data name="Settings_BackupImportFailed" xml:space="preserve">
+    <value>Import failed. Could not read the backup ZIP.</value>
+  </data>
+  <data name="RemoveBackground_Failed" xml:space="preserve">
+    <value>Could not remove the background. Please try again.</value>
+  </data>
+  <data name="Read_CameraUnavailableHelp" xml:space="preserve">
+    <value>Windows could not start the camera. Check camera access in Settings and try again.</value>
+  </data>
+  <data name="Read_PasteFailedHelp" xml:space="preserve">
+    <value>Could not open the image from the clipboard.</value>
+  </data>
+  <data name="Read_OpenImageFailed" xml:space="preserve">
+    <value>{0}: Could not open the image.</value>
+    <comment>{0} = original file name.</comment>
+  </data>
+  <data name="Preview_ShareFailedHelp" xml:space="preserve">
+    <value>Could not prepare this QR code for sharing. Please try again.</value>
+  </data>
+  <data name="Print_PreviewStartFailed" xml:space="preserve">
+    <value>Couldn&apos;t start the PDF preview.</value>
+  </data>
+  <data name="Print_PreviewGenerationFailed" xml:space="preserve">
+    <value>Couldn&apos;t generate the PDF preview. Check the print settings and try again.</value>
+  </data>
+  <data name="Print_JobFailed" xml:space="preserve">
+    <value>Couldn&apos;t send the generated PDF to the printer.</value>
+  </data>
+  <data name="Read_UnknownSource" xml:space="preserve">
+    <value>Unknown source</value>
+  </data>
+  <data name="Read_HistoryNoCodes" xml:space="preserve">
+    <value>(no codes found)</value>
+  </data>
+  <data name="Read_HistoryAdditionalCodes" xml:space="preserve">
+    <value> (+{0} more)</value>
+    <comment>Leading space separates this count from the first decoded result. {0} = additional decoded codes.</comment>
+  </data>
+  <data name="History_KindVCard" xml:space="preserve">
+    <value>vCard</value>
+    <comment>Name of a contact-card format. Do not translate the format name.</comment>
+  </data>
+  <data name="History_KindWifi" xml:space="preserve">
+    <value>WiFi</value>
+  </data>
+  <data name="History_KindEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="History_FallbackContact" xml:space="preserve">
+    <value>vCard contact</value>
+  </data>
+  <data name="History_FallbackNetwork" xml:space="preserve">
+    <value>WiFi network</value>
+  </data>
+  <data name="Spreadsheet_ColumnNumber" xml:space="preserve">
+    <value>Column {0}</value>
+    <comment>{0} = 1-based display column number. Not a workbook header.</comment>
+  </data>
+  <data name="Spreadsheet_RowCount_One" xml:space="preserve">
+    <value>{0} row in file</value>
+    <comment>{0} = row count.</comment>
+  </data>
+  <data name="Spreadsheet_RowCount_Other" xml:space="preserve">
+    <value>{0} rows in file</value>
+    <comment>{0} = row count.</comment>
+  </data>
+  <data name="Spreadsheet_ImportCount_One" xml:space="preserve">
+    <value>{0} value will be imported from &quot;{1}&quot;</value>
+    <comment>{0} = count; {1} = column name.</comment>
+  </data>
+  <data name="Spreadsheet_ImportCount_Other" xml:space="preserve">
+    <value>{0} values will be imported from &quot;{1}&quot;</value>
+    <comment>{0} = count; {1} = column name.</comment>
+  </data>
+  <data name="Spreadsheet_HeaderlessWriteback_One" xml:space="preserve">
+    <value>{0} row will receive {1} values in a new last column because header row is off.</value>
+    <comment>{0} = row count; {1} = ID format.</comment>
+  </data>
+  <data name="Spreadsheet_HeaderlessWriteback_Other" xml:space="preserve">
+    <value>{0} rows will receive {1} values in a new last column because header row is off.</value>
+    <comment>{0} = row count; {1} = ID format.</comment>
+  </data>
+  <data name="Spreadsheet_NewIdColumn_One" xml:space="preserve">
+    <value>{0} row will receive {1} values in a new &quot;{2}&quot; column. Existing cells in other columns will not change.</value>
+    <comment>{0} = row count; {1} = ID format; {2} = invariant header.</comment>
+  </data>
+  <data name="Spreadsheet_NewIdColumn_Other" xml:space="preserve">
+    <value>{0} rows will receive {1} values in a new &quot;{2}&quot; column. Existing cells in other columns will not change.</value>
+    <comment>{0} = row count; {1} = ID format; {2} = invariant header.</comment>
+  </data>
+  <data name="Spreadsheet_FillIdColumn_One" xml:space="preserve">
+    <value>{0} blank cell in &quot;{1}&quot; will be filled using {2}. Existing IDs will be preserved.</value>
+    <comment>{0} = cell count; {1} = column name; {2} = ID format.</comment>
+  </data>
+  <data name="Spreadsheet_FillIdColumn_Other" xml:space="preserve">
+    <value>{0} blank cells in &quot;{1}&quot; will be filled using {2}. Existing IDs will be preserved.</value>
+    <comment>{0} = cell count; {1} = column name; {2} = ID format.</comment>
+  </data>
+  <data name="GenerateIds_PreviewAll_One" xml:space="preserve">
+    <value>Showing all {0} generated ID.</value>
+    <comment>{0} = ID count.</comment>
+  </data>
+  <data name="GenerateIds_PreviewAll_Other" xml:space="preserve">
+    <value>Showing all {0} generated IDs.</value>
+    <comment>{0} = ID count.</comment>
+  </data>
+  <data name="GenerateIds_FormatGuid" xml:space="preserve">
+    <value>GUID</value>
+    <comment>Identifier type. Do not translate the acronym.</comment>
+  </data>
+  <data name="GenerateIds_FormatGuidCompact" xml:space="preserve">
+    <value>GUID without dashes</value>
+    <comment>GUID is an identifier format; only translate &quot;without dashes&quot;.</comment>
+  </data>
+  <data name="GenerateIds_FormatNanoId" xml:space="preserve">
+    <value>NanoID</value>
+    <comment>Identifier type. Do not translate the name.</comment>
+  </data>
+  <data name="Advanced_AlignmentPointCount_One" xml:space="preserve">
+    <value>4 corners + {0} alignment point</value>
+    <comment>{0} = alignment point count.</comment>
+  </data>
+  <data name="Advanced_AlignmentPointCount_Other" xml:space="preserve">
+    <value>4 corners + {0} alignment points</value>
+    <comment>{0} = alignment point count.</comment>
+  </data>
+  <data name="Advanced_CornerTopLeft" xml:space="preserve">
+    <value>TL</value>
+    <comment>Abbreviation for the top-left corner, not a direction-sensitive reading-order label.</comment>
+  </data>
+  <data name="Advanced_CornerTopRight" xml:space="preserve">
+    <value>TR</value>
+    <comment>Abbreviation for the top-right corner.</comment>
+  </data>
+  <data name="Advanced_CornerBottomRight" xml:space="preserve">
+    <value>BR</value>
+    <comment>Abbreviation for the bottom-right corner.</comment>
+  </data>
+  <data name="Advanced_CornerBottomLeft" xml:space="preserve">
+    <value>BL</value>
+    <comment>Abbreviation for the bottom-left corner.</comment>
+  </data>
+  <data name="Advanced_AlignmentMarker" xml:space="preserve">
+    <value>A{0}</value>
+    <comment>Compact image overlay for an alignment point. {0} = marker number.</comment>
+  </data>
+  <data name="Preview_MinimumSizeAndContent" xml:space="preserve">
+    <value>Smallest recommended size {0}, {1}</value>
+    <comment>{0} = formatted size; {1} = QR content. Narrator label.</comment>
+  </data>
+  <data name="Preview_MetadataAndContent" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>{0} = status or sizing text; {1} = QR content. Narrator label.</comment>
+  </data>
+  <data name="Preview_SizeInches" xml:space="preserve">
+    <value>{0:F2} x {0:F2} in</value>
+    <comment>{0} = side length in inches.</comment>
+  </data>
+  <data name="Preview_SizeCentimeters" xml:space="preserve">
+    <value>{0:F2} x {0:F2} cm</value>
+    <comment>{0} = side length in centimeters.</comment>
+  </data>
+  <data name="Preview_SizeTransparency" xml:space="preserve">
+    <value>Exact minimum size depends on the final print surface when transparency is used.</value>
+  </data>
+  <data name="Preview_SizePadding" xml:space="preserve">
+    <value>Padding {0} is outside the predictable 1-4 module range. Borderless and heavy-border QR Codes scan too variably for reliable print sizing.</value>
+    <comment>{0} = padding in QR modules.</comment>
+  </data>
+  <data name="Preview_SizeContrast" xml:space="preserve">
+    <value>Color contrast too low</value>
+  </data>
+  <data name="Preview_SizeDistance" xml:space="preserve">
+    <value>Error at selected max distance.</value>
+  </data>
+  <data name="Package_TileShortName" xml:space="preserve">
+    <value>Simple QR Code Maker</value>
+  </data>
+  <data name="Package_ShareTargetName" xml:space="preserve">
+    <value>Decode QR Code or create a new one</value>
+  </data>
+  <data name="Faq_WhatIsAQRCode_Question" xml:space="preserve">
+    <value>What is a QR Code?</value>
+  </data>
+  <data name="Faq_WhatIsAQRCode_Answer" xml:space="preserve">
+    <value>It is best to think of QR Codes as text in a format computers can easily read. More specifically they are a format of two-dimensional barcode that is used to encode content. QR Codes may be used to display text to the user, to open a URL, and many other things. But most frequently are just used for opening websites.</value>
+  </data>
+  <data name="Faq_WhatDoesQRStandFor_Question" xml:space="preserve">
+    <value>What does QR Stand for?</value>
+  </data>
+  <data name="Faq_WhatDoesQRStandFor_Answer" xml:space="preserve">
+    <value>Quick Response</value>
+  </data>
+  <data name="Faq_WhyCanQRCodesBeDangerous_Question" xml:space="preserve">
+    <value>Why can QR Codes be dangerous?</value>
+  </data>
+  <data name="Faq_WhyCanQRCodesBeDangerous_Answer" xml:space="preserve">
+    <value>Due to the fact that most people use QR Codes to quickly open websites this introduces a risk because it is not clear what website is encoded into the QR Code. Additionally when the URL to the website is redirected then the owner of the URL would be able to change where the QR Code sends people scanning the code whenever they want.</value>
+  </data>
+  <data name="Faq_AreTheseDynamicQRCodes_Question" xml:space="preserve">
+    <value>Are these dynamic QR Codes?</value>
+  </data>
+  <data name="Faq_AreTheseDynamicQRCodes_Answer" xml:space="preserve">
+    <value>QR Codes are not dynamic on their own. To make a QR Code dynamic you need to use a link which will redirect/forward to another link. This requires an external server to do the redirecting. This can be an external website or your own where you can change where the link redirects to.</value>
+  </data>
+  <data name="Faq_HowCanYouTellIfAQRCodeIsDynamic_Question" xml:space="preserve">
+    <value>How can you tell if a QR Code is dynamic?</value>
+  </data>
+  <data name="Faq_HowCanYouTellIfAQRCodeIsDynamic_Answer" xml:space="preserve">
+    <value>Compare the final website with the QR Code content. If when you scan the QR Code with your phone and it goes to a website say, https://www.example.com but when you use this app to read the code and it is a totally different URL like http://JoeFinApps.com/123, then the QR Code is likely dynamic or at the very least being redirected by the domain in the QR Code.</value>
+  </data>
+  <data name="Faq_WhatIsATwoDimensionalBarcode_Question" xml:space="preserve">
+    <value>What is a two-dimensional barcode</value>
+  </data>
+  <data name="Faq_WhatIsATwoDimensionalBarcode_Answer" xml:space="preserve">
+    <value>Barcodes are content which has been translated into a format which can be easily scanned by a machine. The barcodes you see on most products which are a row of lines with different widths are a form of one-dimensional barcodes because they are only one row of data. Two-dimensional barcodes encode data into a pattern which is multiple rows. The data is not always encoded left-to-right or top-to-bottom. Frequently two-dimensional barcodes wrap or pack the data in unique ways depending on the type of code.</value>
+  </data>
+  <data name="Faq_HowToReadAQRCode_Question" xml:space="preserve">
+    <value>How to read a QR Code?</value>
+  </data>
+  <data name="Faq_HowToReadAQRCode_Answer" xml:space="preserve">
+    <value>To read a QR Code, you need a scanner which can read 2-dimensional (2D) barcodes. Android, iOS, and Windows all support QR Code scanning in the native default camera apps. To scan the code, simply open the app and hold the camera in front of it. The app will automatically recognize the code and act accordingly. NOTE: this does not mean the webpage you are sent to is exactly what is encoded into the QR Code. To read the content of a QR Code use the Read Code page of this app and open an image or paste one from your clipboard.</value>
+  </data>
+  <data name="Faq_WhatIsTheURLBuilder_Question" xml:space="preserve">
+    <value>What is the URL builder?</value>
+  </data>
+  <data name="Faq_WhatIsTheURLBuilder_Answer" xml:space="preserve">
+    <value>The URL builder helps you assemble a web address from its main parts instead of typing the whole thing by hand. You can set the scheme, host, port, path, fragment, and query parameters, then the app combines them into a final URL for the QR Code. It is handy when you want to avoid typos, add tracking parameters, or build several links with a consistent structure.</value>
+  </data>
+  <data name="Faq_WhatIsAVCardQRCode_Question" xml:space="preserve">
+    <value>What is a vCard QR Code?</value>
+  </data>
+  <data name="Faq_WhatIsAVCardQRCode_Answer" xml:space="preserve">
+    <value>A vCard QR Code stores contact information such as a name, company, phone numbers, email addresses, website, and postal address in a format many phones and contact apps understand. When someone scans it, their device can offer to create a new contact without manually typing everything. It is useful for business cards, event badges, and signage where you want people to save contact details quickly.</value>
+  </data>
+  <data name="Faq_WhatIsAWiFiQRCode_Question" xml:space="preserve">
+    <value>What is a WiFi QR Code?</value>
+  </data>
+  <data name="Faq_WhatIsAWiFiQRCode_Answer" xml:space="preserve">
+    <value>A WiFi QR Code stores a network name, security type, password, and optional hidden-network flag in a standard text format that many phones can recognize. On newer iPhone and Android devices it can offer to join the network directly, but older cameras and some third-party scanners may only show the raw text. Anyone who scans or photographs the code can recover the credentials, so only share it where that is acceptable. WEP is legacy and insecure, and enterprise WiFi setups usually need more than this simple QR format can provide.</value>
+  </data>
+  <data name="Faq_HowDoIMakeAWiFiQRCode_Question" xml:space="preserve">
+    <value>How do I make a WiFi QR Code?</value>
+  </data>
+  <data name="Faq_HowDoIMakeAWiFiQRCode_Answer" xml:space="preserve">
+    <value>Use the WiFi builder when you want a QR Code that helps guests join a network without typing the password. Enter the network name, choose the security type, add the password if required, and mark the network as hidden only if it really is hidden. After that, the app generates the standard WiFi text for you and turns it into a QR Code.</value>
+  </data>
+  <data name="Faq_WhatIsTheErrorCorrectionLevel_Question" xml:space="preserve">
+    <value>What is the Error Correction Level?</value>
+  </data>
+  <data name="Faq_WhatIsTheErrorCorrectionLevel_Answer" xml:space="preserve">
+    <value>All QR Codes can still be readable even if some of the QR Code is hidden due to damage or challenging conditions. The amount of the QR Code which can be hidden and the code still work is called the Error Correction Level. A higher error correction level will be more durable however the minimum size will be larger due to more data being encoded in the QR Code.</value>
+  </data>
+  <data name="Faq_HowDoesAddingAnImageAffectTheQRCode_Question" xml:space="preserve">
+    <value>How does adding an image affect the QR Code?</value>
+  </data>
+  <data name="Faq_HowDoesAddingAnImageAffectTheQRCode_Answer" xml:space="preserve">
+    <value>When you add an image like a logo to a QR Code using this app, the logo is placed directly over the center of the QR Code, covering up some of the encoded data. This is why error correction is so important - the QR Code&apos;s error correction capability allows it to remain scannable even though part of it is obscured. The higher the error correction level, the more of the QR Code can be covered by your logo while still remaining functional. Always use a higher error correction level when adding logos, and test your QR Codes thoroughly to ensure they scan reliably.</value>
+  </data>
+  <data name="Faq_HowIsTheCenterImageStoredInSVGFiles_Question" xml:space="preserve">
+    <value>How is the center image stored in SVG files?</value>
+  </data>
+  <data name="Faq_HowIsTheCenterImageStoredInSVGFiles_Answer" xml:space="preserve">
+    <value>When you save a QR Code with a center image as an SVG file, the image is embedded directly into the SVG using Base64 encoding. This means the entire image data is converted to text and included within the SVG file itself, making the SVG completely self-contained. You don&apos;t need to keep the original image file separate - everything is embedded in the single SVG file. This makes it easy to share and use the QR Code without worrying about missing image references. Note that the center image is stored as a raster image (PNG), not as a vector, so it may appear pixelated when zoomed in significantly, even though the QR Code itself remains crisp as a vector.</value>
+  </data>
+  <data name="Faq_HowToPutAnImageInsideOfTheCenterOfAQRCode_Question" xml:space="preserve">
+    <value>How to put an image inside of the center of a QR Code?</value>
+  </data>
+  <data name="Faq_HowToPutAnImageInsideOfTheCenterOfAQRCode_Answer" xml:space="preserve">
+    <value>You can add an image directly inside the app using the center image (logo) button in the toolbar, or by saving a Brand that includes a logo. Click the image button to pick any PNG or JPG from your device, then adjust the size (7–30%) and padding (-20 to +20 px) using the sliders in its flyout. The image is placed over the center of the QR Code, so a higher error correction level (Q or H) is strongly recommended. Always test the finished QR Code to confirm it scans reliably.</value>
+  </data>
+  <data name="Faq_HowIsMinimumSizeCalculated_Question" xml:space="preserve">
+    <value>How is minimum size calculated?</value>
+  </data>
+  <data name="Faq_HowIsMinimumSizeCalculated_Answer" xml:space="preserve">
+    <value>The minimum size of a QR Code is calculated based on experimental data. QR Codes at several sizes were printed using a 600dpi laser printer on white paper. The codes were scanned and a relationship between code size and scan distance was developed. The contrast between the QR Code&apos;s foreground and background is also factored into the minimum size. If either QR color uses transparency, the final print surface changes the effective contrast, so the app no longer shows an exact minimum size.</value>
+  </data>
+  <data name="Faq_HowCanIChangeTheMaximumScanDistance_Question" xml:space="preserve">
+    <value>How can I change the maximum scan distance?</value>
+  </data>
+  <data name="Faq_HowCanIChangeTheMaximumScanDistance_Answer" xml:space="preserve">
+    <value>You can the maximum estimated scan distance of the minimum QR Code size in the settings. As always test in the real world before committing to a costly order or placement.</value>
+  </data>
+  <data name="Faq_WhatIsTheContrastRatio_Question" xml:space="preserve">
+    <value>What is the contrast ratio?</value>
+  </data>
+  <data name="Faq_WhatIsTheContrastRatio_Answer" xml:space="preserve">
+    <value>The contrast ratio is the difference in luminance or color that makes an object distinguishable. In the context of QR Codes, the contrast ratio is the difference in color between the foreground and background of the code. A higher contrast ratio makes the code easier to scan and read. The minimum recommended contrast ratio for QR Codes is 2.5:1. If transparency is used, the effective contrast depends on the final print surface after the QR Code is composited.</value>
+  </data>
+  <data name="Faq_AtTheMinimumSizeHowFarAwayCanAQRCodeBeScanned_Question" xml:space="preserve">
+    <value>At the minimum size, how far away can a QR Code be scanned?</value>
+  </data>
+  <data name="Faq_AtTheMinimumSizeHowFarAwayCanAQRCodeBeScanned_Answer" xml:space="preserve">
+    <value>36 inches or 1 meter is roughly the maximum scan distance of a QR Code printed at the minimum size. Physical factors like lighting conditions, damaged codes, and glare will all change how easy (if at all) a QR Code can be scanned.</value>
+  </data>
+  <data name="Faq_WhatIfIPrintTheQRCodeSmallerThanTheMinimumSize_Question" xml:space="preserve">
+    <value>What if I print the QR Code smaller than the minimum size?</value>
+  </data>
+  <data name="Faq_WhatIfIPrintTheQRCodeSmallerThanTheMinimumSize_Answer" xml:space="preserve">
+    <value>The scan distance and size have a linear relationship so doubling the QR Code size doubles the scan distance; the same goes for increasing the size.</value>
+  </data>
+  <data name="Faq_WhatTypeOfScannerOrPhoneCameraIsExpectedWhenPrintingAtTheMinimumSize_Question" xml:space="preserve">
+    <value>What type of scanner or phone camera is expected when printing at the minimum size?</value>
+  </data>
+  <data name="Faq_WhatTypeOfScannerOrPhoneCameraIsExpectedWhenPrintingAtTheMinimumSize_Answer" xml:space="preserve">
+    <value>The scanning experiments were carried out using an iPhone 13 and the default iOS code-scanning app and the main camera. The camera is a 12 Megapixel (MP) camera. Any modern Android or iOS phone after 2018 should be able to scan QR Codes at 1 meter at the default minimum size.</value>
+  </data>
+  <data name="Faq_WillTheScanningAlwaysWorkIfMinimumSizeIsFollowed_Question" xml:space="preserve">
+    <value>Will the scanning always work if minimum size is followed?</value>
+  </data>
+  <data name="Faq_WillTheScanningAlwaysWorkIfMinimumSizeIsFollowed_Answer" xml:space="preserve">
+    <value>No. The minimum size assumes good conditions such as: a well lit environment, matte printed surface, a decently modern scanning device.</value>
+  </data>
+  <data name="Faq_WhyDoWeHaveToUseQRCodes_Question" xml:space="preserve">
+    <value>Why do we have to use QR Codes?</value>
+  </data>
+  <data name="Faq_WhyDoWeHaveToUseQRCodes_Answer" xml:space="preserve">
+    <value>Typing in URLs is tedious so having the camera scan it easier and more reliable.</value>
+  </data>
+  <data name="Faq_AreQRCodesEvilAndOrDumb_Question" xml:space="preserve">
+    <value>Are QR Codes evil and/or dumb?</value>
+  </data>
+  <data name="Faq_AreQRCodesEvilAndOrDumb_Answer" xml:space="preserve">
+    <value>A little of both, but they can be a handy way to get people to websites.</value>
+  </data>
+  <data name="Faq_WhyMightQRCodeDetectionFail_Question" xml:space="preserve">
+    <value>Why might QR Code detection fail?</value>
+  </data>
+  <data name="Faq_WhyMightQRCodeDetectionFail_Answer" xml:space="preserve">
+    <value>QR Code detection can fail for several reasons: the image may be too blurry or low resolution, the lighting may cause glare or shadows that obscure parts of the code, the QR Code may be printed too small, the contrast between the foreground and background may be too low, or the code may be damaged or partially covered. Scanning at an extreme angle can also distort the code enough to prevent detection.</value>
+  </data>
+  <data name="Faq_HowCanIImproveQRCodeDetectionInThisApp_Question" xml:space="preserve">
+    <value>How can I improve QR Code detection in this app?</value>
+  </data>
+  <data name="Faq_HowCanIImproveQRCodeDetectionInThisApp_Answer" xml:space="preserve">
+    <value>If a QR Code is not being detected, try using the Advanced Tools on the decoding page. You can adjust the image with grayscale conversion, contrast enhancement, and perspective correction to help the decoder recognize the code. Cropping the image to focus on just the QR Code area can also improve results. Make sure the image is clear, well-lit, and the QR Code fills a reasonable portion of the frame.</value>
+  </data>
+  <data name="Faq_WhatIsABrand_Question" xml:space="preserve">
+    <value>What is a Brand?</value>
+  </data>
+  <data name="Faq_WhatIsABrand_Answer" xml:space="preserve">
+    <value>A Brand is a saved preset of QR Code settings. It can store any combination of foreground color, background color, error correction level, URL or text content, and a center logo image. Once saved, applying a Brand instantly restores all of those settings so you can produce consistently styled QR Codes without reconfiguring everything each time.</value>
+  </data>
+  <data name="Faq_HowDoICreateABrand_Question" xml:space="preserve">
+    <value>How do I create a Brand?</value>
+  </data>
+  <data name="Faq_HowDoICreateABrand_Answer" xml:space="preserve">
+    <value>Open the Brands flyout by clicking the bookmark icon in the toolbar. Click &apos;Save as brand&apos;, give the preset a name, and check the settings you want the Brand to remember — foreground color, background color, error correction level, URL or text, and center image. Then click &apos;Save Brand&apos;. The current values for every checked setting are captured at that moment.</value>
+  </data>
+  <data name="Faq_HowDoIApplyABrand_Question" xml:space="preserve">
+    <value>How do I apply a Brand?</value>
+  </data>
+  <data name="Faq_HowDoIApplyABrand_Answer" xml:space="preserve">
+    <value>Open the Brands flyout and click any saved Brand in the list. All of the settings stored in that Brand are applied immediately. You can also set a Brand as the default so that its settings are loaded automatically each time the app opens. Right-click any Brand in the list and choose &apos;Set as default&apos;.</value>
+  </data>
+  <data name="Faq_WhatDoesTheDefaultBrandSettingDo_Question" xml:space="preserve">
+    <value>What does the default Brand setting do?</value>
+  </data>
+  <data name="Faq_WhatDoesTheDefaultBrandSettingDo_Answer" xml:space="preserve">
+    <value>When a Brand is marked as the default, its stored settings are applied automatically every time the app starts. Only one Brand can be the default at a time. To set a default, right-click a Brand in the Brands flyout and choose &apos;Set as default&apos;. Right-click the current default and choose the same option to remove the default.</value>
+  </data>
+  <data name="Faq_CanABrandStoreACenterLogoImage_Question" xml:space="preserve">
+    <value>Can a Brand store a center logo image?</value>
+  </data>
+  <data name="Faq_CanABrandStoreACenterLogoImage_Answer" xml:space="preserve">
+    <value>Yes. Load the logo image using the center image button in the toolbar and adjust its size and padding to your liking. Then open the Brands flyout, click &apos;Save as brand&apos;, check the &apos;Center image&apos; checkbox, and save. The path to the image file is stored in the Brand. If the image file is later moved or deleted, the Brand will no longer be able to apply the logo.</value>
+  </data>
+  <data name="Faq_ShowMe" xml:space="preserve">
+    <value>show me</value>
+  </data>
+  <data name="Faq_TopicSize" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="Faq_TopicErrorCorrection" xml:space="preserve">
+    <value>error correction</value>
+  </data>
+  <data name="Faq_TopicBrands" xml:space="preserve">
+    <value>brand</value>
+  </data>
+  <data name="Faq_TopicDetection" xml:space="preserve">
+    <value>detection</value>
+  </data>
+  <data name="DecodingPage_DetectionHelpLink.Content" xml:space="preserve">
+    <value>Why decoding might not work</value>
+  </data>
+  <data name="Emoji_Smile" xml:space="preserve">
+    <value>Smile</value>
+  </data>
+  <data name="Emoji_Grin" xml:space="preserve">
+    <value>Grin</value>
+  </data>
+  <data name="Emoji_Laugh" xml:space="preserve">
+    <value>Laugh</value>
+  </data>
+  <data name="Emoji_ROFL" xml:space="preserve">
+    <value>ROFL</value>
+  </data>
+  <data name="Emoji_Happy" xml:space="preserve">
+    <value>Happy</value>
+  </data>
+  <data name="Emoji_Cool" xml:space="preserve">
+    <value>Cool</value>
+  </data>
+  <data name="Emoji_Wow" xml:space="preserve">
+    <value>Wow</value>
+  </data>
+  <data name="Emoji_Love" xml:space="preserve">
+    <value>Love</value>
+  </data>
+  <data name="Emoji_Adore" xml:space="preserve">
+    <value>Adore</value>
+  </data>
+  <data name="Emoji_Celebrate" xml:space="preserve">
+    <value>Celebrate</value>
+  </data>
+  <data name="Emoji_Robot" xml:space="preserve">
+    <value>Robot</value>
+  </data>
+  <data name="Emoji_Like" xml:space="preserve">
+    <value>Like</value>
+  </data>
+  <data name="Emoji_Applause" xml:space="preserve">
+    <value>Applause</value>
+  </data>
+  <data name="Emoji_Thanks" xml:space="preserve">
+    <value>Thanks</value>
+  </data>
+  <data name="Emoji_Crown" xml:space="preserve">
+    <value>Crown</value>
+  </data>
+  <data name="Emoji_Rocket" xml:space="preserve">
+    <value>Rocket</value>
+  </data>
+  <data name="Emoji_Star" xml:space="preserve">
+    <value>Star</value>
+  </data>
+  <data name="Emoji_Lightning" xml:space="preserve">
+    <value>Lightning</value>
+  </data>
+  <data name="Emoji_Shine" xml:space="preserve">
+    <value>Shine</value>
+  </data>
+  <data name="Emoji_Alert" xml:space="preserve">
+    <value>Alert</value>
+  </data>
+  <data name="Emoji_Question" xml:space="preserve">
+    <value>Question</value>
+  </data>
+  <data name="Emoji_Fire" xml:space="preserve">
+    <value>Fire</value>
+  </data>
+  <data name="Emoji_Idea" xml:space="preserve">
+    <value>Idea</value>
+  </data>
+  <data name="Emoji_Gem" xml:space="preserve">
+    <value>Gem</value>
+  </data>
+  <data name="Emoji_Check" xml:space="preserve">
+    <value>Check</value>
+  </data>
+  <data name="Emoji_Heart" xml:space="preserve">
+    <value>Heart</value>
+  </data>
+  <data name="Emoji_PurpleHeart" xml:space="preserve">
+    <value>Purple Heart</value>
+  </data>
+  <data name="Emoji_Target" xml:space="preserve">
+    <value>Target</value>
+  </data>
+  <data name="Emoji_Party" xml:space="preserve">
+    <value>Party</value>
+  </data>
+  <data name="Emoji_Trophy" xml:space="preserve">
+    <value>Trophy</value>
+  </data>
+  <data name="Emoji_GoldMedal" xml:space="preserve">
+    <value>Gold Medal</value>
+  </data>
+  <data name="Emoji_Package" xml:space="preserve">
+    <value>Package</value>
+  </data>
+  <data name="Emoji_Announcement" xml:space="preserve">
+    <value>Announcement</value>
+  </data>
+  <data name="Emoji_Growth" xml:space="preserve">
+    <value>Growth</value>
+  </data>
+  <data name="Emoji_Cart" xml:space="preserve">
+    <value>Cart</value>
+  </data>
+  <data name="Emoji_Briefcase" xml:space="preserve">
+    <value>Briefcase</value>
+  </data>
+  <data name="Emoji_Money" xml:space="preserve">
+    <value>Money</value>
+  </data>
+  <data name="Emoji_Coffee" xml:space="preserve">
+    <value>Coffee</value>
+  </data>
+  <data name="Emoji_Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="Emoji_Clock" xml:space="preserve">
+    <value>Clock</value>
+  </data>
+  <data name="Emoji_Donut" xml:space="preserve">
+    <value>Donut</value>
+  </data>
+  <data name="Emoji_Gift" xml:space="preserve">
+    <value>Gift</value>
+  </data>
+  <data name="Emoji_Music" xml:space="preserve">
+    <value>Music</value>
+  </data>
+  <data name="Emoji_Gaming" xml:space="preserve">
+    <value>Gaming</value>
+  </data>
+  <data name="Emoji_Camera" xml:space="preserve">
+    <value>Camera</value>
+  </data>
+  <data name="Emoji_Movie" xml:space="preserve">
+    <value>Movie</value>
+  </data>
+  <data name="Emoji_Brain" xml:space="preserve">
+    <value>Brain</value>
+  </data>
+  <data name="Emoji_Person" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="Emoji_Contacts" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="Emoji_ContactCard" xml:space="preserve">
+    <value>Contact Card</value>
+  </data>
+  <data name="Emoji_Pin" xml:space="preserve">
+    <value>Pin</value>
+  </data>
+  <data name="Emoji_Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Emoji_Telephone" xml:space="preserve">
+    <value>Telephone</value>
+  </data>
+  <data name="Emoji_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Emoji_Envelope" xml:space="preserve">
+    <value>Envelope</value>
+  </data>
+  <data name="Emoji_Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Emoji_House" xml:space="preserve">
+    <value>House</value>
+  </data>
+  <data name="Emoji_Office" xml:space="preserve">
+    <value>Office</value>
+  </data>
+  <data name="Emoji_Laptop" xml:space="preserve">
+    <value>Laptop</value>
+  </data>
+  <data name="Emoji_Globe" xml:space="preserve">
+    <value>Globe</value>
+  </data>
+  <data name="Emoji_WiFi" xml:space="preserve">
+    <value>WiFi</value>
+  </data>
+  <data name="Emoji_Rainbow" xml:space="preserve">
+    <value>Rainbow</value>
+  </data>
+  <data name="Emoji_Sunflower" xml:space="preserve">
+    <value>Sunflower</value>
+  </data>
+  <data name="Emoji_Cat" xml:space="preserve">
+    <value>Cat</value>
+  </data>
+  <data name="Emoji_Dog" xml:space="preserve">
+    <value>Dog</value>
+  </data>
+  <data name="Emoji_Fox" xml:space="preserve">
+    <value>Fox</value>
+  </data>
+  <data name="Emoji_Panda" xml:space="preserve">
+    <value>Panda</value>
+  </data>
+  <data name="Emoji_Pizza" xml:space="preserve">
+    <value>Pizza</value>
+  </data>
+  <data name="Emoji_Burger" xml:space="preserve">
+    <value>Burger</value>
+  </data>
+  <data name="Emoji_Fries" xml:space="preserve">
+    <value>Fries</value>
+  </data>
+  <data name="Emoji_Strawberry" xml:space="preserve">
+    <value>Strawberry</value>
+  </data>
+  <data name="Emoji_Sparkles" xml:space="preserve">
+    <value>Sparkles</value>
+  </data>
+  <data name="Emoji_Lock" xml:space="preserve">
+    <value>Lock</value>
+  </data>
+  <data name="Emoji_Bell" xml:space="preserve">
+    <value>Bell</value>
+  </data>
+  <data name="Emoji_Shield" xml:space="preserve">
+    <value>Shield</value>
+  </data>
+  <data name="FramePreset_None_Short" xml:space="preserve">
+    <value>Frame</value>
+  </data>
+  <data name="FramePreset_None_Description" xml:space="preserve">
+    <value>No frame</value>
+  </data>
+  <data name="FramePreset_BottomLabel_Short" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="FramePreset_BottomLabel_Description" xml:space="preserve">
+    <value>Bottom label</value>
+  </data>
+  <data name="FramePreset_BottomLabel_Caption" xml:space="preserve">
+    <value>Scan Me</value>
+  </data>
+  <data name="FramePreset_RoundedFrame_Short" xml:space="preserve">
+    <value>Rounded</value>
+  </data>
+  <data name="FramePreset_RoundedFrame_Description" xml:space="preserve">
+    <value>Rounded frame</value>
+  </data>
+  <data name="FramePreset_RoundedFrame_Caption" xml:space="preserve">
+    <value>Scan Here</value>
+  </data>
+  <data name="FramePreset_CornerCallout_Short" xml:space="preserve">
+    <value>Callout</value>
+  </data>
+  <data name="FramePreset_CornerCallout_Description" xml:space="preserve">
+    <value>Corner callout</value>
+  </data>
+  <data name="FramePreset_CornerCallout_Caption" xml:space="preserve">
+    <value>Scan QR Code</value>
+  </data>
+  <data name="FramePreset_SpeechBubble_Short" xml:space="preserve">
+    <value>Bubble</value>
+  </data>
+  <data name="FramePreset_SpeechBubble_Description" xml:space="preserve">
+    <value>Speech bubble</value>
+  </data>
+  <data name="FramePreset_SpeechBubble_Caption" xml:space="preserve">
+    <value>Scan Me</value>
+  </data>
+  <data name="FramePreset_Ticket_Short" xml:space="preserve">
+    <value>Ticket</value>
+  </data>
+  <data name="FramePreset_Ticket_Description" xml:space="preserve">
+    <value>Event ticket</value>
+  </data>
+  <data name="FramePreset_Ticket_Caption" xml:space="preserve">
+    <value>Get tickets</value>
+  </data>
+  <data name="FramePreset_Sticker_Short" xml:space="preserve">
+    <value>Sticker</value>
+  </data>
+  <data name="FramePreset_Sticker_Description" xml:space="preserve">
+    <value>Pop sticker</value>
+  </data>
+  <data name="FramePreset_Sticker_Caption" xml:space="preserve">
+    <value>Open me</value>
+  </data>
+  <data name="FramePreset_ScallopedBadge_Short" xml:space="preserve">
+    <value>Badge</value>
+  </data>
+  <data name="FramePreset_ScallopedBadge_Description" xml:space="preserve">
+    <value>Scalloped badge</value>
+  </data>
+  <data name="FramePreset_ScallopedBadge_Caption" xml:space="preserve">
+    <value>Scan Me</value>
+  </data>
+  <data name="FramePreset_Polaroid_Short" xml:space="preserve">
+    <value>Photo</value>
+  </data>
+  <data name="FramePreset_Polaroid_Description" xml:space="preserve">
+    <value>Caption card</value>
+  </data>
+  <data name="FramePreset_Polaroid_Caption" xml:space="preserve">
+    <value>Make a memory</value>
+  </data>
+  <data name="FramePreset_Burst_Short" xml:space="preserve">
+    <value>Burst</value>
+  </data>
+  <data name="FramePreset_Burst_Description" xml:space="preserve">
+    <value>Comic burst</value>
+  </data>
+  <data name="FramePreset_Burst_Caption" xml:space="preserve">
+    <value>Try me!</value>
+  </data>
+  <data name="DesignPreset_Classic_Name" xml:space="preserve">
+    <value>Classic</value>
+  </data>
+  <data name="DesignPreset_Classic_Description" xml:space="preserve">
+    <value>Crisp, simple, and ready for anything.</value>
+  </data>
+  <data name="DesignPreset_Bubblegum_Name" xml:space="preserve">
+    <value>Bubblegum</value>
+  </data>
+  <data name="DesignPreset_Bubblegum_Description" xml:space="preserve">
+    <value>Plum dots in a candy-colored speech bubble.</value>
+  </data>
+  <data name="DesignPreset_Bubblegum_Caption" xml:space="preserve">
+    <value>Say hello!</value>
+  </data>
+  <data name="DesignPreset_GigTicket_Name" xml:space="preserve">
+    <value>Gig Ticket</value>
+  </data>
+  <data name="DesignPreset_GigTicket_Description" xml:space="preserve">
+    <value>An admission ticket with a warm sunset border.</value>
+  </data>
+  <data name="DesignPreset_GigTicket_Caption" xml:space="preserve">
+    <value>Get tickets</value>
+  </data>
+  <data name="DesignPreset_Cafe_Name" xml:space="preserve">
+    <value>Cafe</value>
+  </data>
+  <data name="DesignPreset_Cafe_Description" xml:space="preserve">
+    <value>Soft corners and warm paper tones.</value>
+  </data>
+  <data name="DesignPreset_Cafe_Caption" xml:space="preserve">
+    <value>View the menu</value>
+  </data>
+  <data name="DesignPreset_PopSticker_Name" xml:space="preserve">
+    <value>Pop Sticker</value>
+  </data>
+  <data name="DesignPreset_PopSticker_Description" xml:space="preserve">
+    <value>Lime, round eyes, and a bold offset shadow.</value>
+  </data>
+  <data name="DesignPreset_PopSticker_Caption" xml:space="preserve">
+    <value>Open me</value>
+  </data>
+  <data name="DesignPreset_Festival_Name" xml:space="preserve">
+    <value>Festival</value>
+  </data>
+  <data name="DesignPreset_Festival_Description" xml:space="preserve">
+    <value>A bright comic burst with a little extra energy.</value>
+  </data>
+  <data name="DesignPreset_Festival_Caption" xml:space="preserve">
+    <value>Join the fun!</value>
+  </data>
+  <data name="DesignPreset_Ocean_Name" xml:space="preserve">
+    <value>Ocean</value>
+  </data>
+  <data name="DesignPreset_Ocean_Description" xml:space="preserve">
+    <value>A turquoise badge with a fresh blue gradient.</value>
+  </data>
+  <data name="DesignPreset_Ocean_Caption" xml:space="preserve">
+    <value>Dive in</value>
+  </data>
+  <data name="DesignPreset_Postcard_Name" xml:space="preserve">
+    <value>Postcard</value>
+  </data>
+  <data name="DesignPreset_Postcard_Description" xml:space="preserve">
+    <value>A calm blue frame for sharing something personal.</value>
+  </data>
+  <data name="DesignPreset_Postcard_Caption" xml:space="preserve">
+    <value>Keep in touch</value>
+  </data>
+  <data name="Design_Module_Square" xml:space="preserve">
+    <value>Square</value>
+  </data>
+  <data name="Design_Module_Rounded" xml:space="preserve">
+    <value>Rounded</value>
+  </data>
+  <data name="Design_Module_Dots" xml:space="preserve">
+    <value>Dots</value>
+  </data>
+  <data name="Design_Eye_Square" xml:space="preserve">
+    <value>Square</value>
+  </data>
+  <data name="Design_Eye_Rounded" xml:space="preserve">
+    <value>Rounded</value>
+  </data>
+  <data name="Design_Eye_Circle" xml:space="preserve">
+    <value>Circle</value>
+  </data>
+  <data name="Design_Icon_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Design_Icon_Arrow" xml:space="preserve">
+    <value>Arrow</value>
+  </data>
+  <data name="Design_Icon_WiFi" xml:space="preserve">
+    <value>WiFi</value>
+  </data>
+  <data name="Design_Icon_Contact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Design_Icon_Link" xml:space="preserve">
+    <value>Link</value>
+  </data>
+  <data name="App_FlowDirection" xml:space="preserve">
+    <value>LeftToRight</value>
+    <comment>WinUI enum value: choose LeftToRight or RightToLeft for the language. Do not translate the enum name.</comment>
+  </data>
+  <data name="Colors_PickColor" xml:space="preserve">
+    <value>Pick color</value>
+  </data>
+  <data name="Colors_PasteClipboard" xml:space="preserve">
+    <value>Paste color from clipboard</value>
+  </data>
+  <data name="Colors_PasteClipboardValue" xml:space="preserve">
+    <value>Paste {0} from clipboard</value>
+    <comment>{0} is the color's hexadecimal or RGB value. Accessible label and tooltip.</comment>
+  </data>
+  <data name="Licenses_MitCopyrightNote" xml:space="preserve">
+    <value>Note: The specific copyright year(s) and holder(s) for this library are listed in its repository on GitHub. Use "View on GitHub" above to see the full copyright notice.</value>
+  </data>
+  <data name="PrintSettingsDialog_InitialZoom.Text" xml:space="preserve">
+    <value>100%</value>
+    <comment>The initial zoom before the preview loads.</comment>
+  </data>
+  <data name="Print_DocumentTitle" xml:space="preserve">
+    <value>QR Codes</value>
+    <comment>Title of the PDF and the corresponding Windows print job.</comment>
   </data>
 </root>

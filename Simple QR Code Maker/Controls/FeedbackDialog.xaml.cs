@@ -2,6 +2,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer;
 
+using Simple_QR_Code_Maker.Helpers;
+
 namespace Simple_QR_Code_Maker.Controls;
 
 public sealed partial class FeedbackDialog : ContentDialog
@@ -19,7 +21,7 @@ public sealed partial class FeedbackDialog : ContentDialog
         ContentDialogButtonClickDeferral deferral = args.GetDeferral();
         try
         {
-            string subject = Uri.EscapeDataString("Simple QR Code Maker Feedback");
+            string subject = Uri.EscapeDataString("Feedback_EmailSubject".GetLocalized());
             string body = Uri.EscapeDataString(FeedbackTextBox.Text);
             await Windows.System.Launcher.LaunchUriAsync(
                 new Uri($"mailto:{Email}?subject={subject}&body={body}"));
@@ -38,9 +40,9 @@ public sealed partial class FeedbackDialog : ContentDialog
 
         if (sender is Button btn)
         {
-            btn.Content = "Copied!";
+            btn.Content = "Feedback_CopyDone".GetLocalized();
             await Task.Delay(2000);
-            btn.Content = "Copy";
+            btn.Content = "Feedback_Copy".GetLocalized();
         }
     }
 }

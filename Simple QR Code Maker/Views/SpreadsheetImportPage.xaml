@@ -32,58 +32,47 @@
 
                 <TextBlock
                     Style="{StaticResource BodyTextStyle}"
-                    Text="{x:Bind ViewModel.FileDescription,
-                                  Mode=OneWay}"
+                    Text="{x:Bind ViewModel.FileDescription, Mode=OneWay}"
                     TextWrapping="Wrap" />
 
                 <InfoBar
-                    Title="{x:Bind ViewModel.StatusTitle,
-                                   Mode=OneWay}"
+                    Title="{x:Bind ViewModel.StatusTitle, Mode=OneWay}"
                     IsClosable="True"
-                    IsOpen="{x:Bind ViewModel.IsStatusVisible,
-                                    Mode=TwoWay}"
-                    Message="{x:Bind ViewModel.StatusMessage,
-                                     Mode=OneWay}"
-                    Severity="{x:Bind ViewModel.StatusSeverity,
-                                      Mode=OneWay}" />
+                    IsOpen="{x:Bind ViewModel.IsStatusVisible, Mode=TwoWay}"
+                    Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                    Severity="{x:Bind ViewModel.StatusSeverity, Mode=OneWay}" />
 
-                <settingsControls:SettingsCard Description="Choose whether the first row should be used as the column names." Header="Header row">
+                <settingsControls:SettingsCard x:Uid="SpreadsheetImportPage_HeaderRowSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <SymbolIcon Symbol="List" />
                     </settingsControls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.FirstRowIsHeader,
-                                      Mode=TwoWay}"
+                        IsOn="{x:Bind ViewModel.FirstRowIsHeader, Mode=TwoWay}"
                         OffContent=""
                         OnContent="" />
                 </settingsControls:SettingsCard>
 
                 <settingsControls:SettingsExpander
+                    x:Uid="SpreadsheetImportPage_GenerateIDsAndSaveBackSettingsExpander"
                     Description="{x:Bind ViewModel.IdGenerationDescription, Mode=OneWay}"
-                    Header="Generate IDs and save back"
-                    IsExpanded="{x:Bind ViewModel.GenerateIdsToSpreadsheet,
-                                        Mode=OneWay}">
+                    IsExpanded="{x:Bind ViewModel.GenerateIdsToSpreadsheet, Mode=OneWay}">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <SymbolIcon Symbol="Save" />
                     </settingsControls:SettingsExpander.HeaderIcon>
                     <settingsControls:SettingsExpander.Content>
                         <ToggleSwitch
-                            IsOn="{x:Bind ViewModel.GenerateIdsToSpreadsheet,
-                                          Mode=TwoWay}"
+                            IsOn="{x:Bind ViewModel.GenerateIdsToSpreadsheet, Mode=TwoWay}"
                             OffContent=""
                             OnContent="" />
                     </settingsControls:SettingsExpander.Content>
                     <settingsControls:SettingsExpander.Items>
-                        <settingsControls:SettingsCard Header="ID style">
+                        <settingsControls:SettingsCard x:Uid="SpreadsheetImportPage_IDStyleSettingsCard">
                             <ComboBox
                                 MinWidth="220"
                                 HorizontalAlignment="Stretch"
-                                IsEnabled="{x:Bind ViewModel.CanConfigureGeneratedIdFormat,
-                                                   Mode=OneWay}"
-                                ItemsSource="{x:Bind ViewModel.GeneratedIdFormatOptions,
-                                                     Mode=OneWay}"
-                                SelectedItem="{x:Bind ViewModel.SelectedGeneratedIdFormatOption,
-                                                      Mode=TwoWay}">
+                                IsEnabled="{x:Bind ViewModel.CanConfigureGeneratedIdFormat, Mode=OneWay}"
+                                ItemsSource="{x:Bind ViewModel.GeneratedIdFormatOptions, Mode=OneWay}"
+                                SelectedItem="{x:Bind ViewModel.SelectedGeneratedIdFormatOption, Mode=TwoWay}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate x:DataType="models:SpreadsheetGeneratedIdFormatOption">
                                         <TextBlock Text="{x:Bind DisplayName}" />
@@ -91,71 +80,57 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard
-                            Description="Only used when ID style is NanoID."
-                            Header="NanoID length"
-                            Visibility="{x:Bind ViewModel.NanoIdLengthVisibility,
-                                                 Mode=OneWay}">
+                        <settingsControls:SettingsCard x:Uid="SpreadsheetImportPage_NanoIDLengthSettingsCard" Visibility="{x:Bind ViewModel.NanoIdLengthVisibility, Mode=OneWay}">
                             <NumberBox
                                 MinWidth="220"
-                                IsEnabled="{x:Bind ViewModel.IsNanoIdLengthEnabled,
-                                                   Mode=OneWay}"
+                                IsEnabled="{x:Bind ViewModel.IsNanoIdLengthEnabled, Mode=OneWay}"
                                 Minimum="1"
                                 SmallChange="1"
                                 SpinButtonPlacementMode="Compact"
-                                Value="{x:Bind ViewModel.NanoIdLength,
-                                               Mode=TwoWay,
-                                               UpdateSourceTrigger=PropertyChanged}" />
+                                Value="{x:Bind ViewModel.NanoIdLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </settingsControls:SettingsCard>
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>
 
-                <settingsControls:SettingsCard Description="{x:Bind ViewModel.ImportCountDescription, Mode=OneWay}" Header="Column to import">
+                <settingsControls:SettingsCard x:Uid="SpreadsheetImportPage_ColumnToImportSettingsCard" Description="{x:Bind ViewModel.ImportCountDescription, Mode=OneWay}">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <SymbolIcon Symbol="Switch" />
                     </settingsControls:SettingsCard.HeaderIcon>
                     <ComboBox
                         MinWidth="220"
                         HorizontalAlignment="Stretch"
-                        ItemsSource="{x:Bind ViewModel.ColumnNames,
-                                             Mode=OneWay}"
-                        SelectedIndex="{x:Bind ViewModel.SelectedColumnIndex,
-                                               Mode=TwoWay}" />
+                        ItemsSource="{x:Bind ViewModel.ColumnNames, Mode=OneWay}"
+                        SelectedIndex="{x:Bind ViewModel.SelectedColumnIndex, Mode=TwoWay}" />
                 </settingsControls:SettingsCard>
 
-                <settingsControls:SettingsCard Description="Optional text to add before each imported line." Header="Text before imported line">
+                <settingsControls:SettingsCard x:Uid="SpreadsheetImportPage_TextBeforeImportedLineSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <SymbolIcon Symbol="Link" />
                     </settingsControls:SettingsCard.HeaderIcon>
                     <TextBox
+                        x:Uid="SpreadsheetImportPage_ExHttpsTextBox"
                         MinWidth="260"
                         HorizontalAlignment="Stretch"
-                        PlaceholderText="ex: https://"
-                        Text="{x:Bind ViewModel.TextBeforeImportedLine,
-                                      Mode=TwoWay,
-                                      UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{x:Bind ViewModel.TextBeforeImportedLine, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
-                <settingsControls:SettingsCard Description="Optional text to add after each imported line." Header="Text after imported line">
+                <settingsControls:SettingsCard x:Uid="SpreadsheetImportPage_TextAfterImportedLineSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <SymbolIcon Symbol="Link" />
                     </settingsControls:SettingsCard.HeaderIcon>
                     <TextBox
+                        x:Uid="SpreadsheetImportPage_ExSourceQrCodeTextBox"
                         MinWidth="260"
                         HorizontalAlignment="Stretch"
-                        PlaceholderText="ex: ?source=qr-code"
-                        Text="{x:Bind ViewModel.TextAfterImportedLine,
-                                      Mode=TwoWay,
-                                      UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{x:Bind ViewModel.TextAfterImportedLine, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
-                <settingsControls:SettingsCard Description="Only import unique values after applying any before/after text." Header="Remove duplicates">
+                <settingsControls:SettingsCard x:Uid="SpreadsheetImportPage_RemoveDuplicatesSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <SymbolIcon Symbol="Sort" />
                     </settingsControls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.RemoveDuplicates,
-                                      Mode=TwoWay}"
+                        IsOn="{x:Bind ViewModel.RemoveDuplicates, Mode=TwoWay}"
                         OffContent=""
                         OnContent="" />
                 </settingsControls:SettingsCard>
@@ -164,21 +139,18 @@
                     <TextBlock
                         FontSize="12"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="{x:Bind ViewModel.RowCountDescription,
-                                      Mode=OneWay}" />
+                        Text="{x:Bind ViewModel.RowCountDescription, Mode=OneWay}" />
                     <TextBlock
                         FontSize="12"
                         Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                        Text="{x:Bind ViewModel.ImportCountDescription,
-                                      Mode=OneWay}" />
+                        Text="{x:Bind ViewModel.ImportCountDescription, Mode=OneWay}" />
                 </StackPanel>
 
                 <Button
                     MinWidth="220"
                     HorizontalAlignment="Left"
                     Command="{x:Bind ViewModel.ImportCommand}"
-                    IsEnabled="{x:Bind ViewModel.CanImport,
-                                       Mode=OneWay}"
+                    IsEnabled="{x:Bind ViewModel.CanImport, Mode=OneWay}"
                     Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <SymbolIcon Symbol="Accept" />
@@ -186,7 +158,7 @@
                     </StackPanel>
                 </Button>
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Preview" />
+                <TextBlock x:Uid="SpreadsheetImportPage_PreviewText" Style="{ThemeResource SubtitleTextBlockStyle}" />
 
                 <Border
                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
@@ -198,8 +170,7 @@
                         CanFilterColumns="True"
                         CanSortColumns="True"
                         IsReadOnly="True"
-                        ItemsSource="{x:Bind ViewModel.PreviewTableRows,
-                                             Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.PreviewTableRows, Mode=OneWay}"
                         MinColumnWidth="140"
                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
                         ScrollViewer.HorizontalScrollMode="Enabled"

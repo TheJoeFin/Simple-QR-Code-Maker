@@ -1,7 +1,13 @@
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Drawing.Text;
 using UglyToad.PdfPig.Content;
 using UglyToad.PdfPig.Core;
+using UglyToad.PdfPig.Fonts.TrueType;
+using UglyToad.PdfPig.Fonts.TrueType.Parser;
+using UglyToad.PdfPig.Fonts.TrueType.Tables.CMapSubTables;
 using UglyToad.PdfPig.Writer;
 using Windows.Foundation;
 
@@ -15,7 +21,9 @@ public static class QrPdfRenderer
         IReadOnlyList<RequestedQrCodeItem> codes,
         QrRenderSettingsSnapshot renderSettings,
         PrintJobSettings printSettings,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        string documentTitle = "QR Codes",
+        Func<RequestedQrCodeItem, string>? formatLabel = null)
     {
         PrintJobSettings normalizedSettings = printSettings.Normalize();
 
@@ -28,13 +36,6 @@ public static class QrPdfRenderer
                 cancellationToken.ThrowIfCancellationRequested();
                 using QrRenderSettingsSnapshot? commonSettings = renderSettings.CreateCommonBrandOverride(code);
                 QrRenderSettingsSnapshot effectiveSettings = commonSettings ?? renderSettings;
-                string? resolvedFrameText = QrFrameTextResolver.Resolve(
-                    effectiveSettings.FramePreset,
-                    effectiveSettings.FrameTextSource,
-                    effectiveSettings.FrameText,
-                    code.CodeAsText,
-                    code.ContentKind,
-                    code.MultiLineCodeModeOverride);
                 using MemoryStream ms = new();
                 QrCodeRenderer.SaveQrCodePngToStream(
                     ms,
@@ -47,23 +48,23 @@ public static class QrPdfRenderer
                     effectiveSettings.LogoPaddingPixels,
                     effectiveSettings.QrPaddingModules,
                     effectiveSettings.FramePreset,
-                    resolvedFrameText,
+                    effectiveSettings.ResolveFrameText(code),
                     out QrImageLayoutMetrics imageLayout,
                     effectiveSettings.Appearance);
-                string label = code.ContentKind switch
+                string label = formatLabel?.Invoke(code) ?? (code.ContentKind switch
                 {
                     QrContentKind.VCard => VCardBuilderHelper.GetDisplayName(code.CodeAsText),
                     QrContentKind.WiFi => WifiBuilderHelper.GetDisplayName(code.CodeAsText),
                     QrContentKind.Email => EmailBuilderHelper.GetDisplayName(code.CodeAsText),
                     _ => code.CodeAsText,
-                };
+                });
                 return new PrintableQrCodeAsset(label, ms.ToArray(), imageLayout);
             })];
 
             cancellationToken.ThrowIfCancellationRequested();
 
             using PdfDocumentBuilder document = new();
-            document.DocumentInformation.Title = "QR Codes";
+            document.DocumentInformation.Title = documentTitle;
             document.DocumentInformation.Creator = "Simple QR Code Maker";
             PdfLabelFont? labelFont = normalizedSettings.ShowLabels ? new PdfLabelFont(document) : null;
 
@@ -154,8 +155,15 @@ public static class QrPdfRenderer
 
     private static void DrawWrappedLabel(PdfPageBuilder page, string value, Rect labelRect, PdfLabelFont labelFont)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        value = value.ReplaceLineEndings(" ").Replace('\t', ' ').Trim();
+        if (value.Length == 0)
             return;
+
+        if (!labelFont.CanRender(value))
+        {
+            DrawLabelWithFontFallback(page, value, labelRect);
+            return;
+        }
 
         double fontSize = GetLabelFontSize(page, value, labelFont, labelRect.Width);
         List<string> lines = WrapLabelLines(
@@ -181,6 +189,44 @@ public static class QrPdfRenderer
             labelFont.DrawText(page, line, fontSize, baseline);
             top += lineHeight;
         }
+    }
+
+    private static void DrawLabelWithFontFallback(PdfPageBuilder page, string value, Rect labelRect)
+    {
+        const float pixelsPerPoint = 4;
+        using Bitmap image = new((int)Math.Ceiling(labelRect.Width * pixelsPerPoint),
+            (int)Math.Ceiling(labelRect.Height * pixelsPerPoint));
+        using Graphics graphics = Graphics.FromImage(image);
+        graphics.Clear(Color.White);
+        graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+
+        // Keep selectable PDF text where the embedded font supports it; let Windows shape other scripts.
+        using StringFormat format = new()
+        {
+            Alignment = StringAlignment.Center,
+            LineAlignment = StringAlignment.Center,
+            FormatFlags = StringFormatFlags.LineLimit,
+            Trimming = StringTrimming.EllipsisCharacter,
+        };
+        for (double size = PrintLayoutHelper.LabelFontSizePoints;
+             size >= PrintLayoutHelper.MinimumLabelFontSizePoints;
+             size -= 0.5)
+        {
+            using Font font = new("Segoe UI", (float)size * pixelsPerPoint, FontStyle.Regular, GraphicsUnit.Pixel);
+            float height = Math.Min(image.Height, (float)Math.Ceiling(font.GetHeight(graphics) * PrintLayoutHelper.LabelMaxLineCount));
+            RectangleF bounds = new(0, (image.Height - height) / 2, image.Width, height);
+            _ = graphics.MeasureString(value, font, bounds.Size, format, out int charactersFitted, out _);
+            if (charactersFitted < value.Length && size > PrintLayoutHelper.MinimumLabelFontSizePoints)
+                continue;
+
+            graphics.DrawString(value, font, Brushes.Black, bounds, format);
+            break;
+        }
+
+        using MemoryStream png = new();
+        image.Save(png, ImageFormat.Png);
+        double top = page.PageSize.Height - labelRect.Top;
+        page.AddPng(png.ToArray(), new PdfRectangle(labelRect.Left, top - labelRect.Height, labelRect.Right, top));
     }
 
     private static double GetLabelFontSize(PdfPageBuilder page, string value, PdfLabelFont font, double availableWidth)
@@ -214,44 +260,33 @@ public static class QrPdfRenderer
         int maxLineCount,
         out bool fitsCompletely)
     {
-        string normalized = value
-            .Replace("\r\n", " ", StringComparison.Ordinal)
-            .Replace('\r', ' ')
-            .Replace('\n', ' ')
-            .Trim();
         List<string> lines = [];
 
-        if (string.IsNullOrWhiteSpace(normalized))
-        {
-            fitsCompletely = true;
-            return lines;
-        }
-
         int start = 0;
-        while (start < normalized.Length && lines.Count < maxLineCount)
+        while (start < value.Length && lines.Count < maxLineCount)
         {
-            while (start < normalized.Length && char.IsWhiteSpace(normalized[start]))
+            while (start < value.Length && char.IsWhiteSpace(value[start]))
                 start++;
 
-            if (start >= normalized.Length)
+            if (start >= value.Length)
                 break;
 
-            int nextBreak = FindWrapBreakIndex(page, normalized, start, font, fontSize, availableWidth);
-            string line = normalized[start..nextBreak].Trim();
+            int nextBreak = FindWrapBreakIndex(page, value, start, font, fontSize, availableWidth);
+            string line = value[start..nextBreak].Trim();
             if (line.Length == 0)
             {
-                nextBreak = Math.Min(start + 1, normalized.Length);
-                line = normalized[start..nextBreak];
+                nextBreak = Math.Min(start + 1, value.Length);
+                line = value[start..nextBreak];
             }
 
             lines.Add(line);
             start = nextBreak;
         }
 
-        while (start < normalized.Length && char.IsWhiteSpace(normalized[start]))
+        while (start < value.Length && char.IsWhiteSpace(value[start]))
             start++;
 
-        fitsCompletely = start >= normalized.Length;
+        fitsCompletely = start >= value.Length;
         return lines;
     }
 
@@ -303,6 +338,7 @@ public static class QrPdfRenderer
     {
         private readonly PdfDocumentBuilder _document;
         private readonly byte[] _fontBytes;
+        private readonly ICMapSubTable? _unicodeMap;
         private readonly HashSet<char> _characters = [];
         private PdfDocumentBuilder.AddedFont _font;
 
@@ -310,8 +346,12 @@ public static class QrPdfRenderer
         {
             _document = document;
             _fontBytes = File.ReadAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf"));
+            _unicodeMap = TrueTypeFontParser.Parse(new TrueTypeDataBytes(_fontBytes)).WindowsUnicodeCMap;
             _font = document.AddTrueTypeFont(_fontBytes);
         }
+
+        internal bool CanRender(string text)
+            => _unicodeMap is not null && text.All(character => _unicodeMap.CharacterCodeToGlyphIndex(character) > 0);
 
         internal IReadOnlyList<Letter> MeasureText(PdfPageBuilder page, string text, double fontSize)
         {

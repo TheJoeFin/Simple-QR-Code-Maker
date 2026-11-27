@@ -73,7 +73,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     public partial double MinSizeScanDistanceScaleFactor { get; set; } = 1.0;
 
     [ObservableProperty]
-    public partial string MaxScanDistanceText { get; set; } = "36in or 1m";
+    public partial string MaxScanDistanceText { get; set; } = "Settings_DefaultMaxScanDistance".GetLocalized();
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(QrPaddingDescription))]
@@ -115,24 +115,24 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
 
     public string DefaultForegroundColorText => DefaultForegroundColor.HasValue
         ? ColorToHex(DefaultForegroundColor.Value)
-        : "System default — black";
+        : "Settings_DefaultForeground".GetLocalized();
 
     public string DefaultBackgroundColorText => DefaultBackgroundColor.HasValue
         ? ColorToHex(DefaultBackgroundColor.Value)
-        : "System default — white";
+        : "Settings_DefaultBackground".GetLocalized();
 
     public string DefaultErrorCorrectionText => DefaultErrorCorrection switch
     {
-        "L" => "L — Low 7%",
-        "M" => "M — Medium 15%",
-        "Q" => "Q — Quarter 25%",
-        "H" => "H — High 30%",
-        _ => "System default — M (Medium 15%)"
+        "L" => "Settings_CorrectionLow".GetLocalized(),
+        "M" => "Settings_CorrectionMedium".GetLocalized(),
+        "Q" => "Settings_CorrectionQuarter".GetLocalized(),
+        "H" => "Settings_CorrectionHigh".GetLocalized(),
+        _ => "Settings_DefaultCorrection".GetLocalized()
     };
 
     public string DefaultFramePresetText => DefaultFramePresetValue.HasValue
-        ? QrFramePresetCatalog.GetOption(DefaultFramePresetValue.Value).Description
-        : "System default — classic, no frame";
+        ? LocalizedDisplay.FrameDescription(DefaultFramePresetValue)
+        : "Settings_DefaultFrame".GetLocalized();
 
     public Brush DefaultForegroundColorBrush => DefaultForegroundColor.HasValue
         ? new SolidColorBrush(DefaultForegroundColor.Value)
@@ -165,7 +165,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
 
     public string SafeRedirectorDomainsEmptyStateText => HasSafeRedirectorDomains
         ? string.Empty
-        : "No safe domains yet. Use the redirector warning info bar to mark one as safe.";
+        : "Settings_NoSafeDomains".GetLocalized();
 
     partial void OnImportExportStatusMessageChanged(string value)
     {
@@ -436,28 +436,28 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
         if (isMetric)
         {
             if (value == 1)
-                MaxScanDistanceText = $"{value} meter";
+                MaxScanDistanceText = "Settings_ScanDistanceMeter".FormatLocalized(value);
             else
-                MaxScanDistanceText = $"{value} meters";
+                MaxScanDistanceText = "Settings_ScanDistanceMeters".FormatLocalized(value);
         }
         else
         {
             if (value > 1)
             {
-                MaxScanDistanceText = $"{Math.Round(value * 3, 1)} feet";
+                MaxScanDistanceText = "Settings_ScanDistanceFeet".FormatLocalized(Math.Round(value * 3, 1));
             }
             else
             {
-                MaxScanDistanceText = $"{Math.Round(value * 36, 0)} inches";
+                MaxScanDistanceText = "Settings_ScanDistanceInches".FormatLocalized(Math.Round(value * 36, 0));
             }
         }
     }
 
-    public string QrPaddingDescription => $"{QrPaddingModules:0} modules";
+    public string QrPaddingDescription => "Settings_PaddingModules".FormatLocalized(QrPaddingModules);
 
     public string QrPaddingSettingsDescription => BarcodeHelpers.IsSizeRecommendationAvailableForPadding(QrPaddingModules)
-        ? $"{QrPaddingDescription}. Print sizing stays reliable at this setting."
-        : $"{QrPaddingDescription}. Print sizing is disabled outside 1-4 modules.";
+        ? "Settings_PrintSizingReliable".FormatLocalized(QrPaddingDescription)
+        : "Settings_PrintSizingDisabled".FormatLocalized(QrPaddingDescription);
 
     partial void OnQrPaddingModulesChanged(double value)
     {
@@ -562,7 +562,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     }
 
     private static string GetVersionDescription()
-        => $"{"AppDisplayName".GetLocalized()} - {AppVersionHelper.GetCurrentVersionString()}";
+        => "Settings_AppVersion".FormatLocalized("AppDisplayName".GetLocalized(), AppVersionHelper.GetCurrentVersionString());
 
     [RelayCommand]
     private void GoToMoreInfo()
@@ -575,7 +575,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
     {
         if (!ExportIncludeSettings && !ExportIncludeBrands && !ExportIncludeHistory)
         {
-            ShowStatus("Select at least one item to export.", InfoBarSeverity.Warning);
+            ShowStatus("Settings_BackupNothingToExport".GetLocalized(), InfoBarSeverity.Warning);
             return;
         }
 
@@ -592,7 +592,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
                 SuggestedFileName = $"SimpleQRBackup_{DateTime.Now:yyyyMMdd_HHmmss}",
                 SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
             };
-            picker.FileTypeChoices.Add("Zip Archive", [".zip"]);
+            picker.FileTypeChoices.Add("FileType_ZipArchive".GetLocalized(), [".zip"]);
 
             IntPtr windowHandle = WindowNative.GetWindowHandle(App.MainWindow);
             InitializeWithWindow.Initialize(picker, windowHandle);
@@ -670,12 +670,12 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
             await zipStream.CopyToAsync(fileStream);
             await fileStream.FlushAsync();
 
-            ShowStatus("Export complete.", InfoBarSeverity.Success);
+            ShowStatus("Settings_BackupExportComplete".GetLocalized(), InfoBarSeverity.Success);
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Export failed: {ex.Message}");
-            ShowStatus($"Export failed: {ex.Message}", InfoBarSeverity.Error);
+            ShowStatus("Settings_BackupExportFailed".GetLocalized(), InfoBarSeverity.Error);
         }
     }
 
@@ -759,17 +759,17 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware, 
             }
 
             await ReloadAllSettingsAsync();
-            ShowStatus("Import complete. Return to the main screen to reload history and brands.", InfoBarSeverity.Success);
+            ShowStatus("Settings_BackupImportComplete".GetLocalized(), InfoBarSeverity.Success);
         }
         catch (InvalidDataException ex)
         {
             Debug.WriteLine($"Import failed: Invalid backup archive. {ex.Message}");
-            ShowStatus("Import failed: The selected file is not a valid backup ZIP.", InfoBarSeverity.Error);
+            ShowStatus("Settings_BackupInvalid".GetLocalized(), InfoBarSeverity.Error);
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Import failed: {ex.Message}");
-            ShowStatus($"Import failed: {ex.Message}", InfoBarSeverity.Error);
+            ShowStatus("Settings_BackupImportFailed".GetLocalized(), InfoBarSeverity.Error);
         }
     }
 

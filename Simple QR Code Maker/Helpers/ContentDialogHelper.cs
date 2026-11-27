@@ -12,6 +12,7 @@ public static class ContentDialogHelper
 
         // ContentDialog popups do not inherit the window content's requested theme.
         dialog.RequestedTheme = rootElement.ActualTheme;
+        dialog.FlowDirection = rootElement.FlowDirection;
         rootElement.ActualThemeChanged += OnActualThemeChanged;
         try
         {

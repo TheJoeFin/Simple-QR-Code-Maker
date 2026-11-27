@@ -1,3 +1,5 @@
+using Simple_QR_Code_Maker.Helpers;
+
 namespace Simple_QR_Code_Maker.Models;
 
 public enum TitleBarSearchResultKind
@@ -23,8 +25,8 @@ public sealed class TitleBarSearchResult
 
     public string KindLabel => Kind switch
     {
-        TitleBarSearchResultKind.Brand => "Brand",
-        TitleBarSearchResultKind.History => "History",
-        _ => "FAQ",
+        TitleBarSearchResultKind.Brand => "Shell_SearchBrandKind".GetLocalized(),
+        TitleBarSearchResultKind.History => "Shell_SearchHistoryKind".GetLocalized(),
+        _ => "Shell_SearchFaqKind".GetLocalized(),
     };
 }

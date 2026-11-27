@@ -3,6 +3,8 @@ using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
 using Windows.ApplicationModel;
 
+using Simple_QR_Code_Maker.Helpers;
+
 namespace Simple_QR_Code_Maker.ViewModels;
 
 public sealed partial class LicensesDialogViewModel : ObservableRecipient
@@ -22,7 +24,7 @@ public sealed partial class LicensesDialogViewModel : ObservableRecipient
         Libraries.Add(new LibraryInfo
         {
             Name = "SuperTinyIcons",
-            LicenseType = "MIT License",
+            LicenseType = "Licenses_Mit".GetLocalized(),
             GitHubUrl = "https://github.com/edent/SuperTinyIcons",
             LicenseText = File.ReadAllText(Path.Combine(Package.Current.InstalledLocation.Path, "Licenses", "SuperTinyIcons.txt")),
         });
@@ -39,28 +41,28 @@ public sealed partial class LicensesDialogViewModel : ObservableRecipient
         }
         catch
         {
-            return "[License text unavailable — see https://www.apache.org/licenses/LICENSE-2.0]";
+            return "Licenses_Unavailable".GetLocalized();
         }
     }
 
     private static IEnumerable<LibraryInfo> BuildLibraries(string apacheText)
     {
-        yield return new() { Name = "CommunityToolkit.Mvvm", LicenseType = "MIT License", GitHubUrl = "https://github.com/CommunityToolkit/dotnet", LicenseText = MitText };
-        yield return new() { Name = "CommunityToolkit WinUI", LicenseType = "MIT License", GitHubUrl = "https://github.com/CommunityToolkit/Windows", LicenseText = MitText };
-        yield return new() { Name = "Humanizer", LicenseType = "MIT License", GitHubUrl = "https://github.com/Humanizr/Humanizer", LicenseText = MitText };
-        yield return new() { Name = "Magick.NET", LicenseType = "Apache-2.0 License", GitHubUrl = "https://github.com/dlemstra/Magick.NET", LicenseText = apacheText };
-        yield return new() { Name = "Microsoft.Extensions.Hosting", LicenseType = "MIT License", GitHubUrl = "https://github.com/dotnet/runtime", LicenseText = MitText };
-        yield return new() { Name = "Microsoft.Graphics.Win2D", LicenseType = "MIT License", GitHubUrl = "https://github.com/microsoft/Win2D", LicenseText = MitText };
-        yield return new() { Name = "PdfPig", LicenseType = "Apache-2.0 License", GitHubUrl = "https://github.com/UglyToad/PdfPig", LicenseText = apacheText };
-        yield return new() { Name = "Windows App SDK", LicenseType = "MIT License", GitHubUrl = "https://github.com/microsoft/WindowsAppSDK", LicenseText = MitText };
-        yield return new() { Name = "WinUI 3", LicenseType = "MIT License", GitHubUrl = "https://github.com/Microsoft/microsoft-ui-xaml", LicenseText = MitText };
-        yield return new() { Name = "WinUI.TableView", LicenseType = "MIT License", GitHubUrl = "https://github.com/w-ahmad/WinUI.TableView", LicenseText = MitText };
-        yield return new() { Name = "WinUIEx", LicenseType = "MIT License", GitHubUrl = "https://github.com/dotMorten/WinUIEx", LicenseText = MitText };
-        yield return new() { Name = "XAML Behaviors", LicenseType = "MIT License", GitHubUrl = "https://github.com/microsoft/XamlBehaviors", LicenseText = MitText };
-        yield return new() { Name = "ZXing.NET", LicenseType = "Apache-2.0 License", GitHubUrl = "https://github.com/micjahn/ZXing.Net", LicenseText = apacheText };
+        yield return new() { Name = "CommunityToolkit.Mvvm", LicenseType = "Licenses_Mit".GetLocalized(), GitHubUrl = "https://github.com/CommunityToolkit/dotnet", LicenseText = MitText };
+        yield return new() { Name = "CommunityToolkit WinUI", LicenseType = "Licenses_Mit".GetLocalized(), GitHubUrl = "https://github.com/CommunityToolkit/Windows", LicenseText = MitText };
+        yield return new() { Name = "Humanizer", LicenseType = "Licenses_Mit".GetLocalized(), GitHubUrl = "https://github.com/Humanizr/Humanizer", LicenseText = MitText };
+        yield return new() { Name = "Magick.NET", LicenseType = "Licenses_Apache20".GetLocalized(), GitHubUrl = "https://github.com/dlemstra/Magick.NET", LicenseText = apacheText };
+        yield return new() { Name = "Microsoft.Extensions.Hosting", LicenseType = "Licenses_Mit".GetLocalized(), GitHubUrl = "https://github.com/dotnet/runtime", LicenseText = MitText };
+        yield return new() { Name = "Microsoft.Graphics.Win2D", LicenseType = "Licenses_Mit".GetLocalized(), GitHubUrl = "https://github.com/microsoft/Win2D", LicenseText = MitText };
+        yield return new() { Name = "PdfPig", LicenseType = "Licenses_Apache20".GetLocalized(), GitHubUrl = "https://github.com/UglyToad/PdfPig", LicenseText = apacheText };
+        yield return new() { Name = "Windows App SDK", LicenseType = "Licenses_Mit".GetLocalized(), GitHubUrl = "https://github.com/microsoft/WindowsAppSDK", LicenseText = MitText };
+        yield return new() { Name = "WinUI 3", LicenseType = "Licenses_Mit".GetLocalized(), GitHubUrl = "https://github.com/Microsoft/microsoft-ui-xaml", LicenseText = MitText };
+        yield return new() { Name = "WinUI.TableView", LicenseType = "Licenses_Mit".GetLocalized(), GitHubUrl = "https://github.com/w-ahmad/WinUI.TableView", LicenseText = MitText };
+        yield return new() { Name = "WinUIEx", LicenseType = "Licenses_Mit".GetLocalized(), GitHubUrl = "https://github.com/dotMorten/WinUIEx", LicenseText = MitText };
+        yield return new() { Name = "XAML Behaviors", LicenseType = "Licenses_Mit".GetLocalized(), GitHubUrl = "https://github.com/microsoft/XamlBehaviors", LicenseText = MitText };
+        yield return new() { Name = "ZXing.NET", LicenseType = "Licenses_Apache20".GetLocalized(), GitHubUrl = "https://github.com/micjahn/ZXing.Net", LicenseText = apacheText };
     }
 
-    private const string MitText =
+    private const string MitLicense =
         """
         MIT License
 
@@ -82,9 +84,7 @@ public sealed partial class LicensesDialogViewModel : ObservableRecipient
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         SOFTWARE.
 
-        ──────────────────────────────────────────────────────────────────────────
-        Note: The specific copyright year(s) and holder(s) for this library are
-        listed in its repository on GitHub. Use "View on GitHub" above to see the
-        full copyright notice.
         """;
+
+    private static string MitText => $"{MitLicense.TrimEnd()}{Environment.NewLine}{Environment.NewLine}{"Licenses_MitCopyrightNote".GetLocalized()}";
 }

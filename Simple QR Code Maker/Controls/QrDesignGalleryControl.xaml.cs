@@ -46,7 +46,7 @@ public sealed partial class QrDesignGalleryControl : UserControl
         {
             Debug.WriteLine($"Unable to open the QR designer: {exception}");
             WeakReferenceMessenger.Default.Send(new RequestShowMessage(
-                "Unable to open designer", "Please close any other dialog and try again.", InfoBarSeverity.Error));
+                "Design_OpenFailed".GetLocalized(), "Design_OpenFailedHelp".GetLocalized(), InfoBarSeverity.Error));
         }
         finally
         {

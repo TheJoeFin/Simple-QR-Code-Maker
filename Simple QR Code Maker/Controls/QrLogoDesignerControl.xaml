@@ -16,7 +16,7 @@
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
     </UserControl.Resources>
 
-    <SplitButton Command="{x:Bind ViewModel.SelectLogoCommand}" ToolTipService.ToolTip="Add image to the center of the QR Code">
+    <SplitButton x:Uid="QrLogoDesignerControl_AddImageToTheCenterSplitButton" Command="{x:Bind ViewModel.SelectLogoCommand}">
         <SplitButton.Content>
             <Viewbox Height="16" Margin="1">
                 <SymbolIcon Symbol="Pictures" />
@@ -29,12 +29,12 @@
                     HorizontalAlignment="Stretch"
                     Spacing="12">
                     <toolkitControls:Segmented HorizontalAlignment="Stretch" SelectedIndex="{x:Bind ViewModel.LogoPickerModeIndex, Mode=TwoWay}">
-                        <toolkitControls:SegmentedItem Content="Image">
+                        <toolkitControls:SegmentedItem x:Uid="QrLogoDesignerControl_ImageSegmentedItem">
                             <toolkitControls:SegmentedItem.Icon>
                                 <SymbolIcon Symbol="Pictures" />
                             </toolkitControls:SegmentedItem.Icon>
                         </toolkitControls:SegmentedItem>
-                        <toolkitControls:SegmentedItem Content="Emoji">
+                        <toolkitControls:SegmentedItem x:Uid="QrLogoDesignerControl_EmojiSegmentedItem">
                             <toolkitControls:SegmentedItem.Icon>
                                 <FontIcon Glyph="&#xE899;" />
                             </toolkitControls:SegmentedItem.Icon>
@@ -44,8 +44,7 @@
                     <toolkitControls:SwitchPresenter
                         HorizontalAlignment="Stretch"
                         TargetType="x:Int32"
-                        Value="{x:Bind ViewModel.LogoPickerModeIndex,
-                                       Mode=OneWay}">
+                        Value="{x:Bind ViewModel.LogoPickerModeIndex, Mode=OneWay}">
                         <toolkitControls:Case Value="0">
                             <StackPanel Spacing="12">
                                 <Grid
@@ -63,10 +62,7 @@
                                         BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                         BorderThickness="1"
                                         CornerRadius="4"
-                                        Visibility="{x:Bind ViewModel.HasImageLogoSelection,
-                                                            Converter={StaticResource BoolToVisibility},
-                                                            ConverterParameter=True,
-                                                            Mode=OneWay}">
+                                        Visibility="{x:Bind ViewModel.HasImageLogoSelection, Converter={StaticResource BoolToVisibility}, ConverterParameter=True, Mode=OneWay}">
                                         <StackPanel
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -76,10 +72,10 @@
                                                 <SymbolIcon Symbol="Pictures" />
                                             </Viewbox>
                                             <TextBlock
+                                                x:Uid="QrLogoDesignerControl_NoImageSelectedText"
                                                 HorizontalAlignment="Center"
                                                 FontSize="12"
-                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                Text="No image selected" />
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                         </StackPanel>
                                     </Border>
                                     <Border
@@ -88,16 +84,13 @@
                                         BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                         BorderThickness="1"
                                         CornerRadius="4"
-                                        Visibility="{x:Bind ViewModel.HasImageLogoSelection,
-                                                            Mode=OneWay,
-                                                            Converter={StaticResource BoolToVisibility}}">
+                                        Visibility="{x:Bind ViewModel.HasImageLogoSelection, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                                         <Image
                                             MaxWidth="150"
                                             MaxHeight="150"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
-                                            Source="{x:Bind ViewModel.LogoPreviewImage,
-                                                            Mode=OneWay}"
+                                            Source="{x:Bind ViewModel.LogoPreviewImage, Mode=OneWay}"
                                             Stretch="Uniform" />
                                     </Border>
                                     <Border
@@ -123,23 +116,22 @@
                                                 Style="{StaticResource AccentButtonStyle}">
                                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                                     <SymbolIcon Symbol="Pictures" />
-                                                    <TextBlock Text="Pick Image" />
+                                                    <TextBlock x:Uid="QrLogoDesignerControl_PickImageText" />
                                                 </StackPanel>
                                             </Button>
                                             <HyperlinkButton
                                                 HorizontalAlignment="Stretch"
                                                 Command="{x:Bind ViewModel.PasteLogoFromClipboardCommand}"
-                                                Visibility="{x:Bind ViewModel.CanPasteLogoImage,
-                                                                    Mode=OneWay,
-                                                                    Converter={StaticResource BoolToVisibility}}">
+                                                Visibility="{x:Bind ViewModel.CanPasteLogoImage, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                                     <SymbolIcon Symbol="Paste" />
-                                                    <TextBlock Text="Paste" />
+                                                    <TextBlock x:Uid="QrLogoDesignerControl_PasteText" />
                                                 </StackPanel>
                                             </HyperlinkButton>
                                         </StackPanel>
                                     </Border>
                                     <Button
+                                        x:Uid="QrLogoDesignerControl_RemoveImageButton"
                                         Width="24"
                                         Height="24"
                                         Margin="4"
@@ -148,28 +140,22 @@
                                         VerticalAlignment="Top"
                                         Command="{x:Bind ViewModel.RemoveLogoCommand}"
                                         CornerRadius="12"
-                                        ToolTipService.ToolTip="Remove image"
-                                        Visibility="{x:Bind ViewModel.HasImageLogoSelection,
-                                                            Mode=OneWay,
-                                                            Converter={StaticResource BoolToVisibility}}">
+                                        Visibility="{x:Bind ViewModel.HasImageLogoSelection, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                                         <Viewbox Width="10" Height="10">
                                             <SymbolIcon Symbol="Cancel" />
                                         </Viewbox>
                                     </Button>
                                 </Grid>
                                 <Button
+                                    x:Uid="QrLogoDesignerControl_UseOnDeviceAIToButton"
                                     Width="160"
                                     HorizontalAlignment="Center"
                                     Command="{x:Bind ViewModel.RemoveLogoBackgroundCommand}"
-                                    IsEnabled="{x:Bind ViewModel.HasImageLogoSelection,
-                                                       Mode=OneWay}"
-                                    ToolTipService.ToolTip="Use on-device AI to remove the background from the logo image"
-                                    Visibility="{x:Bind ViewModel.CanRemoveLogoBackground,
-                                                        Mode=OneWay,
-                                                        Converter={StaticResource BoolToVisibility}}">
+                                    IsEnabled="{x:Bind ViewModel.HasImageLogoSelection, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.CanRemoveLogoBackground, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <FontIcon FontSize="16" Glyph="&#xE945;" />
-                                        <TextBlock Text="Erase Background" />
+                                        <TextBlock x:Uid="QrLogoDesignerControl_EraseBackgroundText" />
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
@@ -183,15 +169,13 @@
                                                 HorizontalAlignment="Center"
                                                 FontFamily="Segoe UI Emoji"
                                                 FontSize="18"
-                                                Foreground="{x:Bind ViewModel.ForegroundColor,
-                                                                    Mode=OneWay,
-                                                                    Converter={StaticResource ColorToBrush}}"
+                                                Foreground="{x:Bind ViewModel.ForegroundColor, Mode=OneWay, Converter={StaticResource ColorToBrush}}"
                                                 IsColorFontEnabled="False"
                                                 Text="😀" />
                                             <TextBlock
+                                                x:Uid="QrLogoDesignerControl_SolidText"
                                                 HorizontalAlignment="Center"
-                                                FontSize="10"
-                                                Text="Solid" />
+                                                FontSize="10" />
                                         </StackPanel>
                                     </toolkitControls:SegmentedItem>
                                     <toolkitControls:SegmentedItem>
@@ -204,9 +188,9 @@
                                                 IsColorFontEnabled="True"
                                                 Text="😀" />
                                             <TextBlock
+                                                x:Uid="QrLogoDesignerControl_3DText"
                                                 HorizontalAlignment="Center"
-                                                FontSize="10"
-                                                Text="3D" />
+                                                FontSize="10" />
                                         </StackPanel>
                                     </toolkitControls:SegmentedItem>
                                 </toolkitControls:Segmented>
@@ -214,19 +198,16 @@
                                     HorizontalAlignment="Center"
                                     FontSize="12"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="{x:Bind ViewModel.SelectedEmojiStyleLabel,
-                                                  Mode=OneWay}"
+                                    Text="{x:Bind ViewModel.SelectedEmojiStyleLabel, Mode=OneWay}"
                                     Visibility="Collapsed" />
                                 <GridView
                                     Width="240"
                                     Height="180"
                                     IsItemClickEnabled="False"
-                                    ItemsSource="{x:Bind ViewModel.EmojiOptions,
-                                                         Mode=OneWay}"
+                                    ItemsSource="{x:Bind ViewModel.EmojiOptions, Mode=OneWay}"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                    SelectedItem="{x:Bind ViewModel.SelectedEmojiOption,
-                                                          Mode=TwoWay}"
+                                    SelectedItem="{x:Bind ViewModel.SelectedEmojiOption, Mode=TwoWay}"
                                     SelectionMode="Single">
                                     <GridView.ItemContainerStyle>
                                         <Style TargetType="GridViewItem">
@@ -247,8 +228,7 @@
                                                     Width="34"
                                                     Height="34"
                                                     HorizontalAlignment="Center"
-                                                    Source="{x:Bind PreviewImage,
-                                                                    Mode=OneWay}" />
+                                                    Source="{x:Bind PreviewImage, Mode=OneWay}" />
                                                 <TextBlock
                                                     HorizontalAlignment="Center"
                                                     FontSize="11"
@@ -263,12 +243,10 @@
                                 <Button
                                     HorizontalAlignment="Stretch"
                                     Command="{x:Bind ViewModel.RemoveLogoCommand}"
-                                    Visibility="{x:Bind ViewModel.HasEmojiLogoSelection,
-                                                        Mode=OneWay,
-                                                        Converter={StaticResource BoolToVisibility}}">
+                                    Visibility="{x:Bind ViewModel.HasEmojiLogoSelection, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <SymbolIcon Symbol="Cancel" />
-                                        <TextBlock Text="Clear Emoji" />
+                                        <TextBlock x:Uid="QrLogoDesignerControl_ClearEmojiText" />
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
@@ -277,42 +255,39 @@
 
                     <StackPanel Spacing="6">
                         <TextBlock
+                            x:Uid="QrLogoDesignerControl_CenterLogoSizeText"
                             FontSize="12"
-                            FontWeight="SemiBold"
-                            Text="Center Logo Size" />
+                            FontWeight="SemiBold" />
                         <Slider
-                            Maximum="{x:Bind ViewModel.LogoSizeMaxPercentage,
-                                             Mode=OneWay}"
+                            x:Uid="QrLogoDesignerControl_AdjustTheLogoSizeRelativeSlider"
+                            Maximum="{x:Bind ViewModel.LogoSizeMaxPercentage, Mode=OneWay}"
                             Minimum="7"
                             StepFrequency="1"
                             TickFrequency="2"
                             TickPlacement="BottomRight"
-                            ToolTipService.ToolTip="Adjust the logo size relative to the size of the QR Code"
-                            Value="{x:Bind ViewModel.LogoSizePercentage,
-                                           Mode=TwoWay}" />
+                            Value="{x:Bind ViewModel.LogoSizePercentage, Mode=TwoWay}" />
                         <TextBlock HorizontalAlignment="Center" FontSize="12">
                             <Run Text="{x:Bind ViewModel.LogoSizePercentage, Mode=OneWay}" />
-                            <Run Text="percent" />
+                            <Run x:Uid="QrLogoDesignerControl_PercentText" />
                         </TextBlock>
                     </StackPanel>
 
                     <StackPanel Spacing="6">
                         <TextBlock
+                            x:Uid="QrLogoDesignerControl_PaddingAroundCenterLogoText"
                             FontSize="12"
-                            FontWeight="SemiBold"
-                            Text="Padding around center logo" />
+                            FontWeight="SemiBold" />
                         <Slider
+                            x:Uid="QrLogoDesignerControl_ScaleTheLogoImageToSlider"
                             Maximum="50"
                             Minimum="-50"
                             StepFrequency="1"
                             TickFrequency="8"
                             TickPlacement="BottomRight"
-                            ToolTipService.ToolTip="Scale the logo image to fit it better in the space (positive = smaller logo with space, negative = larger logo)"
-                            Value="{x:Bind ViewModel.LogoPaddingPixels,
-                                           Mode=TwoWay}" />
+                            Value="{x:Bind ViewModel.LogoPaddingPixels, Mode=TwoWay}" />
                         <TextBlock HorizontalAlignment="Center" FontSize="12">
                             <Run Text="{x:Bind ViewModel.LogoPaddingPixels, Mode=OneWay}" />
-                            <Run Text="px" />
+                            <Run x:Uid="QrLogoDesignerControl_PxText" />
                         </TextBlock>
                     </StackPanel>
                 </StackPanel>

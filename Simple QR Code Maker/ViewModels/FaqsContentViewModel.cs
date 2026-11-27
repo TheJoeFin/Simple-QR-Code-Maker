@@ -17,6 +17,7 @@ public partial class FaqsContentViewModel : ObservableRecipient
     public partial string SearchText { get; set; } = string.Empty;
 
     private readonly INavigationService navigationService;
+    private FaqTopic activeTopic;
 
     public FaqsContentViewModel(INavigationService navigationService)
     {
@@ -139,11 +140,24 @@ public partial class FaqsContentViewModel : ObservableRecipient
 
     private void OnRequestPaneChange(object recipient, RequestPaneChange message)
     {
-        if (message.Pane == MainViewPanes.Faq && message.RequestState == PaneState.Open)
-            SearchText = message.SearchText;
+        if (message.Pane != MainViewPanes.Faq || message.RequestState != PaneState.Open)
+            return;
+
+        SearchText = message.Topic switch
+        {
+            FaqTopic.Size => "Faq_TopicSize".GetLocalized(),
+            FaqTopic.ErrorCorrection => "Faq_TopicErrorCorrection".GetLocalized(),
+            FaqTopic.Brands => "Faq_TopicBrands".GetLocalized(),
+            FaqTopic.Detection => "Faq_TopicDetection".GetLocalized(),
+            _ => message.SearchText,
+        };
+        activeTopic = message.Topic;
+        RefreshResults();
     }
 
-    private void SearchTimer_Tick(object? sender, object e)
+    private void SearchTimer_Tick(object? sender, object e) => RefreshResults();
+
+    private void RefreshResults()
     {
         searchTimer.Stop();
 
@@ -151,22 +165,12 @@ public partial class FaqsContentViewModel : ObservableRecipient
 
         foreach (FaqItem item in FaqItem.AllFaqs)
         {
-            if (string.IsNullOrWhiteSpace(SearchText))
-            {
-                if (FaqItems.Contains(item))
-                    continue;
+            if (activeTopic != FaqTopic.None
+                ? (item.Topics & activeTopic) != 0
+                : string.IsNullOrWhiteSpace(SearchText)
+                    || item.Title.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)
+                    || item.Content.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase))
                 FaqItems.Add(item);
-                continue;
-            }
-
-            if (item.Title.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)
-                || item.Content.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase))
-            {
-                if (FaqItems.Contains(item))
-                    continue;
-
-                FaqItems.Add(item);
-            }
         }
     }
 
@@ -174,6 +178,7 @@ public partial class FaqsContentViewModel : ObservableRecipient
 
     partial void OnSearchTextChanged(string value)
     {
+        activeTopic = FaqTopic.None;
         try
         {
             searchTimer.Stop();

@@ -23,131 +23,113 @@
             HorizontalAlignment="Center"
             Orientation="Horizontal"
             Spacing="10"
-            Visibility="{x:Bind ViewModel.HasRequestedCodes,
-                                Converter={StaticResource BoolToVisibility},
-                                Mode=OneWay}">
-            <TextBlock VerticalAlignment="Center" Text="Save as" />
-            <SplitButton Command="{x:Bind ViewModel.SavePngCommand}" ToolTipService.ToolTip="Save code(s) as PNG files">
+            Visibility="{x:Bind ViewModel.HasRequestedCodes, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
+            <TextBlock x:Uid="QrExportActionsControl_SaveAsText" VerticalAlignment="Center" />
+            <SplitButton x:Uid="QrExportActionsControl_SaveCodeSAsPNGSplitButton" Command="{x:Bind ViewModel.SavePngCommand}">
                 <SplitButton.Content>
-                    <local:IconAndTextContent ContentText="PNG" Icon="Save" />
+                    <local:IconAndTextContent x:Uid="QrExportActionsControl_PNGIconAndTextContent" Icon="Save" />
                 </SplitButton.Content>
                 <SplitButton.Flyout>
                     <MenuFlyout>
                         <MenuFlyoutItem
+                            x:Uid="QrExportActionsControl_SaveAllToFilesDefaultMenuItem"
                             Command="{x:Bind ViewModel.SavePngCommand}"
-                            Icon="SaveLocal"
-                            Text="Save all to files (default)" />
+                            Icon="SaveLocal" />
                         <MenuFlyoutItem
+                            x:Uid="QrExportActionsControl_SaveAllToZipMenuItem"
                             Command="{x:Bind ViewModel.SavePngAsZipCommand}"
                             Icon="SaveLocal"
-                            Text="Save all to zip"
-                            Visibility="{x:Bind ViewModel.ShowZipSaveOptions,
-                                                Converter={StaticResource BoolToVisibility},
-                                                Mode=OneWay}" />
+                            Visibility="{x:Bind ViewModel.ShowZipSaveOptions, Converter={StaticResource BoolToVisibility}, Mode=OneWay}" />
                         <MenuFlyoutItem
+                            x:Uid="QrExportActionsControl_CopyAllToClipboardMenuItem"
                             Command="{x:Bind ViewModel.CopyPngToClipboardCommand}"
                             Icon="Copy"
-                            IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled,
-                                               Mode=OneWay}"
-                            Text="Copy all to clipboard" />
+                            IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled, Mode=OneWay}" />
                     </MenuFlyout>
                 </SplitButton.Flyout>
             </SplitButton>
-            <SplitButton Command="{x:Bind ViewModel.SaveSvgCommand}" ToolTipService.ToolTip="Save code(s) as SVG files">
+            <SplitButton x:Uid="QrExportActionsControl_SaveCodeSAsSVGSplitButton" Command="{x:Bind ViewModel.SaveSvgCommand}">
                 <SplitButton.Content>
-                    <local:IconAndTextContent ContentText="SVG" Icon="Save" />
+                    <local:IconAndTextContent x:Uid="QrExportActionsControl_SVGIconAndTextContent" Icon="Save" />
                 </SplitButton.Content>
                 <SplitButton.Flyout>
                     <MenuFlyout>
                         <MenuFlyoutItem
+                            x:Uid="QrExportActionsControl_SaveAllToFilesDefaultMenuItem2"
                             Command="{x:Bind ViewModel.SaveSvgCommand}"
-                            Icon="SaveLocal"
-                            Text="Save all to files (default)" />
+                            Icon="SaveLocal" />
                         <MenuFlyoutItem
+                            x:Uid="QrExportActionsControl_SaveAllToZipMenuItem2"
                             Command="{x:Bind ViewModel.SaveSvgAsZipCommand}"
                             Icon="SaveLocal"
-                            Text="Save all to zip"
-                            Visibility="{x:Bind ViewModel.ShowZipSaveOptions,
-                                                Converter={StaticResource BoolToVisibility},
-                                                Mode=OneWay}" />
+                            Visibility="{x:Bind ViewModel.ShowZipSaveOptions, Converter={StaticResource BoolToVisibility}, Mode=OneWay}" />
                         <MenuFlyoutItem
+                            x:Uid="QrExportActionsControl_CopyAllToClipboardMenuItem2"
                             Command="{x:Bind ViewModel.CopySvgToClipboardCommand}"
                             Icon="Copy"
-                            IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled,
-                                               Mode=OneWay}"
-                            Text="Copy all to clipboard" />
+                            IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled, Mode=OneWay}" />
                         <MenuFlyoutItem
+                            x:Uid="QrExportActionsControl_CopyAllAsTextToMenuItem"
                             Command="{x:Bind ViewModel.CopySvgTextToClipboardCommand}"
                             Icon="Copy"
-                            IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled,
-                                               Mode=OneWay}"
-                            Text="Copy all as text to clipboard" />
+                            IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled, Mode=OneWay}" />
                     </MenuFlyout>
                 </SplitButton.Flyout>
             </SplitButton>
             <SplitButton
+                x:Uid="QrExportActionsControl_SaveCodeSAsBothSplitButton"
                 Command="{x:Bind ViewModel.SaveBothCommand}"
-                ToolTipService.ToolTip="Save code(s) as both PNG and SVG files"
-                Visibility="{x:Bind ViewModel.ShowSaveBothButton,
-                                    Converter={StaticResource BoolToVisibility},
-                                    Mode=OneWay}">
+                Visibility="{x:Bind ViewModel.ShowSaveBothButton, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
                 <SplitButton.Content>
-                    <local:IconAndTextContent ContentText="Both" Icon="Save" />
+                    <local:IconAndTextContent x:Uid="QrExportActionsControl_BothIconAndTextContent" Icon="Save" />
                 </SplitButton.Content>
                 <SplitButton.Flyout>
                     <MenuFlyout>
                         <MenuFlyoutItem
+                            x:Uid="QrExportActionsControl_SaveAllToFilesDefaultMenuItem3"
                             Command="{x:Bind ViewModel.SaveBothCommand}"
-                            Icon="SaveLocal"
-                            Text="Save all to files (default)" />
+                            Icon="SaveLocal" />
                         <MenuFlyoutItem
+                            x:Uid="QrExportActionsControl_SaveAllToZipMenuItem3"
                             Command="{x:Bind ViewModel.SaveBothAsZipCommand}"
                             Icon="SaveLocal"
-                            Text="Save all to zip"
-                            Visibility="{x:Bind ViewModel.ShowZipSaveOptions,
-                                                Converter={StaticResource BoolToVisibility},
-                                                Mode=OneWay}" />
+                            Visibility="{x:Bind ViewModel.ShowZipSaveOptions, Converter={StaticResource BoolToVisibility}, Mode=OneWay}" />
                         <MenuFlyoutItem
+                            x:Uid="QrExportActionsControl_CopyAllToClipboardMenuItem3"
                             Command="{x:Bind ViewModel.CopyBothToClipboardCommand}"
                             Icon="Copy"
-                            IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled,
-                                               Mode=OneWay}"
-                            Text="Copy all to clipboard" />
+                            IsEnabled="{x:Bind ViewModel.IsBulkClipboardEnabled, Mode=OneWay}" />
                     </MenuFlyout>
                 </SplitButton.Flyout>
             </SplitButton>
             <Button
+                x:Uid="QrExportActionsControl_PrintQRCodeSButton"
                 Command="{x:Bind ViewModel.PrintCommand}"
-                ToolTipService.ToolTip="Print QR code(s)"
-                Visibility="{x:Bind ViewModel.ShowPrintButton,
-                                    Converter={StaticResource BoolToVisibility},
-                                    Mode=OneWay}">
-                <local:IconAndTextContent ContentText="Print" Icon="Print" />
+                Visibility="{x:Bind ViewModel.ShowPrintButton, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
+                <local:IconAndTextContent x:Uid="QrExportActionsControl_PrintIconAndTextContent" Icon="Print" />
             </Button>
             <Button
+                x:Uid="QrExportActionsControl_QuicklyShowOrHideExportButton"
                 Width="32"
                 Height="32"
                 Padding="0"
                 Background="Transparent"
                 BorderThickness="0"
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                ToolTipService.ToolTip="Quickly show or hide export options">
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                 <Button.Flyout>
                     <MenuFlyout>
                         <ToggleMenuFlyoutItem
+                            x:Uid="QrExportActionsControl_ShowSaveBothButtonToggleMenuFlyoutItem"
                             Command="{x:Bind ViewModel.ToggleSaveBothButtonVisibilityCommand}"
-                            IsChecked="{x:Bind ViewModel.ShowSaveBothButton,
-                                               Mode=OneWay}"
-                            Text="Show Save Both button">
+                            IsChecked="{x:Bind ViewModel.ShowSaveBothButton, Mode=OneWay}">
                             <ToggleMenuFlyoutItem.Icon>
                                 <SymbolIcon Symbol="Save" />
                             </ToggleMenuFlyoutItem.Icon>
                         </ToggleMenuFlyoutItem>
                         <ToggleMenuFlyoutItem
+                            x:Uid="QrExportActionsControl_ShowPrintButtonToggleMenuFlyoutItem"
                             Command="{x:Bind ViewModel.TogglePrintButtonVisibilityCommand}"
-                            IsChecked="{x:Bind ViewModel.ShowPrintButton,
-                                               Mode=OneWay}"
-                            Text="Show Print button">
+                            IsChecked="{x:Bind ViewModel.ShowPrintButton, Mode=OneWay}">
                             <ToggleMenuFlyoutItem.Icon>
                                 <SymbolIcon Symbol="Print" />
                             </ToggleMenuFlyoutItem.Icon>
@@ -158,19 +140,14 @@
             </Button>
             <FontIcon
                 Glyph="&#xE946;"
-                ToolTipService.ToolTip="{x:Bind ViewModel.BulkClipboardRestrictionText,
-                                                Mode=OneWay}"
-                Visibility="{x:Bind ViewModel.BulkClipboardRestrictionText,
-                                    Converter={StaticResource EmptyStringToCollapsed},
-                                    Mode=OneWay}" />
+                ToolTipService.ToolTip="{x:Bind ViewModel.BulkClipboardRestrictionText, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.BulkClipboardRestrictionText, Converter={StaticResource EmptyStringToCollapsed}, Mode=OneWay}" />
         </StackPanel>
         <StackPanel
             HorizontalAlignment="Center"
             Orientation="Horizontal"
             Spacing="8"
-            Visibility="{x:Bind ViewModel.IsBulkOperationRunning,
-                                Converter={StaticResource BoolToVisibility},
-                                Mode=OneWay}">
+            Visibility="{x:Bind ViewModel.IsBulkOperationRunning, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
             <ProgressRing
                 Width="20"
                 Height="20"

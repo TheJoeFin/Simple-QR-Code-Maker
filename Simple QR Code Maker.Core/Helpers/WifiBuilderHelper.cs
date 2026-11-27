@@ -64,17 +64,17 @@ public static class WifiBuilderHelper
         return builder.ToString();
     }
 
-    public static string GetDisplayName(string? text)
+    public static string GetDisplayName(string? text, string fallback = "WiFi network")
     {
         return TryParse(text, out WifiBuilderState state)
-            ? GetDisplayName(state)
-            : "WiFi network";
+            ? GetDisplayName(state, fallback)
+            : fallback;
     }
 
-    public static string GetDisplayName(WifiBuilderState state)
+    public static string GetDisplayName(WifiBuilderState state, string fallback = "WiFi network")
     {
         string ssid = state.Ssid.Trim();
-        return string.IsNullOrWhiteSpace(ssid) ? "WiFi network" : ssid;
+        return string.IsNullOrWhiteSpace(ssid) ? fallback : ssid;
     }
 
     private static Dictionary<string, string> ParseFields(string payload)

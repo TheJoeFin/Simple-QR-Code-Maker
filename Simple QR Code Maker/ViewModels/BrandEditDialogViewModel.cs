@@ -5,6 +5,8 @@ using Windows.Storage.Pickers;
 using WinRT.Interop;
 using ZXing.QrCode.Internal;
 
+using Simple_QR_Code_Maker.Helpers;
+
 namespace Simple_QR_Code_Maker.ViewModels;
 
 public sealed partial class BrandEditDialogViewModel : ObservableRecipient
@@ -13,13 +15,13 @@ public sealed partial class BrandEditDialogViewModel : ObservableRecipient
 
     public List<ErrorCorrectionOptions> AllCorrectionLevels { get; } =
     [
-        new("L", "Low 7%", ErrorCorrectionLevel.L),
-        new("M", "Medium 15%", ErrorCorrectionLevel.M),
-        new("Q", "Quarter 25%", ErrorCorrectionLevel.Q),
-        new("H", "High 30%", ErrorCorrectionLevel.H),
+        new("L", "Correction_Low".GetLocalized(), ErrorCorrectionLevel.L),
+        new("M", "Correction_Medium".GetLocalized(), ErrorCorrectionLevel.M),
+        new("Q", "Correction_Quarter".GetLocalized(), ErrorCorrectionLevel.Q),
+        new("H", "Correction_High".GetLocalized(), ErrorCorrectionLevel.H),
     ];
 
-    public List<QrFramePresetOption> AllFramePresets { get; } = [.. QrFramePresetCatalog.All];
+    public List<QrFramePresetOption> AllFramePresets { get; } = [.. QrFramePresetCatalog.All.Select(option => LocalizedDisplay.FrameOption(option.Preset))];
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNameValid))]
@@ -82,22 +84,22 @@ public sealed partial class BrandEditDialogViewModel : ObservableRecipient
 
     public bool IsNameValid => !string.IsNullOrWhiteSpace(EditName);
     public bool HasLogoPath => IncludeLogo && LogoPath is not null;
-    public string LogoSizeDescription => $"{LogoSize} percent";
-    public string LogoPaddingDescription => $"{LogoPadding} px";
+    public string LogoSizeDescription => "Logo_SizePercent".FormatLocalized(LogoSize);
+    public string LogoPaddingDescription => "Logo_PaddingPixels".FormatLocalized(LogoPadding);
     public bool IsFrameTextVisible => IncludeFrame && SelectedFramePresetOption.Preset != QrFramePreset.None;
 
     public string FrameTextHeader => _original.FrameTextSource == QrFrameTextSource.ContentSummary
-        ? "Fallback label text"
+        ? "Frame_FallbackLabel".GetLocalized()
         : SelectedFramePresetOption.Preset switch
         {
-            QrFramePreset.RoundedFrame => "Banner text",
-            QrFramePreset.CornerCallout => "Callout text",
-            QrFramePreset.BottomLabel => "Label text",
-            _ => "Caption",
+            QrFramePreset.RoundedFrame => "Frame_BannerText".GetLocalized(),
+            QrFramePreset.CornerCallout => "Frame_CalloutText".GetLocalized(),
+            QrFramePreset.BottomLabel => "Frame_LabelText".GetLocalized(),
+            _ => "Frame_Caption".GetLocalized(),
         };
 
     public string FrameTextDescription => _original.FrameTextSource == QrFrameTextSource.ContentSummary
-        ? "Used when no content summary can be derived."
+        ? "Frame_FallbackHelp".GetLocalized()
         : string.Empty;
 
     public string FrameTextPlaceholder => SelectedFramePresetOption.DefaultText;
@@ -124,8 +126,10 @@ public sealed partial class BrandEditDialogViewModel : ObservableRecipient
             ? AllFramePresets.FindIndex(option => option.Preset == original.FramePreset.Value)
             : 0;
         SelectedFramePresetIndex = framePresetIndex >= 0 ? framePresetIndex : 0;
-        EditFrameText = original.FramePreset.HasValue
-            ? QrFramePresetCatalog.ResolveText(original.FramePreset.Value, original.FrameText) ?? string.Empty
+        EditFrameText = original.FramePreset is QrFramePreset preset && preset != QrFramePreset.None
+            ? (string.IsNullOrWhiteSpace(original.FrameText)
+                ? LocalizedDisplay.FrameOption(preset).DefaultText
+                : original.FrameText.Trim())
             : string.Empty;
 
         IncludeUrl = original.UrlContent is not null;

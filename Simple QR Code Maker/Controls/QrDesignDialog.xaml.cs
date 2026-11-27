@@ -50,12 +50,20 @@ public sealed partial class QrDesignDialog : ContentDialog
     {
         ViewModel = viewModel;
         InitializeComponent();
-        ModuleCombo.ItemsSource = Enum.GetValues<QrModuleStyle>();
-        EyeCombo.ItemsSource = Enum.GetValues<QrEyeStyle>();
-        IconCombo.ItemsSource = Enum.GetValues<QrCaptionIcon>();
-        LabelSourceCombo.ItemsSource = new[] { "Manual text", "Content summary" };
-        CaptionSuggestionCombo.ItemsSource = new[] { "Scan Me", "Join Wi-Fi", "Save my contact", "View the menu", "Get tickets", "Say hello!" };
+        ModuleCombo.ItemsSource = LocalizeChoices<QrModuleStyle>("Design_Module");
+        EyeCombo.ItemsSource = LocalizeChoices<QrEyeStyle>("Design_Eye");
+        IconCombo.ItemsSource = LocalizeChoices<QrCaptionIcon>("Design_Icon");
+        LabelSourceCombo.ItemsSource = new[] { "Design_LabelManualText".GetLocalized(), "Design_LabelContentSummary".GetLocalized() };
+        CaptionSuggestionCombo.ItemsSource = new[] { "Design_CaptionScanMe".GetLocalized(), "Design_CaptionJoinWifi".GetLocalized(), "Design_CaptionContact".GetLocalized(), "Design_CaptionViewMenu".GetLocalized(), "Design_CaptionTickets".GetLocalized(), "Design_CaptionSayHello".GetLocalized() };
     }
+
+    private sealed record DesignChoice<T>(T Value, string Label)
+    {
+        public override string ToString() => Label;
+    }
+
+    private static DesignChoice<T>[] LocalizeChoices<T>(string prefix) where T : struct, Enum
+        => [.. Enum.GetValues<T>().Select(value => new DesignChoice<T>(value, $"{prefix}_{value}".GetLocalized()))];
 
     private async void DesignDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
     {
@@ -89,7 +97,7 @@ public sealed partial class QrDesignDialog : ContentDialog
                 }
                 else if (frame is QrFramePresetOption frameOption)
                 {
-                    item = new(frameOption.Preset == QrFramePreset.None ? "No frame" : frameOption.ShortDescription,
+                    item = new(frameOption.Preset == QrFramePreset.None ? "Design_NoFrame".GetLocalized() : frameOption.ShortDescription,
                         frameOption.Description, image, null, frameOption.Preset);
                     Frames.Add(item);
                 }
@@ -105,7 +113,7 @@ public sealed partial class QrDesignDialog : ContentDialog
             Presets.Clear();
             Frames.Clear();
             Debug.WriteLine($"Unable to generate QR design previews: {exception}");
-            PreviewError.Message = "Close and reopen Design to try loading previews again.";
+            PreviewError.Message = "Design_PreviewErrorHelp".GetLocalized();
             PreviewError.IsOpen = true;
         }
         finally
@@ -153,10 +161,10 @@ public sealed partial class QrDesignDialog : ContentDialog
     private static List<(QrDesignPreset? Design, QrFramePresetOption? Frame, byte[] Png)> BuildPreviews()
     {
         List<(QrDesignPreset?, QrFramePresetOption?, byte[])> previews = [];
-        foreach (QrDesignPreset design in QrDesignPresetCatalog.All)
+        foreach (QrDesignPreset design in QrDesignPresetCatalog.All.Select(LocalizedDisplay.DesignPreset))
             previews.Add((design, null, RenderThumbnail(design.Frame, design.Caption, design.Appearance, design.Foreground, design.Background)));
 
-        foreach (QrFramePresetOption frame in QrFramePresetCatalog.All)
+        foreach (QrFramePresetOption frame in QrFramePresetCatalog.All.Select(option => LocalizedDisplay.FrameOption(option.Preset)))
             previews.Add((null, frame, RenderThumbnail(frame.Preset, frame.DefaultText,
                 new() { FrameAccent = Windows.UI.Color.FromArgb(255, 137, 112, 211) },
                 Windows.UI.Color.FromArgb(255, 30, 25, 45), Windows.UI.Color.FromArgb(255, 255, 255, 255))));
@@ -190,9 +198,9 @@ public sealed partial class QrDesignDialog : ContentDialog
         updatingSelection = true;
         try
         {
-            ModuleCombo.SelectedItem = viewModel.ModuleStyle;
-            EyeCombo.SelectedItem = viewModel.EyeStyle;
-            IconCombo.SelectedItem = viewModel.CaptionIcon;
+            ModuleCombo.SelectedItem = ((DesignChoice<QrModuleStyle>[])ModuleCombo.ItemsSource).FirstOrDefault(choice => choice.Value == viewModel.ModuleStyle);
+            EyeCombo.SelectedItem = ((DesignChoice<QrEyeStyle>[])EyeCombo.ItemsSource).FirstOrDefault(choice => choice.Value == viewModel.EyeStyle);
+            IconCombo.SelectedItem = ((DesignChoice<QrCaptionIcon>[])IconCombo.ItemsSource).FirstOrDefault(choice => choice.Value == viewModel.CaptionIcon);
             LabelSourceCombo.SelectedIndex = (int)viewModel.FrameTextSource;
             FrameGrid.SelectedItem = Frames.FirstOrDefault(item => item.Frame == viewModel.FramePreset);
             PresetGrid.SelectedItem = Presets.FirstOrDefault(item => item.Design is QrDesignPreset design
@@ -227,25 +235,25 @@ public sealed partial class QrDesignDialog : ContentDialog
     private void FrameGrid_SelectionChanged(object sender, SelectionChangedEventArgs args)
     {
         if (!updatingSelection && FrameGrid.SelectedItem is QrDesignGalleryItem item)
-            ViewModel.SelectFramePresetCommand.Execute(QrFramePresetCatalog.GetOption(item.Frame));
+            ViewModel.SelectFramePresetCommand.Execute(LocalizedDisplay.FrameOption(item.Frame));
     }
 
     private void ModuleCombo_SelectionChanged(object sender, SelectionChangedEventArgs args)
     {
-        if (!updatingSelection && ModuleCombo.SelectedItem is QrModuleStyle style)
-            ViewModel.ModuleStyle = style;
+        if (!updatingSelection && ModuleCombo.SelectedItem is DesignChoice<QrModuleStyle> choice)
+            ViewModel.ModuleStyle = choice.Value;
     }
 
     private void EyeCombo_SelectionChanged(object sender, SelectionChangedEventArgs args)
     {
-        if (!updatingSelection && EyeCombo.SelectedItem is QrEyeStyle style)
-            ViewModel.EyeStyle = style;
+        if (!updatingSelection && EyeCombo.SelectedItem is DesignChoice<QrEyeStyle> choice)
+            ViewModel.EyeStyle = choice.Value;
     }
 
     private void IconCombo_SelectionChanged(object sender, SelectionChangedEventArgs args)
     {
-        if (!updatingSelection && IconCombo.SelectedItem is QrCaptionIcon icon)
-            ViewModel.CaptionIcon = icon;
+        if (!updatingSelection && IconCombo.SelectedItem is DesignChoice<QrCaptionIcon> choice)
+            ViewModel.CaptionIcon = choice.Value;
     }
 
     private void LabelSourceCombo_SelectionChanged(object sender, SelectionChangedEventArgs args)
@@ -285,7 +293,7 @@ public sealed partial class QrDesignDialog : ContentDialog
         {
             AutomationProperties.SetName(args.ItemContainer, item.Name);
             AutomationProperties.SetAutomationId(args.ItemContainer,
-                item.Design is not null ? $"DesignPreset_{item.Name.Replace(" ", "")}" : $"Frame_{item.Frame}");
+                item.Design is not null ? $"DesignPreset_{item.Design.Id}" : $"Frame_{item.Frame}");
         }
     }
 

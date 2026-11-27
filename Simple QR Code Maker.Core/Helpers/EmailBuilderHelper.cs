@@ -81,19 +81,19 @@ public static class EmailBuilderHelper
         return builder.ToString();
     }
 
-    public static string GetDisplayName(string? text)
+    public static string GetDisplayName(string? text, string fallback = "Email")
     {
         return TryParse(text, out EmailBuilderState state)
-            ? GetDisplayName(state)
-            : "Email";
+            ? GetDisplayName(state, fallback)
+            : fallback;
     }
 
-    public static string GetDisplayName(EmailBuilderState state)
+    public static string GetDisplayName(EmailBuilderState state, string fallback = "Email")
     {
         if (!string.IsNullOrWhiteSpace(state.Subject))
             return state.Subject.Trim();
 
         string to = state.To.Trim();
-        return string.IsNullOrWhiteSpace(to) ? "Email" : to;
+        return string.IsNullOrWhiteSpace(to) ? fallback : to;
     }
 }

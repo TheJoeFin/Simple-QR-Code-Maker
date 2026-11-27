@@ -17,46 +17,35 @@
     </UserControl.Resources>
 
     <DropDownButton
+        x:Uid="BrandPickerControl_SelectBrandDropDownButton"
         Height="36"
         MinWidth="212"
         HorizontalAlignment="Center"
         HorizontalContentAlignment="Stretch"
-        ToolTipService.ToolTip="Select brand"
-        Visibility="{x:Bind ViewModel.BrandItems.Count,
-                            Converter={StaticResource EmptyCollectionToVisibility},
-                            ConverterParameter=true,
-                            Mode=OneWay}">
+        Visibility="{x:Bind ViewModel.BrandItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, ConverterParameter=true, Mode=OneWay}">
         <DropDownButton.Content>
             <Grid>
                 <StackPanel
                     Orientation="Horizontal"
                     Spacing="6"
-                    Visibility="{x:Bind ViewModel.SelectedBrand,
-                                        Mode=OneWay,
-                                        Converter={StaticResource NullToVisibility}}">
+                    Visibility="{x:Bind ViewModel.SelectedBrand, Mode=OneWay, Converter={StaticResource NullToVisibility}}">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"
-                        Text="{x:Bind ViewModel.SelectedBrand.Name,
-                                      Mode=OneWay}"
+                        Text="{x:Bind ViewModel.SelectedBrand.Name, Mode=OneWay}"
                         TextTrimming="CharacterEllipsis" />
                     <SymbolIcon
+                        x:Uid="BrandPickerControl_DefaultBrandSymbolIcon"
                         VerticalAlignment="Center"
                         Symbol="OutlineStar"
-                        ToolTipService.ToolTip="Default brand"
-                        Visibility="{x:Bind ViewModel.SelectedBrand.IsDefault,
-                                            Mode=OneWay,
-                                            Converter={StaticResource BoolToVisibility}}" />
+                        Visibility="{x:Bind ViewModel.SelectedBrand.IsDefault, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
                 </StackPanel>
 
                 <TextBlock
+                    x:Uid="BrandPickerControl_SelectABrandText"
                     VerticalAlignment="Center"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="Select a brand"
-                    Visibility="{x:Bind ViewModel.SelectedBrand,
-                                        Mode=OneWay,
-                                        Converter={StaticResource NullToVisibility},
-                                        ConverterParameter=Inverted}" />
+                    Visibility="{x:Bind ViewModel.SelectedBrand, Mode=OneWay, Converter={StaticResource NullToVisibility}, ConverterParameter=Inverted}" />
             </Grid>
         </DropDownButton.Content>
         <DropDownButton.Flyout>
@@ -65,10 +54,8 @@
                     x:Name="BrandPickerListView"
                     Width="320"
                     MaxHeight="360"
-                    ItemsSource="{x:Bind ViewModel.BrandItems,
-                                         Mode=OneWay}"
-                    SelectedItem="{x:Bind ViewModel.SelectedBrand,
-                                          Mode=OneWay}"
+                    ItemsSource="{x:Bind ViewModel.BrandItems, Mode=OneWay}"
+                    SelectedItem="{x:Bind ViewModel.SelectedBrand, Mode=OneWay}"
                     SelectionChanged="BrandPickerListView_SelectionChanged"
                     SelectionMode="Single">
                     <ListView.ItemContainerStyle>

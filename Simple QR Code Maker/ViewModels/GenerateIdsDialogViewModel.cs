@@ -41,7 +41,7 @@ public sealed partial class GenerateIdsDialogViewModel : ObservableRecipient
     [ObservableProperty]
     public partial bool CanApply { get; set; }
 
-    public ObservableCollection<SpreadsheetGeneratedIdFormatOption> GeneratedIdFormatOptions { get; } = [.. SpreadsheetGeneratedIdFormatOption.All];
+    public ObservableCollection<SpreadsheetGeneratedIdFormatOption> GeneratedIdFormatOptions { get; } = [.. LocalizedDisplay.GetIdFormatOptions()];
 
     public bool IsNanoIdLengthEnabled => SelectedGeneratedIdFormatOption?.Format == SpreadsheetGeneratedIdFormat.NanoId;
 
@@ -105,8 +105,8 @@ public sealed partial class GenerateIdsDialogViewModel : ObservableRecipient
         int previewCount = Math.Min(count, PreviewLimit);
         _previewValues = [.. GeneratedIdGenerator.CreateMany(previewCount, options)];
         PreviewDescription = count > previewCount
-            ? $"Showing the first {previewCount} of {count} generated IDs."
-            : $"Showing all {count} generated ID{(count == 1 ? "" : "s")}.";
+            ? "GenerateIds_PreviewLimited".FormatLocalized(previewCount, count)
+            : "GenerateIds_PreviewAll".FormatCountLocalized(count);
         PreviewText = string.Join("\r", _previewValues);
         CanApply = true;
     }
@@ -119,7 +119,7 @@ public sealed partial class GenerateIdsDialogViewModel : ObservableRecipient
 
         if (!GeneratedIdGenerator.TryGetWholeNumber(GeneratedIdCount, out count))
         {
-            validationMessage = "Enter a whole number of IDs to generate.";
+            validationMessage = "GenerateIds_InvalidCount".GetLocalized();
             return false;
         }
 
@@ -127,7 +127,7 @@ public sealed partial class GenerateIdsDialogViewModel : ObservableRecipient
         if (IsNanoIdLengthEnabled
             && !GeneratedIdGenerator.TryGetWholeNumber(NanoIdLength, out nanoIdLength))
         {
-            validationMessage = "Enter a whole-number NanoID length.";
+            validationMessage = "GenerateIds_InvalidNanoIdLength".GetLocalized();
             return false;
         }
 

@@ -34,7 +34,7 @@
                 Spacing="4">
 
                 <!--  Rate and Review  -->
-                <settingsControls:SettingsCard Description="Enjoying the app? Rate it or send me feedback!" Header="Rate and Review">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_RateAndReviewSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE735;" />
                     </settingsControls:SettingsCard.HeaderIcon>
@@ -51,10 +51,7 @@
                     Style="{ThemeResource SubtitleTextBlockStyle}" />
 
                 <!--  Theme  -->
-                <settingsControls:SettingsExpander
-                    Description="Select the app theme"
-                    Header="Theme"
-                    IsExpanded="True">
+                <settingsControls:SettingsExpander x:Uid="SettingsPage_ThemeSettingsExpander" IsExpanded="True">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE790;" />
                     </settingsControls:SettingsExpander.HeaderIcon>
@@ -66,10 +63,7 @@
                                     Command="{x:Bind ViewModel.SwitchThemeCommand}"
                                     FontSize="15"
                                     GroupName="AppTheme"
-                                    IsChecked="{x:Bind ViewModel.ElementTheme,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=Light,
-                                                       Mode=OneWay}">
+                                    IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Light, Mode=OneWay}">
                                     <RadioButton.CommandParameter>
                                         <xaml:ElementTheme>Light</xaml:ElementTheme>
                                     </RadioButton.CommandParameter>
@@ -79,10 +73,7 @@
                                     Command="{x:Bind ViewModel.SwitchThemeCommand}"
                                     FontSize="15"
                                     GroupName="AppTheme"
-                                    IsChecked="{x:Bind ViewModel.ElementTheme,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=Dark,
-                                                       Mode=OneWay}">
+                                    IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Dark, Mode=OneWay}">
                                     <RadioButton.CommandParameter>
                                         <xaml:ElementTheme>Dark</xaml:ElementTheme>
                                     </RadioButton.CommandParameter>
@@ -92,10 +83,7 @@
                                     Command="{x:Bind ViewModel.SwitchThemeCommand}"
                                     FontSize="15"
                                     GroupName="AppTheme"
-                                    IsChecked="{x:Bind ViewModel.ElementTheme,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=Default,
-                                                       Mode=OneWay}">
+                                    IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Default, Mode=OneWay}">
                                     <RadioButton.CommandParameter>
                                         <xaml:ElementTheme>Default</xaml:ElementTheme>
                                     </RadioButton.CommandParameter>
@@ -107,14 +95,11 @@
 
                 <!--  QR Code Settings  -->
                 <TextBlock
+                    x:Uid="SettingsPage_QRCodeText"
                     Margin="0,16,0,4"
-                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="QR Code" />
+                    Style="{ThemeResource SubtitleTextBlockStyle}" />
 
-                <settingsControls:SettingsExpander
-                    Description="Choose whether the app opens in QR code creation or QR code reading mode"
-                    Header="Launch mode"
-                    IsExpanded="True">
+                <settingsControls:SettingsExpander x:Uid="SettingsPage_LaunchModeSettingsExpander" IsExpanded="True">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <controls:QrCodeIcon />
                     </settingsControls:SettingsExpander.HeaderIcon>
@@ -122,35 +107,26 @@
                         <settingsControls:SettingsCard ContentAlignment="Left">
                             <StackPanel>
                                 <RadioButton
+                                    x:Uid="SettingsPage_CreatingQRCodesRadioButton"
                                     Command="{x:Bind ViewModel.SwitchLaunchModeCommand}"
                                     CommandParameter="CreatingQrCodes"
-                                    Content="Creating QR Codes"
                                     FontSize="15"
                                     GroupName="LaunchMode"
-                                    IsChecked="{x:Bind ViewModel.LaunchMode,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=CreatingQrCodes,
-                                                       Mode=OneWay}" />
+                                    IsChecked="{x:Bind ViewModel.LaunchMode, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=CreatingQrCodes, Mode=OneWay}" />
                                 <RadioButton
+                                    x:Uid="SettingsPage_ReadingQRCodesRadioButton"
                                     Command="{x:Bind ViewModel.SwitchLaunchModeCommand}"
                                     CommandParameter="ReadingQrCodes"
-                                    Content="Reading QR Codes"
                                     FontSize="15"
                                     GroupName="LaunchMode"
-                                    IsChecked="{x:Bind ViewModel.LaunchMode,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=ReadingQrCodes,
-                                                       Mode=OneWay}" />
+                                    IsChecked="{x:Bind ViewModel.LaunchMode, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=ReadingQrCodes, Mode=OneWay}" />
                             </StackPanel>
                         </settingsControls:SettingsCard>
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>
 
                 <!--  Multi-line handling  -->
-                <settingsControls:SettingsExpander
-                    Description="How to handle multiple lines when making QR Codes"
-                    Header="Multi-line handling"
-                    IsExpanded="True">
+                <settingsControls:SettingsExpander x:Uid="SettingsPage_MultiLineHandlingSettingsExpander" IsExpanded="True">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <SymbolIcon Symbol="List" />
                     </settingsControls:SettingsExpander.HeaderIcon>
@@ -158,72 +134,55 @@
                         <settingsControls:SettingsCard ContentAlignment="Left">
                             <StackPanel>
                                 <RadioButton
+                                    x:Uid="SettingsPage_OneCodeForEachLineRadioButton"
                                     Command="{x:Bind ViewModel.SwitchMultiLineModeCommand}"
                                     CommandParameter="OneLineOneCode"
-                                    Content="One code for each line"
                                     FontSize="15"
                                     GroupName="MultiLineHandling"
-                                    IsChecked="{x:Bind ViewModel.MultiLineCodeMode,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=OneLineOneCode,
-                                                       Mode=OneWay}" />
+                                    IsChecked="{x:Bind ViewModel.MultiLineCodeMode, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=OneLineOneCode, Mode=OneWay}" />
                                 <RadioButton
+                                    x:Uid="SettingsPage_MultiLineInSingleCodeRadioButton"
                                     Command="{x:Bind ViewModel.SwitchMultiLineModeCommand}"
                                     CommandParameter="MultilineOneCode"
-                                    Content="Multi-Line in single code"
                                     FontSize="15"
                                     GroupName="MultiLineHandling"
-                                    IsChecked="{x:Bind ViewModel.MultiLineCodeMode,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=MultilineOneCode,
-                                                       Mode=OneWay}" />
+                                    IsChecked="{x:Bind ViewModel.MultiLineCodeMode, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=MultilineOneCode, Mode=OneWay}" />
                             </StackPanel>
                         </settingsControls:SettingsCard>
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>
 
                 <!--  Base text  -->
-                <settingsControls:SettingsCard Description="Starting text, at start and for newlines" Header="Base text">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_BaseTextSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE8AC;" />
                     </settingsControls:SettingsCard.HeaderIcon>
                     <TextBox
+                        x:Uid="SettingsPage_ExHttpsExampleComTextBox"
                         MinWidth="250"
-                        PlaceholderText="ex: https://example.com/"
-                        Text="{x:Bind ViewModel.BaseText,
-                                      Mode=TwoWay,
-                                      UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{x:Bind ViewModel.BaseText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
                 <!--  Auto brands  -->
-                <settingsControls:SettingsCard Description="Automatically apply a matching brand when a QR Code's base URL matches a brand's URL" Header="Auto brands">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_AutoBrandsSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE8F9;" />
                     </settingsControls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.UseAutoBrands,
-                                      Mode=TwoWay,
-                                      UpdateSourceTrigger=PropertyChanged}"
-                        OffContent="Off"
-                        OnContent="On" />
+                    <ToggleSwitch x:Uid="SettingsPage_OffToggleSwitch" IsOn="{x:Bind ViewModel.UseAutoBrands, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
-                <settingsControls:SettingsCard
-                    Description="Suggest colors and logos for recognized website links. Themes are only applied when you choose them."
-                    Header="Recommend using brand themes">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_RecommendUsingBrandThemesSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE8F9;" />
                     </settingsControls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
+                        x:Uid="SettingsPage_RecommendUsingBrandThemesToggleSwitch"
                         AutomationProperties.AutomationId="RecommendUsingBrandThemesToggle"
-                        AutomationProperties.Name="Recommend using brand themes"
-                        IsOn="{x:Bind ViewModel.RecommendUsingBrandThemes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        OffContent="Off"
-                        OnContent="On" />
+                        IsOn="{x:Bind ViewModel.RecommendUsingBrandThemes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
                 <!--  Brand URL on plain-text items  -->
-                <settingsControls:SettingsExpander Description="Action when applying a brand with a URL to non-URL plain text content" Header="Brand URL on plain text items">
+                <settingsControls:SettingsExpander x:Uid="SettingsPage_BrandURLOnPlainTextSettingsExpander">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE8F9;" />
                     </settingsControls:SettingsExpander.HeaderIcon>
@@ -231,42 +190,33 @@
                         <settingsControls:SettingsCard ContentAlignment="Left">
                             <StackPanel>
                                 <RadioButton
+                                    x:Uid="SettingsPage_IgnoreLeaveExistingContentUnchangedRadioButton"
                                     Command="{x:Bind ViewModel.SwitchBrandUrlMissingBehaviorCommand}"
                                     CommandParameter="Ignore"
-                                    Content="Ignore — leave existing content unchanged"
                                     FontSize="15"
                                     GroupName="BrandUrlMissingBehavior"
-                                    IsChecked="{x:Bind ViewModel.BrandUrlMissingBehavior,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=Ignore,
-                                                       Mode=OneWay}" />
+                                    IsChecked="{x:Bind ViewModel.BrandUrlMissingBehavior, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Ignore, Mode=OneWay}" />
                                 <RadioButton
+                                    x:Uid="SettingsPage_WarnDefaultShowAnInfoRadioButton"
                                     Command="{x:Bind ViewModel.SwitchBrandUrlMissingBehaviorCommand}"
                                     CommandParameter="Warn"
-                                    Content="Warn (default) — show an info bar"
                                     FontSize="15"
                                     GroupName="BrandUrlMissingBehavior"
-                                    IsChecked="{x:Bind ViewModel.BrandUrlMissingBehavior,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=Warn,
-                                                       Mode=OneWay}" />
+                                    IsChecked="{x:Bind ViewModel.BrandUrlMissingBehavior, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Warn, Mode=OneWay}" />
                                 <RadioButton
+                                    x:Uid="SettingsPage_AutoPrependAddBrandURLRadioButton"
                                     Command="{x:Bind ViewModel.SwitchBrandUrlMissingBehaviorCommand}"
                                     CommandParameter="AutoPrepend"
-                                    Content="Auto-prepend — add brand URL before each plain text item"
                                     FontSize="15"
                                     GroupName="BrandUrlMissingBehavior"
-                                    IsChecked="{x:Bind ViewModel.BrandUrlMissingBehavior,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=AutoPrepend,
-                                                       Mode=OneWay}" />
+                                    IsChecked="{x:Bind ViewModel.BrandUrlMissingBehavior, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=AutoPrepend, Mode=OneWay}" />
                             </StackPanel>
                         </settingsControls:SettingsCard>
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>
 
                 <!--  Brand URL mismatch behavior  -->
-                <settingsControls:SettingsExpander Description="Action when applying a brand with a URL to content containing non-matching URLs" Header="Brand URL mismatch">
+                <settingsControls:SettingsExpander x:Uid="SettingsPage_BrandURLMismatchSettingsExpander">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE8F9;" />
                     </settingsControls:SettingsExpander.HeaderIcon>
@@ -274,79 +224,57 @@
                         <settingsControls:SettingsCard ContentAlignment="Left">
                             <StackPanel>
                                 <RadioButton
+                                    x:Uid="SettingsPage_IgnoreKeepExistingURLsRadioButton"
                                     Command="{x:Bind ViewModel.SwitchBrandUrlMismatchBehaviorCommand}"
                                     CommandParameter="Ignore"
-                                    Content="Ignore — keep existing URLs"
                                     FontSize="15"
                                     GroupName="BrandUrlMismatchBehavior"
-                                    IsChecked="{x:Bind ViewModel.BrandUrlMismatchBehavior,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=Ignore,
-                                                       Mode=OneWay}" />
+                                    IsChecked="{x:Bind ViewModel.BrandUrlMismatchBehavior, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Ignore, Mode=OneWay}" />
                                 <RadioButton
+                                    x:Uid="SettingsPage_WarnDefaultShowAnInfoRadioButton2"
                                     Command="{x:Bind ViewModel.SwitchBrandUrlMismatchBehaviorCommand}"
                                     CommandParameter="Warn"
-                                    Content="Warn (default) — show an info bar"
                                     FontSize="15"
                                     GroupName="BrandUrlMismatchBehavior"
-                                    IsChecked="{x:Bind ViewModel.BrandUrlMismatchBehavior,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=Warn,
-                                                       Mode=OneWay}" />
+                                    IsChecked="{x:Bind ViewModel.BrandUrlMismatchBehavior, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=Warn, Mode=OneWay}" />
                                 <RadioButton
+                                    x:Uid="SettingsPage_AutoFixReplaceNonMatchingRadioButton"
                                     Command="{x:Bind ViewModel.SwitchBrandUrlMismatchBehaviorCommand}"
                                     CommandParameter="AutoFix"
-                                    Content="Auto-fix — replace non-matching URLs with the brand URL"
                                     FontSize="15"
                                     GroupName="BrandUrlMismatchBehavior"
-                                    IsChecked="{x:Bind ViewModel.BrandUrlMismatchBehavior,
-                                                       Converter={StaticResource EnumIsEqualConverter},
-                                                       ConverterParameter=AutoFix,
-                                                       Mode=OneWay}" />
+                                    IsChecked="{x:Bind ViewModel.BrandUrlMismatchBehavior, Converter={StaticResource EnumIsEqualConverter}, ConverterParameter=AutoFix, Mode=OneWay}" />
                             </StackPanel>
                         </settingsControls:SettingsCard>
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>
 
                 <!--  URL warnings  -->
-                <settingsControls:SettingsCard Description="Show warnings when QR Codes are not URLs" Header="URL warnings">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_URLWarningsSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE7BA;" />
                     </settingsControls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.WarnWhenNotUrl,
-                                      Mode=TwoWay,
-                                      UpdateSourceTrigger=PropertyChanged}"
-                        OffContent="Off"
-                        OnContent="On" />
+                    <ToggleSwitch x:Uid="SettingsPage_OffToggleSwitch2" IsOn="{x:Bind ViewModel.WarnWhenNotUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
-                <settingsControls:SettingsCard Description="Warn when QR Codes use a known redirector such as bit.ly or qrco.de" Header="Redirector warnings">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_RedirectorWarningsSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE7BA;" />
                     </settingsControls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.WarnWhenLikelyRedirector,
-                                      Mode=TwoWay,
-                                      UpdateSourceTrigger=PropertyChanged}"
-                        OffContent="Off"
-                        OnContent="On" />
+                    <ToggleSwitch x:Uid="SettingsPage_OffToggleSwitch3" IsOn="{x:Bind ViewModel.WarnWhenLikelyRedirector, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
-                <settingsControls:SettingsExpander Description="Domains you have marked as safe from the redirector warning info bar" Header="Safe redirector domains">
+                <settingsControls:SettingsExpander x:Uid="SettingsPage_SafeRedirectorDomainsSettingsExpander">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE71D;" />
                     </settingsControls:SettingsExpander.HeaderIcon>
                     <settingsControls:SettingsExpander.Items>
-                        <settingsControls:SettingsCard Header="Known safe domains">
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_KnownSafeDomainsSettingsCard">
                             <StackPanel Spacing="8">
                                 <TextBlock
-                                    Text="{x:Bind ViewModel.SafeRedirectorDomainsEmptyStateText,
-                                                  Mode=OneWay}"
+                                    Text="{x:Bind ViewModel.SafeRedirectorDomainsEmptyStateText, Mode=OneWay}"
                                     TextWrapping="Wrap"
-                                    Visibility="{x:Bind ViewModel.SafeRedirectorDomainsEmptyStateText,
-                                                        Converter={StaticResource EmptyStringToCollapsedConverter},
-                                                        Mode=OneWay}" />
+                                    Visibility="{x:Bind ViewModel.SafeRedirectorDomainsEmptyStateText, Converter={StaticResource EmptyStringToCollapsedConverter}, Mode=OneWay}" />
                                 <ItemsControl ItemsSource="{x:Bind ViewModel.SafeRedirectorDomains, Mode=OneWay}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate x:DataType="x:String">
@@ -360,77 +288,58 @@
                                                     Text="{x:Bind}"
                                                     TextWrapping="Wrap" />
                                                 <Button
+                                                    x:Uid="SettingsPage_RemoveButton"
                                                     Grid.Column="1"
-                                                    Click="RemoveSafeRedirectorDomainButton_Click"
-                                                    Content="Remove" />
+                                                    Click="RemoveSafeRedirectorDomainButton_Click" />
                                             </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
                                 <Button
+                                    x:Uid="SettingsPage_ClearAllButton"
                                     HorizontalAlignment="Left"
                                     Command="{x:Bind ViewModel.ClearSafeRedirectorDomainsCommand}"
-                                    Content="Clear all"
-                                    IsEnabled="{x:Bind ViewModel.HasSafeRedirectorDomains,
-                                                       Mode=OneWay}" />
+                                    IsEnabled="{x:Bind ViewModel.HasSafeRedirectorDomains, Mode=OneWay}" />
                             </StackPanel>
                         </settingsControls:SettingsCard>
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>
 
                 <!--  Minimum size text  -->
-                <settingsControls:SettingsCard Description="Hide the minimum size text on QR codes" Header="Minimum size text">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_MinimumSizeTextSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE8FF;" />
                     </settingsControls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
+                        x:Uid="SettingsPage_ShowingToggleSwitch"
                         AutomationProperties.AutomationId="HideMinimumSizeTextToggle"
-                        IsOn="{x:Bind ViewModel.HideMinimumSizeText,
-                                      Mode=TwoWay,
-                                      UpdateSourceTrigger=PropertyChanged}"
-                        OffContent="Showing"
-                        OnContent="Hidden" />
+                        IsOn="{x:Bind ViewModel.HideMinimumSizeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
                 <!--  Save Both button  -->
-                <settingsControls:SettingsCard Description="Show the 'Save Both' button for PNG and SVG" Header="Save Both button">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_SaveBothButtonSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE74E;" />
                     </settingsControls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.ShowSaveBothButton,
-                                      Mode=TwoWay,
-                                      UpdateSourceTrigger=PropertyChanged}"
-                        OffContent="Hidden"
-                        OnContent="Showing" />
+                    <ToggleSwitch x:Uid="SettingsPage_HiddenToggleSwitch" IsOn="{x:Bind ViewModel.ShowSaveBothButton, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
-                <settingsControls:SettingsCard Description="Show the Print button with the export actions" Header="Print button">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_PrintButtonSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE749;" />
                     </settingsControls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.ShowPrintButton,
-                                      Mode=TwoWay,
-                                      UpdateSourceTrigger=PropertyChanged}"
-                        OffContent="Hidden"
-                        OnContent="Showing" />
+                    <ToggleSwitch x:Uid="SettingsPage_HiddenToggleSwitch2" IsOn="{x:Bind ViewModel.ShowPrintButton, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
-                <settingsControls:SettingsCard Description="Show zip save options in the export menus" Header="Zip save options">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_ZipSaveOptionsSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE7B8;" />
                     </settingsControls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.ShowZipSaveOptions,
-                                      Mode=TwoWay,
-                                      UpdateSourceTrigger=PropertyChanged}"
-                        OffContent="Hidden"
-                        OnContent="Showing" />
+                    <ToggleSwitch x:Uid="SettingsPage_HiddenToggleSwitch3" IsOn="{x:Bind ViewModel.ShowZipSaveOptions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
                 <!--  Max scan distance  -->
-                <settingsControls:SettingsCard Description="{x:Bind ViewModel.MaxScanDistanceText, Mode=OneWay}" Header="Max scan distance at minimum size">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_MaxScanDistanceAtMinimumSettingsCard" Description="{x:Bind ViewModel.MaxScanDistanceText, Mode=OneWay}">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xED5E;" />
                     </settingsControls:SettingsCard.HeaderIcon>
@@ -440,12 +349,10 @@
                         Maximum="5"
                         Minimum=".35"
                         StepFrequency="0.1"
-                        Value="{x:Bind ViewModel.MinSizeScanDistanceScaleFactor,
-                                       Mode=TwoWay,
-                                       UpdateSourceTrigger=PropertyChanged}" />
+                        Value="{x:Bind ViewModel.MinSizeScanDistanceScaleFactor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
-                <settingsControls:SettingsCard Description="{x:Bind ViewModel.QrPaddingSettingsDescription, Mode=OneWay}" Header="QR padding">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_QRPaddingSettingsCard" Description="{x:Bind ViewModel.QrPaddingSettingsDescription, Mode=OneWay}">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <controls:RulerIcon />
                     </settingsControls:SettingsCard.HeaderIcon>
@@ -455,31 +362,27 @@
                         Maximum="10"
                         Minimum="0"
                         StepFrequency="1"
-                        Value="{x:Bind ViewModel.QrPaddingModules,
-                                       Mode=TwoWay,
-                                       UpdateSourceTrigger=PropertyChanged}" />
+                        Value="{x:Bind ViewModel.QrPaddingModules, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </settingsControls:SettingsCard>
 
                 <!--  Quick save location  -->
-                <settingsControls:SettingsExpander Description="Skip the folder picker and save directly to this folder" Header="Quick save location">
+                <settingsControls:SettingsExpander x:Uid="SettingsPage_QuickSaveLocationSettingsExpander">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xED25;" />
                     </settingsControls:SettingsExpander.HeaderIcon>
                     <settingsControls:SettingsExpander.Items>
-                        <settingsControls:SettingsCard Header="Folder">
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_FolderSettingsCard">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBox
+                                    x:Uid="SettingsPage_NoFolderSelectedTextBox"
                                     MinWidth="250"
                                     IsReadOnly="True"
-                                    PlaceholderText="No folder selected"
-                                    Text="{x:Bind ViewModel.QuickSaveLocation,
-                                                  Mode=OneWay}" />
-                                <Button Command="{x:Bind ViewModel.BrowseQuickSaveLocationCommand}" Content="Browse..." />
+                                    Text="{x:Bind ViewModel.QuickSaveLocation, Mode=OneWay}" />
+                                <Button x:Uid="SettingsPage_BrowseButton" Command="{x:Bind ViewModel.BrowseQuickSaveLocationCommand}" />
                                 <Button
+                                    x:Uid="SettingsPage_ClearButton"
                                     Command="{x:Bind ViewModel.ClearQuickSaveLocationCommand}"
-                                    Content="Clear"
-                                    IsEnabled="{x:Bind ViewModel.HasQuickSaveLocation,
-                                                       Mode=OneWay}" />
+                                    IsEnabled="{x:Bind ViewModel.HasQuickSaveLocation, Mode=OneWay}" />
                             </StackPanel>
                         </settingsControls:SettingsCard>
                     </settingsControls:SettingsExpander.Items>
@@ -487,21 +390,18 @@
 
                 <!--  Defaults  -->
                 <TextBlock
+                    x:Uid="SettingsPage_DefaultsText"
                     Margin="0,16,0,4"
-                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="Defaults" />
+                    Style="{ThemeResource SubtitleTextBlockStyle}" />
 
-                <settingsControls:SettingsExpander
-                    Description="Starting values each session, before any brand is applied. Set these from the main page using right-click or the flyout buttons."
-                    Header="QR code defaults"
-                    IsExpanded="True">
+                <settingsControls:SettingsExpander x:Uid="SettingsPage_QRCodeDefaultsSettingsExpander" IsExpanded="True">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE713;" />
                     </settingsControls:SettingsExpander.HeaderIcon>
                     <settingsControls:SettingsExpander.Items>
 
                         <!--  Default foreground color  -->
-                        <settingsControls:SettingsCard Description="{x:Bind ViewModel.DefaultForegroundColorText, Mode=OneWay}" Header="Code color">
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_CodeColorSettingsCard" Description="{x:Bind ViewModel.DefaultForegroundColorText, Mode=OneWay}">
                             <settingsControls:SettingsCard.HeaderIcon>
                                 <FontIcon Glyph="&#xE790;" />
                             </settingsControls:SettingsCard.HeaderIcon>
@@ -509,21 +409,19 @@
                                 <Border
                                     Width="24"
                                     Height="24"
-                                    Background="{x:Bind ViewModel.DefaultForegroundColorBrush,
-                                                        Mode=OneWay}"
+                                    Background="{x:Bind ViewModel.DefaultForegroundColorBrush, Mode=OneWay}"
                                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4" />
                                 <Button
+                                    x:Uid="SettingsPage_ResetButton"
                                     Command="{x:Bind ViewModel.ResetForegroundDefaultCommand}"
-                                    Content="Reset"
-                                    IsEnabled="{x:Bind ViewModel.HasDefaultForegroundColor,
-                                                       Mode=OneWay}" />
+                                    IsEnabled="{x:Bind ViewModel.HasDefaultForegroundColor, Mode=OneWay}" />
                             </StackPanel>
                         </settingsControls:SettingsCard>
 
                         <!--  Default background color  -->
-                        <settingsControls:SettingsCard Description="{x:Bind ViewModel.DefaultBackgroundColorText, Mode=OneWay}" Header="Background color">
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_BackgroundColorSettingsCard" Description="{x:Bind ViewModel.DefaultBackgroundColorText, Mode=OneWay}">
                             <settingsControls:SettingsCard.HeaderIcon>
                                 <FontIcon Glyph="&#xE771;" />
                             </settingsControls:SettingsCard.HeaderIcon>
@@ -531,41 +429,37 @@
                                 <Border
                                     Width="24"
                                     Height="24"
-                                    Background="{x:Bind ViewModel.DefaultBackgroundColorBrush,
-                                                        Mode=OneWay}"
+                                    Background="{x:Bind ViewModel.DefaultBackgroundColorBrush, Mode=OneWay}"
                                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4" />
                                 <Button
+                                    x:Uid="SettingsPage_ResetButton2"
                                     Command="{x:Bind ViewModel.ResetBackgroundDefaultCommand}"
-                                    Content="Reset"
-                                    IsEnabled="{x:Bind ViewModel.HasDefaultBackgroundColor,
-                                                       Mode=OneWay}" />
+                                    IsEnabled="{x:Bind ViewModel.HasDefaultBackgroundColor, Mode=OneWay}" />
                             </StackPanel>
                         </settingsControls:SettingsCard>
 
                         <!--  Default error correction  -->
-                        <settingsControls:SettingsCard Description="{x:Bind ViewModel.DefaultErrorCorrectionText, Mode=OneWay}" Header="Error correction">
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_ErrorCorrectionSettingsCard" Description="{x:Bind ViewModel.DefaultErrorCorrectionText, Mode=OneWay}">
                             <settingsControls:SettingsCard.HeaderIcon>
                                 <FontIcon Glyph="&#xEBE8;" />
                             </settingsControls:SettingsCard.HeaderIcon>
                             <Button
+                                x:Uid="SettingsPage_ResetButton3"
                                 Command="{x:Bind ViewModel.ResetErrorCorrectionDefaultCommand}"
-                                Content="Reset"
-                                IsEnabled="{x:Bind ViewModel.HasDefaultErrorCorrection,
-                                                   Mode=OneWay}" />
+                                IsEnabled="{x:Bind ViewModel.HasDefaultErrorCorrection, Mode=OneWay}" />
                         </settingsControls:SettingsCard>
 
                         <!--  Default frame  -->
-                        <settingsControls:SettingsCard Description="{x:Bind ViewModel.DefaultFramePresetText, Mode=OneWay}" Header="Frame and pattern">
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_FrameAndPatternSettingsCard" Description="{x:Bind ViewModel.DefaultFramePresetText, Mode=OneWay}">
                             <settingsControls:SettingsCard.HeaderIcon>
                                 <FontIcon Glyph="&#xE8BC;" />
                             </settingsControls:SettingsCard.HeaderIcon>
                             <Button
+                                x:Uid="SettingsPage_ResetButton4"
                                 Command="{x:Bind ViewModel.ResetFramePresetDefaultCommand}"
-                                Content="Reset"
-                                IsEnabled="{x:Bind ViewModel.HasDefaultFramePreset,
-                                                   Mode=OneWay}" />
+                                IsEnabled="{x:Bind ViewModel.HasDefaultFramePreset, Mode=OneWay}" />
                         </settingsControls:SettingsCard>
 
                     </settingsControls:SettingsExpander.Items>
@@ -573,33 +467,30 @@
 
                 <!--  Data Import/Export  -->
                 <TextBlock
+                    x:Uid="SettingsPage_DataText"
                     Margin="0,16,0,4"
-                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="Data" />
+                    Style="{ThemeResource SubtitleTextBlockStyle}" />
 
                 <!--  Export  -->
-                <settingsControls:SettingsExpander
-                    Description="Save settings, history, brands, and logo images to a zip backup file"
-                    Header="Export"
-                    IsExpanded="True">
+                <settingsControls:SettingsExpander x:Uid="SettingsPage_ExportSettingsExpander" IsExpanded="True">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE898;" />
                     </settingsControls:SettingsExpander.HeaderIcon>
-                    <Button Command="{x:Bind ViewModel.ExportSettingsCommand}" Content="Export..." />
+                    <Button x:Uid="SettingsPage_ExportButton" Command="{x:Bind ViewModel.ExportSettingsCommand}" />
                     <settingsControls:SettingsExpander.Items>
-                        <settingsControls:SettingsCard Header="Include settings">
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_IncludeSettingsSettingsCard">
                             <settingsControls:SettingsCard.HeaderIcon>
                                 <FontIcon Glyph="&#xE713;" />
                             </settingsControls:SettingsCard.HeaderIcon>
                             <CheckBox IsChecked="{x:Bind ViewModel.ExportIncludeSettings, Mode=TwoWay}" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Header="Include brands">
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_IncludeBrandsSettingsCard">
                             <settingsControls:SettingsCard.HeaderIcon>
                                 <FontIcon Glyph="&#xE8F9;" />
                             </settingsControls:SettingsCard.HeaderIcon>
                             <CheckBox IsChecked="{x:Bind ViewModel.ExportIncludeBrands, Mode=TwoWay}" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Header="Include history">
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_IncludeHistorySettingsCard">
                             <settingsControls:SettingsCard.HeaderIcon>
                                 <FontIcon Glyph="&#xE81C;" />
                             </settingsControls:SettingsCard.HeaderIcon>
@@ -609,23 +500,20 @@
                 </settingsControls:SettingsExpander>
 
                 <!--  Import  -->
-                <settingsControls:SettingsCard Description="Merge settings, history, brands, and logo images from a backup zip file. Existing settings not in the backup are kept." Header="Import">
+                <settingsControls:SettingsCard x:Uid="SettingsPage_ImportSettingsCard">
                     <settingsControls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE896;" />
                     </settingsControls:SettingsCard.HeaderIcon>
-                    <Button Command="{x:Bind ViewModel.ImportSettingsCommand}" Content="Import..." />
+                    <Button x:Uid="SettingsPage_ImportButton" Command="{x:Bind ViewModel.ImportSettingsCommand}" />
                 </settingsControls:SettingsCard>
 
                 <InfoBar
                     x:Name="ImportExportInfoBar"
                     Closed="ImportExportInfoBar_Closed"
                     IsClosable="True"
-                    IsOpen="{x:Bind ViewModel.HasImportExportStatus,
-                                    Mode=OneWay}"
-                    Message="{x:Bind ViewModel.ImportExportStatusMessage,
-                                     Mode=OneWay}"
-                    Severity="{x:Bind ViewModel.ImportExportStatusSeverity,
-                                      Mode=OneWay}" />
+                    IsOpen="{x:Bind ViewModel.HasImportExportStatus, Mode=OneWay}"
+                    Message="{x:Bind ViewModel.ImportExportStatusMessage, Mode=OneWay}"
+                    Severity="{x:Bind ViewModel.ImportExportStatusSeverity, Mode=OneWay}" />
 
                 <!--  About  -->
                 <TextBlock
@@ -633,95 +521,92 @@
                     Margin="0,16,0,4"
                     Style="{ThemeResource SubtitleTextBlockStyle}" />
 
-                <settingsControls:SettingsExpander Description="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" Header="Simple QR Code Maker">
+                <settingsControls:SettingsExpander x:Uid="SettingsPage_SimpleQRCodeMakerSettingsExpander" Description="{x:Bind ViewModel.VersionDescription, Mode=OneWay}">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE946;" />
                     </settingsControls:SettingsExpander.HeaderIcon>
                     <settingsControls:SettingsExpander.Items>
-                        <settingsControls:SettingsCard Header="Privacy">
-                            <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_PrivacySettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" NavigateUri="https://github.com/TheJoeFin/Simple-QR-Code-Maker/blob/master/PRIVACY" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Header="Learn more">
-                            <HyperlinkButton Command="{x:Bind ViewModel.GoToMoreInfoCommand}" Content="QR Codes on Wikipedia" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_LearnMoreSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_QRCodesOnWikipediaHyperlinkButton" Command="{x:Bind ViewModel.GoToMoreInfoCommand}" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Header="Rate this app">
-                            <HyperlinkButton Command="{x:Bind ViewModel.ReviewAppCommand}" Content="Microsoft Store" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_RateThisAppSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_MicrosoftStoreHyperlinkButton" Command="{x:Bind ViewModel.ReviewAppCommand}" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Header="Source code">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/TheJoeFin/Simple-QR-Code-Maker" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_SourceCodeSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton" NavigateUri="https://github.com/TheJoeFin/Simple-QR-Code-Maker" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Header="Created by">
-                            <HyperlinkButton Content="TheJoeFin" NavigateUri="https://github.com/TheJoeFin" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_CreatedBySettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_TheJoeFinHyperlinkButton" NavigateUri="https://github.com/TheJoeFin" />
                         </settingsControls:SettingsCard>
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>
 
                 <!--  More Apps  -->
-                <settingsControls:SettingsExpander
-                    Description="Other free apps by the same developer"
-                    Header="More apps by TheJoeFin"
-                    IsExpanded="True">
+                <settingsControls:SettingsExpander x:Uid="SettingsPage_MoreAppsByTheJoeFinSettingsExpander" IsExpanded="True">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE8F1;" />
                     </settingsControls:SettingsExpander.HeaderIcon>
                     <settingsControls:SettingsExpander.Items>
-                        <settingsControls:SettingsCard Description="Create, edit, and convert icon files" Header="Simple Icon File Maker">
-                            <HyperlinkButton Command="{x:Bind ViewModel.OpenSimpleIconFileMakerCommand}" Content="Microsoft Store" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_SimpleIconFileMakerSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_MicrosoftStoreHyperlinkButton2" Command="{x:Bind ViewModel.OpenSimpleIconFileMakerCommand}" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="Copy text from anywhere on your screen" Header="Text Grab">
-                            <HyperlinkButton Command="{x:Bind ViewModel.OpenTextGrabCommand}" Content="Microsoft Store" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_TextGrabSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_MicrosoftStoreHyperlinkButton3" Command="{x:Bind ViewModel.OpenTextGrabCommand}" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Header="Website">
-                            <HyperlinkButton Content="JoeFinApps.com" NavigateUri="https://joefinapps.com" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_WebsiteSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_JoeFinAppsComHyperlinkButton" NavigateUri="https://joefinapps.com" />
                         </settingsControls:SettingsCard>
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>
 
                 <!--  Libraries  -->
-                <settingsControls:SettingsExpander Description="Open source libraries used in this app" Header="Libraries">
+                <settingsControls:SettingsExpander x:Uid="SettingsPage_LibrariesSettingsExpander">
                     <settingsControls:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE74C;" />
                     </settingsControls:SettingsExpander.HeaderIcon>
-                    <Button Click="ViewLicensesButton_Click" Content="View licenses..." />
+                    <Button x:Uid="SettingsPage_ViewLicensesButton" Click="ViewLicensesButton_Click" />
                     <settingsControls:SettingsExpander.Items>
-                        <settingsControls:SettingsCard Description="MIT License" Header="CommunityToolkit.Mvvm">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/CommunityToolkit/dotnet" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_CommunityToolkitMvvmSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton2" NavigateUri="https://github.com/CommunityToolkit/dotnet" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="MIT License" Header="CommunityToolkit WinUI">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/CommunityToolkit/Windows" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_CommunityToolkitWinUISettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton3" NavigateUri="https://github.com/CommunityToolkit/Windows" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="MIT License" Header="Humanizer">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/Humanizr/Humanizer" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_HumanizerSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton4" NavigateUri="https://github.com/Humanizr/Humanizer" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="Apache-2.0 License" Header="Magick.NET">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/dlemstra/Magick.NET" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_MagickNETSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton5" NavigateUri="https://github.com/dlemstra/Magick.NET" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="MIT License" Header="Microsoft.Extensions.Hosting">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/dotnet/runtime" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_MicrosoftExtensionsHostingSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton6" NavigateUri="https://github.com/dotnet/runtime" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="MIT License" Header="Microsoft.Graphics.Win2D">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/microsoft/Win2D" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_MicrosoftGraphicsWin2DSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton7" NavigateUri="https://github.com/microsoft/Win2D" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="Apache-2.0 License" Header="PdfPig">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/UglyToad/PdfPig" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_PdfPigSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton8" NavigateUri="https://github.com/UglyToad/PdfPig" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="MIT License" Header="Windows App SDK">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/microsoft/WindowsAppSDK" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_WindowsAppSDKSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton9" NavigateUri="https://github.com/microsoft/WindowsAppSDK" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="MIT License" Header="WinUI 3">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_WinUI3SettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton10" NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="MIT License" Header="WinUI.TableView">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/w-ahmad/WinUI.TableView" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_WinUITableViewSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton11" NavigateUri="https://github.com/w-ahmad/WinUI.TableView" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="MIT License" Header="WinUIEx">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/dotMorten/WinUIEx" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_WinUIExSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton12" NavigateUri="https://github.com/dotMorten/WinUIEx" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="MIT License" Header="XAML Behaviors">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/microsoft/XamlBehaviors" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_XAMLBehaviorsSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton13" NavigateUri="https://github.com/microsoft/XamlBehaviors" />
                         </settingsControls:SettingsCard>
-                        <settingsControls:SettingsCard Description="Apache-2.0 License" Header="ZXing.NET">
-                            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/micjahn/ZXing.Net" />
+                        <settingsControls:SettingsCard x:Uid="SettingsPage_ZXingNETSettingsCard">
+                            <HyperlinkButton x:Uid="SettingsPage_GitHubHyperlinkButton14" NavigateUri="https://github.com/micjahn/ZXing.Net" />
                         </settingsControls:SettingsCard>
                     </settingsControls:SettingsExpander.Items>
                 </settingsControls:SettingsExpander>

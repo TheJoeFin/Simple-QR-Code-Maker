@@ -23,54 +23,45 @@
             AutomationProperties.AutomationId="QrCodePreview"
             CanDrag="True"
             DragStarting="QrCodeImage_DragStarting"
-            Source="{x:Bind Data.CodeAsBitmap,
-                            Mode=OneWay}"
-            ToolTipService.ToolTip="{x:Bind Data.ToolTipText,
-                                            Mode=OneWay}">
+            Source="{x:Bind Data.CodeAsBitmap, Mode=OneWay}"
+            ToolTipService.ToolTip="{x:Bind Data.ToolTipText, Mode=OneWay}">
             <Image.ContextFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem
-                        Command="{x:Bind Data.SaveCodePngContextCommand,
-                                         Mode=OneWay}"
-                        Icon="Save"
-                        Text="Save PNG..." />
+                        x:Uid="QrCodeImageControl_SavePNGMenuItem"
+                        Command="{x:Bind Data.SaveCodePngContextCommand, Mode=OneWay}"
+                        Icon="Save" />
                     <MenuFlyoutItem
-                        Command="{x:Bind Data.CopyCodePngContextCommand,
-                                         Mode=OneWay}"
-                        Icon="Copy"
-                        Text="Copy PNG" />
+                        x:Uid="QrCodeImageControl_CopyPNGMenuItem"
+                        Command="{x:Bind Data.CopyCodePngContextCommand, Mode=OneWay}"
+                        Icon="Copy" />
                     <MenuFlyoutItem
-                        Command="{x:Bind Data.ShareCodeContextCommand,
-                                         Mode=OneWay}"
-                        Icon="Share"
-                        Text="Share..." />
+                        x:Uid="QrCodeImageControl_ShareMenuItem"
+                        Command="{x:Bind Data.ShareCodeContextCommand, Mode=OneWay}"
+                        Icon="Share" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem
-                        Command="{x:Bind Data.SaveCodeSvgContextCommand,
-                                         Mode=OneWay}"
-                        Icon="Save"
-                        Text="Save SVG..." />
+                        x:Uid="QrCodeImageControl_SaveSVGMenuItem"
+                        Command="{x:Bind Data.SaveCodeSvgContextCommand, Mode=OneWay}"
+                        Icon="Save" />
                     <MenuFlyoutItem
-                        Command="{x:Bind Data.CopyCodeSvgContextCommand,
-                                         Mode=OneWay}"
-                        Icon="Copy"
-                        Text="Copy SVG" />
+                        x:Uid="QrCodeImageControl_CopySVGMenuItem"
+                        Command="{x:Bind Data.CopyCodeSvgContextCommand, Mode=OneWay}"
+                        Icon="Copy" />
                     <MenuFlyoutItem
-                        Command="{x:Bind Data.CopyCodeSvgTextContextCommand,
-                                         Mode=OneWay}"
-                        Icon="Copy"
-                        Text="Copy SVG as Text" />
+                        x:Uid="QrCodeImageControl_CopySVGAsTextMenuItem"
+                        Command="{x:Bind Data.CopyCodeSvgTextContextCommand, Mode=OneWay}"
+                        Icon="Copy" />
                     <MenuFlyoutSeparator Visibility="{x:Bind BoolToVisibility(Data.CanApplyCommonBrand), Mode=OneWay}" />
                     <MenuFlyoutItem
+                        x:Uid="QrCodeImageControl_UseCommonBrandMenuItem"
                         Command="{x:Bind Data.UseCommonBrandContextCommand, Mode=OneWay}"
-                        Text="Use common brand"
                         ToolTipService.ToolTip="{x:Bind Data.CommonBrandToolTip, Mode=OneWay}"
                         Visibility="{x:Bind BoolToVisibility(Data.CanApplyCommonBrand), Mode=OneWay}" />
                     <MenuFlyoutSeparator Visibility="{x:Bind BoolToVisibility(Data.CanUseCurrentStyle), Mode=OneWay}" />
                     <MenuFlyoutItem
-                        Command="{x:Bind Data.IgnoreAutoBrandContextCommand,
-                                         Mode=OneWay}"
-                        Text="Use current style"
+                        x:Uid="QrCodeImageControl_UseCurrentStyleMenuItem"
+                        Command="{x:Bind Data.IgnoreAutoBrandContextCommand, Mode=OneWay}"
                         Visibility="{x:Bind BoolToVisibility(Data.CanUseCurrentStyle), Mode=OneWay}">
                         <MenuFlyoutItem.Icon>
                             <FontIcon Glyph="&#xE8D7;" />
@@ -80,11 +71,9 @@
             </Image.ContextFlyout>
         </Image>
         <InfoBar
-            IsOpen="{x:Bind Data.UrlWarning,
-                            Mode=OneWay}"
-            Message="QR Code not a URL"
-            Severity="Warning"
-            ToolTipService.ToolTip="This warning can be disabled in settings" />
+            x:Uid="QrCodeImageControl_ThisWarningCanBeDisabledInfoBar"
+            IsOpen="{x:Bind Data.UrlWarning, Mode=OneWay}"
+            Severity="Warning" />
         <Border
             Grid.Row="1"
             Width="300"
@@ -99,11 +88,11 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <HyperlinkButton
+                    x:Uid="QrCodeImageControl_HowWasThisCalculatedHyperlinkButton"
                     MinWidth="0"
                     Padding="0,2,8,0"
                     VerticalAlignment="Top"
-                    Command="{x:Bind Data.FaqButtonCommand, Mode=OneWay}"
-                    ToolTipService.ToolTip="How was this calculated?">
+                    Command="{x:Bind Data.FaqButtonCommand, Mode=OneWay}">
                     <local:RulerIcon />
                 </HyperlinkButton>
                 <Grid
@@ -124,11 +113,11 @@
             <Border.ContextFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem
+                        x:Uid="QrCodeImageControl_CopySizeMenuItem"
                         Command="{x:Bind Data.CopySizeTextCommand, Mode=OneWay}"
                         Icon="Copy"
-                        IsEnabled="{x:Bind Data.CanCopySizeText, Mode=OneWay}"
-                        Text="Copy Size" />
-                    <MenuFlyoutItem Command="{x:Bind Data.HideSizeTextCommand, Mode=OneWay}" Text="Hide min. size text">
+                        IsEnabled="{x:Bind Data.CanCopySizeText, Mode=OneWay}" />
+                    <MenuFlyoutItem x:Uid="QrCodeImageControl_HideMinSizeTextMenuItem" Command="{x:Bind Data.HideSizeTextCommand, Mode=OneWay}">
                         <MenuFlyoutItem.Icon>
                             <local:HideIcon />
                         </MenuFlyoutItem.Icon>
@@ -162,7 +151,10 @@
                                 <ColumnDefinition Width="40" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Image Width="40" Height="40" AutomationProperties.AccessibilityView="Raw">
+                            <Image
+                                Width="40"
+                                Height="40"
+                                AutomationProperties.AccessibilityView="Raw">
                                 <Image.Source>
                                     <SvgImageSource UriSource="{x:Bind Data.CommonBrandLogoUri, Mode=OneWay}" />
                                 </Image.Source>
@@ -176,17 +168,17 @@
                         </Grid>
                         <TextBlock Text="{x:Bind Data.CommonBrandToolTip, Mode=OneWay}" TextWrapping="Wrap" />
                         <TextBlock
+                            x:Uid="QrCodeImageControl_YourCurrentDesignIsKeptText"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="Your current design is kept, so you can switch back anytime."
                             TextWrapping="Wrap" />
                         <StackPanel Spacing="4" Visibility="{x:Bind Data.SizeTextVisible, Mode=OneWay}">
                             <TextBlock FontWeight="SemiBold" Text="{x:Bind Data.SizeRecommendationTitle, Mode=OneWay}" />
                             <TextBlock Text="{x:Bind Data.SizeRecommendationText, Mode=OneWay}" TextWrapping="Wrap" />
                         </StackPanel>
                         <TextBlock
+                            x:Uid="QrCodeImageControl_MinimumSizeEstimatesAreUnavailableText"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Style="{ThemeResource CaptionTextBlockStyle}"
-                            Text="Minimum-size estimates are unavailable with a center logo."
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </ToolTip>
@@ -194,12 +186,12 @@
             <Button.ContextFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem
+                        x:Uid="QrCodeImageControl_CopySizeMenuItem2"
                         Command="{x:Bind Data.CopySizeTextCommand, Mode=OneWay}"
                         Icon="Copy"
                         IsEnabled="{x:Bind Data.CanCopySizeText, Mode=OneWay}"
-                        Text="Copy Size"
                         Visibility="{x:Bind Data.SizeTextVisible, Mode=OneWay}" />
-                    <MenuFlyoutItem Command="{x:Bind Data.FaqButtonCommand, Mode=OneWay}" Text="About QR Code sizing" />
+                    <MenuFlyoutItem x:Uid="QrCodeImageControl_AboutQRCodeSizingMenuItem" Command="{x:Bind Data.FaqButtonCommand, Mode=OneWay}" />
                 </MenuFlyout>
             </Button.ContextFlyout>
             <Grid>
@@ -208,7 +200,10 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Image Width="20" Height="20" AutomationProperties.AccessibilityView="Raw">
+                <Image
+                    Width="20"
+                    Height="20"
+                    AutomationProperties.AccessibilityView="Raw">
                     <Image.Source>
                         <SvgImageSource UriSource="{x:Bind Data.CommonBrandLogoUri, Mode=OneWay}" />
                     </Image.Source>

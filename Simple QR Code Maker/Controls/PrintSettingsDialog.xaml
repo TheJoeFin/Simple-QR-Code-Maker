@@ -5,10 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Print Settings"
-    CloseButtonText="Cancel"
+    x:Uid="PrintSettingsDialog_Dialog"
     DefaultButton="Primary"
-    PrimaryButtonText="Print"
     mc:Ignorable="d">
 
     <ContentDialog.Resources>
@@ -35,7 +33,7 @@
 
         <ScrollViewer
             x:Name="SettingsScrollViewer"
-            AutomationProperties.Name="Print settings"
+            x:Uid="PrintSettingsDialog_SettingsScrollViewer"
             HorizontalScrollBarVisibility="Disabled"
             HorizontalScrollMode="Disabled"
             VerticalScrollBarVisibility="Auto"
@@ -61,81 +59,79 @@
 
                         <ComboBox
                             x:Name="QuickPresetCombo"
+                            x:Uid="PrintSettingsDialog_QuickPresetCombo"
                             Grid.Row="0"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Stretch"
-                            Header="Quick setup"
                             SelectionChanged="QuickPresetCombo_SelectionChanged">
-                            <ComboBoxItem Content="Custom" />
-                            <ComboBoxItem Content="Product labels" />
-                            <ComboBoxItem Content="Flyers or handouts" />
-                            <ComboBoxItem Content="Table tents or menus" />
-                            <ComboBoxItem Content="Posters or signs" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_CustomComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_ProductLabelsComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_FlyersOrHandoutsComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_TableTentsOrMenusComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_PostersOrSignsComboBoxItem" />
                         </ComboBox>
 
                         <TextBlock
                             x:Name="QuickPresetDescriptionTextBlock"
+                            x:Uid="PrintSettingsDialog_QuickPresetDescriptionTextBlock"
                             Grid.Row="1"
                             Grid.ColumnSpan="2"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="Choose a common QR printing scenario or keep the layout fully custom."
                             TextWrapping="WrapWholeWords" />
 
                         <ComboBox
                             x:Name="CodesPerPageCombo"
+                            x:Uid="PrintSettingsDialog_CodesPerPageCombo"
                             Grid.Row="2"
                             Grid.Column="0"
                             HorizontalAlignment="Stretch"
-                            Header="Codes per page"
                             SelectionChanged="CodesPerPageCombo_SelectionChanged">
-                            <ComboBoxItem Content="As many fit" Tag="fit" />
-                            <ComboBoxItem Content="1 per page" Tag="1" />
-                            <ComboBoxItem Content="2 per page" Tag="2" />
-                            <ComboBoxItem Content="4 per page" Tag="4" />
-                            <ComboBoxItem Content="6 per page" Tag="6" />
-                            <ComboBoxItem Content="9 per page" Tag="9" />
-                            <ComboBoxItem Content="12 per page" Tag="12" />
-                            <ComboBoxItem Content="16 per page" Tag="16" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_AsManyFitComboBoxItem" Tag="fit" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_1PerPageComboBoxItem" Tag="1" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_2PerPageComboBoxItem" Tag="2" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_4PerPageComboBoxItem" Tag="4" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_6PerPageComboBoxItem" Tag="6" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_9PerPageComboBoxItem" Tag="9" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_12PerPageComboBoxItem" Tag="12" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_16PerPageComboBoxItem" Tag="16" />
                         </ComboBox>
 
                         <ComboBox
                             x:Name="PageTypeCombo"
+                            x:Uid="PrintSettingsDialog_PageTypeCombo"
                             Grid.Row="2"
                             Grid.Column="1"
                             HorizontalAlignment="Stretch"
-                            Header="Page type"
                             SelectionChanged="PageTypeCombo_SelectionChanged">
-                            <ComboBoxItem Content="Letter" />
-                            <ComboBoxItem Content="Legal" />
-                            <ComboBoxItem Content="Statement" />
-                            <ComboBoxItem Content="Executive" />
-                            <ComboBoxItem Content="Tabloid" />
-                            <ComboBoxItem Content="Ledger" />
-                            <ComboBoxItem Content="A3" />
-                            <ComboBoxItem Content="A4" />
-                            <ComboBoxItem Content="A5" />
-                            <ComboBoxItem Content="B4" />
-                            <ComboBoxItem Content="B5" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_LetterComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_LegalComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_StatementComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_ExecutiveComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_TabloidComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_LedgerComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_A3ComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_A4ComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_A5ComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_B4ComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_B5ComboBoxItem" />
                         </ComboBox>
 
                         <ComboBox
                             x:Name="PageLayoutCombo"
+                            x:Uid="PrintSettingsDialog_PageLayoutCombo"
                             Grid.Row="3"
                             Grid.Column="0"
                             HorizontalAlignment="Stretch"
-                            Header="Page layout"
                             SelectionChanged="PageLayoutCombo_SelectionChanged">
-                            <ComboBoxItem Content="Portrait" />
-                            <ComboBoxItem Content="Landscape" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_PortraitComboBoxItem" />
+                            <ComboBoxItem x:Uid="PrintSettingsDialog_LandscapeComboBoxItem" />
                         </ComboBox>
 
                         <ToggleSwitch
                             x:Name="ShowLabelsSwitch"
+                            x:Uid="PrintSettingsDialog_ShowLabelsSwitch"
                             Grid.Row="3"
                             Grid.Column="1"
-                            Header="Show labels"
-                            OffContent="Off"
-                            OnContent="On"
                             Toggled="ShowLabelsSwitch_Toggled" />
                     </Grid>
 
@@ -151,9 +147,9 @@
 
                         <NumberBox
                             x:Name="CodeSizeMmBox"
+                            x:Uid="PrintSettingsDialog_CodeSizeMmBox"
                             Grid.Row="0"
                             Grid.Column="0"
-                            Header="QR size (mm)"
                             Maximum="250"
                             Minimum="5"
                             SmallChange="1"
@@ -162,9 +158,9 @@
 
                         <NumberBox
                             x:Name="SpacingMmBox"
+                            x:Uid="PrintSettingsDialog_SpacingMmBox"
                             Grid.Row="0"
                             Grid.Column="1"
-                            Header="Spacing (mm)"
                             Maximum="25"
                             Minimum="0"
                             SmallChange="1"
@@ -173,9 +169,9 @@
 
                         <NumberBox
                             x:Name="MarginMmBox"
+                            x:Uid="PrintSettingsDialog_MarginMmBox"
                             Grid.Row="1"
                             Grid.ColumnSpan="2"
-                            Header="Page margin (mm)"
                             Maximum="50"
                             Minimum="0"
                             SmallChange="1"
@@ -206,10 +202,10 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock
+                    x:Uid="PrintSettingsDialog_PreviewText"
                     Grid.Column="0"
                     VerticalAlignment="Center"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="Preview" />
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
                 <StackPanel
                     x:Name="PreviewZoomControls"
@@ -218,22 +214,22 @@
                     Spacing="8">
                     <Button
                         x:Name="FitPreviewButton"
-                        Click="FitPreviewButton_Click"
-                        Content="Fit width" />
+                        x:Uid="PrintSettingsDialog_FitPreviewButton"
+                        Click="FitPreviewButton_Click" />
                     <Button
                         x:Name="ZoomOutButton"
-                        AutomationProperties.Name="Zoom out"
+                        x:Uid="PrintSettingsDialog_ZoomOutButton"
                         Click="ZoomOutButton_Click"
                         Content="-" />
                     <TextBlock
                         x:Name="PreviewZoomTextBlock"
+                        x:Uid="PrintSettingsDialog_InitialZoom"
                         MinWidth="56"
                         VerticalAlignment="Center"
-                        HorizontalTextAlignment="Center"
-                        Text="100%" />
+                        HorizontalTextAlignment="Center" />
                     <Button
                         x:Name="ZoomInButton"
-                        AutomationProperties.Name="Zoom in"
+                        x:Uid="PrintSettingsDialog_ZoomInButton"
                         Click="ZoomInButton_Click"
                         Content="+" />
                 </StackPanel>
@@ -248,7 +244,7 @@
                 CornerRadius="8">
                 <ScrollViewer
                     x:Name="PreviewScrollViewer"
-                    AutomationProperties.Name="Print preview"
+                    x:Uid="PrintSettingsDialog_PreviewScrollViewer"
                     HorizontalScrollBarVisibility="Auto"
                     HorizontalScrollMode="Enabled"
                     MaxZoomFactor="4"
@@ -277,7 +273,7 @@
                 Spacing="12">
                 <ProgressRing IsActive="True" />
                 <TextBlock
-                    Text="Updating PDF preview..."
+                    x:Uid="PrintSettingsDialog_UpdatingPDFPreviewText"
                     TextAlignment="Center"
                     TextWrapping="WrapWholeWords" />
             </StackPanel>

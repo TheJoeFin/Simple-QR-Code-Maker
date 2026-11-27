@@ -4,6 +4,8 @@ using ImageMagick;
 using Simple_QR_Code_Maker.Models;
 using System.Drawing;
 
+using Simple_QR_Code_Maker.Helpers;
+
 namespace Simple_QR_Code_Maker.ViewModels;
 
 public partial class AdvancedToolsViewModel : ObservableObject
@@ -78,8 +80,8 @@ public partial class AdvancedToolsViewModel : ObservableObject
         {
             int alignmentCount = UnwarpControlPoints.Count(p => p.Kind == UnwarpPointKind.AlignmentPattern);
             if (alignmentCount == 0)
-                return "4 corners, no alignment points";
-            return $"4 corners + {alignmentCount} alignment {(alignmentCount == 1 ? "point" : "points")}";
+                return "Advanced_NoAlignmentPoints".GetLocalized();
+            return "Advanced_AlignmentPointCount".FormatCountLocalized(alignmentCount);
         }
     }
 
@@ -90,15 +92,15 @@ public partial class AdvancedToolsViewModel : ObservableObject
             UnwarpControlPoint? next = NextUnwarpPoint;
             if (next == null)
                 return TotalPoints == 0
-                    ? "Set the version and open the unwarp workflow."
-                    : "All points placed — click Apply Unwarp.";
+                    ? "Advanced_UnwarpSetup".GetLocalized()
+                    : "Advanced_UnwarpReady".GetLocalized();
 
             if (next.Kind == UnwarpPointKind.OuterCorner)
-                return $"Click corner {next.OrderIndex + 1} of 4 on the image ({next.Label}).";
+                return "Advanced_UnwarpNextCorner".FormatLocalized(next.OrderIndex + 1, next.Label);
 
             var alignments = UnwarpControlPoints.Where(p => p.Kind == UnwarpPointKind.AlignmentPattern).ToList();
             int alignIndex = alignments.IndexOf(next) + 1;
-            return $"Click alignment point {alignIndex} of {alignments.Count} ({next.Label}), or use Estimated.";
+            return "Advanced_UnwarpNextAlignment".FormatLocalized(alignIndex, alignments.Count, next.Label);
         }
     }
 
@@ -226,12 +228,12 @@ public partial class AdvancedToolsViewModel : ObservableObject
     {
         get
         {
-            if (!IsPerspectiveCorrectionMode) return "1. Select Top-Left corner";
-            if (TopLeftCorner == null) return "1. Select Top-Left corner";
-            if (TopRightCorner == null) return "2. Select Top-Right corner";
-            if (BottomRightCorner == null) return "3. Select Bottom-Right corner";
-            if (BottomLeftCorner == null) return "4. Select Bottom-Left corner";
-            return "All corners selected. Apply correction to continue.";
+            if (!IsPerspectiveCorrectionMode) return "Advanced_SelectTopLeft".GetLocalized();
+            if (TopLeftCorner == null) return "Advanced_SelectTopLeft".GetLocalized();
+            if (TopRightCorner == null) return "Advanced_SelectTopRight".GetLocalized();
+            if (BottomRightCorner == null) return "Advanced_SelectBottomRight".GetLocalized();
+            if (BottomLeftCorner == null) return "Advanced_SelectBottomLeft".GetLocalized();
+            return "Advanced_CornersSelected".GetLocalized();
         }
     }
 
@@ -520,10 +522,10 @@ public partial class AdvancedToolsViewModel : ObservableObject
 
         var pts = new List<UnwarpControlPoint>
         {
-            new() { ModuleRow = 0, ModuleCol = 0, Kind = UnwarpPointKind.OuterCorner, Label = "TL", OrderIndex = 0, IdealX = 0, IdealY = 0 },
-            new() { ModuleRow = 0, ModuleCol = dim - 1, Kind = UnwarpPointKind.OuterCorner, Label = "TR", OrderIndex = 1, IdealX = outputSize, IdealY = 0 },
-            new() { ModuleRow = dim - 1, ModuleCol = dim - 1, Kind = UnwarpPointKind.OuterCorner, Label = "BR", OrderIndex = 2, IdealX = outputSize, IdealY = outputSize },
-            new() { ModuleRow = dim - 1, ModuleCol = 0, Kind = UnwarpPointKind.OuterCorner, Label = "BL", OrderIndex = 3, IdealX = 0, IdealY = outputSize },
+            new() { ModuleRow = 0, ModuleCol = 0, Kind = UnwarpPointKind.OuterCorner, Label = "Advanced_CornerTopLeft".GetLocalized(), OrderIndex = 0, IdealX = 0, IdealY = 0 },
+            new() { ModuleRow = 0, ModuleCol = dim - 1, Kind = UnwarpPointKind.OuterCorner, Label = "Advanced_CornerTopRight".GetLocalized(), OrderIndex = 1, IdealX = outputSize, IdealY = 0 },
+            new() { ModuleRow = dim - 1, ModuleCol = dim - 1, Kind = UnwarpPointKind.OuterCorner, Label = "Advanced_CornerBottomRight".GetLocalized(), OrderIndex = 2, IdealX = outputSize, IdealY = outputSize },
+            new() { ModuleRow = dim - 1, ModuleCol = 0, Kind = UnwarpPointKind.OuterCorner, Label = "Advanced_CornerBottomLeft".GetLocalized(), OrderIndex = 3, IdealX = 0, IdealY = outputSize },
         };
 
         int alignIndex = 1;
@@ -535,7 +537,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
                 ModuleRow = row,
                 ModuleCol = col,
                 Kind = UnwarpPointKind.AlignmentPattern,
-                Label = $"A{alignIndex++}",
+                Label = "Advanced_AlignmentMarker".FormatLocalized(alignIndex++),
                 OrderIndex = pts.Count,
                 IdealX = idealX,
                 IdealY = idealY,

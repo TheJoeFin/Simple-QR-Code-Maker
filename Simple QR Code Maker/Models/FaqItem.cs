@@ -1,3 +1,5 @@
+using Simple_QR_Code_Maker.Helpers;
+
 namespace Simple_QR_Code_Maker.Models;
 
 public enum FaqActionKind
@@ -16,39 +18,49 @@ public class FaqItem
     public string Title { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
     public FaqActionKind ActionKind { get; set; } = FaqActionKind.None;
-    public string? ActionText { get; set; }
+    public string? ActionText => ActionKind == FaqActionKind.None ? null : "Faq_ShowMe".GetLocalized();
+    public FaqTopic Topics { get; init; }
+
+    private static FaqItem Create(string key, FaqTopic topics = FaqTopic.None, FaqActionKind action = FaqActionKind.None)
+        => new()
+        {
+            Title = $"{key}_Question".GetLocalized(),
+            Content = $"{key}_Answer".GetLocalized(),
+            Topics = topics,
+            ActionKind = action,
+        };
 
     public static readonly FaqItem[] AllFaqs = [
-        new FaqItem { Title = "What is a QR Code?", Content = "It is best to think of QR Codes as text in a format computers can easily read. More specifically they are a format of two-dimensional barcode that is used to encode content. QR Codes may be used to display text to the user, to open a URL, and many other things. But most frequently are just used for opening websites."},
-        new FaqItem { Title = "What does QR Stand for?", Content = "Quick Response"},
-        new FaqItem { Title = "Why can QR Codes be dangerous?", Content = "Due to the fact that most people use QR Codes to quickly open websites this introduces a risk because it is not clear what website is encoded into the QR Code. Additionally when the URL to the website is redirected then the owner of the URL would be able to change where the QR Code sends people scanning the code whenever they want."},
-        new FaqItem { Title = "Are these dynamic QR Codes?", Content = "QR Codes are not dynamic on their own. To make a QR Code dynamic you need to use a link which will redirect/forward to another link. This requires an external server to do the redirecting. This can be an external website or your own where you can change where the link redirects to." },
-        new FaqItem { Title = "How can you tell if a QR Code is dynamic?", Content = "Compare the final website with the QR Code content. If when you scan the QR Code with your phone and it goes to a website say, https://www.example.com but when you use this app to read the code and it is a totally different URL like http://JoeFinApps.com/123, then the QR Code is likely dynamic or at the very least being redirected by the domain in the QR Code." },
-        new FaqItem { Title = "What is a two-dimensional barcode", Content="Barcodes are content which has been translated into a format which can be easily scanned by a machine. The barcodes you see on most products which are a row of lines with different widths are a form of one-dimensional barcodes because they are only one row of data. Two-dimensional barcodes encode data into a pattern which is multiple rows. The data is not always encoded left-to-right or top-to-bottom. Frequently two-dimensional barcodes wrap or pack the data in unique ways depending on the type of code."},
-        new FaqItem { Title = "How to read a QR Code?", Content = "To read a QR Code, you need a scanner which can read 2-dimensional (2D) barcodes. Android, iOS, and Windows all support QR Code scanning in the native default camera apps. To scan the code, simply open the app and hold the camera in front of it. The app will automatically recognize the code and act accordingly. NOTE: this does not mean the webpage you are sent to is exactly what is encoded into the QR Code. To read the content of a QR Code use the Read Code page of this app and open an image or paste one from your clipboard.", ActionKind = FaqActionKind.OpenReadCodes, ActionText = "show me" },
-        new FaqItem { Title = "What is the URL builder?", Content = "The URL builder helps you assemble a web address from its main parts instead of typing the whole thing by hand. You can set the scheme, host, port, path, fragment, and query parameters, then the app combines them into a final URL for the QR Code. It is handy when you want to avoid typos, add tracking parameters, or build several links with a consistent structure.", ActionKind = FaqActionKind.OpenUrlBuilder, ActionText = "show me" },
-        new FaqItem { Title = "What is a vCard QR Code?", Content = "A vCard QR Code stores contact information such as a name, company, phone numbers, email addresses, website, and postal address in a format many phones and contact apps understand. When someone scans it, their device can offer to create a new contact without manually typing everything. It is useful for business cards, event badges, and signage where you want people to save contact details quickly.", ActionKind = FaqActionKind.OpenVCardBuilder, ActionText = "show me" },
-        new FaqItem { Title = "What is a WiFi QR Code?", Content = "A WiFi QR Code stores a network name, security type, password, and optional hidden-network flag in a standard text format that many phones can recognize. On newer iPhone and Android devices it can offer to join the network directly, but older cameras and some third-party scanners may only show the raw text. Anyone who scans or photographs the code can recover the credentials, so only share it where that is acceptable. WEP is legacy and insecure, and enterprise WiFi setups usually need more than this simple QR format can provide." },
-        new FaqItem { Title = "How do I make a WiFi QR Code?", Content = "Use the WiFi builder when you want a QR Code that helps guests join a network without typing the password. Enter the network name, choose the security type, add the password if required, and mark the network as hidden only if it really is hidden. After that, the app generates the standard WiFi text for you and turns it into a QR Code.", ActionKind = FaqActionKind.OpenWifiBuilder, ActionText = "show me" },
-        new FaqItem { Title = "What is the Error Correction Level?", Content = "All QR Codes can still be readable even if some of the QR Code is hidden due to damage or challenging conditions. The amount of the QR Code which can be hidden and the code still work is called the Error Correction Level. A higher error correction level will be more durable however the minimum size will be larger due to more data being encoded in the QR Code." },
-        new FaqItem { Title = "How does adding an image affect the QR Code?", Content = "When you add an image like a logo to a QR Code using this app, the logo is placed directly over the center of the QR Code, covering up some of the encoded data. This is why error correction is so important - the QR Code's error correction capability allows it to remain scannable even though part of it is obscured. The higher the error correction level, the more of the QR Code can be covered by your logo while still remaining functional. Always use a higher error correction level when adding logos, and test your QR Codes thoroughly to ensure they scan reliably." },
-        new FaqItem { Title = "How is the center image stored in SVG files?", Content = "When you save a QR Code with a center image as an SVG file, the image is embedded directly into the SVG using Base64 encoding. This means the entire image data is converted to text and included within the SVG file itself, making the SVG completely self-contained. You don't need to keep the original image file separate - everything is embedded in the single SVG file. This makes it easy to share and use the QR Code without worrying about missing image references. Note that the center image is stored as a raster image (PNG), not as a vector, so it may appear pixelated when zoomed in significantly, even though the QR Code itself remains crisp as a vector." },
-        new FaqItem { Title = "How to put an image inside of the center of a QR Code?", Content = "You can add an image directly inside the app using the center image (logo) button in the toolbar, or by saving a Brand that includes a logo. Click the image button to pick any PNG or JPG from your device, then adjust the size (7–30%) and padding (-20 to +20 px) using the sliders in its flyout. The image is placed over the center of the QR Code, so a higher error correction level (Q or H) is strongly recommended. Always test the finished QR Code to confirm it scans reliably." },
-        new FaqItem { Title = "How is minimum size calculated?", Content = "The minimum size of a QR Code is calculated based on experimental data. QR Codes at several sizes were printed using a 600dpi laser printer on white paper. The codes were scanned and a relationship between code size and scan distance was developed. The contrast between the QR Code's foreground and background is also factored into the minimum size. If either QR color uses transparency, the final print surface changes the effective contrast, so the app no longer shows an exact minimum size." },
-        new FaqItem { Title = "How can I change the maximum scan distance?", Content = "You can the maximum estimated scan distance of the minimum QR Code size in the settings. As always test in the real world before committing to a costly order or placement.", ActionKind = FaqActionKind.OpenSettings, ActionText = "show me"},
-        new FaqItem { Title = "What is the contrast ratio?", Content = "The contrast ratio is the difference in luminance or color that makes an object distinguishable. In the context of QR Codes, the contrast ratio is the difference in color between the foreground and background of the code. A higher contrast ratio makes the code easier to scan and read. The minimum recommended contrast ratio for QR Codes is 2.5:1. If transparency is used, the effective contrast depends on the final print surface after the QR Code is composited." },
-        new FaqItem { Title = "At the minimum size, how far away can a QR Code be scanned?", Content = "36 inches or 1 meter is roughly the maximum scan distance of a QR Code printed at the minimum size. Physical factors like lighting conditions, damaged codes, and glare will all change how easy (if at all) a QR Code can be scanned." },
-        new FaqItem { Title = "What if I print the QR Code smaller than the minimum size?", Content = "The scan distance and size have a linear relationship so doubling the QR Code size doubles the scan distance; the same goes for increasing the size." },
-        new FaqItem { Title = "What type of scanner or phone camera is expected when printing at the minimum size?", Content = "The scanning experiments were carried out using an iPhone 13 and the default iOS code-scanning app and the main camera. The camera is a 12 Megapixel (MP) camera. Any modern Android or iOS phone after 2018 should be able to scan QR Codes at 1 meter at the default minimum size." },
-        new FaqItem { Title = "Will the scanning always work if minimum size is followed?", Content = "No. The minimum size assumes good conditions such as: a well lit environment, matte printed surface, a decently modern scanning device." },
-        new FaqItem { Title = "Why do we have to use QR Codes?", Content = "Typing in URLs is tedious so having the camera scan it easier and more reliable." },
-        new FaqItem { Title = "Are QR Codes evil and/or dumb?", Content = "A little of both, but they can be a handy way to get people to websites." },
-        new FaqItem { Title = "Why might QR Code detection fail?", Content = "QR Code detection can fail for several reasons: the image may be too blurry or low resolution, the lighting may cause glare or shadows that obscure parts of the code, the QR Code may be printed too small, the contrast between the foreground and background may be too low, or the code may be damaged or partially covered. Scanning at an extreme angle can also distort the code enough to prevent detection." },
-        new FaqItem { Title = "How can I improve QR Code detection in this app?", Content = "If a QR Code is not being detected, try using the Advanced Tools on the decoding page. You can adjust the image with grayscale conversion, contrast enhancement, and perspective correction to help the decoder recognize the code. Cropping the image to focus on just the QR Code area can also improve results. Make sure the image is clear, well-lit, and the QR Code fills a reasonable portion of the frame.", ActionKind = FaqActionKind.OpenAdvancedTools, ActionText = "show me" },
-        new FaqItem { Title = "What is a Brand?", Content = "A Brand is a saved preset of QR Code settings. It can store any combination of foreground color, background color, error correction level, URL or text content, and a center logo image. Once saved, applying a Brand instantly restores all of those settings so you can produce consistently styled QR Codes without reconfiguring everything each time." },
-        new FaqItem { Title = "How do I create a Brand?", Content = "Open the Brands flyout by clicking the bookmark icon in the toolbar. Click 'Save as brand', give the preset a name, and check the settings you want the Brand to remember — foreground color, background color, error correction level, URL or text, and center image. Then click 'Save Brand'. The current values for every checked setting are captured at that moment." },
-        new FaqItem { Title = "How do I apply a Brand?", Content = "Open the Brands flyout and click any saved Brand in the list. All of the settings stored in that Brand are applied immediately. You can also set a Brand as the default so that its settings are loaded automatically each time the app opens. Right-click any Brand in the list and choose 'Set as default'." },
-        new FaqItem { Title = "What does the default Brand setting do?", Content = "When a Brand is marked as the default, its stored settings are applied automatically every time the app starts. Only one Brand can be the default at a time. To set a default, right-click a Brand in the Brands flyout and choose 'Set as default'. Right-click the current default and choose the same option to remove the default." },
-        new FaqItem { Title = "Can a Brand store a center logo image?", Content = "Yes. Load the logo image using the center image button in the toolbar and adjust its size and padding to your liking. Then open the Brands flyout, click 'Save as brand', check the 'Center image' checkbox, and save. The path to the image file is stored in the Brand. If the image file is later moved or deleted, the Brand will no longer be able to apply the logo." },
+        Create("Faq_WhatIsAQRCode"),
+        Create("Faq_WhatDoesQRStandFor"),
+        Create("Faq_WhyCanQRCodesBeDangerous"),
+        Create("Faq_AreTheseDynamicQRCodes"),
+        Create("Faq_HowCanYouTellIfAQRCodeIsDynamic"),
+        Create("Faq_WhatIsATwoDimensionalBarcode"),
+        Create("Faq_HowToReadAQRCode", action: FaqActionKind.OpenReadCodes),
+        Create("Faq_WhatIsTheURLBuilder", action: FaqActionKind.OpenUrlBuilder),
+        Create("Faq_WhatIsAVCardQRCode", action: FaqActionKind.OpenVCardBuilder),
+        Create("Faq_WhatIsAWiFiQRCode"),
+        Create("Faq_HowDoIMakeAWiFiQRCode", action: FaqActionKind.OpenWifiBuilder),
+        Create("Faq_WhatIsTheErrorCorrectionLevel", topics: FaqTopic.Size | FaqTopic.ErrorCorrection),
+        Create("Faq_HowDoesAddingAnImageAffectTheQRCode", topics: FaqTopic.ErrorCorrection),
+        Create("Faq_HowIsTheCenterImageStoredInSVGFiles"),
+        Create("Faq_HowToPutAnImageInsideOfTheCenterOfAQRCode", topics: FaqTopic.Size | FaqTopic.ErrorCorrection | FaqTopic.Brands),
+        Create("Faq_HowIsMinimumSizeCalculated", topics: FaqTopic.Size),
+        Create("Faq_HowCanIChangeTheMaximumScanDistance", topics: FaqTopic.Size, action: FaqActionKind.OpenSettings),
+        Create("Faq_WhatIsTheContrastRatio"),
+        Create("Faq_AtTheMinimumSizeHowFarAwayCanAQRCodeBeScanned", topics: FaqTopic.Size),
+        Create("Faq_WhatIfIPrintTheQRCodeSmallerThanTheMinimumSize", topics: FaqTopic.Size),
+        Create("Faq_WhatTypeOfScannerOrPhoneCameraIsExpectedWhenPrintingAtTheMinimumSize", topics: FaqTopic.Size),
+        Create("Faq_WillTheScanningAlwaysWorkIfMinimumSizeIsFollowed", topics: FaqTopic.Size),
+        Create("Faq_WhyDoWeHaveToUseQRCodes"),
+        Create("Faq_AreQRCodesEvilAndOrDumb"),
+        Create("Faq_WhyMightQRCodeDetectionFail", topics: FaqTopic.Detection),
+        Create("Faq_HowCanIImproveQRCodeDetectionInThisApp", topics: FaqTopic.Detection, action: FaqActionKind.OpenAdvancedTools),
+        Create("Faq_WhatIsABrand", topics: FaqTopic.ErrorCorrection | FaqTopic.Brands),
+        Create("Faq_HowDoICreateABrand", topics: FaqTopic.ErrorCorrection | FaqTopic.Brands),
+        Create("Faq_HowDoIApplyABrand", topics: FaqTopic.Brands),
+        Create("Faq_WhatDoesTheDefaultBrandSettingDo", topics: FaqTopic.Brands),
+        Create("Faq_CanABrandStoreACenterLogoImage", topics: FaqTopic.Size | FaqTopic.Brands),
         ];
 }

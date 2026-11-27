@@ -6,12 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
-    Title="Generate IDs"
-    CloseButtonText="Cancel"
+    x:Uid="GenerateIdsDialog_Dialog"
     DefaultButton="Primary"
-    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanApply,
-                                    Mode=OneWay}"
-    PrimaryButtonText="Add"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
     mc:Ignorable="d">
 
     <ScrollViewer
@@ -21,29 +18,24 @@
         HorizontalScrollMode="Disabled"
         VerticalScrollBarVisibility="Auto">
         <Border
-            Width="{x:Bind DialogScrollViewer.ActualWidth,
-                           Mode=OneWay}"
+            Width="{x:Bind DialogScrollViewer.ActualWidth, Mode=OneWay}"
             MinWidth="420"
             Padding="0,0,12,0">
             <StackPanel HorizontalAlignment="Stretch" Spacing="12">
-                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Generate one random ID per line and add them into the current text." />
+                <TextBlock x:Uid="GenerateIdsDialog_GenerateOneRandomIDPerText" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
                 <NumberBox
                     x:Name="CountNumberBox"
-                    Header="How many IDs"
+                    x:Uid="GenerateIdsDialog_CountNumberBox"
                     Minimum="1"
                     SmallChange="1"
                     SpinButtonPlacementMode="Compact"
-                    Value="{x:Bind ViewModel.GeneratedIdCount,
-                                   Mode=TwoWay,
-                                   UpdateSourceTrigger=PropertyChanged}" />
+                    Value="{x:Bind ViewModel.GeneratedIdCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ComboBox
-                    Header="ID style"
-                    ItemsSource="{x:Bind ViewModel.GeneratedIdFormatOptions,
-                                         Mode=OneWay}"
-                    SelectedItem="{x:Bind ViewModel.SelectedGeneratedIdFormatOption,
-                                          Mode=TwoWay}">
+                    x:Uid="GenerateIdsDialog_IDStyleComboBox"
+                    ItemsSource="{x:Bind ViewModel.GeneratedIdFormatOptions, Mode=OneWay}"
+                    SelectedItem="{x:Bind ViewModel.SelectedGeneratedIdFormatOption, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate x:DataType="models:SpreadsheetGeneratedIdFormatOption">
                             <TextBlock Text="{x:Bind DisplayName}" />
@@ -53,54 +45,37 @@
 
                 <NumberBox
                     x:Name="NanoIdLengthNumberBox"
-                    Header="NanoID length"
-                    IsEnabled="{x:Bind ViewModel.IsNanoIdLengthEnabled,
-                                       Mode=OneWay}"
+                    x:Uid="GenerateIdsDialog_NanoIdLengthNumberBox"
+                    IsEnabled="{x:Bind ViewModel.IsNanoIdLengthEnabled, Mode=OneWay}"
                     Minimum="1"
                     SmallChange="1"
                     SpinButtonPlacementMode="Compact"
-                    Visibility="{x:Bind ViewModel.NanoIdLengthVisibility,
-                                        Mode=OneWay}"
-                    Value="{x:Bind ViewModel.NanoIdLength,
-                                   Mode=TwoWay,
-                                   UpdateSourceTrigger=PropertyChanged}" />
+                    Visibility="{x:Bind ViewModel.NanoIdLengthVisibility, Mode=OneWay}"
+                    Value="{x:Bind ViewModel.NanoIdLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBox
-                    Header="Text before each ID"
-                    PlaceholderText="https://example.com/"
-                    Text="{x:Bind ViewModel.PrefixText,
-                                  Mode=TwoWay,
-                                  UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox x:Uid="GenerateIdsDialog_TextBeforeEachIDTextBox" Text="{x:Bind ViewModel.PrefixText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBox
-                    Header="Text after each ID"
-                    PlaceholderText="?source=qr-code"
-                    Text="{x:Bind ViewModel.SuffixText,
-                                  Mode=TwoWay,
-                                  UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox x:Uid="GenerateIdsDialog_TextAfterEachIDTextBox" Text="{x:Bind ViewModel.SuffixText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <StackPanel Spacing="6">
                     <TextBlock
+                        x:Uid="GenerateIdsDialog_PreviewText"
                         FontSize="14"
-                        FontWeight="SemiBold"
-                        Text="Preview" />
+                        FontWeight="SemiBold" />
                     <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.PreviewDescription, Mode=OneWay}" />
                     <TextBox
                         MinHeight="112"
                         AcceptsReturn="True"
                         IsReadOnly="True"
-                        Text="{x:Bind ViewModel.PreviewText,
-                                      Mode=OneWay}"
+                        Text="{x:Bind ViewModel.PreviewText, Mode=OneWay}"
                         TextWrapping="Wrap" />
                 </StackPanel>
 
                 <InfoBar
-                    Title="Check your settings"
+                    x:Uid="GenerateIdsDialog_CheckYourSettingsInfoBar"
                     IsClosable="False"
-                    IsOpen="{x:Bind ViewModel.IsValidationVisible,
-                                    Mode=OneWay}"
-                    Message="{x:Bind ViewModel.ValidationMessage,
-                                     Mode=OneWay}"
+                    IsOpen="{x:Bind ViewModel.IsValidationVisible, Mode=OneWay}"
+                    Message="{x:Bind ViewModel.ValidationMessage, Mode=OneWay}"
                     Severity="Error" />
             </StackPanel>
         </Border>

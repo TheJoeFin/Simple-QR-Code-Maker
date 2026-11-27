@@ -142,11 +142,11 @@ public static class VCardBuilderHelper
         return string.Join("\r\n", lines);
     }
 
-    public static string GetDisplayName(string? text)
+    public static string GetDisplayName(string? text, string fallback = "vCard contact")
     {
         return TryParse(text, out VCardBuilderState state)
             ? GetDisplayName(state)
-            : "vCard contact";
+            : fallback;
     }
 
     public static string GetDisplayName(VCardBuilderState state)

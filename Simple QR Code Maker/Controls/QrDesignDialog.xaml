@@ -5,18 +5,27 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Simple_QR_Code_Maker.Controls"
     xmlns:converters="using:Simple_QR_Code_Maker.Converters"
-    Title="QR code design"
-    CloseButtonText="Done"
+    x:Uid="QrDesignDialog_Dialog"
+    Closed="DesignDialog_Closed"
     DefaultButton="None"
-    Opened="DesignDialog_Opened"
-    Closed="DesignDialog_Closed">
+    Opened="DesignDialog_Opened">
     <ContentDialog.Resources>
         <x:Double x:Key="ContentDialogMaxWidth">900</x:Double>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
         <DataTemplate x:Key="DesignTileTemplate" x:DataType="controls:QrDesignGalleryItem">
-            <StackPanel Width="104" Spacing="6" ToolTipService.ToolTip="{x:Bind Description}">
-                <Image Width="104" Height="112" Source="{x:Bind Thumbnail}" Stretch="Uniform" />
-                <TextBlock HorizontalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="{x:Bind Name}" />
+            <StackPanel
+                Width="104"
+                Spacing="6"
+                ToolTipService.ToolTip="{x:Bind Description}">
+                <Image
+                    Width="104"
+                    Height="112"
+                    Source="{x:Bind Thumbnail}"
+                    Stretch="Uniform" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Text="{x:Bind Name}" />
             </StackPanel>
         </DataTemplate>
         <Style x:Key="DesignTileStyle" TargetType="GridViewItem">
@@ -26,7 +35,12 @@
         </Style>
     </ContentDialog.Resources>
 
-    <Grid x:Name="DialogLayout" Width="760" Height="620" ColumnSpacing="24" RowSpacing="12">
+    <Grid
+        x:Name="DialogLayout"
+        Width="760"
+        Height="620"
+        ColumnSpacing="24"
+        RowSpacing="12">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition x:Name="PreviewColumn" Width="240" />
@@ -35,134 +49,265 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel x:Name="PreviewPane" Grid.Column="1" Grid.RowSpan="2" Spacing="12">
-            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Live preview" />
-            <Border Padding="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    CornerRadius="{ThemeResource ControlCornerRadius}">
-                <Image x:Name="LivePreviewImage" MaxHeight="500" Stretch="Uniform" AutomationProperties.Name="Current QR code design preview" />
+        <StackPanel
+            x:Name="PreviewPane"
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Spacing="12">
+            <TextBlock x:Uid="QrDesignDialog_LivePreviewText" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <Border
+                Padding="8"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="{ThemeResource ControlCornerRadius}">
+                <Image
+                    x:Name="LivePreviewImage"
+                    x:Uid="QrDesignDialog_LivePreviewImage"
+                    MaxHeight="500"
+                    Stretch="Uniform" />
             </Border>
-            <TextBlock x:Name="NoPreviewText" Text="Enter QR content in the main window to see a live preview here."
-                       TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-            <TextBlock x:Name="PreviewHelpText" Style="{StaticResource CaptionTextBlockStyle}" Text="Changes apply immediately. Choose Done to return to your QR codes."
-                       TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            <TextBlock
+                x:Name="NoPreviewText"
+                x:Uid="QrDesignDialog_NoPreviewText"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                TextWrapping="Wrap" />
+            <TextBlock
+                x:Name="PreviewHelpText"
+                x:Uid="QrDesignDialog_PreviewHelpText"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                TextWrapping="Wrap" />
         </StackPanel>
-        <ScrollViewer x:Name="DesignScroller" Grid.RowSpan="2" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer
+            x:Name="DesignScroller"
+            Grid.RowSpan="2"
+            HorizontalScrollMode="Disabled"
+            VerticalScrollBarVisibility="Auto">
             <StackPanel x:Name="DesignPanel" Spacing="12">
-                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                           Text="Pick a look, then make it your own. Your QR content stays the same."
-                           TextWrapping="Wrap" />
-                <SelectorBar x:Name="DesignSections" AutomationProperties.AutomationId="DesignSections" SelectionChanged="DesignSections_SelectionChanged">
-                    <SelectorBarItem x:Name="PresetsSection" IsSelected="True" Text="Presets" />
-                    <SelectorBarItem x:Name="PatternSection" Text="Pattern" />
-                    <SelectorBarItem x:Name="FrameSection" Text="Frame" />
+                <TextBlock
+                    x:Uid="QrDesignDialog_PickALookThenMakeText"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    TextWrapping="Wrap" />
+                <SelectorBar
+                    x:Name="DesignSections"
+                    AutomationProperties.AutomationId="DesignSections"
+                    SelectionChanged="DesignSections_SelectionChanged">
+                    <SelectorBarItem
+                        x:Name="PresetsSection"
+                        x:Uid="QrDesignDialog_PresetsSection"
+                        IsSelected="True" />
+                    <SelectorBarItem x:Name="PatternSection" x:Uid="QrDesignDialog_PatternSection" />
+                    <SelectorBarItem x:Name="FrameSection" x:Uid="QrDesignDialog_FrameSection" />
                 </SelectorBar>
-                <ProgressRing x:Name="PreviewProgress" Width="28" Height="28" IsActive="False" Visibility="Collapsed" />
-                <InfoBar x:Name="PreviewError" IsClosable="True" Severity="Error" Title="Design previews unavailable" />
-                <!-- This outer ScrollViewer owns scrolling; the small galleries do not scroll independently. -->
-                <GridView x:Name="PresetGrid"
-                          ItemsSource="{x:Bind Presets}"
-                          ItemTemplate="{StaticResource DesignTileTemplate}"
-                          ItemContainerStyle="{StaticResource DesignTileStyle}"
-                          ContainerContentChanging="Gallery_ContainerContentChanging"
-                          SelectionChanged="PresetGrid_SelectionChanged"
-                          SelectionMode="Single"
-                          ScrollViewer.VerticalScrollMode="Disabled"
-                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                          ScrollViewer.HorizontalScrollMode="Disabled"
-                          AutomationProperties.AutomationId="DesignPresetGallery"
-                          AutomationProperties.Name="Coordinated design presets">
+                <ProgressRing
+                    x:Name="PreviewProgress"
+                    Width="28"
+                    Height="28"
+                    IsActive="False"
+                    Visibility="Collapsed" />
+                <InfoBar
+                    x:Name="PreviewError"
+                    x:Uid="QrDesignDialog_PreviewError"
+                    IsClosable="True"
+                    Severity="Error" />
+                <!--  This outer ScrollViewer owns scrolling; the small galleries do not scroll independently.  -->
+                <GridView
+                    x:Name="PresetGrid"
+                    x:Uid="QrDesignDialog_PresetGrid"
+                    AutomationProperties.AutomationId="DesignPresetGallery"
+                    ContainerContentChanging="Gallery_ContainerContentChanging"
+                    ItemContainerStyle="{StaticResource DesignTileStyle}"
+                    ItemTemplate="{StaticResource DesignTileTemplate}"
+                    ItemsSource="{x:Bind Presets}"
+                    ScrollViewer.HorizontalScrollMode="Disabled"
+                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                    ScrollViewer.VerticalScrollMode="Disabled"
+                    SelectionChanged="PresetGrid_SelectionChanged"
+                    SelectionMode="Single">
                     <GridView.ItemsPanel>
-                        <ItemsPanelTemplate><ItemsWrapGrid Orientation="Horizontal" /></ItemsPanelTemplate>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
                     </GridView.ItemsPanel>
                 </GridView>
-                <StackPanel x:Name="PatternPanel" Spacing="12" Visibility="Collapsed">
-                    <ComboBox x:Name="ModuleCombo" AutomationProperties.AutomationId="QrModuleStyle" Header="QR pattern" HorizontalAlignment="Stretch" SelectionChanged="ModuleCombo_SelectionChanged" />
-                    <ComboBox x:Name="EyeCombo" AutomationProperties.AutomationId="QrEyeStyle" Header="Corner eyes" HorizontalAlignment="Stretch" SelectionChanged="EyeCombo_SelectionChanged" />
-                    <TextBlock Text="The small timing and alignment patterns stay square to help scanners read your code."
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
-                    <Button AutomationProperties.AutomationId="ResetQrPattern" Content="Classic squares" Click="ClassicPattern_Click" />
-                    <DropDownButton AutomationProperties.AutomationId="DesignForegroundPickerButton" Content="QR color and opacity" HorizontalAlignment="Stretch">
+                <StackPanel
+                    x:Name="PatternPanel"
+                    Spacing="12"
+                    Visibility="Collapsed">
+                    <ComboBox
+                        x:Name="ModuleCombo"
+                        x:Uid="QrDesignDialog_ModuleCombo"
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.AutomationId="QrModuleStyle"
+                        SelectionChanged="ModuleCombo_SelectionChanged" />
+                    <ComboBox
+                        x:Name="EyeCombo"
+                        x:Uid="QrDesignDialog_EyeCombo"
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.AutomationId="QrEyeStyle"
+                        SelectionChanged="EyeCombo_SelectionChanged" />
+                    <TextBlock
+                        x:Uid="QrDesignDialog_TheSmallTimingAndAlignmentText"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        TextWrapping="Wrap" />
+                    <Button
+                        x:Uid="QrDesignDialog_ClassicSquaresButton"
+                        AutomationProperties.AutomationId="ResetQrPattern"
+                        Click="ClassicPattern_Click" />
+                    <DropDownButton
+                        x:Uid="QrDesignDialog_QRColorAndOpacityDropDownButton"
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.AutomationId="DesignForegroundPickerButton">
                         <DropDownButton.Flyout>
                             <Flyout>
-                                <ColorPicker AutomationProperties.AutomationId="DesignForegroundPicker"
-                                             Color="{x:Bind ViewModel.ForegroundColor, Mode=TwoWay}" IsAlphaEnabled="True"
-                                             IsColorChannelTextInputVisible="True" AutomationProperties.Name="QR color and opacity" />
+                                <ColorPicker
+                                    x:Uid="QrDesignDialog_QRColorAndOpacityColorPicker"
+                                    AutomationProperties.AutomationId="DesignForegroundPicker"
+                                    IsAlphaEnabled="True"
+                                    IsColorChannelTextInputVisible="True"
+                                    Color="{x:Bind ViewModel.ForegroundColor, Mode=TwoWay}" />
                             </Flyout>
                         </DropDownButton.Flyout>
                     </DropDownButton>
-                    <DropDownButton AutomationProperties.AutomationId="DesignBackgroundPickerButton" Content="Background color and opacity" HorizontalAlignment="Stretch">
+                    <DropDownButton
+                        x:Uid="QrDesignDialog_BackgroundColorAndOpacityDropDownButton"
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.AutomationId="DesignBackgroundPickerButton">
                         <DropDownButton.Flyout>
                             <Flyout>
-                                <ColorPicker AutomationProperties.AutomationId="DesignBackgroundPicker"
-                                             Color="{x:Bind ViewModel.BackgroundColor, Mode=TwoWay}" IsAlphaEnabled="True"
-                                             IsColorChannelTextInputVisible="True" AutomationProperties.Name="QR background color and opacity" />
+                                <ColorPicker
+                                    x:Uid="QrDesignDialog_QRBackgroundColorAndOpacityColorPicker"
+                                    AutomationProperties.AutomationId="DesignBackgroundPicker"
+                                    IsAlphaEnabled="True"
+                                    IsColorChannelTextInputVisible="True"
+                                    Color="{x:Bind ViewModel.BackgroundColor, Mode=TwoWay}" />
                             </Flyout>
                         </DropDownButton.Flyout>
                     </DropDownButton>
-                    <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="Transparent backgrounds depend on the surface where you place the QR code."
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                    <TextBlock
+                        x:Uid="QrDesignDialog_TransparentBackgroundsDependOnTheText"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        TextWrapping="Wrap" />
                 </StackPanel>
-                <StackPanel x:Name="FramePanel" Spacing="12" Visibility="Collapsed">
-                    <GridView x:Name="FrameGrid"
-                              ItemsSource="{x:Bind Frames}"
-                              ItemTemplate="{StaticResource DesignTileTemplate}"
-                              ItemContainerStyle="{StaticResource DesignTileStyle}"
-                              ContainerContentChanging="Gallery_ContainerContentChanging"
-                              SelectionChanged="FrameGrid_SelectionChanged"
-                              SelectionMode="Single"
-                              ScrollViewer.VerticalScrollMode="Disabled"
-                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                              ScrollViewer.HorizontalScrollMode="Disabled"
-                              AutomationProperties.AutomationId="FrameShapeGallery"
-                              AutomationProperties.Name="Frame shapes">
+                <StackPanel
+                    x:Name="FramePanel"
+                    Spacing="12"
+                    Visibility="Collapsed">
+                    <GridView
+                        x:Name="FrameGrid"
+                        x:Uid="QrDesignDialog_FrameGrid"
+                        AutomationProperties.AutomationId="FrameShapeGallery"
+                        ContainerContentChanging="Gallery_ContainerContentChanging"
+                        ItemContainerStyle="{StaticResource DesignTileStyle}"
+                        ItemTemplate="{StaticResource DesignTileTemplate}"
+                        ItemsSource="{x:Bind Frames}"
+                        ScrollViewer.HorizontalScrollMode="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        ScrollViewer.VerticalScrollMode="Disabled"
+                        SelectionChanged="FrameGrid_SelectionChanged"
+                        SelectionMode="Single">
                         <GridView.ItemsPanel>
-                            <ItemsPanelTemplate><ItemsWrapGrid Orientation="Horizontal" /></ItemsPanelTemplate>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
                         </GridView.ItemsPanel>
                     </GridView>
                     <StackPanel Spacing="12" Visibility="{x:Bind ViewModel.IsFrameTextVisible, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                         <StackPanel Spacing="2">
-                            <CheckBox x:Uid="QrDesign_NoBackground" AutomationProperties.AutomationId="FrameNoBackground"
-                                      IsChecked="{x:Bind ViewModel.UseFrameAsQrBackground, Mode=TwoWay}" />
-                            <TextBlock x:Uid="QrDesign_NoBackgroundHelp" Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                            <CheckBox
+                                x:Uid="QrDesign_NoBackground"
+                                AutomationProperties.AutomationId="FrameNoBackground"
+                                IsChecked="{x:Bind ViewModel.UseFrameAsQrBackground, Mode=TwoWay}" />
+                            <TextBlock
+                                x:Uid="QrDesign_NoBackgroundHelp"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                TextWrapping="Wrap" />
                         </StackPanel>
-                        <TextBox AutomationProperties.AutomationId="FrameCaption" Header="{x:Bind ViewModel.FrameTextHeader, Mode=OneWay}"
-                                 PlaceholderText="{x:Bind ViewModel.FrameTextPlaceholder, Mode=OneWay}"
-                                 Text="{x:Bind ViewModel.FrameText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <ComboBox x:Name="CaptionSuggestionCombo" AutomationProperties.AutomationId="CaptionIdeas" Header="Caption ideas" HorizontalAlignment="Stretch"
-                                  SelectionChanged="CaptionSuggestionCombo_SelectionChanged" />
-                        <ComboBox x:Name="LabelSourceCombo" AutomationProperties.AutomationId="CaptionSource" Header="Label source" HorizontalAlignment="Stretch" SelectionChanged="LabelSourceCombo_SelectionChanged" />
-                        <TextBlock Text="{x:Bind ViewModel.FrameTextHelperText, Mode=OneWay}"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                   Visibility="{x:Bind ViewModel.IsFrameFallbackInfoVisible, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
-                        <ComboBox x:Name="IconCombo" AutomationProperties.AutomationId="CaptionIcon" Header="Caption icon" HorizontalAlignment="Stretch" SelectionChanged="IconCombo_SelectionChanged" />
-                        <ToggleSwitch AutomationProperties.AutomationId="CustomFrameAccent" Header="Independent frame color" IsOn="{x:Bind ViewModel.UseCustomFrameAccent, Mode=TwoWay}"
-                                      OffContent="Use QR code color" OnContent="Custom accent" />
-                        <DropDownButton AutomationProperties.AutomationId="FrameAccentPickerButton" Content="Accent color" IsEnabled="{x:Bind ViewModel.UseCustomFrameAccent, Mode=OneWay}">
+                        <TextBox
+                            AutomationProperties.AutomationId="FrameCaption"
+                            Header="{x:Bind ViewModel.FrameTextHeader, Mode=OneWay}"
+                            PlaceholderText="{x:Bind ViewModel.FrameTextPlaceholder, Mode=OneWay}"
+                            Text="{x:Bind ViewModel.FrameText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <ComboBox
+                            x:Name="CaptionSuggestionCombo"
+                            x:Uid="QrDesignDialog_CaptionSuggestionCombo"
+                            HorizontalAlignment="Stretch"
+                            AutomationProperties.AutomationId="CaptionIdeas"
+                            SelectionChanged="CaptionSuggestionCombo_SelectionChanged" />
+                        <ComboBox
+                            x:Name="LabelSourceCombo"
+                            x:Uid="QrDesignDialog_LabelSourceCombo"
+                            HorizontalAlignment="Stretch"
+                            AutomationProperties.AutomationId="CaptionSource"
+                            SelectionChanged="LabelSourceCombo_SelectionChanged" />
+                        <TextBlock
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="{x:Bind ViewModel.FrameTextHelperText, Mode=OneWay}"
+                            TextWrapping="Wrap"
+                            Visibility="{x:Bind ViewModel.IsFrameFallbackInfoVisible, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
+                        <ComboBox
+                            x:Name="IconCombo"
+                            x:Uid="QrDesignDialog_IconCombo"
+                            HorizontalAlignment="Stretch"
+                            AutomationProperties.AutomationId="CaptionIcon"
+                            SelectionChanged="IconCombo_SelectionChanged" />
+                        <ToggleSwitch
+                            x:Uid="QrDesignDialog_IndependentFrameColorToggleSwitch"
+                            AutomationProperties.AutomationId="CustomFrameAccent"
+                            IsOn="{x:Bind ViewModel.UseCustomFrameAccent, Mode=TwoWay}" />
+                        <DropDownButton
+                            x:Uid="QrDesignDialog_AccentColorDropDownButton"
+                            AutomationProperties.AutomationId="FrameAccentPickerButton"
+                            IsEnabled="{x:Bind ViewModel.UseCustomFrameAccent, Mode=OneWay}">
                             <DropDownButton.Flyout>
                                 <Flyout>
-                                    <ColorPicker AutomationProperties.AutomationId="FrameAccentPicker" Color="{x:Bind ViewModel.FrameAccentColor, Mode=TwoWay}" IsAlphaEnabled="False"
-                                                 IsColorChannelTextInputVisible="True" AutomationProperties.Name="Frame accent color" />
+                                    <ColorPicker
+                                        x:Uid="QrDesignDialog_FrameAccentColorColorPicker"
+                                        AutomationProperties.AutomationId="FrameAccentPicker"
+                                        IsAlphaEnabled="False"
+                                        IsColorChannelTextInputVisible="True"
+                                        Color="{x:Bind ViewModel.FrameAccentColor, Mode=TwoWay}" />
                                 </Flyout>
                             </DropDownButton.Flyout>
                         </DropDownButton>
-                        <ToggleSwitch AutomationProperties.AutomationId="FrameGradient" Header="Frame gradient" IsOn="{x:Bind ViewModel.UseFrameGradient, Mode=TwoWay}"
-                                      OffContent="Solid color" OnContent="Two-color gradient" />
-                        <DropDownButton AutomationProperties.AutomationId="FrameGradientPickerButton" Content="Gradient end color" IsEnabled="{x:Bind ViewModel.UseFrameGradient, Mode=OneWay}">
+                        <ToggleSwitch
+                            x:Uid="QrDesignDialog_FrameGradientToggleSwitch"
+                            AutomationProperties.AutomationId="FrameGradient"
+                            IsOn="{x:Bind ViewModel.UseFrameGradient, Mode=TwoWay}" />
+                        <DropDownButton
+                            x:Uid="QrDesignDialog_GradientEndColorDropDownButton"
+                            AutomationProperties.AutomationId="FrameGradientPickerButton"
+                            IsEnabled="{x:Bind ViewModel.UseFrameGradient, Mode=OneWay}">
                             <DropDownButton.Flyout>
                                 <Flyout>
-                                    <ColorPicker AutomationProperties.AutomationId="FrameGradientEndPicker" Color="{x:Bind ViewModel.FrameGradientEndColor, Mode=TwoWay}" IsAlphaEnabled="False"
-                                                 IsColorChannelTextInputVisible="True" AutomationProperties.Name="Frame gradient end color" />
+                                    <ColorPicker
+                                        x:Uid="QrDesignDialog_FrameGradientEndColorColorPicker"
+                                        AutomationProperties.AutomationId="FrameGradientEndPicker"
+                                        IsAlphaEnabled="False"
+                                        IsColorChannelTextInputVisible="True"
+                                        Color="{x:Bind ViewModel.FrameGradientEndColor, Mode=TwoWay}" />
                                 </Flyout>
                             </DropDownButton.Flyout>
                         </DropDownButton>
                     </StackPanel>
                 </StackPanel>
-                <TextBlock Text="Presets use a clear four-module margin. Keep the code dark on a light background, and try the final size with your phone before printing."
-                           Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                <TextBlock
+                    x:Uid="QrDesignDialog_PresetsUseAClearFourText"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <StackPanel Spacing="8">
-                    <Button AutomationProperties.AutomationId="UndoDesignPreset" HorizontalAlignment="Stretch" Command="{x:Bind ViewModel.UndoDesignPresetCommand}" Content="Undo preset" />
-                    <Button AutomationProperties.AutomationId="SaveDefaultDesign" HorizontalAlignment="Stretch" Command="{x:Bind ViewModel.SetFrameAsDefaultCommand}" Content="Set design as default" />
+                    <Button
+                        x:Uid="QrDesignDialog_UndoPresetButton"
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.AutomationId="UndoDesignPreset"
+                        Command="{x:Bind ViewModel.UndoDesignPresetCommand}" />
+                    <Button
+                        x:Uid="QrDesignDialog_SetDesignAsDefaultButton"
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.AutomationId="SaveDefaultDesign"
+                        Command="{x:Bind ViewModel.SetFrameAsDefaultCommand}" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

@@ -14,6 +14,8 @@ using WinRT.Interop;
 using WinPdfDocument = Windows.Data.Pdf.PdfDocument;
 using WinPdfPage = Windows.Data.Pdf.PdfPage;
 
+using Simple_QR_Code_Maker.Helpers;
+
 namespace Simple_QR_Code_Maker.Services;
 
 public class PrintService : IPrintService
@@ -25,7 +27,6 @@ public class PrintService : IPrintService
     private PrintManager? activePrintManager;
     private List<BitmapImage> activePrintBitmaps = [];
     private List<UIElement> activePrintPages = [];
-    private string activePrintTitle = "QR Codes";
 
     public async Task<string> GenerateQrPdfAsync(
         IReadOnlyList<RequestedQrCodeItem> codes,
@@ -36,7 +37,9 @@ public class PrintService : IPrintService
         string pdfPath = CreatePreviewPdfPath();
         try
         {
-            byte[] bytes = await QrPdfRenderer.GenerateQrPdfBytesAsync(codes, renderSettings, printSettings, cancellationToken).ConfigureAwait(false);
+            byte[] bytes = await QrPdfRenderer.GenerateQrPdfBytesAsync(codes, renderSettings, printSettings,
+                cancellationToken, "Print_DocumentTitle".GetLocalized(),
+                static code => LocalizedDisplay.ContentText(code.CodeAsText, code.ContentKind)).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             await File.WriteAllBytesAsync(pdfPath, bytes, cancellationToken).ConfigureAwait(false);
             return pdfPath;
@@ -63,7 +66,6 @@ public class PrintService : IPrintService
             if (activePrintDocument is not null)
                 throw new InvalidOperationException("Another print job is already in progress.");
 
-            activePrintTitle = Path.GetFileNameWithoutExtension(pdfPath);
             activePrintBitmaps = await LoadPrintableBitmapsAsync(pdfPath, cancellationToken);
             RegisterForPrinting(windowHandle);
             try
@@ -110,12 +112,11 @@ public class PrintService : IPrintService
         activePrintDocumentSource = null;
         activePrintBitmaps.Clear();
         activePrintPages.Clear();
-        activePrintTitle = "QR Codes";
     }
 
     private void OnPrintTaskRequested(PrintManager sender, PrintTaskRequestedEventArgs args)
     {
-        PrintTask printTask = args.Request.CreatePrintTask(activePrintTitle, OnPrintTaskSourceRequested);
+        PrintTask printTask = args.Request.CreatePrintTask("Print_DocumentTitle".GetLocalized(), OnPrintTaskSourceRequested);
         printTask.Completed += OnPrintTaskCompleted;
     }
 

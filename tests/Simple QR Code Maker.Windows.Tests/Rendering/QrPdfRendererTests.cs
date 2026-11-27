@@ -65,6 +65,40 @@ public sealed class QrPdfRendererTests
     }
 
     [TestMethod]
+    [DataRow("Codes à imprimer", "Légende", true)]
+    [DataRow("QR コード", "印刷", false)]
+    public async Task LocalizedPdfTitleAndLabelDoNotChangeEncodedTextAsync(string title, string label, bool selectable)
+    {
+        using QrRenderSettingsSnapshot renderSettings = CreateRenderSettings();
+        RequestedQrCodeItem code = new("example payload");
+        byte[] bytes = await QrPdfRenderer.GenerateQrPdfBytesAsync([code], renderSettings, new() { ShowLabels = true },
+            documentTitle: title, formatLabel: _ => label);
+        using PdfDocument document = PdfDocument.Open(bytes);
+        Page page = document.GetPage(1);
+
+        Assert.AreEqual(title, document.Information.Title);
+        IPdfImage[] images = [.. page.GetImages()];
+        Assert.HasCount(selectable ? 1 : 2, images);
+        if (selectable)
+        {
+            StringAssert.Contains(page.Text, label);
+        }
+        else
+        {
+            Assert.IsTrue(images[1].TryGetPng(out byte[]? labelPng));
+            using MemoryStream labelStream = new(labelPng!);
+            using Bitmap labelImage = new(labelStream);
+            Assert.IsTrue(Enumerable.Range(0, labelImage.Width).Any(x =>
+                Enumerable.Range(0, labelImage.Height).Any(y => labelImage.GetPixel(x, y).R < 128)));
+            Assert.IsTrue(images[1].BoundingBox.Top < images[0].BoundingBox.Bottom);
+        }
+        Assert.IsTrue(images[0].TryGetPng(out byte[]? png));
+        using MemoryStream stream = new(png!);
+        using Bitmap bitmap = new(stream);
+        Assert.AreEqual(code.CodeAsText, QrCodeRenderer.GetStringsFromBitmap(bitmap).Single().Item1);
+    }
+
+    [TestMethod]
     public async Task PdfImagesFollowTopLeftGridOrderAndStayInsideDistinctCellsAsync()
     {
         using QrRenderSettingsSnapshot renderSettings = CreateRenderSettings();

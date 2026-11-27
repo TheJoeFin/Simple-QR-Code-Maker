@@ -12,6 +12,8 @@ using Windows.Storage.Pickers;
 using Windows.System;
 using WinRT.Interop;
 
+using Simple_QR_Code_Maker.Helpers;
+
 namespace Simple_QR_Code_Maker.ViewModels;
 
 public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAware, ITitleBarBackNavigation
@@ -72,7 +74,7 @@ public partial class FolderSummaryViewModel : ObservableRecipient, INavigationAw
             SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
             SuggestedFileName = string.IsNullOrEmpty(FolderName) ? "folder-summary" : FolderName,
         };
-        picker.FileTypeChoices.Add("CSV File", [".csv"]);
+        picker.FileTypeChoices.Add("FileType_Csv".GetLocalized(), [".csv"]);
 
         Window saveWindow = new();
         IntPtr hwnd = WindowNative.GetWindowHandle(saveWindow);

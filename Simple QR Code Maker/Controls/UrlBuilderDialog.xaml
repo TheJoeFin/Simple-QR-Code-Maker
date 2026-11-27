@@ -7,10 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
     x:Name="Root"
-    Title="Build URL"
-    CloseButtonText="Cancel"
+    x:Uid="UrlBuilderDialog_Root"
     DefaultButton="Primary"
-    PrimaryButtonText="Apply"
     mc:Ignorable="d">
 
     <ScrollViewer
@@ -20,8 +18,7 @@
         HorizontalScrollMode="Disabled"
         VerticalScrollBarVisibility="Auto">
         <Border
-            Width="{x:Bind DialogScrollViewer.ActualWidth,
-                           Mode=OneWay}"
+            Width="{x:Bind DialogScrollViewer.ActualWidth, Mode=OneWay}"
             MinWidth="420"
             Padding="0,0,12,0">
             <StackPanel HorizontalAlignment="Stretch" Spacing="12">
@@ -32,15 +29,13 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Button
+                        x:Uid="UrlBuilderDialog_GoToThePreviousLineButton"
                         Grid.Column="0"
-                        AccessKey="P"
                         Command="{x:Bind ViewModel.GoToPreviousLineCommand}"
-                        IsEnabled="{x:Bind ViewModel.CanGoPrevious,
-                                           Mode=OneWay}"
-                        ToolTipService.ToolTip="Go to the previous line">
+                        IsEnabled="{x:Bind ViewModel.CanGoPrevious, Mode=OneWay}">
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <SymbolIcon Symbol="Back" />
-                            <TextBlock Text="Previous" />
+                            <TextBlock x:Uid="UrlBuilderDialog_PreviousText" />
                         </StackPanel>
                     </Button>
                     <TextBlock
@@ -48,18 +43,15 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"
-                        Text="{x:Bind ViewModel.CurrentLineLabel,
-                                      Mode=OneWay}" />
+                        Text="{x:Bind ViewModel.CurrentLineLabel, Mode=OneWay}" />
                     <Button
+                        x:Uid="UrlBuilderDialog_GoToTheNextLineButton"
                         Grid.Column="2"
                         HorizontalAlignment="Right"
-                        AccessKey="N"
                         Command="{x:Bind ViewModel.GoToNextLineCommand}"
-                        IsEnabled="{x:Bind ViewModel.CanGoNext,
-                                           Mode=OneWay}"
-                        ToolTipService.ToolTip="Go to the next line">
+                        IsEnabled="{x:Bind ViewModel.CanGoNext, Mode=OneWay}">
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <TextBlock Text="Next" />
+                            <TextBlock x:Uid="UrlBuilderDialog_NextText" />
                             <SymbolIcon Symbol="Forward" />
                         </StackPanel>
                     </Button>
@@ -67,47 +59,35 @@
 
                 <TextBox
                     x:Name="SchemeTextBox"
-                    Header="Scheme"
-                    PlaceholderText="https"
-                    Text="{x:Bind ViewModel.Scheme,
-                                  Mode=TwoWay,
-                                  UpdateSourceTrigger=PropertyChanged}" />
+                    x:Uid="UrlBuilderDialog_SchemeTextBox"
+                    Text="{x:Bind ViewModel.Scheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
                     x:Name="AuthorityTextBox"
-                    Header="Authority / host"
-                    PlaceholderText="example.com"
-                    Text="{x:Bind ViewModel.Authority,
-                                  Mode=TwoWay,
-                                  UpdateSourceTrigger=PropertyChanged}" />
+                    x:Uid="UrlBuilderDialog_AuthorityTextBox"
+                    Text="{x:Bind ViewModel.Authority, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBox
-                    Header="Path"
-                    PlaceholderText="/products/qr codes"
-                    Text="{x:Bind ViewModel.Path,
-                                  Mode=TwoWay,
-                                  UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox x:Uid="UrlBuilderDialog_PathTextBox" Text="{x:Bind ViewModel.Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <StackPanel Spacing="8">
                     <TextBlock
+                        x:Uid="UrlBuilderDialog_QueryParametersText"
                         FontSize="14"
-                        FontWeight="SemiBold"
-                        Text="Query parameters" />
+                        FontWeight="SemiBold" />
                     <Button
+                        x:Uid="UrlBuilderDialog_AddAQueryParameterButton"
                         HorizontalAlignment="Left"
-                        Command="{x:Bind ViewModel.AddQueryParameterCommand}"
-                        ToolTipService.ToolTip="Add a query parameter">
+                        Command="{x:Bind ViewModel.AddQueryParameterCommand}">
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <SymbolIcon Symbol="Add" />
-                            <TextBlock Text="Add parameter" />
+                            <TextBlock x:Uid="UrlBuilderDialog_AddParameterText" />
                         </StackPanel>
                     </Button>
 
                     <TextBlock
+                        x:Uid="UrlBuilderDialog_NoQueryParametersYetText"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="No query parameters yet"
-                        Visibility="{x:Bind ViewModel.EmptyQueryParametersVisibility,
-                                            Mode=OneWay}" />
+                        Visibility="{x:Bind ViewModel.EmptyQueryParametersVisibility, Mode=OneWay}" />
 
                     <ItemsControl HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.QueryParameters, Mode=OneWay}">
                         <ItemsControl.ItemTemplate>
@@ -122,26 +102,20 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <TextBox
+                                        x:Uid="UrlBuilderDialog_NameTextBox"
                                         Grid.Column="0"
-                                        Header="Name"
-                                        PlaceholderText="utm_source"
-                                        Text="{x:Bind Name,
-                                                      Mode=TwoWay,
-                                                      UpdateSourceTrigger=PropertyChanged}" />
+                                        Text="{x:Bind Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     <TextBox
+                                        x:Uid="UrlBuilderDialog_ValueTextBox"
                                         Grid.Column="1"
-                                        Header="Value"
-                                        PlaceholderText="newsletter"
-                                        Text="{x:Bind Value,
-                                                      Mode=TwoWay,
-                                                      UpdateSourceTrigger=PropertyChanged}" />
+                                        Text="{x:Bind Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     <HyperlinkButton
+                                        x:Uid="UrlBuilderDialog_RemoveParameterHyperlinkButton"
                                         Grid.Column="2"
                                         Margin="0,22,0,0"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Bottom"
-                                        Click="RemoveQueryParameterButton_Click"
-                                        ToolTipService.ToolTip="Remove parameter">
+                                        Click="RemoveQueryParameterButton_Click">
                                         <SymbolIcon Symbol="Delete" />
                                     </HyperlinkButton>
                                 </Grid>
@@ -150,20 +124,14 @@
                     </ItemsControl>
                 </StackPanel>
 
-                <TextBox
-                    Header="Fragment"
-                    PlaceholderText="section-1"
-                    Text="{x:Bind ViewModel.Fragment,
-                                  Mode=TwoWay,
-                                  UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox x:Uid="UrlBuilderDialog_FragmentTextBox" Text="{x:Bind ViewModel.Fragment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox
+                    x:Uid="UrlBuilderDialog_PreviewTextBox"
                     MinHeight="72"
                     AcceptsReturn="True"
-                    Header="Preview"
                     IsReadOnly="True"
-                    Text="{x:Bind ViewModel.PreviewUrl,
-                                  Mode=OneWay}"
+                    Text="{x:Bind ViewModel.PreviewUrl, Mode=OneWay}"
                     TextWrapping="Wrap" />
             </StackPanel>
         </Border>

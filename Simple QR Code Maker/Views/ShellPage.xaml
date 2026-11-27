@@ -19,8 +19,7 @@
         <TitleBar
             x:Name="AppTitleBar"
             Height="48"
-            IsBackButtonVisible="{x:Bind ViewModel.IsBackVisible,
-                                         Mode=OneWay}">
+            IsBackButtonVisible="{x:Bind ViewModel.IsBackVisible, Mode=OneWay}">
             <TitleBar.IconSource>
                 <BitmapIconSource ShowAsMonochrome="False" UriSource="ms-appx:///Assets/WindowIcon.ico" />
             </TitleBar.IconSource>
@@ -39,7 +38,7 @@
             <NavigationView.MenuItems>
                 <NavigationViewItem
                     x:Name="MakeCodesNavItem"
-                    Content="Make Codes"
+                    x:Uid="ShellPage_MakeCodesNavItem"
                     Tag="Make">
                     <NavigationViewItem.Icon>
                         <controls:QrCodeIcon />
@@ -47,7 +46,7 @@
                 </NavigationViewItem>
                 <NavigationViewItem
                     x:Name="ReadCodesNavItem"
-                    Content="Read Codes"
+                    x:Uid="ShellPage_ReadCodesNavItem"
                     Tag="Read">
                     <NavigationViewItem.Icon>
                         <controls:ScanIcon />
@@ -57,29 +56,28 @@
             <NavigationView.FooterMenuItems>
                 <NavigationViewItem
                     x:Name="FaqNavItem"
+                    x:Uid="ShellPage_FaqNavItem"
                     SelectsOnInvoked="False"
-                    Tag="Faq"
-                    ToolTipService.ToolTip="Frequently Asked Questions about QR Codes">
+                    Tag="Faq">
                     <NavigationViewItem.Icon>
                         <SymbolIcon Symbol="Library" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem
                     x:Name="HistoryNavItem"
+                    x:Uid="ShellPage_HistoryNavItem"
                     x:FieldModifier="public"
                     SelectsOnInvoked="False"
-                    Tag="History"
-                    ToolTipService.ToolTip="History of previously generated QR Codes">
+                    Tag="History">
                     <NavigationViewItem.Icon>
                         <controls:HistoryIcon />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem
                     x:Name="ShareNavItem"
+                    x:Uid="ShellPage_ShareNavItem"
                     SelectsOnInvoked="False"
-                    Tag="Share"
-                    AutomationProperties.Name="Share"
-                    ToolTipService.ToolTip="Share content or Simple QR Code Maker">
+                    Tag="Share">
                     <NavigationViewItem.Icon>
                         <SymbolIcon Symbol="Share" />
                     </NavigationViewItem.Icon>
@@ -87,14 +85,14 @@
                         <MenuFlyout>
                             <MenuFlyoutItem
                                 x:Name="ShareContentMenuItem"
+                                x:Uid="ShellPage_ShareContentMenuItem"
                                 Click="ShareContentMenuItem_Click"
-                                Text="Share content"
                                 Visibility="Collapsed">
                                 <MenuFlyoutItem.Icon>
                                     <SymbolIcon Symbol="Share" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
-                            <MenuFlyoutItem Click="ShareAppMenuItem_Click" Text="Share app">
+                            <MenuFlyoutItem x:Uid="ShellPage_ShareAppMenuItem" Click="ShareAppMenuItem_Click">
                                 <MenuFlyoutItem.Icon>
                                     <SymbolIcon Symbol="Shop" />
                                 </MenuFlyoutItem.Icon>
@@ -104,9 +102,8 @@
                 </NavigationViewItem>
                 <NavigationViewItem
                     x:Name="SettingsNavItem"
-                    Content="Settings"
-                    Tag="Settings"
-                    ToolTipService.ToolTip="Simple QR Code Maker Settings">
+                    x:Uid="ShellPage_SettingsNavItem"
+                    Tag="Settings">
                     <NavigationViewItem.Icon>
                         <SymbolIcon Symbol="Setting" />
                     </NavigationViewItem.Icon>
@@ -116,32 +113,31 @@
                 <Frame x:Name="NavigationFrame" />
                 <InfoBar
                     x:Name="SharePane"
-                    Title="Share Simple QR Code Maker"
+                    x:Uid="ShellPage_SharePane"
                     Margin="32,20"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-                    IsOpen="{x:Bind ViewModel.IsShareOpen,
-                                    Mode=TwoWay}">
+                    IsOpen="{x:Bind ViewModel.IsShareOpen, Mode=TwoWay}">
                     <StackPanel
                         Padding="16"
                         Orientation="Vertical"
                         Spacing="12">
                         <StackPanel Orientation="Horizontal" Spacing="12">
                             <SymbolIcon Symbol="Shop" />
-                            <TextBlock Text="Link to the Microsoft Store" />
+                            <TextBlock x:Uid="ShellPage_LinkToTheMicrosoftStoreText" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Spacing="12">
                             <HyperlinkButton HorizontalAlignment="Center" Click="VisitLinkButton_Click">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <SymbolIcon Symbol="Go" />
-                                    <TextBlock Text="Visit" />
+                                    <TextBlock x:Uid="ShellPage_VisitText" />
                                 </StackPanel>
                             </HyperlinkButton>
                             <HyperlinkButton HorizontalAlignment="Center" Click="CopyLinkButton_Click">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <SymbolIcon Symbol="Copy" />
-                                    <TextBlock Text="Copy" />
+                                    <TextBlock x:Uid="ShellPage_CopyText" />
                                 </StackPanel>
                             </HyperlinkButton>
                         </StackPanel>
@@ -149,7 +145,7 @@
                 </InfoBar>
                 <InfoBar
                     x:Name="ShareErrorBar"
-                    Title="Failed to share content"
+                    x:Uid="ShellPage_ShareErrorBar"
                     Margin="32,20"
                     VerticalAlignment="Bottom"
                     Severity="Error" />

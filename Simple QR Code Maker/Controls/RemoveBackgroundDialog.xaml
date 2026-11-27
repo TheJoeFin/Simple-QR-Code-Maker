@@ -5,11 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Remove Background"
-    CloseButtonText="Cancel"
+    x:Uid="RemoveBackgroundDialog_Dialog"
     DefaultButton="Primary"
     IsPrimaryButtonEnabled="{x:Bind ViewModel.IsPrimaryEnabled, Mode=OneWay}"
-    PrimaryButtonText="Apply"
     mc:Ignorable="d">
 
     <Grid
@@ -29,17 +27,17 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock
+                x:Uid="RemoveBackgroundDialog_OriginalText"
                 Grid.Column="0"
                 HorizontalAlignment="Center"
                 FontSize="12"
-                FontWeight="SemiBold"
-                Text="Original" />
+                FontWeight="SemiBold" />
             <TextBlock
+                x:Uid="RemoveBackgroundDialog_BackgroundRemovedText"
                 Grid.Column="1"
                 HorizontalAlignment="Center"
                 FontSize="12"
-                FontWeight="SemiBold"
-                Text="Background Removed" />
+                FontWeight="SemiBold" />
         </Grid>
 
         <!--  Image previews  -->

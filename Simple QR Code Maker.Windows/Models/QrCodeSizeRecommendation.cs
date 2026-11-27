@@ -9,7 +9,8 @@ public enum QrCodeSizeRecommendationKind
     Error,
 }
 
-public readonly record struct QrCodeSizeRecommendation(QrCodeSizeRecommendationKind Kind, string Text)
+public readonly record struct QrCodeSizeRecommendation(
+    QrCodeSizeRecommendationKind Kind, double SideMillimeters = 0, int PaddingModules = 0)
 {
     public bool IsExact => Kind == QrCodeSizeRecommendationKind.Exact;
 }

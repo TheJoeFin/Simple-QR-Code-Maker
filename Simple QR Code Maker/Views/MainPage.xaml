@@ -30,9 +30,7 @@
 
     <SplitView
         DisplayMode="Overlay"
-        IsPaneOpen="{x:Bind ViewModel.IsFaqPaneOpen,
-                            Mode=TwoWay,
-                            UpdateSourceTrigger=PropertyChanged}"
+        IsPaneOpen="{x:Bind ViewModel.IsFaqPaneOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         OpenPaneLength="500"
         PanePlacement="Left">
         <SplitView.Pane>
@@ -41,9 +39,7 @@
         <SplitView.Content>
             <SplitView
                 DisplayMode="Overlay"
-                IsPaneOpen="{x:Bind ViewModel.IsHistoryPaneOpen,
-                                    Mode=TwoWay,
-                                    UpdateSourceTrigger=PropertyChanged}"
+                IsPaneOpen="{x:Bind ViewModel.IsHistoryPaneOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 OpenPaneLength="400"
                 PanePlacement="Right">
                 <SplitView.Content>
@@ -77,86 +73,72 @@
                                             MaxWidth="800"
                                             HorizontalAlignment="Stretch"
                                             AcceptsReturn="True"
-                                            PlaceholderText="{x:Bind ViewModel.PlaceholderText,
-                                                                     Mode=OneWay}"
+                                            PlaceholderText="{x:Bind ViewModel.PlaceholderText, Mode=OneWay}"
                                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                            Text="{x:Bind ViewModel.UrlText,
-                                                          Mode=TwoWay,
-                                                          UpdateSourceTrigger=PropertyChanged}"
+                                            Text="{x:Bind ViewModel.UrlText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             TextChanged="UrlTextBox_TextChanged"
                                             TextWrapping="NoWrap" />
                                         <Button
                                             x:Name="UrlImportButton"
+                                            x:Uid="MainPage_UrlImportButton"
                                             Grid.Column="1"
                                             Width="36"
                                             Height="36"
                                             Margin="0,0,0,-1"
                                             Padding="0"
                                             VerticalAlignment="Bottom"
-                                            Click="UrlImportButton_Click"
-                                            ToolTipService.ToolTip="Add or import text">
+                                            Click="UrlImportButton_Click">
                                             <Button.Flyout>
                                                 <MenuFlyout Placement="Bottom">
                                                     <MenuFlyoutItem
+                                                        x:Uid="MainPage_PasteMenuItem"
                                                         Command="{x:Bind ViewModel.PasteTextIntoUrlTextCommand}"
-                                                        IsEnabled="{x:Bind ViewModel.CanPasteText,
-                                                                           Mode=OneWay}"
-                                                        Text="Paste">
+                                                        IsEnabled="{x:Bind ViewModel.CanPasteText, Mode=OneWay}">
                                                         <MenuFlyoutItem.Icon>
                                                             <SymbolIcon Symbol="Paste" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
-                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.OpenUrlBuilderCommand}" Text="Build URL">
+                                                    <MenuFlyoutItem x:Uid="MainPage_BuildURLMenuItem" Command="{x:Bind ViewModel.OpenUrlBuilderCommand}">
                                                         <MenuFlyoutItem.Icon>
                                                             <FontIcon Glyph="&#xE71B;" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
-                                                    <MenuFlyoutItem
-                                                        Command="{x:Bind ViewModel.OpenVCardBuilderCommand}"
-                                                        Text="Build vCard"
-                                                        ToolTipService.ToolTip="Build business cards to easily share contact information through QR Codes">
+                                                    <MenuFlyoutItem x:Uid="MainPage_BuildVCardMenuItem" Command="{x:Bind ViewModel.OpenVCardBuilderCommand}">
                                                         <MenuFlyoutItem.Icon>
                                                             <SymbolIcon Symbol="Contact" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
-                                                    <MenuFlyoutItem
-                                                        Command="{x:Bind ViewModel.OpenWifiBuilderCommand}"
-                                                        Text="Build WiFi"
-                                                        ToolTipService.ToolTip="Build a WiFi QR Code that can share network credentials">
+                                                    <MenuFlyoutItem x:Uid="MainPage_BuildWiFiMenuItem" Command="{x:Bind ViewModel.OpenWifiBuilderCommand}">
                                                         <MenuFlyoutItem.Icon>
                                                             <FontIcon Glyph="&#xE701;" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
-                                                    <MenuFlyoutItem
-                                                        Command="{x:Bind ViewModel.OpenEmailBuilderCommand}"
-                                                        Text="Build Email"
-                                                        ToolTipService.ToolTip="Build an email QR Code with prefilled recipient, subject, and body">
+                                                    <MenuFlyoutItem x:Uid="MainPage_BuildEmailMenuItem" Command="{x:Bind ViewModel.OpenEmailBuilderCommand}">
                                                         <MenuFlyoutItem.Icon>
                                                             <SymbolIcon Symbol="Mail" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
-                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.OpenGenerateIdsDialogCommand}" Text="Generate IDs">
+                                                    <MenuFlyoutItem x:Uid="MainPage_GenerateIDsMenuItem" Command="{x:Bind ViewModel.OpenGenerateIdsDialogCommand}">
                                                         <MenuFlyoutItem.Icon>
                                                             <SymbolIcon Symbol="Bullets" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
                                                     <MenuFlyoutSeparator />
-                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.OpenTextFileCommand}" Text="Open text file">
+                                                    <MenuFlyoutItem x:Uid="MainPage_OpenTextFileMenuItem" Command="{x:Bind ViewModel.OpenTextFileCommand}">
                                                         <MenuFlyoutItem.Icon>
                                                             <FontIcon Glyph="&#xE8A5;" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
-                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.OpenSpreadsheetFileCommand}" Text="Open spreadsheet">
+                                                    <MenuFlyoutItem x:Uid="MainPage_OpenSpreadsheetMenuItem" Command="{x:Bind ViewModel.OpenSpreadsheetFileCommand}">
                                                         <MenuFlyoutItem.Icon>
                                                             <FontIcon Glyph="&#xF232;" />
                                                         </MenuFlyoutItem.Icon>
                                                     </MenuFlyoutItem>
                                                     <MenuFlyoutSeparator />
                                                     <ToggleMenuFlyoutItem
+                                                        x:Uid="MainPage_MultiLineCodesToggleMenuFlyoutItem"
                                                         Click="VCardSingleCodeDefault_Click"
-                                                        IsChecked="{x:Bind ViewModel.UseSingleCodeForCurrentDocument,
-                                                                           Mode=OneWay}"
-                                                        Text="Multi line codes">
+                                                        IsChecked="{x:Bind ViewModel.UseSingleCodeForCurrentDocument, Mode=OneWay}">
                                                         <ToggleMenuFlyoutItem.Icon>
                                                             <SymbolIcon Symbol="Bullets" />
                                                         </ToggleMenuFlyoutItem.Icon>
@@ -174,25 +156,19 @@
                                         HorizontalAlignment="Center"
                                         Orientation="Horizontal"
                                         Spacing="10"
-                                        Visibility="{x:Bind ViewModel.CanSaveImage,
-                                                            Mode=OneWay,
-                                                            Converter={StaticResource BoolToVisibility}}">
+                                        Visibility="{x:Bind ViewModel.CanSaveImage, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                                         <interactivity:Interaction.Behaviors>
                                             <behaviors:ImplicitVisibilityAnimationBehavior />
                                         </interactivity:Interaction.Behaviors>
                                         <controls:ColorPickerButton
-                                            BrandColorItems="{x:Bind ViewModel.ForegroundBrandColorItems,
-                                                                     Mode=OneWay}"
-                                            DefaultImagePath="{x:Bind ViewModel.CurrentLogoPath,
-                                                                      Mode=OneWay}"
-                                            RecentColorItems="{x:Bind ViewModel.ForegroundRecentColorItems,
-                                                                      Mode=OneWay}"
-                                            ToolTipText="Code Color"
-                                            Color="{x:Bind ViewModel.ForegroundColor,
-                                                           Mode=TwoWay}">
+                                            x:Uid="MainPage_CodeColorColorPickerButton"
+                                            BrandColorItems="{x:Bind ViewModel.ForegroundBrandColorItems, Mode=OneWay}"
+                                            DefaultImagePath="{x:Bind ViewModel.CurrentLogoPath, Mode=OneWay}"
+                                            RecentColorItems="{x:Bind ViewModel.ForegroundRecentColorItems, Mode=OneWay}"
+                                            Color="{x:Bind ViewModel.ForegroundColor, Mode=TwoWay}">
                                             <controls:ColorPickerButton.ContextFlyout>
                                                 <MenuFlyout>
-                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.SetForegroundAsDefaultCommand}" Text="Set as default code color" />
+                                                    <MenuFlyoutItem x:Uid="MainPage_SetAsDefaultCodeColorMenuItem" Command="{x:Bind ViewModel.SetForegroundAsDefaultCommand}" />
                                                 </MenuFlyout>
                                             </controls:ColorPickerButton.ContextFlyout>
                                             <controls:ColorPickerButton.ButtonContent>
@@ -202,26 +178,22 @@
                                             </controls:ColorPickerButton.ButtonContent>
                                         </controls:ColorPickerButton>
                                         <controls:ColorPickerButton
-                                            BrandColorItems="{x:Bind ViewModel.BackgroundBrandColorItems,
-                                                                     Mode=OneWay}"
-                                            DefaultImagePath="{x:Bind ViewModel.CurrentLogoPath,
-                                                                      Mode=OneWay}"
-                                            RecentColorItems="{x:Bind ViewModel.BackgroundRecentColorItems,
-                                                                      Mode=OneWay}"
-                                            ToolTipText="Background Color"
-                                            Color="{x:Bind ViewModel.BackgroundColor,
-                                                           Mode=TwoWay}">
+                                            x:Uid="MainPage_BackgroundColorColorPickerButton"
+                                            BrandColorItems="{x:Bind ViewModel.BackgroundBrandColorItems, Mode=OneWay}"
+                                            DefaultImagePath="{x:Bind ViewModel.CurrentLogoPath, Mode=OneWay}"
+                                            RecentColorItems="{x:Bind ViewModel.BackgroundRecentColorItems, Mode=OneWay}"
+                                            Color="{x:Bind ViewModel.BackgroundColor, Mode=TwoWay}">
                                             <controls:ColorPickerButton.ContextFlyout>
                                                 <MenuFlyout>
-                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.SetBackgroundAsDefaultCommand}" Text="Set as default background color" />
+                                                    <MenuFlyoutItem x:Uid="MainPage_SetAsDefaultBackgroundColorMenuItem" Command="{x:Bind ViewModel.SetBackgroundAsDefaultCommand}" />
                                                 </MenuFlyout>
                                             </controls:ColorPickerButton.ContextFlyout>
                                         </controls:ColorPickerButton>
-                                        <DropDownButton Width="60" ToolTipService.ToolTip="Level of Error Correction">
+                                        <DropDownButton x:Uid="MainPage_LevelOfErrorCorrectionDropDownButton" Width="60">
                                             <TextBlock Text="{x:Bind ViewModel.SelectedOption.ShortDescription, Mode=OneWay}" />
                                             <DropDownButton.ContextFlyout>
                                                 <MenuFlyout>
-                                                    <MenuFlyoutItem Command="{x:Bind ViewModel.SetErrorCorrectionAsDefaultCommand}" Text="Set as default error correction" />
+                                                    <MenuFlyoutItem x:Uid="MainPage_SetAsDefaultErrorCorrectionMenuItem" Command="{x:Bind ViewModel.SetErrorCorrectionAsDefaultCommand}" />
                                                 </MenuFlyout>
                                             </DropDownButton.ContextFlyout>
                                             <DropDownButton.Flyout>
@@ -243,7 +215,7 @@
                                                             </ItemsRepeater.ItemTemplate>
                                                         </ItemsRepeater>
                                                         <HyperlinkButton Click="WhatIsErrorCorrection_Click" FontSize="12">
-                                                            <TextBlock Text="What is error correction?" />
+                                                            <TextBlock x:Uid="MainPage_WhatIsErrorCorrectionText" />
                                                         </HyperlinkButton>
                                                     </StackPanel>
                                                 </Flyout>
@@ -266,16 +238,13 @@
                                                 <Viewbox
                                                     Height="100"
                                                     Opacity="0.7"
-                                                    Visibility="{x:Bind ViewModel.QrCodeBitmaps.Count,
-                                                                        Mode=OneWay,
-                                                                        Converter={StaticResource EmptyCollectionToVisibility}}">
+                                                    Visibility="{x:Bind ViewModel.QrCodeBitmaps.Count, Mode=OneWay, Converter={StaticResource EmptyCollectionToVisibility}}">
                                                     <controls:QrCodeIcon />
                                                 </Viewbox>
                                                 <ItemsControl
                                                     x:Name="ListOfCodes"
                                                     HorizontalAlignment="Stretch"
-                                                    ItemsSource="{x:Bind ViewModel.QrCodeBitmaps,
-                                                                         Mode=OneWay}">
+                                                    ItemsSource="{x:Bind ViewModel.QrCodeBitmaps, Mode=OneWay}">
                                                     <ItemsControl.ItemContainerTransitions>
                                                         <TransitionCollection>
                                                             <AddDeleteThemeTransition />
@@ -305,21 +274,16 @@
                                                 HorizontalAlignment="Center"
                                                 FontWeight="SemiBold"
                                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                Text="{x:Bind ViewModel.PreviewSummaryText,
-                                                              Mode=OneWay}"
-                                                Visibility="{x:Bind ViewModel.PreviewSummaryText,
-                                                                    Converter={StaticResource EmptyStringToCollapsed},
-                                                                    Mode=OneWay}" />
+                                                Text="{x:Bind ViewModel.PreviewSummaryText, Mode=OneWay}"
+                                                Visibility="{x:Bind ViewModel.PreviewSummaryText, Converter={StaticResource EmptyStringToCollapsed}, Mode=OneWay}" />
                                             <HyperlinkButton
                                                 Margin="0,8,0,0"
                                                 HorizontalAlignment="Center"
                                                 Command="{x:Bind ViewModel.LoadMorePreviewsCommand}"
-                                                Visibility="{x:Bind ViewModel.CanLoadMorePreviews,
-                                                                    Converter={StaticResource BoolToVisibility},
-                                                                    Mode=OneWay}">
+                                                Visibility="{x:Bind ViewModel.CanLoadMorePreviews, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
                                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                                     <SymbolIcon Symbol="Download" />
-                                                    <TextBlock Text="Load more" />
+                                                    <TextBlock x:Uid="MainPage_LoadMoreText" />
                                                 </StackPanel>
                                             </HyperlinkButton>
                                         </StackPanel>
@@ -328,9 +292,7 @@
                                     <controls:QrExportActionsControl
                                         Name="SaveButtons"
                                         ViewModel="{x:Bind ViewModel}"
-                                        Visibility="{x:Bind ViewModel.HasRequestedCodes,
-                                                            Converter={StaticResource BoolToVisibility},
-                                                            Mode=OneWay}">
+                                        Visibility="{x:Bind ViewModel.HasRequestedCodes, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
                                         <interactivity:Interaction.Behaviors>
                                             <behaviors:ImplicitVisibilityAnimationBehavior />
                                         </interactivity:Interaction.Behaviors>
@@ -340,21 +302,13 @@
                                         HorizontalAlignment="Center"
                                         Orientation="Horizontal"
                                         Spacing="10"
-                                        Visibility="{x:Bind ViewModel.ShowMainNavigationButtons,
-                                                            Converter={StaticResource BoolToVisibility},
-                                                            Mode=OneWay}">
-                                        <controls:IconAndTextButton
-                                            Command="{x:Bind ViewModel.OpenFileCommand}"
-                                            Text="Read Codes"
-                                            ToolTipService.ToolTip="Open an image to read and extract text from any codes">
+                                        Visibility="{x:Bind ViewModel.ShowMainNavigationButtons, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
+                                        <controls:IconAndTextButton x:Uid="MainPage_ReadCodesIconAndTextButton" Command="{x:Bind ViewModel.OpenFileCommand}">
                                             <controls:IconAndTextButton.Icon>
                                                 <controls:ScanIcon />
                                             </controls:IconAndTextButton.Icon>
                                         </controls:IconAndTextButton>
-                                        <controls:IconAndTextButton
-                                            Command="{x:Bind ViewModel.GoToSettingsCommand}"
-                                            Text="Settings"
-                                            ToolTipService.ToolTip="Simple QR Code Maker Settings">
+                                        <controls:IconAndTextButton x:Uid="MainPage_SettingsIconAndTextButton" Command="{x:Bind ViewModel.GoToSettingsCommand}">
                                             <controls:IconAndTextButton.IconSource>
                                                 <SymbolIconSource Symbol="Setting" />
                                             </controls:IconAndTextButton.IconSource>
@@ -366,6 +320,7 @@
 
                         <Button
                             x:Name="ScrollToCodesButton"
+                            x:Uid="MainPage_ScrollToCodesButton"
                             Height="40"
                             MinWidth="168"
                             Padding="16,0"
@@ -374,55 +329,43 @@
                             Click="ScrollToCodesButton_Click"
                             CornerRadius="16"
                             Style="{StaticResource AccentButtonStyle}"
-                            ToolTipService.ToolTip="Scroll to the QR Code preview"
                             Visibility="Collapsed">
                             <interactivity:Interaction.Behaviors>
                                 <behaviors:ImplicitVisibilityAnimationBehavior />
                             </interactivity:Interaction.Behaviors>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <FontIcon Glyph="&#xE74B;" />
-                                <TextBlock Text="Scroll to codes" />
+                                <TextBlock x:Uid="MainPage_ScrollToCodesText" />
                             </StackPanel>
                         </Button>
 
                         <InfoBar
                             x:Name="LenghErrorInfoBar"
-                            Title="{x:Bind ViewModel.CodeInfoBarTitle,
-                                           Mode=OneWay}"
+                            Title="{x:Bind ViewModel.CodeInfoBarTitle, Mode=OneWay}"
                             MaxWidth="600"
                             Margin="20"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
-                            IsOpen="{x:Bind ViewModel.ShowCodeInfoBar,
-                                            Mode=TwoWay}"
-                            Message="{x:Bind ViewModel.CodeInfoBarMessage,
-                                             Mode=OneWay}"
-                            Severity="{x:Bind ViewModel.CodeInfoBarSeverity,
-                                              Mode=OneWay}">
+                            IsOpen="{x:Bind ViewModel.ShowCodeInfoBar, Mode=TwoWay}"
+                            Message="{x:Bind ViewModel.CodeInfoBarMessage, Mode=OneWay}"
+                            Severity="{x:Bind ViewModel.CodeInfoBarSeverity, Mode=OneWay}">
                             <InfoBar.Content>
                                 <StackPanel
                                     Padding="0,0,0,10"
                                     Orientation="Horizontal"
                                     Spacing="12">
                                     <HyperlinkButton
+                                        x:Uid="MainPage_OpenFolderHyperlinkButton"
                                         Command="{x:Bind ViewModel.OpenSavedFolderCommand}"
-                                        Content="Open folder"
-                                        Visibility="{x:Bind ViewModel.SavedFolderPath,
-                                                            Converter={StaticResource EmptyStringToCollapsed},
-                                                            Mode=OneWay}" />
+                                        Visibility="{x:Bind ViewModel.SavedFolderPath, Converter={StaticResource EmptyStringToCollapsed}, Mode=OneWay}" />
                                     <HyperlinkButton
                                         Command="{x:Bind ViewModel.MarkRedirectorDomainSafeCommand}"
-                                        Content="{x:Bind ViewModel.RedirectorSafeActionText,
-                                                         Mode=OneWay}"
-                                        Visibility="{x:Bind ViewModel.ShowMarkRedirectorSafeAction,
-                                                            Converter={StaticResource BoolToVisibility},
-                                                            Mode=OneWay}" />
+                                        Content="{x:Bind ViewModel.RedirectorSafeActionText, Mode=OneWay}"
+                                        Visibility="{x:Bind ViewModel.ShowMarkRedirectorSafeAction, Converter={StaticResource BoolToVisibility}, Mode=OneWay}" />
                                     <controls:IconAndTextHyperlinkButton
+                                        x:Uid="MainPage_SettingsIconAndTextHyperlinkButton"
                                         Command="{x:Bind ViewModel.GoToSettingsCommand}"
-                                        Text="Settings"
-                                        Visibility="{x:Bind ViewModel.ShowRedirectorSettingsAction,
-                                                            Converter={StaticResource BoolToVisibility},
-                                                            Mode=OneWay}">
+                                        Visibility="{x:Bind ViewModel.ShowRedirectorSettingsAction, Converter={StaticResource BoolToVisibility}, Mode=OneWay}">
                                         <controls:IconAndTextHyperlinkButton.IconSource>
                                             <SymbolIconSource Symbol="Setting" />
                                         </controls:IconAndTextHyperlinkButton.IconSource>
@@ -433,45 +376,33 @@
 
                         <TeachingTip
                             x:Name="AddButtonTeachingTip"
-                            Title="More ways to add content"
-                            CloseButtonContent="Got it"
+                            x:Uid="MainPage_AddButtonTeachingTip"
                             Closed="AddButtonTeachingTip_Closed"
-                            IsOpen="{x:Bind ViewModel.ShowAddButtonTeachingTip,
-                                            Mode=OneWay}"
+                            IsOpen="{x:Bind ViewModel.ShowAddButtonTeachingTip, Mode=OneWay}"
                             PreferredPlacement="BottomRight"
-                            Subtitle="Open this menu to paste text, build URL, vCard, WiFi, or Email QR codes, or import from a file."
                             Target="{x:Bind UrlImportButton}" />
 
                         <TeachingTip
                             x:Name="HistoryButtonTeachingTip"
-                            Title="Your QR code history"
-                            CloseButtonContent="Got it"
+                            x:Uid="MainPage_HistoryButtonTeachingTip"
                             Closed="HistoryButtonTeachingTip_Closed"
-                            IsOpen="{x:Bind ViewModel.ShowHistoryButtonTeachingTip,
-                                            Mode=OneWay}"
-                            PreferredPlacement="Bottom"
-                            Subtitle="Previously generated QR codes are saved here. Tap History in the toolbar to restore a previous code." />
+                            IsOpen="{x:Bind ViewModel.ShowHistoryButtonTeachingTip, Mode=OneWay}"
+                            PreferredPlacement="Bottom" />
 
                         <TeachingTip
                             x:Name="BrandButtonTeachingTip"
-                            Title="Save your style as a brand"
-                            CloseButtonContent="Got it"
+                            x:Uid="MainPage_BrandButtonTeachingTip"
                             Closed="BrandButtonTeachingTip_Closed"
-                            IsOpen="{x:Bind ViewModel.ShowBrandButtonTeachingTip,
-                                            Mode=OneWay}"
+                            IsOpen="{x:Bind ViewModel.ShowBrandButtonTeachingTip, Mode=OneWay}"
                             PreferredPlacement="Bottom"
-                            Subtitle="Use this button to save your current colors, logo, and settings as a named brand — then apply it to any QR code instantly."
                             Target="{x:Bind BrandMgmtControl}" />
 
                         <TeachingTip
                             x:Name="BrandUrlWarningTip"
-                            Title="Brand URL conflict"
-                            CloseButtonContent="Got it"
+                            x:Uid="MainPage_BrandUrlWarningTip"
                             Closed="BrandUrlWarningTip_Closed"
-                            IsOpen="{x:Bind ViewModel.ShowBrandUrlWarningTip,
-                                            Mode=OneWay}"
+                            IsOpen="{x:Bind ViewModel.ShowBrandUrlWarningTip, Mode=OneWay}"
                             PreferredPlacement="Bottom"
-                            Subtitle="Some content doesn't match this brand's URL. You can change how brands handle URL conflicts in Settings."
                             Target="{x:Bind BrandPickerArea}" />
                     </Grid>
                 </SplitView.Content>

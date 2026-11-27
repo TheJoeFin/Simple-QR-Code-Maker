@@ -35,7 +35,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
 
     public ObservableCollection<SpreadsheetPreviewRow> PreviewTableRows { get; } = [];
 
-    public ObservableCollection<SpreadsheetGeneratedIdFormatOption> GeneratedIdFormatOptions { get; } = [.. SpreadsheetGeneratedIdFormatOption.All];
+    public ObservableCollection<SpreadsheetGeneratedIdFormatOption> GeneratedIdFormatOptions { get; } = [.. LocalizedDisplay.GetIdFormatOptions()];
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanImport))]
@@ -81,7 +81,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     public partial bool IsImportInProgress { get; set; } = false;
 
     [ObservableProperty]
-    public partial string IdGenerationDescription { get; set; } = "Generated IDs will not be written back to the spreadsheet.";
+    public partial string IdGenerationDescription { get; set; } = "Spreadsheet_IdNotSaved".GetLocalized();
 
     [ObservableProperty]
     public partial bool IsStatusVisible { get; set; } = false;
@@ -105,12 +105,12 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     public bool CanUseTitleBarBack => true;
 
     public string FileDescription => string.IsNullOrWhiteSpace(SourceFileName)
-        ? "Review the detected rows and choose a column to import."
-        : $"Review \"{SourceFileName}\" and choose a column to import.";
+        ? "Spreadsheet_Review".GetLocalized()
+        : "Spreadsheet_ReviewFile".FormatLocalized(SourceFileName);
 
     public string ImportButtonText => GenerateIdsToSpreadsheet
-        ? "Save IDs and import selected column"
-        : "Import selected column";
+        ? "Spreadsheet_SaveIdsAndImport".GetLocalized()
+        : "Spreadsheet_Import".GetLocalized();
 
     public bool CanConfigureGeneratedIdFormat => GenerateIdsToSpreadsheet && _dataRows.Count > 0;
 
@@ -207,7 +207,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         IsImportInProgress = false;
         RowCountDescription = string.Empty;
         ImportCountDescription = string.Empty;
-        IdGenerationDescription = "Generated IDs will not be written back to the spreadsheet.";
+        IdGenerationDescription = "Spreadsheet_IdNotSaved".GetLocalized();
         ClearStatus();
 
         if (parameter is not SpreadsheetImportNavigationData data)
@@ -260,8 +260,8 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
                 SpreadsheetIdWriteRequest request = BuildIdWriteRequest();
                 await ExcelSpreadsheetHelper.WriteGeneratedIdsAsync(_sourceFilePath, request);
                 WeakReferenceMessenger.Default.Send(new RequestShowMessage(
-                    "IDs saved to spreadsheet",
-                    $"Generated IDs were saved back to \"{SourceFileName}\".",
+                    "Spreadsheet_IdsSaved".GetLocalized(),
+                    "Spreadsheet_IdsSavedFile".FormatLocalized(SourceFileName),
                     InfoBarSeverity.Success));
             }
 
@@ -277,8 +277,8 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         {
             Debug.WriteLine($"Failed to save generated spreadsheet IDs: {ex.Message}");
             ShowStatus(
-                "Could not save the generated IDs back to the spreadsheet. Close the file if it is open elsewhere and try again.",
-                "Could not save spreadsheet",
+                "Spreadsheet_SaveFailedHelp".GetLocalized(),
+                "Spreadsheet_SaveFailed".GetLocalized(),
                 InfoBarSeverity.Error);
         }
         finally
@@ -299,9 +299,9 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
             _displayRows = [];
             ColumnNames.Clear();
             PreviewTableRows.Clear();
-            RowCountDescription = "No data found";
+            RowCountDescription = "Spreadsheet_Empty".GetLocalized();
             ImportCountDescription = string.Empty;
-            IdGenerationDescription = "Generated IDs will not be written back because no data was found.";
+            IdGenerationDescription = "Spreadsheet_EmptyNoWriteback".GetLocalized();
             _importableValueCount = 0;
             OnPropertyChanged(nameof(Headers));
             OnPropertyChanged(nameof(PreviewRows));
@@ -314,8 +314,10 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
 
         _dataRows = firstRowIsHeader ? [.. _allRows.Skip(1)] : [.. _allRows];
 
-        List<string> headers = SpreadsheetImportPolicy.CreateHeaders(_allRows, firstRowIsHeader);
-        int existingIdColumnIndex = firstRowIsHeader ? FindIdColumnIndex(headers) : -1;
+        List<string> headers = SpreadsheetImportPolicy.CreateHeaders(_allRows, firstRowIsHeader, FormatColumnNumber);
+        int existingIdColumnIndex = firstRowIsHeader
+            ? SpreadsheetImportPolicy.FindIdColumnIndex(_allRows[0].Cells)
+            : -1;
         _idColumnIndex = -1;
         _willCreateIdColumn = false;
 
@@ -329,7 +331,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
             {
                 _idColumnIndex = headers.Count;
                 _willCreateIdColumn = true;
-                headers.Add(firstRowIsHeader ? IdColumnName : $"Column {headers.Count + 1}");
+                headers.Add(firstRowIsHeader ? IdColumnName : FormatColumnNumber(headers.Count + 1));
             }
         }
 
@@ -349,8 +351,8 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
             SelectedColumnIndex = ColumnNames.Count > 0 ? 0 : -1;
 
         RowCountDescription = _dataRows.Count > PreviewRowLimit
-            ? $"{_dataRows.Count} rows in file (preview shows first {PreviewRowLimit})"
-            : $"{_dataRows.Count} row{(_dataRows.Count == 1 ? "" : "s")} in file";
+            ? "Spreadsheet_RowCountLimited".FormatLocalized(_dataRows.Count, PreviewRowLimit)
+            : "Spreadsheet_RowCount".FormatCountLocalized(_dataRows.Count);
 
         OnPropertyChanged(nameof(Headers));
         OnPropertyChanged(nameof(PreviewRows));
@@ -359,6 +361,8 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
         OnPropertyChanged(nameof(ImportButtonText));
         UpdateImportCount();
     }
+
+    private static string FormatColumnNumber(int columnNumber) => "Spreadsheet_ColumnNumber".FormatLocalized(columnNumber);
 
     private void UpdateImportCount()
     {
@@ -374,8 +378,8 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
 
         List<string> selectedValues = GetSelectedValues();
         _importableValueCount = selectedValues.Count;
-        string columnName = columnIndex < _headers.Length ? _headers[columnIndex] : $"Column {columnIndex + 1}";
-        ImportCountDescription = $"{_importableValueCount} value{(_importableValueCount == 1 ? "" : "s")} will be imported from \"{columnName}\"";
+        string columnName = columnIndex < _headers.Length ? _headers[columnIndex] : FormatColumnNumber(columnIndex + 1);
+        ImportCountDescription = "Spreadsheet_ImportCount".FormatCountLocalized(_importableValueCount, columnName);
         OnPropertyChanged(nameof(CanImport));
         ImportCommand.NotifyCanExecuteChanged();
     }
@@ -441,25 +445,25 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
     private string BuildIdGenerationDescription(int missingIdCount, string? generatedIdValidationMessage)
     {
         if (!GenerateIdsToSpreadsheet)
-            return "Generated IDs will not be written back to the spreadsheet.";
+            return "Spreadsheet_IdNotSaved".GetLocalized();
 
         if (_dataRows.Count == 0)
-            return "Generated IDs cannot be written because there are no data rows.";
+            return "Spreadsheet_IdNeedsRows".GetLocalized();
 
         if (!string.IsNullOrWhiteSpace(generatedIdValidationMessage))
             return generatedIdValidationMessage;
 
-        string formatName = SelectedGeneratedIdFormatOption?.DisplayName ?? "GUID";
+        string formatName = LocalizedDisplay.IdFormatName(SelectedGeneratedIdFormatOption);
         if (!FirstRowIsHeader)
-            return $"{missingIdCount} row{(missingIdCount == 1 ? "" : "s")} will receive {formatName} values in a new last column because header row is off.";
+            return "Spreadsheet_HeaderlessWriteback".FormatCountLocalized(missingIdCount, formatName);
 
         if (_willCreateIdColumn)
-            return $"{missingIdCount} row{(missingIdCount == 1 ? "" : "s")} will receive {formatName} values in a new \"{IdColumnName}\" column. Existing cells in other columns will not change.";
+            return "Spreadsheet_NewIdColumn".FormatCountLocalized(missingIdCount, formatName, IdColumnName);
 
         if (missingIdCount == 0)
-            return $"The existing \"{_headers[_idColumnIndex]}\" column already has values in every row. Existing IDs will be preserved.";
+            return "Spreadsheet_IdsAlreadyPresent".FormatLocalized(_headers[_idColumnIndex]);
 
-        return $"{missingIdCount} blank cell{(missingIdCount == 1 ? "" : "s")} in \"{_headers[_idColumnIndex]}\" will be filled using {formatName}. Existing IDs will be preserved.";
+        return "Spreadsheet_FillIdColumn".FormatCountLocalized(missingIdCount, _headers[_idColumnIndex], formatName);
     }
 
     private SpreadsheetIdWriteRequest BuildIdWriteRequest()
@@ -517,7 +521,7 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
                 Format = format,
                 NanoIdLength = GeneratedIdGenerator.DefaultNanoIdLength,
             };
-            validationMessage = "Enter a whole-number NanoID length before saving generated IDs.";
+            validationMessage = "Spreadsheet_InvalidNanoIdLength".GetLocalized();
             return false;
         }
 
@@ -534,9 +538,6 @@ public partial class SpreadsheetImportViewModel : ObservableRecipient, INavigati
 
     private static string GetCellValue(IReadOnlyList<string> values, int index)
         => SpreadsheetImportPolicy.GetCellValue(values, index);
-
-    private static int FindIdColumnIndex(IReadOnlyList<string> headers)
-        => SpreadsheetImportPolicy.FindIdColumnIndex(headers);
 
     private void ShowStatus(string message, string title, InfoBarSeverity severity)
     {

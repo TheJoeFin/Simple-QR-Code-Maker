@@ -35,7 +35,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     public partial bool IsInfoBarShowing { get; set; } = false;
 
     [ObservableProperty]
-    public partial string DecodedContentInfoBarTitle { get; set; } = "QR Code Content";
+    public partial string DecodedContentInfoBarTitle { get; set; } = "Read_ResultTitle".GetLocalized();
 
     [ObservableProperty]
     public partial InfoBarSeverity DecodedContentInfoBarSeverity { get; set; } = InfoBarSeverity.Informational;
@@ -148,9 +148,9 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     {
         DecodingSourceKind.File when !string.IsNullOrEmpty(currentSourceFilePath)
             => Path.GetFileName(currentSourceFilePath),
-        DecodingSourceKind.Clipboard => "Clipboard image",
-        DecodingSourceKind.Camera => "Camera capture",
-        DecodingSourceKind.SnippingTool => "Snipping Tool capture",
+        DecodingSourceKind.Clipboard => "Read_ClipboardImage".GetLocalized(),
+        DecodingSourceKind.Camera => "Read_CameraCapture".GetLocalized(),
+        DecodingSourceKind.SnippingTool => "Read_SnippingToolCapture".GetLocalized(),
         _ => CurrentDecodingItem?.FileName ?? string.Empty,
     };
 
@@ -205,7 +205,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     private async Task AddCutOutImageAsync(MagickImage croppedImage)
     {
         IsLoading = true;
-        LoadingMessage = "Extracting region…";
+        LoadingMessage = "Read_ExtractingRegion".GetLocalized();
 
         try
         {
@@ -238,7 +238,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                     ImagePixelHeight = (int)croppedImage.Height,
                     CodeBorders = codeBorders,
                     OriginalMagickImage = croppedImage,
-                    Label = $"Cut-out {cutOutNumber}",
+                    Label = "Read_CutOutLabel".FormatLocalized(cutOutNumber),
+                    CutOutFileSuffix = FormattableString.Invariant($"cutout{cutOutNumber}"),
                     ParentFileName = currentFolderFileItem.FileName,
                 };
                 currentFolderFileItem.CutOuts.Add(cutOutItem);
@@ -248,7 +249,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             else
             {
                 if (DecodingImageItems.Count == 1 && string.IsNullOrEmpty(DecodingImageItems[0].Label))
-                    DecodingImageItems[0].Label = "Original";
+                    DecodingImageItems[0].Label = "Read_OriginalLabel".GetLocalized();
 
                 int regionNumber = DecodingImageItems.Count;
                 DecodingImageItem cutOutItem = new()
@@ -260,7 +261,8 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                     ImagePixelHeight = (int)croppedImage.Height,
                     CodeBorders = codeBorders,
                     OriginalMagickImage = croppedImage,
-                    Label = $"Region {regionNumber}",
+                    Label = "Read_RegionLabel".FormatLocalized(regionNumber),
+                    CutOutFileSuffix = FormattableString.Invariant($"region{regionNumber}"),
                 };
                 DecodingImageItems.Add(cutOutItem);
                 OnPropertyChanged(nameof(IsMultiImagePanelVisible));
@@ -325,15 +327,14 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             ? "image"
             : Path.GetFileNameWithoutExtension(item.ParentFileName);
 
-        string labelPart = item.Label.Replace("-", "").Replace(" ", "").ToLowerInvariant();
-        string suggestedName = $"{nameWithoutExt}-{labelPart}";
+        string suggestedName = $"{nameWithoutExt}-{item.CutOutFileSuffix}";
 
         FileSavePicker picker = new()
         {
             SuggestedStartLocation = PickerLocationId.PicturesLibrary,
             SuggestedFileName = suggestedName,
         };
-        picker.FileTypeChoices.Add("PNG Image", [".png"]);
+        picker.FileTypeChoices.Add("FileType_Png".GetLocalized(), [".png"]);
 
         Window saveWindow = new();
         IntPtr hwnd = WindowNative.GetWindowHandle(saveWindow);
@@ -349,8 +350,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     private async Task SaveCutOutToFolderAsync(DecodingImageItem item)
     {
         string nameWithoutExt = Path.GetFileNameWithoutExtension(item.ParentFileName);
-        string labelPart = item.Label.Replace("-", "").Replace(" ", "").ToLowerInvariant();
-        string fileName = $"{nameWithoutExt}-{labelPart}.png";
+        string fileName = $"{nameWithoutExt}-{item.CutOutFileSuffix}.png";
 
         StorageFile savedFile = await currentFolderPaneFolder!.CreateFileAsync(
             fileName, CreationCollisionOption.GenerateUniqueName);
@@ -622,7 +622,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     private void ResetDecodedContentInfoBar()
     {
         IsInfoBarShowing = false;
-        DecodedContentInfoBarTitle = "QR Code Content";
+        DecodedContentInfoBarTitle = "Read_ResultTitle".GetLocalized();
         DecodedContentInfoBarSeverity = InfoBarSeverity.Informational;
         InfoBarMessage = string.Empty;
         IsDecodedContentUrl = false;
@@ -641,14 +641,14 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
         if (warnWhenLikelyRedirector && classification.ShouldWarn)
         {
-            DecodedContentInfoBarTitle = "Known redirector detected";
+            DecodedContentInfoBarTitle = "Redirector_Detected".GetLocalized();
             DecodedContentInfoBarSeverity = InfoBarSeverity.Warning;
-            RedirectorWarningMessage = $"This code points to {classification.Host}, which is a known redirector. Open it carefully because the final destination is hidden until after the redirect.";
+            RedirectorWarningMessage = "Read_RedirectorWarning".FormatLocalized(classification.Host);
             IsRedirectorWarningVisible = true;
         }
         else
         {
-            DecodedContentInfoBarTitle = "QR Code Content";
+            DecodedContentInfoBarTitle = "Read_ResultTitle".GetLocalized();
             DecodedContentInfoBarSeverity = InfoBarSeverity.Informational;
             RedirectorWarningMessage = string.Empty;
             IsRedirectorWarningVisible = false;
@@ -827,6 +827,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             ImagePixelHeight = item.ImagePixelHeight,
             IsNoCodesWarningDismissed = item.IsNoCodesWarningDismissed,
             Label = item.Label,
+            CutOutFileSuffix = item.CutOutFileSuffix,
             ParentFileName = item.ParentFileName,
             CodeBorders =
             [
@@ -911,6 +912,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             OriginalMagickImage = magickImage,
             ProcessedMagickImage = (MagickImage)magickImage.Clone(),
             Label = state.Label,
+            CutOutFileSuffix = state.CutOutFileSuffix,
             ParentFileName = state.ParentFileName,
         };
     }
@@ -1004,7 +1006,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     {
         nextSourceKind = DecodingSourceKind.Camera;
         IsLoading = true;
-        LoadingMessage = "Opening camera…";
+        LoadingMessage = "Read_OpeningCamera".GetLocalized();
 
         try
         {
@@ -1012,23 +1014,23 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             dialog.PhotoSettings.AllowCropping = false;
 
             // Start the async operation then yield so the dispatcher renders
-            // "Opening camera…" before we synchronously overwrite the message.
+            // "Read_OpeningCamera".GetLocalized() before we synchronously overwrite the message.
             IAsyncOperation<StorageFile> captureOperation = dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
             await Task.Yield();
-            LoadingMessage = "Taking picture…";
+            LoadingMessage = "Read_TakingPicture".GetLocalized();
 
             StorageFile? file = await captureOperation;
             if (file is not null)
             {
-                LoadingMessage = "Processing image…";
+                LoadingMessage = "Read_ProcessingImage".GetLocalized();
                 await OpenAndDecodeStorageFile(file);
             }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Camera capture failed: {ex}");
-            DecodedContentInfoBarTitle = "Camera unavailable";
-            InfoBarMessage = ex.Message;
+            DecodedContentInfoBarTitle = "Read_CameraUnavailable".GetLocalized();
+            InfoBarMessage = "Read_CameraUnavailableHelp".GetLocalized();
             DecodedContentInfoBarSeverity = InfoBarSeverity.Error;
             IsInfoBarShowing = true;
         }
@@ -1054,10 +1056,10 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     private void ToggleFaqPaneOpen() => IsFaqPaneOpen = !IsFaqPaneOpen;
 
     [RelayCommand]
-    private void OpenFaqWithSearch(string searchText)
+    private void OpenDetectionFaq()
     {
         IsFaqPaneOpen = true;
-        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, searchText));
+        WeakReferenceMessenger.Default.Send(new RequestPaneChange(MainViewPanes.Faq, PaneState.Open, topic: FaqTopic.Detection));
     }
 
     [RelayCommand]
@@ -1067,7 +1069,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             return;
 
         IsLoading = true;
-        LoadingMessage = "Applying adjustments…";
+        LoadingMessage = "Read_ApplyingAdjustments".GetLocalized();
 
         try
         {
@@ -1115,7 +1117,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     private async Task OpenFileFromClipboard()
     {
         IsLoading = true;
-        LoadingMessage = "Opening image from clipboard…";
+        LoadingMessage = "Read_OpeningClipboardImage".GetLocalized();
 
         try
         {
@@ -1152,16 +1154,16 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             }
 
             CanPasteImage = false;
-            DecodedContentInfoBarTitle = "No image to paste";
-            InfoBarMessage = "Copy an image, a supported image file, or its full file path, then try again.";
+            DecodedContentInfoBarTitle = "Read_NoImageToPaste".GetLocalized();
+            InfoBarMessage = "Read_NoImageToPasteHelp".GetLocalized();
             DecodedContentInfoBarSeverity = InfoBarSeverity.Warning;
             IsInfoBarShowing = true;
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Failed to paste image: {ex.Message}");
-            DecodedContentInfoBarTitle = "Could not paste image";
-            InfoBarMessage = ex.Message;
+            DecodedContentInfoBarTitle = "Read_PasteFailed".GetLocalized();
+            InfoBarMessage = "Read_PasteFailedHelp".GetLocalized();
             DecodedContentInfoBarSeverity = InfoBarSeverity.Error;
             IsInfoBarShowing = true;
         }
@@ -1218,7 +1220,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     private async Task OpenNewFile()
     {
         IsLoading = true;
-        LoadingMessage = "Opening image…";
+        LoadingMessage = "Read_OpeningImage".GetLocalized();
 
         try
         {
@@ -1272,10 +1274,10 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         {
             ContentDialog confirmDialog = new()
             {
-                Title = "Large folder",
-                Content = $"This folder contains {imageFiles.Count} image files. Batch operations like \"Decode All\" or \"Summary View\" may take a while. Continue?",
-                PrimaryButtonText = "Continue",
-                CloseButtonText = "Cancel",
+                Title = "Read_LargeFolder".GetLocalized(),
+                Content = "Read_LargeFolderConfirmation".FormatLocalized(imageFiles.Count),
+                PrimaryButtonText = "Common_Continue".GetLocalized(),
+                CloseButtonText = "Common_Cancel".GetLocalized(),
                 DefaultButton = ContentDialogButton.Primary,
                 XamlRoot = App.MainWindow.Content.XamlRoot,
             };
@@ -1337,7 +1339,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                     break;
 
                 current++;
-                LoadingMessage = $"Processing {current} of {total}: {fileItem.FileName}";
+                LoadingMessage = "Read_BatchProgress".FormatLocalized(current, total, fileItem.FileName);
 
                 string outputText;
                 try
@@ -1408,7 +1410,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                     break;
 
                 current++;
-                LoadingMessage = $"Processing {current} of {total}: {fileItem.FileName}";
+                LoadingMessage = "Read_BatchProgress".FormatLocalized(current, total, fileItem.FileName);
 
                 List<string> codes;
                 try
@@ -1557,12 +1559,12 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             for (int index = 0; index < pickedFiles.Count; index++)
             {
                 IStorageItem pickedItem = pickedFiles[index];
-                LoadingMessage = $"Opening image {index + 1} of {pickedFiles.Count}…";
+                LoadingMessage = "Read_MultipleOpenProgress".FormatLocalized(index + 1, pickedFiles.Count);
                 await Task.Yield();
 
                 if (pickedItem is not StorageFile file || !IsSupportedImageFile(file))
                 {
-                    failures.Add($"{pickedItem.Name}: Not a supported image file.");
+                    failures.Add("Read_UnsupportedImage".FormatLocalized(pickedItem.Name));
                     continue;
                 }
 
@@ -1574,7 +1576,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"Failed to open image '{file.Name}': {ex.Message}");
-                    failures.Add($"{file.Name}: {ex.Message}");
+                    failures.Add("Read_OpenImageFailed".FormatLocalized(file.Name));
                     continue;
                 }
 
@@ -1611,7 +1613,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             if (failures.Count > 0)
             {
                 ResetDecodedContentInfoBar();
-                DecodedContentInfoBarTitle = "Some files could not be opened";
+                DecodedContentInfoBarTitle = "Read_SomeFilesFailed".GetLocalized();
                 InfoBarMessage = string.Join(Environment.NewLine, failures);
                 DecodedContentInfoBarSeverity = decodedItems.Count > 0
                     ? InfoBarSeverity.Warning
@@ -1629,7 +1631,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     public async Task OpenAndDecodeStorageFile(StorageFile storageFile)
     {
         IsLoading = true;
-        LoadingMessage = "Opening image\u2026";
+        LoadingMessage = "Read_OpeningImage".GetLocalized();
         await Task.Yield();
 
         try
@@ -1761,7 +1763,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
             SuggestedStartLocation = PickerLocationId.PicturesLibrary,
             SuggestedFileName = suggestedFileName,
         };
-        picker.FileTypeChoices.Add("PNG Image", [".png"]);
+        picker.FileTypeChoices.Add("FileType_Png".GetLocalized(), [".png"]);
 
         Window saveWindow = new();
         IntPtr hwnd = WindowNative.GetWindowHandle(saveWindow);

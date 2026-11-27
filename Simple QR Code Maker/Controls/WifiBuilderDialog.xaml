@@ -5,11 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Build WiFi"
-    CloseButtonText="Cancel"
+    x:Uid="WifiBuilderDialog_Dialog"
     DefaultButton="Primary"
     IsPrimaryButtonEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
-    PrimaryButtonText="Apply"
     mc:Ignorable="d">
 
     <ScrollViewer
@@ -23,62 +21,51 @@
             MinWidth="420"
             Padding="0,0,12,0">
             <StackPanel HorizontalAlignment="Stretch" Spacing="12">
-                <TextBlock
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="Create a QR Code that shares WiFi credentials for phones and other scanners that understand the standard WiFi payload format." />
+                <TextBlock x:Uid="WifiBuilderDialog_CreateAQRCodeThatText" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
                 <TextBox
                     x:Name="SsidTextBox"
-                    Header="Network name (SSID)"
-                    PlaceholderText="Contoso Guest"
+                    x:Uid="WifiBuilderDialog_SsidTextBox"
                     Text="{x:Bind ViewModel.Ssid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <ComboBox
-                    Header="Security type"
-                    SelectedIndex="{x:Bind ViewModel.SelectedAuthenticationTypeIndex, Mode=TwoWay}">
-                    <ComboBoxItem Tag="WPA">WPA / WPA2 / WPA3</ComboBoxItem>
-                    <ComboBoxItem Tag="WEP">WEP (Legacy)</ComboBoxItem>
-                    <ComboBoxItem Tag="None">None (Open network)</ComboBoxItem>
+                <ComboBox x:Uid="WifiBuilderDialog_SecurityTypeComboBox" SelectedIndex="{x:Bind ViewModel.SelectedAuthenticationTypeIndex, Mode=TwoWay}">
+                    <ComboBoxItem x:Uid="WifiBuilderDialog_WPAWPA2WPA3ComboBoxItem" Tag="WPA" />
+                    <ComboBoxItem x:Uid="WifiBuilderDialog_WEPLegacyComboBoxItem" Tag="WEP" />
+                    <ComboBoxItem x:Uid="WifiBuilderDialog_NoneOpenNetworkComboBoxItem" Tag="None" />
                 </ComboBox>
 
                 <TextBox
-                    Header="Password"
-                    PlaceholderText="Enter the WiFi password"
+                    x:Uid="WifiBuilderDialog_PasswordTextBox"
                     Text="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     Visibility="{x:Bind ViewModel.PasswordVisibility, Mode=OneWay}" />
 
-                <CheckBox
-                    Content="This is a hidden network"
-                    IsChecked="{x:Bind ViewModel.IsHiddenNetwork, Mode=TwoWay}" />
+                <CheckBox x:Uid="WifiBuilderDialog_ThisIsAHiddenNetworkCheckBox" IsChecked="{x:Bind ViewModel.IsHiddenNetwork, Mode=TwoWay}" />
 
                 <InfoBar
-                    IsOpen="True"
+                    x:Uid="WifiBuilderDialog_OpenNetworkInfoBar"
                     IsClosable="False"
-                    Message="Open networks do not use a password, and many devices will still show the network details before joining."
+                    IsOpen="True"
                     Severity="Informational"
-                    Title="Open network"
                     Visibility="{x:Bind ViewModel.OpenNetworkInfoVisibility, Mode=OneWay}" />
 
                 <InfoBar
-                    IsOpen="True"
+                    x:Uid="WifiBuilderDialog_LegacySecurityInfoBar"
                     IsClosable="False"
-                    Message="WEP is obsolete and insecure. Only use it if you need compatibility with very old equipment."
+                    IsOpen="True"
                     Severity="Warning"
-                    Title="Legacy security"
                     Visibility="{x:Bind ViewModel.LegacySecurityWarningVisibility, Mode=OneWay}" />
 
                 <InfoBar
-                    IsOpen="True"
+                    x:Uid="WifiBuilderDialog_BeforeYouShareThisInfoBar"
                     IsClosable="False"
-                    Message="Anyone who scans or photographs this QR Code can recover the WiFi credentials. Newer iPhone and Android devices usually recognize it, but older cameras and some third-party scanners may only show the raw text."
+                    IsOpen="True"
                     Severity="Warning"
-                    Title="Before you share this"
                     Visibility="Visible" />
 
                 <TextBox
+                    x:Uid="WifiBuilderDialog_PreviewTextBox"
                     MinHeight="72"
                     AcceptsReturn="True"
-                    Header="Preview"
                     IsReadOnly="True"
                     Text="{x:Bind ViewModel.PreviewWifiPayload, Mode=OneWay}"
                     TextWrapping="Wrap" />

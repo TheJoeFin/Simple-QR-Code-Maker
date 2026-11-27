@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -64,7 +65,7 @@ public sealed partial class ColorPickerButton : UserControl
             nameof(ToolTipText),
             typeof(string),
             typeof(ColorPickerButton),
-            new PropertyMetadata("Pick color", OnToolTipTextChanged));
+            new PropertyMetadata(string.Empty, OnToolTipTextChanged));
 
     public string? ToolTipText
     {
@@ -276,7 +277,7 @@ public sealed partial class ColorPickerButton : UserControl
         PasteClipboardColorButton.IsEnabled = true;
         PasteClipboardColorButton.IsTabStop = true;
 
-        string accessibleLabel = $"Paste {displayText} from clipboard";
+        string accessibleLabel = "Colors_PasteClipboardValue".FormatLocalized(displayText);
         ToolTipService.SetToolTip(PasteClipboardColorButton, accessibleLabel);
         AutomationProperties.SetName(PasteClipboardColorButton, accessibleLabel);
     }
@@ -290,7 +291,7 @@ public sealed partial class ColorPickerButton : UserControl
         PasteClipboardColorButton.IsEnabled = false;
         PasteClipboardColorButton.IsTabStop = false;
         ToolTipService.SetToolTip(PasteClipboardColorButton, null);
-        AutomationProperties.SetName(PasteClipboardColorButton, "Paste color from clipboard");
+        AutomationProperties.SetName(PasteClipboardColorButton, "Colors_PasteClipboard".GetLocalized());
     }
 
     private void UpdateButtonContent()
@@ -319,7 +320,7 @@ public sealed partial class ColorPickerButton : UserControl
         if (PickerButton is null)
             return;
 
-        string toolTipText = string.IsNullOrWhiteSpace(ToolTipText) ? "Pick color" : ToolTipText;
+        string toolTipText = string.IsNullOrWhiteSpace(ToolTipText) ? "Colors_PickColor".GetLocalized() : ToolTipText;
         ToolTipService.SetToolTip(PickerButton, toolTipText);
         AutomationProperties.SetName(PickerButton, toolTipText);
     }

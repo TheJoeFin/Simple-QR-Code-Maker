@@ -1,5 +1,7 @@
 using Microsoft.UI.Xaml.Data;
 
+using Simple_QR_Code_Maker.Helpers;
+
 namespace Simple_QR_Code_Maker.Converters;
 
 public partial class BoolToAdvancedToolsMessageConverter : IValueConverter
@@ -11,12 +13,12 @@ public partial class BoolToAdvancedToolsMessageConverter : IValueConverter
         if (isAdvancedToolsVisible)
         {
             // Advanced tools are open - show the original message
-            return "Could be there are none present or content failed to read. If you believe this is an issue with the app, please email Joe@JoeFinApps.com";
+            return "Read_NoCodesContact".GetLocalized();
         }
         else
         {
             // Advanced tools are not open - suggest using them
-            return "No QR codes detected. Try using the Advanced Tools to isolate and improve detection with image adjustments like grayscale, contrast, and perspective correction.";
+            return "Read_NoCodesAdvancedTools".GetLocalized();
         }
     }
 

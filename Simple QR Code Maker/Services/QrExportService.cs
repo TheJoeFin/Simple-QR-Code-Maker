@@ -162,7 +162,7 @@ public class QrExportService : IQrExportService
             SuggestedStartLocation = PickerLocationId.PicturesLibrary,
             SuggestedFileName = $"QR Codes {DateTime.Now:yyyy-MM-dd}",
         };
-        savePicker.FileTypeChoices.Add("ZIP Archive", [".zip"]);
+        savePicker.FileTypeChoices.Add("FileType_ZipExport".GetLocalized(), [".zip"]);
 
         InitializeWithWindow.Initialize(savePicker, WindowNative.GetWindowHandle(App.MainWindow));
         return await savePicker.PickSaveFileAsync();

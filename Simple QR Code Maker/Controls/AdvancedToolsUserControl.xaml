@@ -33,9 +33,7 @@
             <ScrollViewer
                 Padding="16,16,16,0"
                 VerticalScrollBarVisibility="Auto"
-                Visibility="{x:Bind ViewModel.IsWorkflowPickerVisible,
-                                    Mode=OneWay,
-                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsWorkflowPickerVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                 <StackPanel Spacing="12">
                     <Border
                         Padding="16"
@@ -64,25 +62,22 @@
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 Spacing="4">
-                                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Advanced decoding" />
+                                <TextBlock x:Uid="AdvancedToolsUserControl_AdvancedDecodingText" Style="{StaticResource SubtitleTextBlockStyle}" />
                                 <TextBlock
+                                    x:Uid="AdvancedToolsUserControl_ChooseAFocusedWorkflowOrText"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Choose a focused workflow or make quick image adjustments before decoding."
                                     TextWrapping="Wrap" />
                             </StackPanel>
                         </Grid>
                     </Border>
 
-                    <settingsControls:SettingsExpander
-                        Description="Make quick, non-guided image adjustments."
-                        Header="Quick fixes"
-                        IsExpanded="True">
+                    <settingsControls:SettingsExpander x:Uid="AdvancedToolsUserControl_QuickFixesSettingsExpander" IsExpanded="True">
                         <settingsControls:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xE793;" />
                         </settingsControls:SettingsExpander.HeaderIcon>
                         <settingsControls:SettingsExpander.Items>
-                            <settingsControls:SettingsCard Header="One-tap fixes">
+                            <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_OneTapFixesSettingsCard">
                                 <Grid ColumnSpacing="8">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -90,39 +85,35 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Button
+                                        x:Uid="AdvancedToolsUserControl_ConvertTheImageToGrayscaleButton"
                                         Grid.Column="0"
                                         Width="360"
                                         HorizontalAlignment="Stretch"
                                         HorizontalContentAlignment="Left"
                                         Command="{x:Bind ViewModel.ApplyGrayscaleCommand}"
-                                        IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                                           Mode=OneWay,
-                                                           Converter={StaticResource BoolNegationConverter}}"
-                                        ToolTipService.ToolTip="Convert the image to grayscale for better QR code detection">
+                                        IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
-                                            <TextBlock Text="Grayscale" TextWrapping="Wrap" />
+                                            <TextBlock x:Uid="AdvancedToolsUserControl_GrayscaleText" TextWrapping="Wrap" />
                                         </StackPanel>
                                     </Button>
 
                                     <Button
+                                        x:Uid="AdvancedToolsUserControl_InvertImageColorsWhenTheButton"
                                         Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         HorizontalContentAlignment="Left"
                                         Command="{x:Bind ViewModel.ApplyInvertCommand}"
-                                        IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                                           Mode=OneWay,
-                                                           Converter={StaticResource BoolNegationConverter}}"
-                                        ToolTipService.ToolTip="Invert image colors when the code is lighter than its background">
+                                        IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
-                                            <TextBlock Text="Invert" TextWrapping="Wrap" />
+                                            <TextBlock x:Uid="AdvancedToolsUserControl_InvertText" TextWrapping="Wrap" />
                                         </StackPanel>
                                     </Button>
                                 </Grid>
                             </settingsControls:SettingsCard>
 
-                            <settingsControls:SettingsCard Header="Contrast">
+                            <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_ContrastSettingsCard">
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -130,23 +121,21 @@
                                     </Grid.ColumnDefinitions>
                                     <Slider
                                         x:Name="ContrastSlider"
+                                        x:Uid="AdvancedToolsUserControl_ContrastSlider"
                                         Grid.Column="0"
                                         Maximum="100"
                                         Minimum="-100"
                                         StepFrequency="1"
-                                        ToolTipService.ToolTip="Increase or decrease contrast to separate the code from its background"
-                                        Value="{x:Bind ViewModel.ContrastValue,
-                                                       Mode=TwoWay}" />
+                                        Value="{x:Bind ViewModel.ContrastValue, Mode=TwoWay}" />
                                     <TextBlock
                                         Grid.Column="1"
                                         MinWidth="40"
                                         VerticalAlignment="Center"
-                                        Text="{x:Bind ViewModel.ContrastValue,
-                                                      Mode=OneWay}" />
+                                        Text="{x:Bind ViewModel.ContrastValue, Mode=OneWay}" />
                                 </Grid>
                             </settingsControls:SettingsCard>
 
-                            <settingsControls:SettingsCard Header="Black point">
+                            <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_BlackPointSettingsCard">
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -154,23 +143,21 @@
                                     </Grid.ColumnDefinitions>
                                     <Slider
                                         x:Name="BlackPointSlider"
+                                        x:Uid="AdvancedToolsUserControl_BlackPointSlider"
                                         Grid.Column="0"
                                         Maximum="100"
                                         Minimum="0"
                                         StepFrequency="1"
-                                        ToolTipService.ToolTip="Set how dark a pixel needs to be before it becomes black"
-                                        Value="{x:Bind ViewModel.BlackPointLevel,
-                                                       Mode=TwoWay}" />
+                                        Value="{x:Bind ViewModel.BlackPointLevel, Mode=TwoWay}" />
                                     <TextBlock
                                         Grid.Column="1"
                                         MinWidth="40"
                                         VerticalAlignment="Center"
-                                        Text="{x:Bind ViewModel.BlackPointLevel,
-                                                      Mode=OneWay}" />
+                                        Text="{x:Bind ViewModel.BlackPointLevel, Mode=OneWay}" />
                                 </Grid>
                             </settingsControls:SettingsCard>
 
-                            <settingsControls:SettingsCard Header="White point">
+                            <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_WhitePointSettingsCard">
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -178,23 +165,21 @@
                                     </Grid.ColumnDefinitions>
                                     <Slider
                                         x:Name="WhitePointSlider"
+                                        x:Uid="AdvancedToolsUserControl_WhitePointSlider"
                                         Grid.Column="0"
                                         Maximum="100"
                                         Minimum="0"
                                         StepFrequency="1"
-                                        ToolTipService.ToolTip="Set how bright a pixel needs to be before it becomes white"
-                                        Value="{x:Bind ViewModel.WhitePointLevel,
-                                                       Mode=TwoWay}" />
+                                        Value="{x:Bind ViewModel.WhitePointLevel, Mode=TwoWay}" />
                                     <TextBlock
                                         Grid.Column="1"
                                         MinWidth="40"
                                         VerticalAlignment="Center"
-                                        Text="{x:Bind ViewModel.WhitePointLevel,
-                                                      Mode=OneWay}" />
+                                        Text="{x:Bind ViewModel.WhitePointLevel, Mode=OneWay}" />
                                 </Grid>
                             </settingsControls:SettingsCard>
 
-                            <settingsControls:SettingsCard Header="Add border">
+                            <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_AddBorderSettingsCard">
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -202,32 +187,28 @@
                                     </Grid.ColumnDefinitions>
                                     <Slider
                                         x:Name="BorderPercentSlider"
+                                        x:Uid="AdvancedToolsUserControl_BorderPercentSlider"
                                         Grid.Column="0"
                                         Maximum="50"
                                         Minimum="0"
                                         StepFrequency="1"
-                                        ToolTipService.ToolTip="Add a white border sized as a percentage of the image width (e.g. 10 = 10% border on each side)"
-                                        Value="{x:Bind ViewModel.BorderPercent,
-                                                       Mode=TwoWay}" />
+                                        Value="{x:Bind ViewModel.BorderPercent, Mode=TwoWay}" />
                                     <TextBlock
                                         Grid.Column="1"
                                         MinWidth="40"
                                         VerticalAlignment="Center"
-                                        Text="{x:Bind ViewModel.BorderPercent,
-                                                      Mode=OneWay}" />
+                                        Text="{x:Bind ViewModel.BorderPercent, Mode=OneWay}" />
                                 </Grid>
                             </settingsControls:SettingsCard>
 
-                            <settingsControls:SettingsCard Header="Apply quick fixes">
+                            <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_ApplyQuickFixesSettingsCard">
                                 <Button
+                                    x:Uid="AdvancedToolsUserControl_ApplyTheCurrentQuickFixButton"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Stretch"
                                     Command="{x:Bind ViewModel.ApplyProcessingCommand}"
-                                    IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                                       Mode=OneWay,
-                                                       Converter={StaticResource BoolNegationConverter}}"
-                                    Style="{StaticResource AccentButtonStyle}"
-                                    ToolTipService.ToolTip="Apply the current quick-fix settings to the image">
+                                    IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    Style="{StaticResource AccentButtonStyle}">
                                     <Grid ColumnSpacing="8">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
@@ -241,23 +222,17 @@
                                                 VerticalAlignment="Center"
                                                 FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                 Glyph="&#xE73E;"
-                                                Visibility="{x:Bind ViewModel.IsProcessing,
-                                                                    Mode=OneWay,
-                                                                    Converter={StaticResource BoolToVisibilityConverter},
-                                                                    ConverterParameter=inverse}" />
+                                                Visibility="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=inverse}" />
                                             <ProgressRing
                                                 Width="16"
                                                 Height="16"
-                                                IsActive="{x:Bind ViewModel.IsProcessing,
-                                                                  Mode=OneWay}"
-                                                Visibility="{x:Bind ViewModel.IsProcessing,
-                                                                    Mode=OneWay,
-                                                                    Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                IsActive="{x:Bind ViewModel.IsProcessing, Mode=OneWay}"
+                                                Visibility="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                         </Grid>
 
                                         <TextBlock
+                                            x:Uid="AdvancedToolsUserControl_ApplyQuickFixesText"
                                             Grid.Column="1"
-                                            Text="Apply quick fixes"
                                             TextWrapping="Wrap" />
 
                                         <Ellipse
@@ -266,94 +241,79 @@
                                             Height="8"
                                             VerticalAlignment="Center"
                                             Fill="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
-                                            Visibility="{x:Bind ViewModel.HasPendingChanges,
-                                                                Mode=OneWay,
-                                                                Converter={StaticResource BoolToVisibilityConverter}}" />
+                                            Visibility="{x:Bind ViewModel.HasPendingChanges, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                     </Grid>
                                 </Button>
                             </settingsControls:SettingsCard>
                         </settingsControls:SettingsExpander.Items>
                     </settingsControls:SettingsExpander>
 
-                    <settingsControls:SettingsExpander
-                        Description="Open a focused tool flow and return here when finished."
-                        Header="Guided workflows"
-                        IsExpanded="True">
+                    <settingsControls:SettingsExpander x:Uid="AdvancedToolsUserControl_GuidedWorkflowsSettingsExpander" IsExpanded="True">
                         <settingsControls:SettingsExpander.HeaderIcon>
                             <SymbolIcon Symbol="Edit" />
                         </settingsControls:SettingsExpander.HeaderIcon>
                         <settingsControls:SettingsExpander.Items>
-                            <settingsControls:SettingsCard Description="Click a dark pixel and apply that sample immediately." Header="Sample black point">
+                            <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_SampleBlackPointSettingsCard">
                                 <Button
+                                    x:Uid="AdvancedToolsUserControl_OpenTheBlackPointSamplingButton"
                                     Command="{x:Bind ViewModel.OpenBlackPointWorkflowCommand}"
-                                    IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                                       Mode=OneWay,
-                                                       Converter={StaticResource BoolNegationConverter}}"
-                                    Style="{StaticResource WorkflowLauncherButtonStyle}"
-                                    ToolTipService.ToolTip="Open the black-point sampling workflow">
+                                    IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    Style="{StaticResource WorkflowLauncherButtonStyle}">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <FontIcon Glyph="&#xEF3C;" />
-                                        <TextBlock Text="Pick Black Point" />
+                                        <TextBlock x:Uid="AdvancedToolsUserControl_PickBlackPointText" />
                                     </StackPanel>
                                 </Button>
                             </settingsControls:SettingsCard>
 
-                            <settingsControls:SettingsCard Description="Click a light pixel and apply that sample immediately." Header="Sample white point">
+                            <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_SampleWhitePointSettingsCard">
                                 <Button
+                                    x:Uid="AdvancedToolsUserControl_OpenTheWhitePointSamplingButton"
                                     Command="{x:Bind ViewModel.OpenWhitePointWorkflowCommand}"
-                                    IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                                       Mode=OneWay,
-                                                       Converter={StaticResource BoolNegationConverter}}"
-                                    Style="{StaticResource WorkflowLauncherButtonStyle}"
-                                    ToolTipService.ToolTip="Open the white-point sampling workflow">
+                                    IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    Style="{StaticResource WorkflowLauncherButtonStyle}">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <FontIcon Glyph="&#xEF3C;" />
-                                        <TextBlock Text="Pick White Point" />
+                                        <TextBlock x:Uid="AdvancedToolsUserControl_PickWhitePointText" />
                                     </StackPanel>
                                 </Button>
                             </settingsControls:SettingsCard>
 
-                            <settingsControls:SettingsCard Description="Mark all four corners, then apply the correction." Header="Straighten a QR code">
+                            <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_StraightenAQRCodeSettingsCard">
                                 <Button
+                                    x:Uid="AdvancedToolsUserControl_OpenThePerspectiveCorrectionWorkflowButton"
                                     Command="{x:Bind ViewModel.OpenPerspectiveWorkflowCommand}"
-                                    IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                                       Mode=OneWay,
-                                                       Converter={StaticResource BoolNegationConverter}}"
-                                    Style="{StaticResource WorkflowLauncherButtonStyle}"
-                                    ToolTipService.ToolTip="Open the perspective correction workflow">
+                                    IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    Style="{StaticResource WorkflowLauncherButtonStyle}">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <local:QrCodeIcon />
-                                        <TextBlock Text="Pick Code Corners" />
+                                        <TextBlock x:Uid="AdvancedToolsUserControl_PickCodeCornersText" />
                                     </StackPanel>
                                 </Button>
                             </settingsControls:SettingsCard>
 
-                            <settingsControls:SettingsCard Description="Draw a region on the image, then extract it as a new image." Header="Extract a region">
+                            <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_ExtractARegionSettingsCard">
                                 <Button
+                                    x:Uid="AdvancedToolsUserControl_OpenTheExtractRegionWorkflowButton"
                                     Command="{x:Bind ViewModel.OpenCutOutWorkflowCommand}"
-                                    IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                                       Mode=OneWay,
-                                                       Converter={StaticResource BoolNegationConverter}}"
-                                    Style="{StaticResource WorkflowLauncherButtonStyle}"
-                                    ToolTipService.ToolTip="Open the extract-region workflow">
+                                    IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    Style="{StaticResource WorkflowLauncherButtonStyle}">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <SymbolIcon Symbol="Crop" />
-                                        <TextBlock Text="Cutout area" />
+                                        <TextBlock x:Uid="AdvancedToolsUserControl_CutoutAreaText" />
                                     </StackPanel>
                                 </Button>
                             </settingsControls:SettingsCard>
 
-                            <settingsControls:SettingsCard Description="Mark corners and alignment points to unwarp a curved or bent QR code." Header="Unwarp a QR code">
+                            <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_UnwarpAQRCodeSettingsCard">
                                 <Button
+                                    x:Uid="AdvancedToolsUserControl_OpenTheUnwarpWorkflowToButton"
                                     Command="{x:Bind ViewModel.OpenUnwarpWorkflowCommand}"
-                                    IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                                       Mode=OneWay,
-                                                       Converter={StaticResource BoolNegationConverter}}"
-                                    Style="{StaticResource WorkflowLauncherButtonStyle}"
-                                    ToolTipService.ToolTip="Open the unwarp workflow to correct warped or curved QR codes">
+                                    IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    Style="{StaticResource WorkflowLauncherButtonStyle}">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <FontIcon Glyph="&#xF207;" />
-                                        <TextBlock Text="Pick Unwarp Points" />
+                                        <TextBlock x:Uid="AdvancedToolsUserControl_PickUnwarpPointsText" />
                                     </StackPanel>
                                 </Button>
                             </settingsControls:SettingsCard>
@@ -365,9 +325,7 @@
             <ScrollViewer
                 Padding="16,16,16,0"
                 VerticalScrollBarVisibility="Auto"
-                Visibility="{x:Bind ViewModel.IsSampleBlackPointWorkflowVisible,
-                                    Mode=OneWay,
-                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsSampleBlackPointWorkflowVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                 <StackPanel Spacing="12">
                     <Border
                         Padding="16"
@@ -376,19 +334,19 @@
                         BorderThickness="1"
                         CornerRadius="{StaticResource OverlayCornerRadius}">
                         <StackPanel Spacing="4">
-                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Sample black point" />
+                            <TextBlock x:Uid="AdvancedToolsUserControl_SampleBlackPointText" Style="{StaticResource SubtitleTextBlockStyle}" />
                             <TextBlock
+                                x:Uid="AdvancedToolsUserControl_ClickTheDarkestMeaningfulPartText"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="Click the darkest meaningful part of the code or background. The sample is applied as soon as you pick it."
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
 
                     <InfoBar
+                        x:Uid="AdvancedToolsUserControl_ClickOnceOnTheImageInfoBar"
                         IsClosable="False"
                         IsOpen="True"
-                        Message="Click once on the image to choose the black point."
                         Severity="Informational" />
                 </StackPanel>
             </ScrollViewer>
@@ -396,9 +354,7 @@
             <ScrollViewer
                 Padding="16,16,16,0"
                 VerticalScrollBarVisibility="Auto"
-                Visibility="{x:Bind ViewModel.IsSampleWhitePointWorkflowVisible,
-                                    Mode=OneWay,
-                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsSampleWhitePointWorkflowVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                 <StackPanel Spacing="12">
                     <Border
                         Padding="16"
@@ -407,19 +363,19 @@
                         BorderThickness="1"
                         CornerRadius="{StaticResource OverlayCornerRadius}">
                         <StackPanel Spacing="4">
-                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Sample white point" />
+                            <TextBlock x:Uid="AdvancedToolsUserControl_SampleWhitePointText" Style="{StaticResource SubtitleTextBlockStyle}" />
                             <TextBlock
+                                x:Uid="AdvancedToolsUserControl_ClickTheLightestMeaningfulPartText"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="Click the lightest meaningful part of the code or background. The sample is applied as soon as you pick it."
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
 
                     <InfoBar
+                        x:Uid="AdvancedToolsUserControl_ClickOnceOnTheImageInfoBar2"
                         IsClosable="False"
                         IsOpen="True"
-                        Message="Click once on the image to choose the white point."
                         Severity="Informational" />
                 </StackPanel>
             </ScrollViewer>
@@ -427,9 +383,7 @@
             <ScrollViewer
                 Padding="16,16,16,0"
                 VerticalScrollBarVisibility="Auto"
-                Visibility="{x:Bind ViewModel.IsPerspectiveWorkflowVisible,
-                                    Mode=OneWay,
-                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsPerspectiveWorkflowVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                 <StackPanel Spacing="12">
                     <Border
                         Padding="16"
@@ -438,22 +392,22 @@
                         BorderThickness="1"
                         CornerRadius="{StaticResource OverlayCornerRadius}">
                         <StackPanel Spacing="4">
-                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Straighten a QR code" />
+                            <TextBlock x:Uid="AdvancedToolsUserControl_StraightenAQRCodeText" Style="{StaticResource SubtitleTextBlockStyle}" />
                             <TextBlock
+                                x:Uid="AdvancedToolsUserControl_WorkThroughTheCornerSelectionText"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="Work through the corner selection steps, then apply the correction when the outline is complete."
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
 
                     <InfoBar
+                        x:Uid="AdvancedToolsUserControl_ClickEachCornerOnTheInfoBar"
                         IsClosable="False"
                         IsOpen="True"
-                        Message="Click each corner on the image in order."
                         Severity="Informational" />
 
-                    <settingsControls:SettingsCard Header="Current step">
+                    <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_CurrentStepSettingsCard">
                         <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -465,17 +419,13 @@
                                 Height="28"
                                 Background="{ThemeResource AccentFillColorDefaultBrush}"
                                 CornerRadius="14"
-                                Visibility="{x:Bind ViewModel.IsCornerSelectionComplete,
-                                                    Mode=OneWay,
-                                                    Converter={StaticResource BoolToVisibilityConverter},
-                                                    ConverterParameter=inverse}">
+                                Visibility="{x:Bind ViewModel.IsCornerSelectionComplete, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=inverse}">
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
                                     Style="{StaticResource BodyStrongTextBlockStyle}"
-                                    Text="{x:Bind ViewModel.CurrentCornerNumber,
-                                                  Mode=OneWay}" />
+                                    Text="{x:Bind ViewModel.CurrentCornerNumber, Mode=OneWay}" />
                             </Border>
 
                             <Border
@@ -483,9 +433,7 @@
                                 Height="28"
                                 Background="{ThemeResource SystemFillColorSuccessBrush}"
                                 CornerRadius="14"
-                                Visibility="{x:Bind ViewModel.IsCornerSelectionComplete,
-                                                    Mode=OneWay,
-                                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                                Visibility="{x:Bind ViewModel.IsCornerSelectionComplete, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <FontIcon
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
@@ -497,13 +445,12 @@
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 Style="{StaticResource BodyStrongTextBlockStyle}"
-                                Text="{x:Bind ViewModel.CurrentCornerInstruction,
-                                              Mode=OneWay}"
+                                Text="{x:Bind ViewModel.CurrentCornerInstruction, Mode=OneWay}"
                                 TextWrapping="Wrap" />
                         </Grid>
                     </settingsControls:SettingsCard>
 
-                    <settingsControls:SettingsCard Header="Border size">
+                    <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_BorderSizeSettingsCard">
                         <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -511,28 +458,26 @@
                             </Grid.ColumnDefinitions>
                             <Slider
                                 x:Name="BorderSlider"
+                                x:Uid="AdvancedToolsUserControl_BorderSlider"
                                 Grid.Column="0"
                                 Maximum="50"
                                 Minimum="0"
                                 StepFrequency="1"
-                                ToolTipService.ToolTip="Add white padding around the corrected image to improve detection"
-                                Value="{x:Bind ViewModel.BorderPixels,
-                                               Mode=TwoWay}" />
+                                Value="{x:Bind ViewModel.BorderPixels, Mode=TwoWay}" />
                             <TextBlock
                                 Grid.Column="1"
                                 MinWidth="40"
                                 VerticalAlignment="Center"
-                                Text="{x:Bind ViewModel.BorderPixels,
-                                              Mode=OneWay}" />
+                                Text="{x:Bind ViewModel.BorderPixels, Mode=OneWay}" />
                         </Grid>
                     </settingsControls:SettingsCard>
 
-                    <settingsControls:SettingsCard Header="Selection">
+                    <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_SelectionSettingsCard">
                         <Button
+                            x:Uid="AdvancedToolsUserControl_ClearAllSelectedCornersAndButton"
                             HorizontalAlignment="Stretch"
-                            Command="{x:Bind ViewModel.ClearPerspectiveCornersCommand}"
-                            ToolTipService.ToolTip="Clear all selected corners and start over">
-                            <TextBlock Text="Clear corners" />
+                            Command="{x:Bind ViewModel.ClearPerspectiveCornersCommand}">
+                            <TextBlock x:Uid="AdvancedToolsUserControl_ClearCornersText" />
                         </Button>
                     </settingsControls:SettingsCard>
                 </StackPanel>
@@ -541,9 +486,7 @@
             <ScrollViewer
                 Padding="16,16,16,0"
                 VerticalScrollBarVisibility="Auto"
-                Visibility="{x:Bind ViewModel.IsUnwarpWorkflowVisible,
-                                    Mode=OneWay,
-                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsUnwarpWorkflowVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                 <StackPanel Spacing="12">
                     <Border
                         Padding="16"
@@ -552,41 +495,39 @@
                         BorderThickness="1"
                         CornerRadius="{StaticResource OverlayCornerRadius}">
                         <StackPanel Spacing="4">
-                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Unwarp a QR code" />
+                            <TextBlock x:Uid="AdvancedToolsUserControl_UnwarpAQRCodeText" Style="{StaticResource SubtitleTextBlockStyle}" />
                             <TextBlock
+                                x:Uid="AdvancedToolsUserControl_SetTheQRVersionClickText"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="Set the QR version, click each corner then each alignment point. Use Estimated to accept calculated positions."
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
 
                     <InfoBar
+                        x:Uid="AdvancedToolsUserControl_ClickOnTheImageToInfoBar"
                         IsClosable="False"
                         IsOpen="True"
-                        Message="Click on the image to place each point in order."
                         Severity="Informational" />
 
-                    <settingsControls:SettingsCard Header="QR Code Version">
+                    <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_QRCodeVersionSettingsCard">
                         <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Slider
+                                x:Uid="AdvancedToolsUserControl_SelectTheQRCodeVersionSlider"
                                 Grid.Column="0"
                                 Maximum="40"
                                 Minimum="10"
                                 StepFrequency="5"
-                                ToolTipService.ToolTip="Select the QR code version (10–40). Higher versions have more alignment points."
-                                Value="{x:Bind ViewModel.QrVersionDouble,
-                                               Mode=TwoWay}" />
+                                Value="{x:Bind ViewModel.QrVersionDouble, Mode=TwoWay}" />
                             <TextBlock
                                 Grid.Column="1"
                                 MinWidth="28"
                                 VerticalAlignment="Center"
-                                Text="{x:Bind ViewModel.QrVersion,
-                                              Mode=OneWay}" />
+                                Text="{x:Bind ViewModel.QrVersion, Mode=OneWay}" />
                         </Grid>
                     </settingsControls:SettingsCard>
 
@@ -598,9 +539,9 @@
                         CornerRadius="{StaticResource OverlayCornerRadius}">
                         <StackPanel Spacing="8">
                             <TextBlock
+                                x:Uid="AdvancedToolsUserControl_PointLayoutText"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="Point layout" />
+                                Style="{StaticResource CaptionTextBlockStyle}" />
                             <Border
                                 Width="140"
                                 Height="140"
@@ -619,13 +560,12 @@
                                 HorizontalAlignment="Center"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{x:Bind ViewModel.UnwarpPointSummary,
-                                              Mode=OneWay}"
+                                Text="{x:Bind ViewModel.UnwarpPointSummary, Mode=OneWay}"
                                 TextAlignment="Center" />
                         </StackPanel>
                     </Border>
 
-                    <settingsControls:SettingsCard Header="Current step">
+                    <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_CurrentStepSettingsCard2">
                         <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -637,17 +577,13 @@
                                 Height="28"
                                 Background="{ThemeResource AccentFillColorDefaultBrush}"
                                 CornerRadius="14"
-                                Visibility="{x:Bind ViewModel.IsUnwarpComplete,
-                                                    Mode=OneWay,
-                                                    Converter={StaticResource BoolToVisibilityConverter},
-                                                    ConverterParameter=inverse}">
+                                Visibility="{x:Bind ViewModel.IsUnwarpComplete, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=inverse}">
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
                                     Style="{StaticResource BodyStrongTextBlockStyle}"
-                                    Text="{x:Bind ViewModel.PlacedCount,
-                                                  Mode=OneWay}" />
+                                    Text="{x:Bind ViewModel.PlacedCount, Mode=OneWay}" />
                             </Border>
 
                             <Border
@@ -655,9 +591,7 @@
                                 Height="28"
                                 Background="{ThemeResource SystemFillColorSuccessBrush}"
                                 CornerRadius="14"
-                                Visibility="{x:Bind ViewModel.IsUnwarpComplete,
-                                                    Mode=OneWay,
-                                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                                Visibility="{x:Bind ViewModel.IsUnwarpComplete, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <FontIcon
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
@@ -669,27 +603,26 @@
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 Style="{StaticResource BodyStrongTextBlockStyle}"
-                                Text="{x:Bind ViewModel.CurrentUnwarpInstruction,
-                                              Mode=OneWay}"
+                                Text="{x:Bind ViewModel.CurrentUnwarpInstruction, Mode=OneWay}"
                                 TextWrapping="Wrap" />
                         </Grid>
                     </settingsControls:SettingsCard>
 
-                    <settingsControls:SettingsCard Header="Use estimated position" Visibility="{x:Bind ViewModel.IsNextUnwarpPointAlignment, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_UseEstimatedPositionSettingsCard" Visibility="{x:Bind ViewModel.IsNextUnwarpPointAlignment, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                         <Button
+                            x:Uid="AdvancedToolsUserControl_AcceptTheCalculatedBilinearPositionButton"
                             HorizontalAlignment="Stretch"
-                            Command="{x:Bind ViewModel.UseEstimatedUnwarpPointCommand}"
-                            ToolTipService.ToolTip="Accept the calculated (bilinear) position for the current alignment point">
-                            <TextBlock Text="Use Estimated" />
+                            Command="{x:Bind ViewModel.UseEstimatedUnwarpPointCommand}">
+                            <TextBlock x:Uid="AdvancedToolsUserControl_UseEstimatedText" />
                         </Button>
                     </settingsControls:SettingsCard>
 
-                    <settingsControls:SettingsCard Header="Points">
+                    <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_PointsSettingsCard">
                         <Button
+                            x:Uid="AdvancedToolsUserControl_ClearAllPlacedPointsAndButton"
                             HorizontalAlignment="Stretch"
-                            Command="{x:Bind ViewModel.ClearUnwarpPointsCommand}"
-                            ToolTipService.ToolTip="Clear all placed points and start over">
-                            <TextBlock Text="Clear all points" />
+                            Command="{x:Bind ViewModel.ClearUnwarpPointsCommand}">
+                            <TextBlock x:Uid="AdvancedToolsUserControl_ClearAllPointsText" />
                         </Button>
                     </settingsControls:SettingsCard>
                 </StackPanel>
@@ -698,9 +631,7 @@
             <ScrollViewer
                 Padding="16,16,16,0"
                 VerticalScrollBarVisibility="Auto"
-                Visibility="{x:Bind ViewModel.IsCutOutWorkflowVisible,
-                                    Mode=OneWay,
-                                    Converter={StaticResource BoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsCutOutWorkflowVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                 <StackPanel Spacing="12">
                     <Border
                         Padding="16"
@@ -709,31 +640,28 @@
                         BorderThickness="1"
                         CornerRadius="{StaticResource OverlayCornerRadius}">
                         <StackPanel Spacing="4">
-                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Extract a region" />
+                            <TextBlock x:Uid="AdvancedToolsUserControl_ExtractARegionText" Style="{StaticResource SubtitleTextBlockStyle}" />
                             <TextBlock
+                                x:Uid="AdvancedToolsUserControl_DragOverTheImageToText"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="Drag over the image to select a region, then extract it into its own decoding item."
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
 
                     <InfoBar
+                        x:Uid="AdvancedToolsUserControl_ClickAndDragOnTheInfoBar"
                         IsClosable="False"
                         IsOpen="True"
-                        Message="Click and drag on the image to draw a region."
                         Severity="Informational" />
 
-                    <settingsControls:SettingsCard Header="Selection status">
+                    <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_SelectionStatusSettingsCard">
                         <StackPanel Spacing="8">
                             <TextBlock
+                                x:Uid="AdvancedToolsUserControl_NoRegionSelectedYetText"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="No region selected yet."
                                 TextWrapping="Wrap"
-                                Visibility="{x:Bind ViewModel.HasCutOutSelection,
-                                                    Mode=OneWay,
-                                                    Converter={StaticResource BoolToVisibilityConverter},
-                                                    ConverterParameter=inverse}" />
+                                Visibility="{x:Bind ViewModel.HasCutOutSelection, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=inverse}" />
 
                             <Grid ColumnSpacing="12" Visibility="{x:Bind ViewModel.HasCutOutSelection, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <Grid.ColumnDefinitions>
@@ -754,22 +682,22 @@
                                 </Border>
 
                                 <TextBlock
+                                    x:Uid="AdvancedToolsUserControl_RegionSelectedAndReadyToText"
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
                                     Foreground="{ThemeResource SystemFillColorSuccessBrush}"
                                     Style="{StaticResource BodyStrongTextBlockStyle}"
-                                    Text="Region selected and ready to extract."
                                     TextWrapping="Wrap" />
                             </Grid>
                         </StackPanel>
                     </settingsControls:SettingsCard>
 
-                    <settingsControls:SettingsCard Header="Selection">
+                    <settingsControls:SettingsCard x:Uid="AdvancedToolsUserControl_SelectionSettingsCard2">
                         <Button
+                            x:Uid="AdvancedToolsUserControl_ClearTheCurrentRegionSelectionButton"
                             HorizontalAlignment="Stretch"
-                            Command="{x:Bind ViewModel.ClearCutOutSelectionCommand}"
-                            ToolTipService.ToolTip="Clear the current region selection">
-                            <TextBlock Text="Clear selection" />
+                            Command="{x:Bind ViewModel.ClearCutOutSelectionCommand}">
+                            <TextBlock x:Uid="AdvancedToolsUserControl_ClearSelectionText" />
                         </Button>
                     </settingsControls:SettingsCard>
                 </StackPanel>
@@ -782,9 +710,7 @@
             Background="{ThemeResource LayerFillColorDefaultBrush}"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="0,1,0,0"
-            Visibility="{x:Bind ViewModel.IsWorkflowPickerVisible,
-                                Mode=OneWay,
-                                Converter={StaticResource BoolToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.IsWorkflowPickerVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <Grid ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -793,31 +719,27 @@
                 </Grid.ColumnDefinitions>
 
                 <Button
+                    x:Uid="AdvancedToolsUserControl_ResetAllQuickFixSettingsButton"
                     Grid.Column="0"
                     HorizontalAlignment="Stretch"
                     Command="{x:Bind ViewModel.ResetAllSettingsCommand}"
-                    IsEnabled="{x:Bind ViewModel.IsProcessing,
-                                       Mode=OneWay,
-                                       Converter={StaticResource BoolNegationConverter}}"
-                    ToolTipService.ToolTip="Reset all quick-fix settings to their defaults">
-                    <TextBlock Text="Reset all" />
+                    IsEnabled="{x:Bind ViewModel.IsProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                    <TextBlock x:Uid="AdvancedToolsUserControl_ResetAllText" />
                 </Button>
 
                 <local:IconAndTextHyperlinkButton
+                    x:Uid="AdvancedToolsUserControl_UndoIconAndTextHyperlinkButton"
                     Grid.Column="1"
-                    Command="{x:Bind ViewModel.UndoCommand}"
-                    Text="Undo"
-                    ToolTipService.ToolTip="Undo the last applied change (Ctrl+Z)">
+                    Command="{x:Bind ViewModel.UndoCommand}">
                     <local:IconAndTextHyperlinkButton.IconSource>
                         <SymbolIconSource Symbol="Undo" />
                     </local:IconAndTextHyperlinkButton.IconSource>
                 </local:IconAndTextHyperlinkButton>
 
                 <local:IconAndTextHyperlinkButton
+                    x:Uid="AdvancedToolsUserControl_RedoIconAndTextHyperlinkButton"
                     Grid.Column="2"
                     Command="{x:Bind ViewModel.RedoCommand}"
-                    Text="Redo"
-                    ToolTipService.ToolTip="Redo the last undone change (Ctrl+Y)"
                     Visibility="Collapsed">
                     <local:IconAndTextHyperlinkButton.IconSource>
                         <SymbolIconSource Symbol="Redo" />
@@ -832,14 +754,11 @@
             Background="{ThemeResource LayerFillColorDefaultBrush}"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="0,1,0,0"
-            Visibility="{x:Bind ViewModel.IsSampleBlackPointWorkflowVisible,
-                                Mode=OneWay,
-                                Converter={StaticResource BoolToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.IsSampleBlackPointWorkflowVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <Button
+                x:Uid="AdvancedToolsUserControl_CancelButton"
                 HorizontalAlignment="Stretch"
-                Command="{x:Bind ViewModel.CancelWorkflowCommand}"
-                Content="Cancel"
-                ToolTipService.ToolTip="Cancel black-point sampling and return to the tool list" />
+                Command="{x:Bind ViewModel.CancelWorkflowCommand}" />
         </Border>
 
         <Border
@@ -848,14 +767,11 @@
             Background="{ThemeResource LayerFillColorDefaultBrush}"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="0,1,0,0"
-            Visibility="{x:Bind ViewModel.IsSampleWhitePointWorkflowVisible,
-                                Mode=OneWay,
-                                Converter={StaticResource BoolToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.IsSampleWhitePointWorkflowVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <Button
+                x:Uid="AdvancedToolsUserControl_CancelButton2"
                 HorizontalAlignment="Stretch"
-                Command="{x:Bind ViewModel.CancelWorkflowCommand}"
-                Content="Cancel"
-                ToolTipService.ToolTip="Cancel white-point sampling and return to the tool list" />
+                Command="{x:Bind ViewModel.CancelWorkflowCommand}" />
         </Border>
 
         <Border
@@ -864,9 +780,7 @@
             Background="{ThemeResource LayerFillColorDefaultBrush}"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="0,1,0,0"
-            Visibility="{x:Bind ViewModel.IsPerspectiveWorkflowVisible,
-                                Mode=OneWay,
-                                Converter={StaticResource BoolToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.IsPerspectiveWorkflowVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <Grid RowSpacing="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -874,13 +788,11 @@
                 </Grid.RowDefinitions>
 
                 <Button
+                    x:Uid="AdvancedToolsUserControl_ApplyCorrectionButton"
                     HorizontalAlignment="Stretch"
                     Command="{x:Bind ViewModel.ApplyProcessingCommand}"
-                    Content="Apply correction"
-                    IsEnabled="{x:Bind ViewModel.CanApplyPerspectiveWorkflow,
-                                       Mode=OneWay}"
-                    Style="{StaticResource AccentButtonStyle}"
-                    ToolTipService.ToolTip="Apply the perspective correction and return to the tool list" />
+                    IsEnabled="{x:Bind ViewModel.CanApplyPerspectiveWorkflow, Mode=OneWay}"
+                    Style="{StaticResource AccentButtonStyle}" />
 
                 <Grid Grid.Row="1" ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
@@ -889,15 +801,15 @@
                     </Grid.ColumnDefinitions>
 
                     <Button
+                        x:Uid="AdvancedToolsUserControl_ClearCornersButton"
                         Grid.Column="0"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.ClearPerspectiveCornersCommand}"
-                        Content="Clear corners" />
+                        Command="{x:Bind ViewModel.ClearPerspectiveCornersCommand}" />
                     <Button
+                        x:Uid="AdvancedToolsUserControl_CancelButton3"
                         Grid.Column="1"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.CancelWorkflowCommand}"
-                        Content="Cancel" />
+                        Command="{x:Bind ViewModel.CancelWorkflowCommand}" />
                 </Grid>
             </Grid>
         </Border>
@@ -908,9 +820,7 @@
             Background="{ThemeResource LayerFillColorDefaultBrush}"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="0,1,0,0"
-            Visibility="{x:Bind ViewModel.IsCutOutWorkflowVisible,
-                                Mode=OneWay,
-                                Converter={StaticResource BoolToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.IsCutOutWorkflowVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <Grid RowSpacing="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -918,13 +828,13 @@
                 </Grid.RowDefinitions>
 
                 <Button
+                    x:Uid="AdvancedToolsUserControl_ExtractTheSelectedRegionAndButton"
                     HorizontalAlignment="Stretch"
                     Command="{x:Bind ViewModel.PerformCutOutCommand}"
-                    Style="{StaticResource AccentButtonStyle}"
-                    ToolTipService.ToolTip="Extract the selected region and return to the tool list">
+                    Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <SymbolIcon Symbol="Crop" />
-                        <TextBlock Text="Extract region" />
+                        <TextBlock x:Uid="AdvancedToolsUserControl_ExtractRegionText" />
                     </StackPanel>
                 </Button>
 
@@ -935,15 +845,15 @@
                     </Grid.ColumnDefinitions>
 
                     <Button
+                        x:Uid="AdvancedToolsUserControl_ClearSelectionButton"
                         Grid.Column="0"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.ClearCutOutSelectionCommand}"
-                        Content="Clear selection" />
+                        Command="{x:Bind ViewModel.ClearCutOutSelectionCommand}" />
                     <Button
+                        x:Uid="AdvancedToolsUserControl_CancelButton4"
                         Grid.Column="1"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.CancelWorkflowCommand}"
-                        Content="Cancel" />
+                        Command="{x:Bind ViewModel.CancelWorkflowCommand}" />
                 </Grid>
             </Grid>
         </Border>
@@ -954,9 +864,7 @@
             Background="{ThemeResource LayerFillColorDefaultBrush}"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="0,1,0,0"
-            Visibility="{x:Bind ViewModel.IsUnwarpWorkflowVisible,
-                                Mode=OneWay,
-                                Converter={StaticResource BoolToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.IsUnwarpWorkflowVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <Grid RowSpacing="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -964,13 +872,13 @@
                 </Grid.RowDefinitions>
 
                 <Button
+                    x:Uid="AdvancedToolsUserControl_ApplyPolynomialUnwarpCorrectionAndButton"
                     HorizontalAlignment="Stretch"
                     Command="{x:Bind ViewModel.ApplyUnwarpCommand}"
-                    Style="{StaticResource AccentButtonStyle}"
-                    ToolTipService.ToolTip="Apply polynomial unwarp correction and return to the tool list">
+                    Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon Glyph="&#xF207;" />
-                        <TextBlock Text="Apply Unwarp" />
+                        <TextBlock x:Uid="AdvancedToolsUserControl_ApplyUnwarpText" />
                     </StackPanel>
                 </Button>
 
@@ -981,15 +889,15 @@
                     </Grid.ColumnDefinitions>
 
                     <Button
+                        x:Uid="AdvancedToolsUserControl_ClearPointsButton"
                         Grid.Column="0"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.ClearUnwarpPointsCommand}"
-                        Content="Clear points" />
+                        Command="{x:Bind ViewModel.ClearUnwarpPointsCommand}" />
                     <Button
+                        x:Uid="AdvancedToolsUserControl_CancelButton5"
                         Grid.Column="1"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.CancelWorkflowCommand}"
-                        Content="Cancel" />
+                        Command="{x:Bind ViewModel.CancelWorkflowCommand}" />
                 </Grid>
             </Grid>
         </Border>

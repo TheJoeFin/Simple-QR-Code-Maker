@@ -26,23 +26,23 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <TextBlock
+            x:Uid="FaqsContent_FrequentlyAskedQuestionsText"
             Grid.Row="0"
             HorizontalAlignment="Center"
-            Style="{StaticResource SubheaderTextBlockStyle}"
-            Text="Frequently Asked Questions" />
+            Style="{StaticResource SubheaderTextBlockStyle}" />
         <AutoSuggestBox
+            x:Uid="FaqsContent_SearchForContentInTheAutoSuggestBox"
             Grid.Row="1"
             Margin="20,0"
-            PlaceholderText="Search for content in the FAQs..."
             QueryIcon="Find"
             Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}" />
         <Grid Grid.Row="2">
             <TextBlock
+                x:Uid="FaqsContent_NoFAQsMatchTheSearchText"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 Style="{StaticResource BodyTextBlockStyle}"
-                Text="No FAQs match the search, try a different term, or send an email"
                 TextAlignment="Center"
                 TextWrapping="Wrap"
                 Visibility="{x:Bind ViewModel.FaqItems.Count, Converter={StaticResource EmptyCollectionToVisibility}, Mode=OneWay}" />
@@ -74,15 +74,15 @@
             </ScrollViewer>
         </Grid>
         <TextBlock
+            x:Uid="FaqsContent_DonTSeeYourQuestionText"
             Grid.Row="3"
             Padding="24,10"
-            Text="Don't see your question or need more information? Feel free to email me and I'll get you an answer"
             TextWrapping="Wrap" />
         <local:IconAndTextButton
+            x:Uid="FaqsContent_EmailAQuestionIconAndTextButton"
             Grid.Row="4"
             HorizontalAlignment="Center"
-            Click="IconAndTextButton_Click"
-            Text="Email a Question">
+            Click="IconAndTextButton_Click">
             <local:IconAndTextButton.IconSource>
                 <SymbolIconSource Symbol="Mail" />
             </local:IconAndTextButton.IconSource>

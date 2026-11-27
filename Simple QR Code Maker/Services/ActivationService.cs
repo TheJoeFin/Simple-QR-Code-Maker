@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 
 using Simple_QR_Code_Maker.Activation;
 using Simple_QR_Code_Maker.Contracts.Services;
+using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Views;
 
 namespace Simple_QR_Code_Maker.Services;
@@ -30,6 +31,8 @@ public class ActivationService : IActivationService
         if (App.MainWindow.Content == null)
         {
             _shell = App.GetService<ShellPage>();
+            if (_shell is FrameworkElement root)
+                root.FlowDirection = Enum.Parse<FlowDirection>("App_FlowDirection".GetLocalized());
             App.MainWindow.Content = _shell ?? new Frame();
         }
 

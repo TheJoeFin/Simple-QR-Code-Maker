@@ -54,7 +54,7 @@ internal static class ShareHelper
 
         ShowShareUI(data =>
         {
-            data.Properties.Title = codes.Count == 1 ? "QR Code" : "QR Codes";
+            data.Properties.Title = codes.Count == 1 ? "Share_OneQrCode".GetLocalized() : "Share_MultipleQrCodes".GetLocalized();
             data.Properties.Description = string.Join(Environment.NewLine, codes.Select(code => code.CodeAsText));
             data.SetStorageItems(files);
             if (files.Count == 1)
@@ -69,7 +69,7 @@ internal static class ShareHelper
 
         ShowShareUI(data =>
         {
-            data.Properties.Title = "Decoded codes";
+            data.Properties.Title = "Share_DecodedCodes".GetLocalized();
             data.SetText(text);
         });
     }
@@ -92,7 +92,7 @@ internal static class ShareHelper
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Failed to provide shared content: {ex}");
-                args.Request.FailWithDisplayText("Could not prepare content for sharing. Please try again.");
+                args.Request.FailWithDisplayText("Share_PrepareContentFailed".GetLocalized());
             }
         };
         manager.DataRequested += pendingHandler;

@@ -92,7 +92,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     public partial bool IsBulkOperationRunning { get; set; }
 
     [ObservableProperty]
-    public partial string PlaceholderText { get; set; } = "ex: http://www.example.com";
+    public partial string PlaceholderText { get; set; } = "Main_InputExample".GetLocalized();
 
     private readonly string[] placeholdersList =
     [
@@ -114,7 +114,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     public partial Windows.UI.Color ForegroundColor { get; set; } = Windows.UI.Color.FromArgb(255, 0, 0, 0);
 
     [ObservableProperty]
-    public partial ErrorCorrectionOptions SelectedOption { get; set; } = new("M", "Medium 15%", ErrorCorrectionLevel.M);
+    public partial ErrorCorrectionOptions SelectedOption { get; set; } = new("M", "Correction_Medium".GetLocalized(), ErrorCorrectionLevel.M);
 
     [ObservableProperty]
     public partial double QrPaddingModules { get; set; } = 2.0;
@@ -280,9 +280,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     public partial InfoBarSeverity CodeInfoBarSeverity { get; set; } = InfoBarSeverity.Success;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ShowMarkRedirectorSafeAction))]
-    [NotifyPropertyChangedFor(nameof(ShowRedirectorSettingsAction))]
-    public partial string CodeInfoBarTitle { get; set; } = "QR Code copied to clipboard";
+    public partial string CodeInfoBarTitle { get; set; } = "Main_CodeCopied".GetLocalized();
 
     [ObservableProperty]
     public partial string CodeInfoBarMessage { get; set; } = string.Empty;
@@ -344,11 +342,16 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     public string RedirectorSafeActionText => string.IsNullOrWhiteSpace(CurrentRedirectorWarningDomain)
         ? string.Empty
-        : $"Mark '{CurrentRedirectorWarningDomain}' as safe";
+        : "Main_MarkRedirectorSafe".FormatLocalized(CurrentRedirectorWarningDomain);
 
     private bool IsRedirectorInfoBarActive => ShowCodeInfoBar
-        && CodeInfoBarSeverity == InfoBarSeverity.Warning
-        && CodeInfoBarTitle == "Known redirector detected";
+        && CodeInfoBarSeverity == InfoBarSeverity.Warning;
+
+    private void SetCodeInfoBarTitle(string title)
+    {
+        CurrentRedirectorWarningDomain = string.Empty;
+        CodeInfoBarTitle = title;
+    }
 
     public ObservableCollection<EmojiLogoOption> EmojiOptions { get; } =
     [
@@ -359,21 +362,21 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     public bool IsFrameFallbackInfoVisible => IsFrameTextVisible && FrameTextSource == QrFrameTextSource.ContentSummary;
 
-    public string FrameTextHelperText => "Used when no content summary can be derived.";
+    public string FrameTextHelperText => "Frame_FallbackHelp".GetLocalized();
 
     public string FrameTextHeader => !IsFrameTextVisible
         ? string.Empty
         : FrameTextSource == QrFrameTextSource.ContentSummary
-            ? "Fallback label text"
+            ? "Frame_FallbackLabel".GetLocalized()
             : FramePreset switch
             {
-                QrFramePreset.RoundedFrame => "Banner text",
-                QrFramePreset.CornerCallout => "Callout text",
-                QrFramePreset.BottomLabel => "Label text",
+                QrFramePreset.RoundedFrame => "Frame_BannerText".GetLocalized(),
+                QrFramePreset.CornerCallout => "Frame_CalloutText".GetLocalized(),
+                QrFramePreset.BottomLabel => "Frame_LabelText".GetLocalized(),
                 _ => string.Empty,
             };
 
-    public string FrameTextPlaceholder => QrFramePresetCatalog.GetOption(FramePreset).DefaultText;
+    public string FrameTextPlaceholder => LocalizedDisplay.FrameOption(FramePreset).DefaultText;
 
     partial void OnSelectedHistoryItemChanged(HistoryItem? value)
     {
@@ -511,7 +514,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to render emoji logo: {ex.Message}");
-            ShowLogoLoadFailure("Failed to render the selected emoji");
+            ShowLogoLoadFailure("Main_EmojiRenderFailed".GetLocalized());
         }
     }
 
@@ -555,10 +558,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     private static readonly List<ErrorCorrectionOptions> allCorrectionLevels =
     [
-        new("L", "Low 7%", ErrorCorrectionLevel.L),
-        new("M", "Medium 15%", ErrorCorrectionLevel.M),
-        new("Q", "Quarter 25%", ErrorCorrectionLevel.Q),
-        new("H", "High 30%", ErrorCorrectionLevel.H),
+        new("L", "Correction_Low".GetLocalized(), ErrorCorrectionLevel.L),
+        new("M", "Correction_Medium".GetLocalized(), ErrorCorrectionLevel.M),
+        new("Q", "Correction_Quarter".GetLocalized(), ErrorCorrectionLevel.Q),
+        new("H", "Correction_High".GetLocalized(), ErrorCorrectionLevel.H),
     ];
 
     partial void OnSelectedOptionChanged(ErrorCorrectionOptions value)
@@ -632,7 +635,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         else
         {
             if (ErrorCorrectionLevels.Count == 3)
-                ErrorCorrectionLevels.Insert(0, new("L", "Low 7%", ErrorCorrectionLevel.L));
+                ErrorCorrectionLevels.Insert(0, new("L", "Correction_Low".GetLocalized(), ErrorCorrectionLevel.L));
         }
 
         _ = UpdateLogoPreviewImageAsync(value);
@@ -694,8 +697,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     public string SelectedEmojiStyleLabel => EmojiStyleIndex switch
     {
-        1 => "Selected style: 3D",
-        _ => "Selected style: Black/White",
+        1 => "Main_EmojiStyleColor".GetLocalized(),
+        _ => "Main_EmojiStyleSolid".GetLocalized(),
     };
 
     partial void OnLogoPickerModeIndexChanged(int value)
@@ -775,7 +778,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     public bool IsBulkClipboardDisabled => HasRequestedCodes && IsLargeBatchPreview;
 
     public string BulkClipboardRestrictionText => IsBulkClipboardDisabled
-        ? $"Bulk clipboard is disabled when more than {LargeBatchThreshold} QR Codes are requested. Save to files or ZIP instead."
+        ? "Main_BulkClipboardLimit".FormatLocalized(LargeBatchThreshold)
         : string.Empty;
 
     public string PreviewSummaryText
@@ -788,11 +791,11 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             if (LoadedPreviewCount >= RequestedCodeCount)
             {
                 return RequestedCodeCount == 1
-                    ? "Showing 1 preview."
-                    : $"Showing all {RequestedCodeCount} previews.";
+                    ? "Main_PreviewSingle".GetLocalized()
+                    : "Main_PreviewAll".FormatLocalized(RequestedCodeCount);
             }
 
-            return $"Showing {LoadedPreviewCount} of {RequestedCodeCount} previews.";
+            return "Main_PreviewPartial".FormatLocalized(LoadedPreviewCount, RequestedCodeCount);
         }
     }
 
@@ -803,7 +806,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             if (!IsBulkOperationRunning || BulkOperationTotalItemCount == 0)
                 return string.Empty;
 
-            return $"Saving {BulkOperationCompletedItemCount} of {BulkOperationTotalItemCount} QR Codes...";
+            return "Main_BulkSaving".FormatLocalized(BulkOperationCompletedItemCount, BulkOperationTotalItemCount);
         }
     }
 
@@ -1037,8 +1040,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
                 DisposeCommonBrandLogo(preview);
 
             Debug.WriteLine($"Failed to change the common brand for a QR Code: {ex}");
-            CodeInfoBarTitle = "Could not change the common brand";
-            CodeInfoBarMessage = "The colors and logo could not be applied. Try a shorter URL or use your current style.";
+            SetCodeInfoBarTitle("Main_CommonBrandFailed".GetLocalized());
+            CodeInfoBarMessage = "Main_CommonBrandFailedHelp".GetLocalized();
             CodeInfoBarSeverity = InfoBarSeverity.Error;
             ShowCodeInfoBar = true;
             return;
@@ -1074,7 +1077,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         CodeInfoBarMessage = rsm.Message;
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = rsm.Severity;
-        CodeInfoBarTitle = rsm.Title;
+        SetCodeInfoBarTitle(rsm.Title);
 
         if (rsm.Severity == InfoBarSeverity.Success)
         {
@@ -1130,7 +1133,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private void PlaceholderTextTimer_Tick(object? sender, object e)
     {
         Random random = new();
-        PlaceholderText = $"ex: {placeholdersList[random.Next(placeholdersList.Length)]}";
+        PlaceholderText = "Main_InputExampleFormat".FormatLocalized(placeholdersList[random.Next(placeholdersList.Length)]);
     }
 
     private async void DebounceTimer_Tick(object? sender, object e)
@@ -1174,7 +1177,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             if (_pendingBrandUrlWarning is { } warning)
             {
                 _pendingBrandUrlWarning = null;
-                CodeInfoBarTitle = warning.Title;
+                SetCodeInfoBarTitle(warning.Title);
                 CodeInfoBarMessage = warning.Message;
                 CodeInfoBarSeverity = InfoBarSeverity.Informational;
                 ShowCodeInfoBar = true;
@@ -1185,10 +1188,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         {
             ShowCodeInfoBar = true;
             CodeInfoBarSeverity = InfoBarSeverity.Error;
-            CodeInfoBarTitle = "Error creating QR Code";
+            SetCodeInfoBarTitle("Main_GenerationFailed".GetLocalized());
             CodeInfoBarMessage = RequestedCodeCount == 0
-                ? "The text you entered is too long for a QR Code. Please try a shorter text."
-                : "Some text entries were too long for a QR Code and were skipped.";
+                ? "Main_ContentTooLong".GetLocalized()
+                : "Main_SomeContentTooLong".GetLocalized();
             CurrentRedirectorWarningDomain = string.Empty;
             return;
         }
@@ -1242,10 +1245,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         CurrentRedirectorWarningDomain = host;
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Warning;
-        CodeInfoBarTitle = "Known redirector detected";
+        CodeInfoBarTitle = "Redirector_Detected".GetLocalized();
         CodeInfoBarMessage = unsafeRedirectorCount > 1
-            ? $"This set includes {unsafeRedirectorCount} URLs that use known redirectors. First detected: {host}."
-            : $"This URL uses {host}, which is a known redirector. People scanning the code may not see the final destination until after it opens.";
+            ? "Main_RedirectorBatchWarning".FormatLocalized(unsafeRedirectorCount, host)
+            : "Main_RedirectorWarning".FormatLocalized(host);
     }
 
     private IEnumerable<string> EnumerateRequestedCodeTexts()
@@ -1316,8 +1319,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             {
                 case BrandUrlMissingBehavior.Warn:
                     _pendingBrandUrlWarning = (
-                        "Non-URL content detected",
-                        "This brand has a URL but some items are plain text. Change brand URL behavior in Settings.");
+                        "Main_BrandNonUrl".GetLocalized(),
+                        "Main_BrandNonUrlHelp".GetLocalized());
                     warned = true;
                     break;
                 case BrandUrlMissingBehavior.AutoPrepend:
@@ -1335,8 +1338,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             {
                 case BrandUrlMismatchBehavior.Warn:
                     _pendingBrandUrlWarning = (
-                        "URL doesn't match brand",
-                        "Some URLs don't match this brand's URL. Change brand URL conflict behavior in Settings.");
+                        "Main_BrandUrlMismatch".GetLocalized(),
+                        "Main_BrandUrlMismatchHelp".GetLocalized());
                     warned = true;
                     break;
                 case BrandUrlMismatchBehavior.AutoFix:
@@ -1460,9 +1463,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         if (brandOverride?.FramePreset.HasValue == true)
         {
             framePreset = brandOverride.FramePreset.Value;
-            resolvedFrameText = framePreset == QrFramePreset.None
-                ? null
-                : QrFramePresetCatalog.ResolveText(framePreset, brandOverride.FrameText);
+            resolvedFrameText = LocalizedDisplay.FrameText(framePreset, brandOverride.FrameText);
         }
         else
         {
@@ -1702,12 +1703,12 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
                 return;
             }
 
-            ShowLogoLoadFailure("Clipboard does not contain an image");
+            ShowLogoLoadFailure("Main_ClipboardNoImage".GetLocalized());
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to paste logo image: {ex.Message}");
-            ShowLogoLoadFailure("Failed to load the image from the clipboard");
+            ShowLogoLoadFailure("Main_ClipboardLogoFailed".GetLocalized());
         }
     }
 
@@ -1737,8 +1738,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to read text file: {ex.Message}");
-            CodeInfoBarMessage = "Could not read the selected file";
-            CodeInfoBarTitle = "Error reading file";
+            CodeInfoBarMessage = "Main_FileReadFailedHelp".GetLocalized();
+            SetCodeInfoBarTitle("Main_FileReadFailed".GetLocalized());
             CodeInfoBarSeverity = InfoBarSeverity.Error;
             ShowCodeInfoBar = true;
         }
@@ -1773,8 +1774,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         catch (InvalidOperationException ex) when (!IsSpreadsheetImportAvailable)
         {
             Debug.WriteLine($"Excel workbook import unavailable: {ex.Message}");
-            CodeInfoBarMessage = "CSV and TSV imports are available. Install Microsoft Excel to import Excel workbooks.";
-            CodeInfoBarTitle = "Excel workbooks unavailable";
+            CodeInfoBarMessage = "Main_ExcelUnavailableHelp".GetLocalized();
+            SetCodeInfoBarTitle("Main_ExcelUnavailable".GetLocalized());
             CodeInfoBarSeverity = InfoBarSeverity.Warning;
             ShowCodeInfoBar = true;
             return;
@@ -1782,8 +1783,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to read spreadsheet file: {ex.Message}");
-            CodeInfoBarMessage = "Could not read the selected file";
-            CodeInfoBarTitle = "Error reading spreadsheet";
+            CodeInfoBarMessage = "Main_FileReadFailedHelp".GetLocalized();
+            SetCodeInfoBarTitle("Main_SpreadsheetReadFailed".GetLocalized());
             CodeInfoBarSeverity = InfoBarSeverity.Error;
             ShowCodeInfoBar = true;
             return;
@@ -1791,8 +1792,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
         if (spreadsheet.Rows.Count == 0)
         {
-            CodeInfoBarMessage = "The selected spreadsheet did not contain any data.";
-            CodeInfoBarTitle = "Nothing to import";
+            CodeInfoBarMessage = "Main_NoSpreadsheetDataHelp".GetLocalized();
+            SetCodeInfoBarTitle("Main_NoSpreadsheetData".GetLocalized());
             CodeInfoBarSeverity = InfoBarSeverity.Warning;
             ShowCodeInfoBar = true;
             return;
@@ -1828,7 +1829,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             QrPaddingModules,
             FramePreset,
             FrameTextSource,
-            FrameText,
+            LocalizedDisplay.FrameText(FramePreset, FrameText),
             Appearance);
     }
 
@@ -1837,7 +1838,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         return QrFrameTextResolver.Resolve(
             FramePreset,
             FrameTextSource,
-            FrameText,
+            LocalizedDisplay.FrameText(FramePreset, FrameText),
             requestedCode.CodeAsText,
             requestedCode.ContentKind,
             requestedCode.MultiLineCodeModeOverride);
@@ -1845,7 +1846,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
     private void ShowClipboardDisabledInfoBar()
     {
-        CodeInfoBarTitle = "Bulk clipboard disabled";
+        SetCodeInfoBarTitle("Main_BulkClipboardDisabled".GetLocalized());
         CodeInfoBarMessage = BulkClipboardRestrictionText;
         CodeInfoBarSeverity = InfoBarSeverity.Informational;
         ShowCodeInfoBar = true;
@@ -1856,7 +1857,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         CodeInfoBarMessage = message;
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Error;
-        CodeInfoBarTitle = "Failed to copy QR Codes to the clipboard";
+        SetCodeInfoBarTitle("Main_CopyFailed".GetLocalized());
     }
 
     private void ShowBulkOperationFailureInfoBar(string title, string message)
@@ -1864,7 +1865,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         CodeInfoBarMessage = message;
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Error;
-        CodeInfoBarTitle = title;
+        SetCodeInfoBarTitle(title);
     }
 
     private void ShowClipboardCopySuccessInfoBar(string title)
@@ -1872,7 +1873,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         CodeInfoBarMessage = string.Empty;
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Success;
-        CodeInfoBarTitle = title;
+        SetCodeInfoBarTitle(title);
         copyInfoBarTimer.Start();
     }
 
@@ -1899,7 +1900,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
             if (files.Count == 0)
             {
-                ShowClipboardCopyFailureInfoBar("No QR Codes to copy to the clipboard");
+                ShowClipboardCopyFailureInfoBar("Main_NothingToCopy".GetLocalized());
                 return;
             }
 
@@ -1909,13 +1910,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
             ShowClipboardCopySuccessInfoBar(
                 requestedCodes.Length == 1
-                    ? "PNG QR Code copied to the clipboard"
-                    : $"{requestedCodes.Length} PNG QR Codes copied to the clipboard");
+                    ? "Main_PngCopied".GetLocalized()
+                    : "Main_PngsCopied".FormatLocalized(requestedCodes.Length));
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to copy PNG QR Codes to the clipboard: {ex.Message}");
-            ShowClipboardCopyFailureInfoBar("Could not prepare the PNG QR Codes for the clipboard");
+            ShowClipboardCopyFailureInfoBar("Main_PngClipboardFailed".GetLocalized());
         }
     }
 
@@ -1942,7 +1943,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
             if (files.Count == 0)
             {
-                ShowClipboardCopyFailureInfoBar("No QR Codes to copy to the clipboard");
+                ShowClipboardCopyFailureInfoBar("Main_NothingToCopy".GetLocalized());
                 return;
             }
 
@@ -1952,13 +1953,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
             ShowClipboardCopySuccessInfoBar(
                 requestedCodes.Length == 1
-                    ? "SVG QR Code copied to the clipboard"
-                    : $"{requestedCodes.Length} SVG QR Codes copied to the clipboard");
+                    ? "Main_SvgCopied".GetLocalized()
+                    : "Main_SvgsCopied".FormatLocalized(requestedCodes.Length));
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to copy SVG QR Codes to the clipboard: {ex.Message}");
-            ShowClipboardCopyFailureInfoBar("Could not prepare the SVG QR Codes for the clipboard");
+            ShowClipboardCopyFailureInfoBar("Main_SvgClipboardFailed".GetLocalized());
         }
     }
 
@@ -1984,7 +1985,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
             if (textStrings.Count == 0)
             {
-                ShowClipboardCopyFailureInfoBar("No QR Codes to copy to the clipboard");
+                ShowClipboardCopyFailureInfoBar("Main_NothingToCopy".GetLocalized());
                 return;
             }
 
@@ -1994,13 +1995,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
             ShowClipboardCopySuccessInfoBar(
                 textStrings.Count == 1
-                    ? "SVG QR Code copied to the clipboard"
-                    : $"{textStrings.Count} Text of SVGs QR Codes copied to the clipboard");
+                    ? "Main_SvgCopied".GetLocalized()
+                    : "Main_SvgTextsCopied".FormatLocalized(textStrings.Count));
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to copy SVG text QR Codes to the clipboard: {ex.Message}");
-            ShowClipboardCopyFailureInfoBar("Could not prepare the SVG text for the clipboard");
+            ShowClipboardCopyFailureInfoBar("Main_SvgTextClipboardFailed".GetLocalized());
         }
     }
 
@@ -2011,7 +2012,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         SavedFolderPath = string.Empty;
         ShowCodeInfoBar = false;
         CodeInfoBarSeverity = InfoBarSeverity.Informational;
-        CodeInfoBarTitle = "Copy infoBar title";
+        SetCodeInfoBarTitle("Main_CopyStatusTitle".GetLocalized());
     }
 
     [RelayCommand]
@@ -2073,7 +2074,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private void SelectFramePreset(QrFramePresetOption option)
     {
         string normalizedFrameText = FrameText.Trim();
-        string currentDefaultText = QrFramePresetCatalog.GetOption(FramePreset).DefaultText;
+        string currentDefaultText = LocalizedDisplay.FrameOption(FramePreset).DefaultText;
         bool shouldReplaceFrameText = string.IsNullOrWhiteSpace(normalizedFrameText)
             || (FramePreset != QrFramePreset.None && string.Equals(normalizedFrameText, currentDefaultText, StringComparison.Ordinal));
 
@@ -2116,7 +2117,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         IsNewBrandFormVisible = false;
 
         WeakReferenceMessenger.Default.Send(
-            new RequestShowMessage("Brand saved", $"\"{brand.Name}\" has been saved", InfoBarSeverity.Success));
+            new RequestShowMessage("Main_BrandSaved".GetLocalized(), "Main_BrandSavedDetail".FormatLocalized(brand.Name), InfoBarSeverity.Success));
     }
 
     [RelayCommand]
@@ -2170,9 +2171,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             {
                 FramePreset = brand.FramePreset.Value;
                 FrameTextSource = brand.FrameTextSource;
-                FrameText = brand.FramePreset.Value == QrFramePreset.None
-                    ? string.Empty
-                    : QrFramePresetCatalog.ResolveText(brand.FramePreset.Value, brand.FrameText) ?? string.Empty;
+                FrameText = LocalizedDisplay.FrameText(brand.FramePreset.Value, brand.FrameText)?.Trim() ?? string.Empty;
             }
 
             if (brand.Appearance is not null)
@@ -2257,7 +2256,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             SelectedBrand = edited;
 
         WeakReferenceMessenger.Default.Send(
-            new RequestShowMessage("Brand updated", $"\"{edited.Name}\" has been updated", InfoBarSeverity.Success));
+            new RequestShowMessage("Main_BrandUpdated".GetLocalized(), "Main_BrandUpdatedDetail".FormatLocalized(edited.Name), InfoBarSeverity.Success));
     }
 
     [RelayCommand(CanExecute = nameof(CanRunBulkSaveOperation))]
@@ -2390,7 +2389,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             return;
 
         ShowSaveSuccessInfoBar(
-            requestedCodes.Length == 1 ? "PNG QR Code saved!" : $"{requestedCodes.Length} PNG QR Codes saved!",
+            requestedCodes.Length == 1 ? "Main_PngSaved".GetLocalized() : "Main_PngsSaved".FormatLocalized(requestedCodes.Length),
             savedFolder);
     }
 
@@ -2409,7 +2408,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             return;
 
         ShowSaveSuccessInfoBar(
-            requestedCodes.Length == 1 ? "SVG QR Code saved!" : $"{requestedCodes.Length} SVG QR Codes saved!",
+            requestedCodes.Length == 1 ? "Main_SvgSaved".GetLocalized() : "Main_SvgsSaved".FormatLocalized(requestedCodes.Length),
             savedFolder);
     }
 
@@ -2430,9 +2429,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Success;
         if (requestedCodes.Length == 1)
-            CodeInfoBarTitle = "PNG QR Code saved to zip!";
+            SetCodeInfoBarTitle("Main_PngZipSaved".GetLocalized());
         else
-            CodeInfoBarTitle = $"{requestedCodes.Length} PNG QR Codes saved to zip!";
+            SetCodeInfoBarTitle("Main_PngsZipSaved".FormatLocalized(requestedCodes.Length));
     }
 
     [RelayCommand(CanExecute = nameof(CanRunBulkSaveOperation))]
@@ -2452,9 +2451,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Success;
         if (requestedCodes.Length == 1)
-            CodeInfoBarTitle = "SVG QR Code saved to zip!";
+            SetCodeInfoBarTitle("Main_SvgZipSaved".GetLocalized());
         else
-            CodeInfoBarTitle = $"{requestedCodes.Length} SVG QR Codes saved to zip!";
+            SetCodeInfoBarTitle("Main_SvgsZipSaved".FormatLocalized(requestedCodes.Length));
     }
 
     [RelayCommand(CanExecute = nameof(CanRunBulkSaveOperation))]
@@ -2471,7 +2470,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
             return;
 
         ShowSaveSuccessInfoBar(
-            requestedCodes.Length == 1 ? "PNG and SVG QR Code saved!" : $"{requestedCodes.Length} PNG and SVG QR Codes saved!",
+            requestedCodes.Length == 1 ? "Main_BothSaved".GetLocalized() : "Main_BothMultipleSaved".FormatLocalized(requestedCodes.Length),
             savedFolder);
     }
 
@@ -2492,9 +2491,9 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Success;
         if (requestedCodes.Length == 1)
-            CodeInfoBarTitle = "PNG and SVG QR Code saved to zip!";
+            SetCodeInfoBarTitle("Main_BothZipSaved".GetLocalized());
         else
-            CodeInfoBarTitle = $"{requestedCodes.Length} PNG and SVG QR Codes saved to zip!";
+            SetCodeInfoBarTitle("Main_BothMultipleZipSaved".FormatLocalized(requestedCodes.Length));
     }
 
     [RelayCommand(CanExecute = nameof(CanRunBulkClipboardOperation))]
@@ -2520,7 +2519,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
             if (files.Count == 0)
             {
-                ShowClipboardCopyFailureInfoBar("No QR Codes to copy to the clipboard");
+                ShowClipboardCopyFailureInfoBar("Main_NothingToCopy".GetLocalized());
                 return;
             }
 
@@ -2530,13 +2529,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
 
             ShowClipboardCopySuccessInfoBar(
                 requestedCodes.Length == 1
-                    ? "PNG and SVG QR Code copied to the clipboard"
-                    : $"{requestedCodes.Length} PNG and SVG QR Codes copied to the clipboard");
+                    ? "Main_BothCopied".GetLocalized()
+                    : "Main_BothMultipleCopied".FormatLocalized(requestedCodes.Length));
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to copy PNG and SVG QR Codes to the clipboard: {ex.Message}");
-            ShowClipboardCopyFailureInfoBar("Could not prepare the QR Codes for the clipboard");
+            ShowClipboardCopyFailureInfoBar("Main_BothClipboardFailed".GetLocalized());
         }
     }
 
@@ -2585,7 +2584,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to load logo image: {ex.Message}");
-            ShowLogoLoadFailure("Failed to load the selected image");
+            ShowLogoLoadFailure("Main_LogoLoadFailedHelp".GetLocalized());
         }
     }
 
@@ -2650,7 +2649,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         CodeInfoBarMessage = message;
         ShowCodeInfoBar = true;
         CodeInfoBarSeverity = InfoBarSeverity.Error;
-        CodeInfoBarTitle = "Error loading logo";
+        SetCodeInfoBarTitle("Main_LogoLoadFailed".GetLocalized());
     }
 
     /// <summary>
@@ -2718,7 +2717,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to save QR Codes to files: {ex.Message}");
-            ShowBulkOperationFailureInfoBar("Failed to save QR Codes", "Could not save the requested QR Codes to files.");
+            ShowBulkOperationFailureInfoBar("Main_ExportFailed".GetLocalized(), "Main_ExportFilesFailedHelp".GetLocalized());
             return null;
         }
         finally
@@ -2730,8 +2729,8 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     private void ShowSaveSuccessInfoBar(string title, string folderPath)
     {
         CodeInfoBarSeverity = InfoBarSeverity.Success;
-        CodeInfoBarTitle = title;
-        CodeInfoBarMessage = $"Saved to {folderPath}";
+        SetCodeInfoBarTitle(title);
+        CodeInfoBarMessage = "Main_SavedToFolder".FormatLocalized(folderPath);
         SavedFolderPath = folderPath;
         ShowCodeInfoBar = true;
         copyInfoBarTimer.Start();
@@ -2749,7 +2748,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to save QR Codes to zip: {ex.Message}");
-            ShowBulkOperationFailureInfoBar("Failed to save QR Codes", "Could not save the requested QR Codes to a ZIP archive.");
+            ShowBulkOperationFailureInfoBar("Main_ExportFailed".GetLocalized(), "Main_ExportZipFailedHelp".GetLocalized());
             return false;
         }
         finally

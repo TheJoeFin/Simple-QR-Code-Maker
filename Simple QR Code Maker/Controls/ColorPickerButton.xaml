@@ -23,8 +23,7 @@
                     Width="16"
                     Height="16"
                     VerticalAlignment="Center"
-                    Background="{x:Bind Color,
-                                        Converter={StaticResource ColorToBrush}}"
+                    Background="{x:Bind Color, Converter={StaticResource ColorToBrush}}"
                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     CornerRadius="4" />
@@ -49,19 +48,19 @@
                         HorizontalAlignment="Stretch"
                         SelectedIndex="0"
                         SelectionChanged="ModePicker_SelectionChanged">
-                        <toolkitControls:SegmentedItem Content="Color" Tag="color">
+                        <toolkitControls:SegmentedItem x:Uid="ColorPickerButton_ColorSegmentedItem" Tag="color">
                             <toolkitControls:SegmentedItem.Icon>
                                 <FontIcon Glyph="&#xE790;" />
                             </toolkitControls:SegmentedItem.Icon>
                         </toolkitControls:SegmentedItem>
-                        <toolkitControls:SegmentedItem Content="Image" Tag="image">
+                        <toolkitControls:SegmentedItem x:Uid="ColorPickerButton_ImageSegmentedItem" Tag="image">
                             <toolkitControls:SegmentedItem.Icon>
                                 <SymbolIcon Symbol="Pictures" />
                             </toolkitControls:SegmentedItem.Icon>
                         </toolkitControls:SegmentedItem>
                         <toolkitControls:SegmentedItem
                             x:Name="ListModePickerItem"
-                            Content="List"
+                            x:Uid="ColorPickerButton_ListModePickerItem"
                             Tag="list"
                             Visibility="Collapsed">
                             <toolkitControls:SegmentedItem.Icon>
@@ -77,8 +76,7 @@
                             ColorSpectrumShape="Ring"
                             IsAlphaEnabled="True"
                             IsMoreButtonVisible="True"
-                            Color="{x:Bind Color,
-                                           Mode=OneWay}" />
+                            Color="{x:Bind Color, Mode=OneWay}" />
                         <ContentControl x:Name="ImageModeHost" Visibility="Collapsed" />
                         <ScrollViewer
                             x:Name="ListModePanel"
@@ -93,9 +91,9 @@
                                     Spacing="6"
                                     Visibility="Collapsed">
                                     <TextBlock
+                                        x:Uid="ColorPickerButton_BrandsText"
                                         FontSize="12"
-                                        FontWeight="SemiBold"
-                                        Text="Brands" />
+                                        FontWeight="SemiBold" />
                                     <ListView
                                         x:Name="BrandColorsListView"
                                         IsItemClickEnabled="True"
@@ -117,9 +115,9 @@
                                     Spacing="6"
                                     Visibility="Collapsed">
                                     <TextBlock
+                                        x:Uid="ColorPickerButton_RecentColorsText"
                                         FontSize="12"
-                                        FontWeight="SemiBold"
-                                        Text="Recent colors" />
+                                        FontWeight="SemiBold" />
                                     <ListView
                                         x:Name="RecentColorsListView"
                                         IsItemClickEnabled="True"
@@ -137,10 +135,10 @@
                                 </StackPanel>
                                 <TextBlock
                                     x:Name="SavedColorsEmptyStateText"
+                                    x:Uid="ColorPickerButton_SavedColorsEmptyStateText"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="No brands or recent colors yet."
                                     Visibility="Collapsed" />
                             </StackPanel>
                         </ScrollViewer>
@@ -158,10 +156,10 @@
                             Orientation="Horizontal"
                             Spacing="8">
                             <TextBlock
+                                x:Uid="ColorPickerButton_ClipboardText"
                                 VerticalAlignment="Center"
                                 FontSize="12"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="Clipboard" />
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             <Button
                                 x:Name="PasteClipboardColorButton"
                                 MinWidth="0"
@@ -190,9 +188,7 @@
                 x:Name="DefaultColorSwatch"
                 Width="16"
                 Height="16"
-                Fill="{x:Bind Color,
-                              Mode=OneWay,
-                              Converter={StaticResource ColorToBrush}}" />
+                Fill="{x:Bind Color, Mode=OneWay, Converter={StaticResource ColorToBrush}}" />
             <ContentControl
                 x:Name="ButtonContentHost"
                 HorizontalAlignment="Center"

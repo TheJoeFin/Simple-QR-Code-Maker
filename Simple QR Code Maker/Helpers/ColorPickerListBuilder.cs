@@ -12,10 +12,10 @@ public static class ColorPickerListBuilder
         foreach (BrandItem brand in brands)
         {
             if (brand.Foreground is Windows.UI.Color foreground)
-                items.Add(new ColorPickerListItem(foreground, BuildLabel("Foreground", brand.Name)));
+                items.Add(new ColorPickerListItem(foreground, BuildLabel("Colors_Foreground".GetLocalized(), brand.Name)));
 
             if (brand.Background is Windows.UI.Color background)
-                items.Add(new ColorPickerListItem(background, BuildLabel("Background", brand.Name)));
+                items.Add(new ColorPickerListItem(background, BuildLabel("Colors_Background".GetLocalized(), brand.Name)));
         }
 
         return items;
@@ -27,8 +27,8 @@ public static class ColorPickerListBuilder
 
         foreach (HistoryItem historyItem in historyItems)
         {
-            items.Add(new ColorPickerListItem(historyItem.Foreground, BuildLabel("Foreground", historyItem.CodesContent)));
-            items.Add(new ColorPickerListItem(historyItem.Background, BuildLabel("Background", historyItem.CodesContent)));
+            items.Add(new ColorPickerListItem(historyItem.Foreground, BuildLabel("Colors_Foreground".GetLocalized(), historyItem.CodesContent)));
+            items.Add(new ColorPickerListItem(historyItem.Background, BuildLabel("Colors_Background".GetLocalized(), historyItem.CodesContent)));
         }
 
         return items;
@@ -46,13 +46,13 @@ public static class ColorPickerListBuilder
 
     private static string BuildLabel(string prefix, string source)
     {
-        return $"{prefix}, {NormalizeSource(source)}";
+        return "Colors_ListItem".FormatLocalized(prefix, NormalizeSource(source));
     }
 
     private static string NormalizeSource(string source)
     {
         if (string.IsNullOrWhiteSpace(source))
-            return "(empty)";
+            return "Colors_Empty".GetLocalized();
 
         string normalized = source
             .Replace("\r\n", " ", StringComparison.Ordinal)
@@ -66,6 +66,6 @@ public static class ColorPickerListBuilder
             normalized = normalized.Replace("  ", " ", StringComparison.Ordinal);
         }
 
-        return normalized.Length == 0 ? "(empty)" : normalized;
+        return normalized.Length == 0 ? "Colors_Empty".GetLocalized() : normalized;
     }
 }

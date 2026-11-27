@@ -54,19 +54,19 @@ public sealed partial class RemoveBackgroundDialogViewModel : ObservableRecipien
         OriginalImageSource = await ConvertBitmapToBitmapImageAsync(_sourceImage);
 
         IsStatusVisible = true;
-        StatusText = "Preparing AI model…";
+        StatusText = "RemoveBackground_Preparing".GetLocalized();
         IsProcessing = true;
 
         try
         {
             if (!await BackgroundRemovalHelper.CheckIsAvailableAsync())
             {
-                StatusText = "Background removal is not available on this device.";
+                StatusText = "RemoveBackground_Unavailable".GetLocalized();
                 IsPrimaryEnabled = false;
                 return;
             }
 
-            StatusText = "Removing background…";
+            StatusText = "RemoveBackground_InProgress".GetLocalized();
 
             using SoftwareBitmap softwareBitmap = ConvertToSoftwareBitmap(_sourceImage);
 
@@ -85,12 +85,12 @@ public sealed partial class RemoveBackgroundDialogViewModel : ObservableRecipien
             ResultImageSource = await ConvertBitmapToBitmapImageAsync(result);
 
             IsPrimaryEnabled = true;
-            StatusText = "Background removed successfully";
+            StatusText = "RemoveBackground_Success".GetLocalized();
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Background removal failed: {ex}");
-            StatusText = $"Failed: {ex.Message}";
+            StatusText = "RemoveBackground_Failed".GetLocalized();
             IsPrimaryEnabled = false;
         }
         finally

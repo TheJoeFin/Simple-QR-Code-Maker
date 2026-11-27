@@ -5,25 +5,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Share Your Feedback"
-    CloseButtonText="Close"
+    x:Uid="FeedbackDialog_Dialog"
     DefaultButton="Primary"
-    PrimaryButtonText="Open Mail App"
     mc:Ignorable="d">
 
     <StackPanel MaxWidth="440" Spacing="16">
 
-        <TextBlock TextWrapping="Wrap">
-            Hi! I'm an indie developer, and feedback from users is the best way for me to understand issues and improve the app. If something isn't working right or you have a suggestion, I'd love to hear from you!
-        </TextBlock>
+        <TextBlock x:Uid="FeedbackDialog_HiIMAnIndieText" TextWrapping="Wrap" />
 
         <TextBox
             x:Name="FeedbackTextBox"
-            AcceptsReturn="True"
-            Header="Message"
-            MaxLength="2000"
+            x:Uid="FeedbackDialog_FeedbackTextBox"
             MinHeight="120"
-            PlaceholderText="Describe the issue or share your thoughts..."
+            AcceptsReturn="True"
+            MaxLength="2000"
             TextWrapping="Wrap" />
 
         <Border
@@ -43,22 +38,22 @@
                     VerticalAlignment="Center"
                     Glyph="&#xE168;" />
                 <TextBlock
+                    x:Uid="FeedbackDialog_JoeJoefinappsComText"
                     Grid.Column="1"
                     VerticalAlignment="Center"
-                    IsTextSelectionEnabled="True"
-                    Text="joe@joefinapps.com" />
+                    IsTextSelectionEnabled="True" />
                 <Button
                     x:Name="CopyEmailButton"
+                    x:Uid="FeedbackDialog_CopyEmailButton"
                     Grid.Column="2"
-                    Click="CopyEmailButton_Click"
-                    Content="Copy" />
+                    Click="CopyEmailButton_Click" />
             </Grid>
         </Border>
 
         <TextBlock
+            x:Uid="FeedbackDialog_OpenMailAppWillOpenText"
             FontSize="12"
             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-            Text="'Open Mail App' will open your default email client with your message pre-filled."
             TextWrapping="Wrap" />
 
     </StackPanel>

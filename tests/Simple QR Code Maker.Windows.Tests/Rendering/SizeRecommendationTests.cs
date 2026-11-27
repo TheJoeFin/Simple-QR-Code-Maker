@@ -50,7 +50,9 @@ public sealed class SizeRecommendationTests
         Assert.IsGreaterThan(minimum, padded);
         Assert.IsTrue(QrCodeRenderer.TryGetMinimumRecommendedSideMillimeters(distance, 21, Color.FromArgb(255, 100, 100, 100), White, out double reducedContrast));
         Assert.IsGreaterThan(minimum, reducedContrast);
-        Assert.IsTrue(QrCodeRenderer.GetSizeRecommendation(distance, 21, Black, White).IsExact);
+        QrCodeSizeRecommendation recommendation = QrCodeRenderer.GetSizeRecommendation(distance, 21, Black, White);
+        Assert.IsTrue(recommendation.IsExact);
+        Assert.AreEqual(minimum, recommendation.SideMillimeters, 1e-10);
     }
 
     [TestMethod]
@@ -83,7 +85,9 @@ public sealed class SizeRecommendationTests
         QrCodeSizeRecommendation recommendation = QrCodeRenderer.GetSizeRecommendation(distance, 21, foreground, background, padding);
         Assert.AreEqual(expected, recommendation.Kind);
         Assert.IsFalse(recommendation.IsExact);
-        Assert.IsFalse(string.IsNullOrWhiteSpace(recommendation.Text));
+        Assert.AreEqual(0, recommendation.SideMillimeters);
+        if (expected == QrCodeSizeRecommendationKind.PaddingDependent)
+            Assert.AreEqual((int)padding, recommendation.PaddingModules);
         Assert.IsFalse(QrCodeRenderer.TryGetMinimumRecommendedSideMillimeters(distance, 21, foreground, background, out double size, padding));
         Assert.AreEqual(0, size);
     }

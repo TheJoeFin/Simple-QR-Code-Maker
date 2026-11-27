@@ -4,7 +4,8 @@ namespace Simple_QR_Code_Maker.Helpers;
 
 public static class SpreadsheetImportPolicy
 {
-    public static List<string> CreateHeaders(IReadOnlyList<SpreadsheetSourceRow> rows, bool firstRowIsHeader)
+    public static List<string> CreateHeaders(
+        IReadOnlyList<SpreadsheetSourceRow> rows, bool firstRowIsHeader, Func<int, string>? formatFallback = null)
     {
         int columnCount = rows.Count == 0 ? 0 : rows.Max(row => row.Cells.Count);
         List<string> headers = [with(columnCount)];
@@ -12,7 +13,7 @@ public static class SpreadsheetImportPolicy
         {
             headers.Add(firstRowIsHeader && index < rows[0].Cells.Count && !string.IsNullOrWhiteSpace(rows[0].Cells[index])
                 ? rows[0].Cells[index]
-                : $"Column {index + 1}");
+                : formatFallback?.Invoke(index + 1) ?? $"Column {index + 1}");
         }
 
         return headers;

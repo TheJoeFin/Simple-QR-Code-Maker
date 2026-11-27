@@ -5,12 +5,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Simple_QR_Code_Maker.Models"
-    mc:Ignorable="d"
-    Title="Open Source Licenses"
-    CloseButtonText="Close"
-    MinWidth="760">
+    x:Uid="LicensesDialog_Dialog"
+    MinWidth="760"
+    mc:Ignorable="d">
 
-    <Grid ColumnSpacing="16" Height="480">
+    <Grid Height="480" ColumnSpacing="16">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="210" />
             <ColumnDefinition Width="*" />
@@ -48,9 +47,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock
-                Style="{ThemeResource SubtitleTextBlockStyle}"
-                Text="{x:Bind ViewModel.SelectedLibrary.Name, Mode=OneWay}" />
+            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="{x:Bind ViewModel.SelectedLibrary.Name, Mode=OneWay}" />
 
             <TextBlock
                 Grid.Row="1"
@@ -59,9 +56,9 @@
                 Text="{x:Bind ViewModel.SelectedLibrary.LicenseType, Mode=OneWay}" />
 
             <HyperlinkButton
+                x:Uid="LicensesDialog_ViewOnGitHubHyperlinkButton"
                 Grid.Row="2"
                 Padding="0,0,0,4"
-                Content="View on GitHub"
                 NavigateUri="{x:Bind ViewModel.SelectedLibrary.GitHubUri, Mode=OneWay}" />
 
             <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">

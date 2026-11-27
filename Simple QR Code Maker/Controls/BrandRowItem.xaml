@@ -6,6 +6,7 @@
     xmlns:controls="using:Simple_QR_Code_Maker.Controls"
     xmlns:converters="using:Simple_QR_Code_Maker.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:Simple_QR_Code_Maker.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
@@ -30,38 +31,27 @@
             <StackPanel Orientation="Horizontal" Spacing="6">
                 <Grid Width="24" Height="24">
                     <Border
-                        Background="{x:Bind Data.Background,
-                                            Converter={StaticResource ColorToBrush},
-                                            Mode=OneWay}"
+                        x:Uid="BrandRowItem_BackgroundColorBorder"
+                        Background="{x:Bind Data.Background, Converter={StaticResource ColorToBrush}, Mode=OneWay}"
                         CornerRadius="1"
-                        ToolTipService.ToolTip="Background Color"
-                        Visibility="{x:Bind Data.Background,
-                                            Converter={StaticResource NullToVisibility},
-                                            Mode=OneWay}" />
+                        Visibility="{x:Bind Data.Background, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
                     <controls:QrCodeIcon
-                        Foreground="{x:Bind Data.Foreground,
-                                            Converter={StaticResource ColorToBrush},
-                                            Mode=OneWay}"
-                        ToolTipService.ToolTip="Foreground Color"
-                        Visibility="{x:Bind Data.Foreground,
-                                            Converter={StaticResource NullToVisibility},
-                                            Mode=OneWay}" />
+                        x:Uid="BrandRowItem_ForegroundColorQrCodeIcon"
+                        Foreground="{x:Bind Data.Foreground, Converter={StaticResource ColorToBrush}, Mode=OneWay}"
+                        Visibility="{x:Bind Data.Foreground, Converter={StaticResource NullToVisibility}, Mode=OneWay}" />
                 </Grid>
                 <TextBlock
                     FontWeight="SemiBold"
                     Style="{StaticResource BodyTextStyle}"
-                    Text="{x:Bind Data.Name,
-                                  Mode=OneWay}"
+                    Text="{x:Bind Data.Name, Mode=OneWay}"
                     TextTrimming="CharacterEllipsis" />
                 <FontIcon
+                    x:Uid="BrandRowItem_DefaultBrandFontIcon"
                     VerticalAlignment="Center"
                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                     FontSize="12"
                     Glyph="&#xE734;"
-                    ToolTipService.ToolTip="Default brand"
-                    Visibility="{x:Bind Data.IsDefault,
-                                        Mode=OneWay,
-                                        Converter={StaticResource BoolToVisibility}}" />
+                    Visibility="{x:Bind Data.IsDefault, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
             </StackPanel>
 
             <StackPanel
@@ -71,45 +61,37 @@
                 <StackPanel
                     Orientation="Horizontal"
                     Spacing="4"
-                    Visibility="{x:Bind Data.ErrorCorrectionLevelAsString,
-                                        Converter={StaticResource NullToVisibility},
-                                        Mode=OneWay}">
+                    Visibility="{x:Bind Data.ErrorCorrectionLevelAsString, Converter={StaticResource NullToVisibility}, Mode=OneWay}">
                     <TextBlock
+                        x:Uid="BrandRowItem_ErrorCorrectionLevelText"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
-                        Text="{x:Bind Data.ErrorCorrectionLevelAsString,
-                                      Mode=OneWay}"
-                        ToolTipService.ToolTip="Error Correction Level" />
+                        Text="{x:Bind Data.ErrorCorrectionLevelAsString, Mode=OneWay}" />
                 </StackPanel>
 
                 <StackPanel
                     Orientation="Horizontal"
                     Spacing="4"
-                    Visibility="{x:Bind Data.UrlContent,
-                                        Converter={StaticResource NullToVisibility},
-                                        Mode=OneWay}">
+                    Visibility="{x:Bind Data.UrlContent, Converter={StaticResource NullToVisibility}, Mode=OneWay}">
                     <FontIcon
                         VerticalAlignment="Center"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                         FontSize="11"
                         Glyph="&#xE71B;" />
                     <TextBlock
+                        x:Uid="BrandRowItem_TextText"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Text="Text" />
+                        Style="{StaticResource CaptionTextBlockStyle}" />
                 </StackPanel>
 
                 <StackPanel
                     Orientation="Horizontal"
                     Spacing="4"
-                    Visibility="{x:Bind Data.FrameDescription,
-                                        Converter={StaticResource NullToVisibility},
-                                        Mode=OneWay}">
+                    Visibility="{x:Bind Data.FrameDescription, Converter={StaticResource NullToVisibility}, Mode=OneWay}">
                     <TextBlock
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
-                        Text="{x:Bind Data.FrameDescription,
-                                      Mode=OneWay}" />
+                        Text="{x:Bind helpers:LocalizedDisplay.FrameDescription(Data.FramePreset), Mode=OneWay}" />
                 </StackPanel>
             </StackPanel>
 
@@ -117,8 +99,7 @@
                 Grid.Row="2"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 Style="{StaticResource CaptionTextBlockStyle}"
-                Text="{x:Bind Data.CreatedDateAsString,
-                              Mode=OneWay}"
+                Text="{x:Bind Data.CreatedDateAsString, Mode=OneWay}"
                 TextTrimming="CharacterEllipsis" />
         </StackPanel>
 
@@ -135,40 +116,34 @@
                 BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="6"
-                Visibility="{x:Bind Data.LogoImagePath,
-                                    Converter={StaticResource NullToVisibility},
-                                    Mode=OneWay}">
+                Visibility="{x:Bind Data.LogoImagePath, Converter={StaticResource NullToVisibility}, Mode=OneWay}">
                 <Image
                     Width="32"
                     Height="32"
                     Margin="0"
-                    Source="{x:Bind Data.LogoImagePath,
-                                    Converter={StaticResource FilePathToImage},
-                                    Mode=OneWay}"
+                    Source="{x:Bind Data.LogoImagePath, Converter={StaticResource FilePathToImage}, Mode=OneWay}"
                     Stretch="Uniform" />
             </Border>
 
             <Button
+                x:Uid="BrandRowItem_BrandOptionsButton"
                 Width="32"
                 Height="32"
                 MinWidth="32"
                 Padding="0"
-                ToolTipService.ToolTip="Brand options"
-                Visibility="{x:Bind ShowActions,
-                                    Mode=OneWay,
-                                    Converter={StaticResource BoolToVisibility}}">
+                Visibility="{x:Bind ShowActions, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                 <Button.Flyout>
                     <MenuFlyout>
                         <MenuFlyoutItem
+                            x:Uid="BrandRowItem_EditMenuItem"
                             Click="EditMenuItem_Click"
-                            Icon="Edit"
-                            Text="Edit" />
-                        <MenuFlyoutItem Click="SetDefaultMenuItem_Click" Text="Set as default" />
+                            Icon="Edit" />
+                        <MenuFlyoutItem x:Uid="BrandRowItem_SetAsDefaultMenuItem" Click="SetDefaultMenuItem_Click" />
                         <MenuFlyoutSeparator />
                         <MenuFlyoutItem
+                            x:Uid="BrandRowItem_DeleteMenuItem"
                             Click="DeleteMenuItem_Click"
-                            Icon="Delete"
-                            Text="Delete" />
+                            Icon="Delete" />
                     </MenuFlyout>
                 </Button.Flyout>
                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE712;" />

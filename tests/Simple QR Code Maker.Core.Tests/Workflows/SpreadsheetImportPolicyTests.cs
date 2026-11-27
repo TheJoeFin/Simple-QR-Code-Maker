@@ -20,6 +20,23 @@ public sealed class SpreadsheetImportPolicyTests
     }
 
     [TestMethod]
+    public void LocalizedHeadersOnlyReplaceMissingHeaderCells()
+    {
+        SpreadsheetSourceRow[] rows =
+        [
+            new() { SourceRowIndex = 0, Cells = ["Column 1", " ", " ID "] },
+            new() { SourceRowIndex = 1, Cells = ["payload", "  unchanged ", "123", "extra"] },
+        ];
+
+        CollectionAssert.AreEqual(new[] { "Column 1", "Colonne 2", " ID ", "Colonne 4" },
+            SpreadsheetImportPolicy.CreateHeaders(rows, true, column => $"Colonne {column}"));
+        CollectionAssert.AreEqual(new[] { "Colonne 1", "Colonne 2", "Colonne 3", "Colonne 4" },
+            SpreadsheetImportPolicy.CreateHeaders(rows, false, column => $"Colonne {column}"));
+        CollectionAssert.AreEqual(new[] { "  unchanged " },
+            SpreadsheetImportPolicy.SelectValues([rows[1].Cells], 1, "", "", false));
+    }
+
+    [TestMethod]
     public void SelectionFiltersBlanksAndPreservesOrdinalOrderAndContent()
     {
         IReadOnlyList<string>[] rows = [["one"], [], [" "], ["one"], ["ONE"], [" two "]];

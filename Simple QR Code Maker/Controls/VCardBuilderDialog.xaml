@@ -5,11 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Build vCard"
-    CloseButtonText="Cancel"
+    x:Uid="VCardBuilderDialog_Dialog"
     DefaultButton="Primary"
     IsPrimaryButtonEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
-    PrimaryButtonText="Apply"
     mc:Ignorable="d">
 
     <ScrollViewer
@@ -23,14 +21,11 @@
             MinWidth="460"
             Padding="0,0,12,0">
             <StackPanel HorizontalAlignment="Stretch" Spacing="12">
-                <TextBlock
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="Start with the common contact fields, then use + to add optional details." />
+                <TextBlock x:Uid="VCardBuilderDialog_StartWithTheCommonContactText" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
                 <TextBox
                     x:Name="FormattedNameTextBox"
-                    Header="Formatted name"
-                    PlaceholderText="Jane Doe"
+                    x:Uid="VCardBuilderDialog_FormattedNameTextBox"
                     Text="{x:Bind ViewModel.FormattedName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <Grid ColumnSpacing="8">
@@ -39,14 +34,12 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <TextBox
+                        x:Uid="VCardBuilderDialog_FirstNameTextBox"
                         Grid.Column="0"
-                        Header="First name"
-                        PlaceholderText="Jane"
                         Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBox
+                        x:Uid="VCardBuilderDialog_LastNameTextBox"
                         Grid.Column="1"
-                        Header="Last name"
-                        PlaceholderText="Doe"
                         Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
 
@@ -57,61 +50,60 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <TextBox
+                        x:Uid="VCardBuilderDialog_MiddleTextBox"
                         Grid.Column="0"
-                        Header="Middle"
                         Text="{x:Bind ViewModel.MiddleName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBox
+                        x:Uid="VCardBuilderDialog_PrefixTextBox"
                         Grid.Column="1"
-                        Header="Prefix"
-                        PlaceholderText="Dr."
                         Text="{x:Bind ViewModel.Prefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBox
+                        x:Uid="VCardBuilderDialog_SuffixTextBox"
                         Grid.Column="2"
-                        Header="Suffix"
-                        PlaceholderText="Jr."
                         Text="{x:Bind ViewModel.Suffix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
 
-                <TextBox
-                    Header="Organization"
-                    PlaceholderText="Contoso"
-                    Text="{x:Bind ViewModel.Organization, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox x:Uid="VCardBuilderDialog_OrganizationTextBox" Text="{x:Bind ViewModel.Organization, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBox
-                    Header="Title"
-                    PlaceholderText="Product Manager"
-                    Text="{x:Bind ViewModel.JobTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox x:Uid="VCardBuilderDialog_TitleTextBox" Text="{x:Bind ViewModel.JobTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBox
-                    Header="Mobile phone"
-                    PlaceholderText="+1 555 0100"
-                    Text="{x:Bind ViewModel.MobilePhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox x:Uid="VCardBuilderDialog_MobilePhoneTextBox" Text="{x:Bind ViewModel.MobilePhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBox
-                    Header="Email"
-                    PlaceholderText="jane@example.com"
-                    Text="{x:Bind ViewModel.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox x:Uid="VCardBuilderDialog_EmailTextBox" Text="{x:Bind ViewModel.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBox
-                    Header="Website"
-                    PlaceholderText="https://example.com"
-                    Text="{x:Bind ViewModel.Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox x:Uid="VCardBuilderDialog_WebsiteTextBox" Text="{x:Bind ViewModel.Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <Button
-                    HorizontalAlignment="Left"
-                    ToolTipService.ToolTip="Add an optional vCard field">
+                <Button x:Uid="VCardBuilderDialog_AddAnOptionalVCardFieldButton" HorizontalAlignment="Left">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <SymbolIcon Symbol="Add" />
-                        <TextBlock Text="Add field" />
+                        <TextBlock x:Uid="VCardBuilderDialog_AddFieldText" />
                     </StackPanel>
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.AddOptionalFieldCommand}" CommandParameter="WorkPhone" Text="Work phone" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.AddOptionalFieldCommand}" CommandParameter="HomePhone" Text="Home phone" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.AddOptionalFieldCommand}" CommandParameter="Nickname" Text="Nickname" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.AddOptionalFieldCommand}" CommandParameter="Birthday" Text="Birthday" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.AddOptionalFieldCommand}" CommandParameter="Address" Text="Address" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.AddOptionalFieldCommand}" CommandParameter="Note" Text="Note" />
+                            <MenuFlyoutItem
+                                x:Uid="VCardBuilderDialog_WorkPhoneMenuItem"
+                                Command="{x:Bind ViewModel.AddOptionalFieldCommand}"
+                                CommandParameter="WorkPhone" />
+                            <MenuFlyoutItem
+                                x:Uid="VCardBuilderDialog_HomePhoneMenuItem"
+                                Command="{x:Bind ViewModel.AddOptionalFieldCommand}"
+                                CommandParameter="HomePhone" />
+                            <MenuFlyoutItem
+                                x:Uid="VCardBuilderDialog_NicknameMenuItem"
+                                Command="{x:Bind ViewModel.AddOptionalFieldCommand}"
+                                CommandParameter="Nickname" />
+                            <MenuFlyoutItem
+                                x:Uid="VCardBuilderDialog_BirthdayMenuItem"
+                                Command="{x:Bind ViewModel.AddOptionalFieldCommand}"
+                                CommandParameter="Birthday" />
+                            <MenuFlyoutItem
+                                x:Uid="VCardBuilderDialog_AddressMenuItem"
+                                Command="{x:Bind ViewModel.AddOptionalFieldCommand}"
+                                CommandParameter="Address" />
+                            <MenuFlyoutItem
+                                x:Uid="VCardBuilderDialog_NoteMenuItem"
+                                Command="{x:Bind ViewModel.AddOptionalFieldCommand}"
+                                CommandParameter="Note" />
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>
@@ -130,22 +122,20 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock
+                                x:Uid="VCardBuilderDialog_WorkPhoneText"
                                 Grid.Column="0"
                                 FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Work phone" />
+                                FontWeight="SemiBold" />
                             <HyperlinkButton
+                                x:Uid="VCardBuilderDialog_RemoveWorkPhoneHyperlinkButton"
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 Command="{x:Bind ViewModel.RemoveOptionalFieldCommand}"
-                                CommandParameter="WorkPhone"
-                                ToolTipService.ToolTip="Remove work phone">
+                                CommandParameter="WorkPhone">
                                 <SymbolIcon Symbol="Delete" />
                             </HyperlinkButton>
                         </Grid>
-                        <TextBox
-                            PlaceholderText="+1 555 0101"
-                            Text="{x:Bind ViewModel.WorkPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox x:Uid="VCardBuilderDialog_15550101TextBox" Text="{x:Bind ViewModel.WorkPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </Border>
 
@@ -163,22 +153,20 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock
+                                x:Uid="VCardBuilderDialog_HomePhoneText"
                                 Grid.Column="0"
                                 FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Home phone" />
+                                FontWeight="SemiBold" />
                             <HyperlinkButton
+                                x:Uid="VCardBuilderDialog_RemoveHomePhoneHyperlinkButton"
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 Command="{x:Bind ViewModel.RemoveOptionalFieldCommand}"
-                                CommandParameter="HomePhone"
-                                ToolTipService.ToolTip="Remove home phone">
+                                CommandParameter="HomePhone">
                                 <SymbolIcon Symbol="Delete" />
                             </HyperlinkButton>
                         </Grid>
-                        <TextBox
-                            PlaceholderText="+1 555 0102"
-                            Text="{x:Bind ViewModel.HomePhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox x:Uid="VCardBuilderDialog_15550102TextBox" Text="{x:Bind ViewModel.HomePhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </Border>
 
@@ -196,22 +184,20 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock
+                                x:Uid="VCardBuilderDialog_NicknameText"
                                 Grid.Column="0"
                                 FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Nickname" />
+                                FontWeight="SemiBold" />
                             <HyperlinkButton
+                                x:Uid="VCardBuilderDialog_RemoveNicknameHyperlinkButton"
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 Command="{x:Bind ViewModel.RemoveOptionalFieldCommand}"
-                                CommandParameter="Nickname"
-                                ToolTipService.ToolTip="Remove nickname">
+                                CommandParameter="Nickname">
                                 <SymbolIcon Symbol="Delete" />
                             </HyperlinkButton>
                         </Grid>
-                        <TextBox
-                            PlaceholderText="Janie"
-                            Text="{x:Bind ViewModel.Nickname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox x:Uid="VCardBuilderDialog_JanieTextBox" Text="{x:Bind ViewModel.Nickname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </Border>
 
@@ -229,22 +215,20 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock
+                                x:Uid="VCardBuilderDialog_BirthdayText"
                                 Grid.Column="0"
                                 FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Birthday" />
+                                FontWeight="SemiBold" />
                             <HyperlinkButton
+                                x:Uid="VCardBuilderDialog_RemoveBirthdayHyperlinkButton"
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 Command="{x:Bind ViewModel.RemoveOptionalFieldCommand}"
-                                CommandParameter="Birthday"
-                                ToolTipService.ToolTip="Remove birthday">
+                                CommandParameter="Birthday">
                                 <SymbolIcon Symbol="Delete" />
                             </HyperlinkButton>
                         </Grid>
-                        <TextBox
-                            PlaceholderText="1990-10-21"
-                            Text="{x:Bind ViewModel.Birthday, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox x:Uid="VCardBuilderDialog_19901021TextBox" Text="{x:Bind ViewModel.Birthday, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </Border>
 
@@ -262,34 +246,32 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock
+                                x:Uid="VCardBuilderDialog_AddressText"
                                 Grid.Column="0"
                                 FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Address" />
+                                FontWeight="SemiBold" />
                             <HyperlinkButton
+                                x:Uid="VCardBuilderDialog_RemoveAddressHyperlinkButton"
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 Command="{x:Bind ViewModel.RemoveOptionalFieldCommand}"
-                                CommandParameter="Address"
-                                ToolTipService.ToolTip="Remove address">
+                                CommandParameter="Address">
                                 <SymbolIcon Symbol="Delete" />
                             </HyperlinkButton>
                         </Grid>
-                        <TextBox
-                            Header="Street"
-                            Text="{x:Bind ViewModel.StreetAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox x:Uid="VCardBuilderDialog_StreetTextBox" Text="{x:Bind ViewModel.StreetAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <Grid ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <TextBox
+                                x:Uid="VCardBuilderDialog_CityTextBox"
                                 Grid.Column="0"
-                                Header="City"
                                 Text="{x:Bind ViewModel.Locality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox
+                                x:Uid="VCardBuilderDialog_StateRegionTextBox"
                                 Grid.Column="1"
-                                Header="State / region"
                                 Text="{x:Bind ViewModel.Region, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                         <Grid ColumnSpacing="8">
@@ -298,12 +280,12 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <TextBox
+                                x:Uid="VCardBuilderDialog_PostalCodeTextBox"
                                 Grid.Column="0"
-                                Header="Postal code"
                                 Text="{x:Bind ViewModel.PostalCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox
+                                x:Uid="VCardBuilderDialog_CountryTextBox"
                                 Grid.Column="1"
-                                Header="Country"
                                 Text="{x:Bind ViewModel.Country, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                     </StackPanel>
@@ -323,32 +305,32 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock
+                                x:Uid="VCardBuilderDialog_NoteText"
                                 Grid.Column="0"
                                 FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Note" />
+                                FontWeight="SemiBold" />
                             <HyperlinkButton
+                                x:Uid="VCardBuilderDialog_RemoveNoteHyperlinkButton"
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 Command="{x:Bind ViewModel.RemoveOptionalFieldCommand}"
-                                CommandParameter="Note"
-                                ToolTipService.ToolTip="Remove note">
+                                CommandParameter="Note">
                                 <SymbolIcon Symbol="Delete" />
                             </HyperlinkButton>
                         </Grid>
                         <TextBox
+                            x:Uid="VCardBuilderDialog_AddContactNotesTextBox"
                             MinHeight="72"
                             AcceptsReturn="True"
-                            PlaceholderText="Add contact notes"
                             Text="{x:Bind ViewModel.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>
 
                 <TextBox
+                    x:Uid="VCardBuilderDialog_PreviewTextBox"
                     MinHeight="128"
                     AcceptsReturn="True"
-                    Header="Preview"
                     IsReadOnly="True"
                     Text="{x:Bind ViewModel.PreviewVCard, Mode=OneWay}"
                     TextWrapping="Wrap" />

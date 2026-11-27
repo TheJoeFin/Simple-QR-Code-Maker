@@ -17,7 +17,7 @@ internal static class QrExportWriter
                 effectiveSettings.ForegroundColor, effectiveSettings.BackgroundColor,
                 effectiveSettings.LogoImage, effectiveSettings.LogoSizePercentage,
                 effectiveSettings.LogoPaddingPixels, effectiveSettings.QrPaddingModules,
-                effectiveSettings.FramePreset, ResolveFrameText(code, effectiveSettings),
+                effectiveSettings.FramePreset, effectiveSettings.ResolveFrameText(code),
                 effectiveSettings.Appearance);
             return output.ToArray();
         });
@@ -33,7 +33,7 @@ internal static class QrExportWriter
                 effectiveSettings.LogoImage, effectiveSettings.LogoSizePercentage,
                 effectiveSettings.LogoPaddingPixels, effectiveSettings.LogoSvgContent,
                 effectiveSettings.QrPaddingModules, effectiveSettings.FramePreset,
-                ResolveFrameText(code, effectiveSettings), effectiveSettings.Appearance).Content;
+                effectiveSettings.ResolveFrameText(code), effectiveSettings.Appearance).Content;
         });
 
     internal static async Task WriteAsync(
@@ -87,9 +87,4 @@ internal static class QrExportWriter
     }
 
     internal static string GetFileExtension(FileKind kind) => $".{kind.ToString().ToLowerInvariant()}";
-
-    private static string? ResolveFrameText(RequestedQrCodeItem code, QrRenderSettingsSnapshot settings)
-        => QrFrameTextResolver.Resolve(
-            settings.FramePreset, settings.FrameTextSource, settings.FrameText,
-            code.CodeAsText, code.ContentKind, code.MultiLineCodeModeOverride);
 }

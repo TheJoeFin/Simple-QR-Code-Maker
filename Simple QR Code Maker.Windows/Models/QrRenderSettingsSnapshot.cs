@@ -57,6 +57,10 @@ public sealed class QrRenderSettingsSnapshot : IDisposable
 
     public QrCodeAppearance Appearance { get; }
 
+    internal string? ResolveFrameText(RequestedQrCodeItem code)
+        => QrFrameTextResolver.Resolve(FramePreset, FrameTextSource, FrameText,
+            code.CodeAsText, code.ContentKind, code.MultiLineCodeModeOverride);
+
     public static QrRenderSettingsSnapshot Create(
         ErrorCorrectionLevel errorCorrectionLevel,
         System.Drawing.Color foregroundColor,
