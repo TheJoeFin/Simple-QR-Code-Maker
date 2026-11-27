@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Simple QR Code Maker is a WinUI 3 Windows desktop application (.NET 10, C#) for generating and decoding QR codes. It is published on the Microsoft Store and targets x64 and ARM64.
+Simple QR Code Maker is a WinUI 3 Windows desktop application (.NET 11, C#) for generating and decoding QR codes. It is published on the Microsoft Store and targets x64 and ARM64.
 
 ## Build Commands
 
@@ -24,11 +24,11 @@ dotnet msbuild "Simple QR Code Maker.slnx" -p:Configuration=Release -p:Platform=
 dotnet msbuild "Simple QR Code Maker.slnx" -p:Configuration=Release -p:Platform=x64
 ```
 
-Visual Studio 2022 with the Windows App SDK workload and MSIX packaging tools is required. See `.vsconfig` for the exact required components.
+The .NET 11 SDK and Visual Studio 2026 (18.12 or later) with the Windows App SDK workload and MSIX packaging tools are required. See `.vsconfig` for the exact required components.
 
-## No Automated Tests
+## Automated Tests
 
-There are no unit or integration test projects. Testing is done manually using MSIX packages in `AppPackages/`.
+Run `.\scripts\Test.ps1 -Platform ARM64` (use `x64` on x64 hosts), adding `-Coverage` for TRX and Cobertura reports in `TestResults`. `-Suite Core` selects portable tests; `-Suite Windows` selects headless Windows tests. Tests use MSTest with Microsoft.Testing.Platform, not VSTest. No app activation, real app data, Excel installation, or desktop interaction is needed.
 
 ## UI Automation Testing
 
@@ -41,7 +41,9 @@ The app follows **MVVM + Dependency Injection** using `CommunityToolkit.Mvvm` an
 ### Solution Structure
 
 - **`Simple QR Code Maker/`** — Main WinUI 3 app project
-- **`Simple QR Code Maker.Core/`** — Shared library (currently just `FileService` for JSON I/O)
+- **`Simple QR Code Maker.Core/`** — Portable builders, parsers, workflow/print policies, and JSON/file infrastructure
+- **`Simple QR Code Maker.Windows/`** — Headless Windows rendering, persistence, and models
+- **`tests/`** — MSTest/MTP projects exercising the actual production libraries
 
 ### App Entry & DI
 

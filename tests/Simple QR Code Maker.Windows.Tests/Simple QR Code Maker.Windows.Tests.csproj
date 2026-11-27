@@ -1,0 +1,19 @@
+<Project Sdk="MSTest.Sdk/4.5.1">
+  <PropertyGroup>
+    <TargetFramework>net11.0-windows10.0.26100.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <RootNamespace>Simple_QR_Code_Maker.Windows.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Simple QR Code Maker.Windows\Simple QR Code Maker.Windows.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Microsoft.Testing.Extensions.TrxReport" Version="2.5.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="MSTest.TestAdapter" Version="4.5.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="MSTest.TestFramework" Version="4.5.3" />
+  </ItemGroup>
+</Project>

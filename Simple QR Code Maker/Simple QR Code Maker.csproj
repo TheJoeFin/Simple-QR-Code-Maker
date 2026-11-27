@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetFramework>net11.0-windows10.0.26100.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <RootNamespace>Simple_QR_Code_Maker</RootNamespace>
     <ApplicationIcon>Assets/WindowIcon.ico</ApplicationIcon>
@@ -19,9 +19,12 @@
     <WindowsAppSdkUndockedRegFreeWinRTInitialize>false</WindowsAppSdkUndockedRegFreeWinRTInitialize>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>preview</LangVersion>
     <PublishAot>false</PublishAot>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GitHubIdentityName>40087JoeFinApps.SimpleQRCodeMaker</GitHubIdentityName>
+    <GitHubIdentityPublisher>CN=Joseph Finney, O=Joseph Finney, L=Milwaukee, S=Wisconsin, C=US, PostalCode=53212</GitHubIdentityPublisher>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\AdvancedToolsControl.xaml" />
@@ -52,23 +55,25 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.251219" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
     <PackageReference Include="Humanizer" Version="3.0.10" />
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="15.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.13" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="15.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.4.0" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinApp" Version="0.7.1" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.5.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2957" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinApp" Version="0.8.0" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinUIAnalyzer" Version="0.8.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.7.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
     <PackageReference Include="PdfPig" Version="0.1.16" />
-    <PackageReference Include="WinUI.TableView" Version="1.5.1" />
+    <PackageReference Include="WinUI.TableView" Version="1.5.2" />
     <PackageReference Include="WinUIEx" Version="2.9.3" />
     <PackageReference Include="ZXing.Net" Version="0.16.11" />
-    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.16" />
+    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.17" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Simple QR Code Maker.Core\Simple QR Code Maker.Core.csproj" />
+    <ProjectReference Include="..\Simple QR Code Maker.Windows\Simple QR Code Maker.Windows.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Licenses\Apache-2.0.txt">
@@ -77,11 +82,11 @@
     <Content Include="Licenses\SuperTinyIcons.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <!-- SuperTinyIcons revision d532b8a9e8a96ed5462f3813106f0b1e230249dc; see Licenses\SuperTinyIcons.txt. -->
-    <!-- Path commands use explicit arc flags for Magick.NET compatibility. -->
-    <EmbeddedResource Include="Assets\CommonBrands\*.svg">
-      <LogicalName>CommonBrands.%(Filename)%(Extension)</LogicalName>
-    </EmbeddedResource>
+    <Content Include="$(ReleaseAppInstallerPath)" Condition="'$(ReleaseAppInstallerPath)' != ''">
+      <Link>Update.appinstaller</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

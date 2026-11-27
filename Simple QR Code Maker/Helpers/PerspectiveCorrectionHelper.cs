@@ -35,7 +35,7 @@ public class PerspectiveCorrectionHelper
 
     public static Ellipse CreateCornerMarker(System.Drawing.Point point, int index)
     {
-        var marker = new Ellipse
+        Ellipse marker = new()
         {
             Width = 20,
             Height = 20,

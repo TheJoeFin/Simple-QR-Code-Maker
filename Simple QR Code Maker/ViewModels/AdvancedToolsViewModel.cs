@@ -87,7 +87,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     {
         get
         {
-            var next = NextUnwarpPoint;
+            UnwarpControlPoint? next = NextUnwarpPoint;
             if (next == null)
                 return TotalPoints == 0
                     ? "Set the version and open the unwarp workflow."
@@ -366,7 +366,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
     [RelayCommand]
     private void UseEstimatedUnwarpPoint()
     {
-        var next = NextUnwarpPoint;
+        UnwarpControlPoint? next = NextUnwarpPoint;
         if (next == null || next.Kind != UnwarpPointKind.AlignmentPattern) return;
         next.IsEstimated = true;
         _activeUnwarpPoint = null;
@@ -386,7 +386,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
         if (baselineImage == null) return;
         IsProcessing = true;
 
-        var image = baselineImage;
+        MagickImage image = baselineImage;
         var points = UnwarpControlPoints.ToList();
         var version = QrVersion;
 
@@ -423,7 +423,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
                     outputSize = Math.Min(dim * 10, 1500);
                 }
 
-                var controlPts = BuildControlPointList(points, version, outputSize);
+                List<(Point src, PointF dst)> controlPts = BuildControlPointList(points, version, outputSize);
                 return Helpers.ImageProcessingHelper.ApplyPolynomialUnwarp(image, controlPts, outputSize, outputSize);
             });
         }
@@ -503,7 +503,7 @@ public partial class AdvancedToolsViewModel : ObservableObject
 
     public void PlaceNextUnwarpPoint(System.Drawing.Point imagePoint)
     {
-        var next = NextUnwarpPoint;
+        UnwarpControlPoint? next = NextUnwarpPoint;
         if (next == null) return;
         next.PlacedImagePoint = imagePoint;
         next.IsEstimated = false;
@@ -527,9 +527,9 @@ public partial class AdvancedToolsViewModel : ObservableObject
         };
 
         int alignIndex = 1;
-        foreach (var (row, col) in Helpers.QrAlignmentPatternHelper.GetAlignmentPatternCenters(version))
+        foreach ((int row, int col) in Helpers.QrAlignmentPatternHelper.GetAlignmentPatternCenters(version))
         {
-            var (idealX, idealY) = Helpers.QrAlignmentPatternHelper.GetIdealPixelCoord(row, col, version, outputSize);
+            (double idealX, double idealY) = Helpers.QrAlignmentPatternHelper.GetIdealPixelCoord(row, col, version, outputSize);
             pts.Add(new UnwarpControlPoint
             {
                 ModuleRow = row,
@@ -572,10 +572,10 @@ public partial class AdvancedToolsViewModel : ObservableObject
         if (corners.Count != 4 || corners.Any(c => !c.PlacedImagePoint.HasValue))
             return result;
 
-        var tl = corners[0].PlacedImagePoint!.Value;
-        var tr = corners[1].PlacedImagePoint!.Value;
-        var br = corners[2].PlacedImagePoint!.Value;
-        var bl = corners[3].PlacedImagePoint!.Value;
+        Point tl = corners[0].PlacedImagePoint!.Value;
+        Point tr = corners[1].PlacedImagePoint!.Value;
+        Point br = corners[2].PlacedImagePoint!.Value;
+        Point bl = corners[3].PlacedImagePoint!.Value;
 
         result.Add((tl, new(0, 0)));
         result.Add((tr, new(outputSize, 0)));
@@ -585,22 +585,22 @@ public partial class AdvancedToolsViewModel : ObservableObject
         // Auto-add the three finder-pattern centers to strengthen the polynomial fit.
         int dim = Helpers.QrAlignmentPatternHelper.GetDimension(version);
         (int Row, int Col)[] finderCenters = [(3, 3), (3, dim - 4), (dim - 4, 3)];
-        foreach (var (fr, fc) in finderCenters)
+        foreach ((int fr, int fc) in finderCenters)
         {
-            var src = Helpers.QrAlignmentPatternHelper.EstimateImagePosition(tl, tr, bl, br, fr, fc, version);
-            var (idealX, idealY) = Helpers.QrAlignmentPatternHelper.GetIdealPixelCoord(fr, fc, version, outputSize);
+            PointF src = Helpers.QrAlignmentPatternHelper.EstimateImagePosition(tl, tr, bl, br, fr, fc, version);
+            (double idealX, double idealY) = Helpers.QrAlignmentPatternHelper.GetIdealPixelCoord(fr, fc, version, outputSize);
             result.Add((System.Drawing.Point.Round(src), new((float)idealX, (float)idealY)));
         }
 
         // Alignment patterns: use the user-placed point if available, otherwise bilinear estimate.
         // Always recompute ideal coords from module position so they stay in sync with outputSize.
-        foreach (var pt in points.Where(p => p.Kind == UnwarpPointKind.AlignmentPattern && p.IsPlacedOrEstimated))
+        foreach (UnwarpControlPoint? pt in points.Where(p => p.Kind == UnwarpPointKind.AlignmentPattern && p.IsPlacedOrEstimated))
         {
             System.Drawing.Point src = pt.PlacedImagePoint.HasValue
                 ? pt.PlacedImagePoint.Value
                 : System.Drawing.Point.Round(Helpers.QrAlignmentPatternHelper.EstimateImagePosition(tl, tr, bl, br, pt.ModuleRow, pt.ModuleCol, version));
 
-            var (idealX, idealY) = Helpers.QrAlignmentPatternHelper.GetIdealPixelCoord(pt.ModuleRow, pt.ModuleCol, version, outputSize);
+            (double idealX, double idealY) = Helpers.QrAlignmentPatternHelper.GetIdealPixelCoord(pt.ModuleRow, pt.ModuleCol, version, outputSize);
             result.Add((src, new((float)idealX, (float)idealY)));
         }
 

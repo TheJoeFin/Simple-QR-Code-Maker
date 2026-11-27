@@ -42,8 +42,8 @@ public static class BackgroundRemovalHelper
                 return true;
             }
 
-            if (state == AIFeatureReadyState.NotSupportedOnCurrentSystem
-                || state == AIFeatureReadyState.DisabledByUser)
+            if (state is AIFeatureReadyState.NotSupportedOnCurrentSystem
+                or AIFeatureReadyState.DisabledByUser)
             {
                 _cachedAvailability = false;
                 return false;

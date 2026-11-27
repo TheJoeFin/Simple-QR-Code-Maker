@@ -28,7 +28,7 @@ public partial class DecodingImageItem : ObservableObject
 
     public BitmapImage? ProcessedBitmapImage { get; set; }
 
-    public List<(string, Result)> Strings { get; set; } = new();
+    public List<(string, Result)> Strings { get; set; } = [];
 
     [ObservableProperty]
     public partial ObservableCollection<TextBorder> CodeBorders { get; set; } = new();

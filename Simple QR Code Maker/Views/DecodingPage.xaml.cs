@@ -73,7 +73,7 @@ public sealed partial class DecodingPage : Page
     private void AdvancedToolsViewModel_UnwarpPointsClearedRequested(object? sender, EventArgs e)
     {
         if (ViewModel.CurrentDecodingItem == null) return;
-        var toRemove = ViewModel.CurrentDecodingItem.PerspectiveCornerMarkers
+        List<UIElement> toRemove = ViewModel.CurrentDecodingItem.PerspectiveCornerMarkers
             .Where(m => m is FrameworkElement fe && "unwarp".Equals(fe.Tag as string))
             .ToList();
         foreach (var m in toRemove)
@@ -257,7 +257,6 @@ public sealed partial class DecodingPage : Page
         SelectionRectangle.Visibility = w > 2 && h > 2 ? Visibility.Visible : Visibility.Collapsed;
     }
 
-
     private void HandlePerspectiveCorrectionClick(
         Point imagePoint,
         Windows.Foundation.Point displayPoint)
@@ -383,7 +382,7 @@ public sealed partial class DecodingPage : Page
         if (item == null) return;
 
         // Remove stale unwarp markers.
-        var toRemove = item.PerspectiveCornerMarkers
+        List<UIElement> toRemove = item.PerspectiveCornerMarkers
             .Where(m => m is FrameworkElement fe && "unwarp".Equals(fe.Tag as string))
             .ToList();
         foreach (var m in toRemove)
@@ -398,13 +397,13 @@ public sealed partial class DecodingPage : Page
         int imageH = item.ImagePixelHeight;
         if (imageW <= 0 || imageH <= 0 || displayW <= 0 || displayH <= 0) return;
 
-        var placedCorners = tools.UnwarpControlPoints
+        List<UnwarpControlPoint> placedCorners = tools.UnwarpControlPoints
             .Where(p => p.Kind == UnwarpPointKind.OuterCorner && p.PlacedImagePoint.HasValue)
             .OrderBy(p => p.OrderIndex)
             .ToList();
 
         // Solid corner markers.
-        var cornerDisplayPoints = new List<Windows.Foundation.Point>();
+        List<Windows.Foundation.Point> cornerDisplayPoints = new();
         foreach (var pt in placedCorners)
         {
             var dp = ToDisplayPoint(pt.PlacedImagePoint!.Value, displayW, displayH, imageW, imageH);

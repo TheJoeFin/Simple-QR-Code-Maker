@@ -7,7 +7,7 @@ namespace Simple_QR_Code_Maker;
 
 public sealed partial class MainWindow : WindowEx
 {
-    private Microsoft.UI.Dispatching.DispatcherQueue dispatcherQueue;
+    private readonly Microsoft.UI.Dispatching.DispatcherQueue dispatcherQueue;
 
     private readonly UISettings settings;
 

@@ -2,9 +2,11 @@
     x:Class="Simple_QR_Code_Maker.Views.DecodingPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:Simple_QR_Code_Maker.Behaviors"
     xmlns:controls="using:Simple_QR_Code_Maker.Controls"
     xmlns:converters="using:Simple_QR_Code_Maker.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
     x:Name="DecodingPageRoot"
@@ -106,6 +108,9 @@
                                             IsHitTestVisible="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                                             Opacity="0.92"
                                             Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <interactivity:Interaction.Behaviors>
+                                                <behaviors:ImplicitVisibilityAnimationBehavior />
+                                            </interactivity:Interaction.Behaviors>
                                             <StackPanel
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
@@ -147,6 +152,9 @@
                                                 Orientation="Vertical"
                                                 Spacing="10"
                                                 Visibility="{x:Bind ViewModel.HasImage, Mode=OneWay, Converter={StaticResource InvertedBoolToVisibilityConverter}}">
+                                                <interactivity:Interaction.Behaviors>
+                                                    <behaviors:ImplicitVisibilityAnimationBehavior />
+                                                </interactivity:Interaction.Behaviors>
 
                                                 <StackPanel
                                                     HorizontalAlignment="Center"
@@ -233,6 +241,9 @@
                                                     Orientation="Horizontal"
                                                     Spacing="6"
                                                     Visibility="{x:Bind ViewModel.HasImage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    <interactivity:Interaction.Behaviors>
+                                                        <behaviors:ImplicitVisibilityAnimationBehavior />
+                                                    </interactivity:Interaction.Behaviors>
                                                     <TextBlock
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
@@ -285,6 +296,9 @@
                                                         Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
                                                         CornerRadius="4"
                                                         Visibility="{x:Bind ViewModel.HasActivePreviewSurface, Mode=OneWay, Converter={StaticResource InvertedBoolToVisibilityConverter}}">
+                                                        <interactivity:Interaction.Behaviors>
+                                                            <behaviors:ImplicitVisibilityAnimationBehavior />
+                                                        </interactivity:Interaction.Behaviors>
                                                         <StackPanel
                                                             Padding="40"
                                                             HorizontalAlignment="Center"
@@ -311,6 +325,9 @@
                                                         Background="{ThemeResource ControlAltFillColorSecondaryBrush}"
                                                         CornerRadius="4"
                                                         Visibility="{x:Bind ViewModel.HasActivePreviewSurface, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                        <interactivity:Interaction.Behaviors>
+                                                            <behaviors:ImplicitVisibilityAnimationBehavior />
+                                                        </interactivity:Interaction.Behaviors>
                                                         <ScrollView
                                                             x:Name="ImageScrollView"
                                                             ContentOrientation="None"

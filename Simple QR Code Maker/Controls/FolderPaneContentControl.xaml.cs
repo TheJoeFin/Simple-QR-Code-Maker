@@ -29,7 +29,7 @@ public sealed partial class FolderPaneContentControl : UserControl
 
     private static void OnViewModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        var control = (FolderPaneContentControl)d;
+        FolderPaneContentControl control = (FolderPaneContentControl)d;
         control.Bindings.Update();
 
         if (e.NewValue is DecodingViewModel vm)

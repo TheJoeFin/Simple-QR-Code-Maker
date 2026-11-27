@@ -174,11 +174,11 @@ public sealed partial class RemoveBackgroundDialogViewModel : ObservableRecipien
             {
                 for (int x = 0; x < srcWidth; x++)
                 {
-                    int srcIdx = y * srcData.Stride + x * 4;
+                    int srcIdx = (y * srcData.Stride) + (x * 4);
 
                     int maskX = x * maskWidth / srcWidth;
                     int maskY = y * maskHeight / srcHeight;
-                    int maskIdx = maskY * maskWidth + maskX;
+                    int maskIdx = (maskY * maskWidth) + maskX;
 
                     // Mask: 0 = background, 255 = foreground — invert for alpha
                     byte alpha = (byte)(255 - maskPixels[maskIdx]);

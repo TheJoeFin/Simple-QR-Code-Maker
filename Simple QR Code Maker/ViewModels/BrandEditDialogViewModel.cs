@@ -93,7 +93,7 @@ public sealed partial class BrandEditDialogViewModel : ObservableRecipient
             QrFramePreset.RoundedFrame => "Banner text",
             QrFramePreset.CornerCallout => "Callout text",
             QrFramePreset.BottomLabel => "Label text",
-            _ => string.Empty,
+            _ => "Caption",
         };
 
     public string FrameTextDescription => _original.FrameTextSource == QrFrameTextSource.ContentSummary
@@ -165,6 +165,8 @@ public sealed partial class BrandEditDialogViewModel : ObservableRecipient
             LogoSizePercentage = IncludeLogo ? LogoSize : null,
             LogoPaddingPixels = IncludeLogo ? LogoPadding : null,
             FramePreset = IncludeFrame ? selectedFramePreset : null,
+            Appearance = IncludeFrame ? _original.Appearance : null,
+            QrPaddingModules = IncludeFrame ? _original.QrPaddingModules : null,
             FrameTextSource = _original.FrameTextSource,
             FrameText = IncludeFrame && selectedFramePreset != QrFramePreset.None
                 ? NormalizeFrameText(EditFrameText)

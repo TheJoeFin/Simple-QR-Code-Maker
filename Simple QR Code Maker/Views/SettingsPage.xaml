@@ -557,7 +557,7 @@
                         </settingsControls:SettingsCard>
 
                         <!--  Default frame  -->
-                        <settingsControls:SettingsCard Description="{x:Bind ViewModel.DefaultFramePresetText, Mode=OneWay}" Header="Frame">
+                        <settingsControls:SettingsCard Description="{x:Bind ViewModel.DefaultFramePresetText, Mode=OneWay}" Header="Frame and pattern">
                             <settingsControls:SettingsCard.HeaderIcon>
                                 <FontIcon Glyph="&#xE8BC;" />
                             </settingsControls:SettingsCard.HeaderIcon>

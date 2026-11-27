@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Shapes;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.ViewModels;
+using Windows.Foundation;
 using Windows.UI;
 
 namespace Simple_QR_Code_Maker.Controls;
@@ -54,22 +55,22 @@ public sealed partial class AdvancedToolsUserControl : UserControl
 
         int version = ViewModel.QrVersion;
         int dim = QrAlignmentPatternHelper.GetDimension(version);
-        var points = ViewModel.UnwarpControlPoints;
+        List<UnwarpControlPoint> points = ViewModel.UnwarpControlPoints;
 
         const double canvasSize = 140.0;
         const double padding = 6.0;
-        double drawingSize = canvasSize - 2 * padding;
+        double drawingSize = canvasSize - (2 * padding);
 
-        double ToCanvasX(double moduleCol) => padding + (moduleCol + 0.5) / dim * drawingSize;
-        double ToCanvasY(double moduleRow) => padding + (moduleRow + 0.5) / dim * drawingSize;
+        double ToCanvasX(double moduleCol) => padding + ((moduleCol + 0.5) / dim * drawingSize);
+        double ToCanvasY(double moduleRow) => padding + ((moduleRow + 0.5) / dim * drawingSize);
         double ToCanvasLen(double modules) => modules / dim * drawingSize;
 
         // Finder pattern zones (7x7 modules at TL, TR, BL)
         (double Row, double Col)[] finderTopLefts = [(0, 0), (0, dim - 7), (dim - 7, 0)];
-        foreach (var (fRow, fCol) in finderTopLefts)
+        foreach ((double fRow, double fCol) in finderTopLefts)
         {
-            double left = padding + fCol / dim * drawingSize;
-            double top = padding + fRow / dim * drawingSize;
+            double left = padding + (fCol / dim * drawingSize);
+            double top = padding + (fRow / dim * drawingSize);
             double size = ToCanvasLen(7);
 
             var rect = new Rectangle
@@ -86,8 +87,8 @@ public sealed partial class AdvancedToolsUserControl : UserControl
         }
 
         // Control point dots
-        var nextPoint = ViewModel.NextUnwarpPoint;
-        foreach (var pt in points)
+        UnwarpControlPoint? nextPoint = ViewModel.NextUnwarpPoint;
+        foreach (UnwarpControlPoint pt in points)
         {
             bool isCorner = pt.Kind == UnwarpPointKind.OuterCorner;
             bool isPlaced = pt.IsPlacedOrEstimated;
@@ -115,8 +116,8 @@ public sealed partial class AdvancedToolsUserControl : UserControl
                     RenderTransform = transform,
                     Opacity = 0.75,
                 };
-                Canvas.SetLeft(halo, cx - haloSize / 2);
-                Canvas.SetTop(halo, cy - haloSize / 2);
+                Canvas.SetLeft(halo, cx - (haloSize / 2));
+                Canvas.SetTop(halo, cy - (haloSize / 2));
                 UnwarpPreviewCanvas.Children.Add(halo);
 
                 var sb = new Storyboard();
@@ -169,8 +170,8 @@ public sealed partial class AdvancedToolsUserControl : UserControl
                     : null,
                 StrokeThickness = isPlaced && !isNext ? 1.5 : 0,
             };
-            Canvas.SetLeft(ellipse, cx - dotSize / 2);
-            Canvas.SetTop(ellipse, cy - dotSize / 2);
+            Canvas.SetLeft(ellipse, cx - (dotSize / 2));
+            Canvas.SetTop(ellipse, cy - (dotSize / 2));
             UnwarpPreviewCanvas.Children.Add(ellipse);
         }
     }
@@ -179,20 +180,20 @@ public sealed partial class AdvancedToolsUserControl : UserControl
     {
         if (!ViewModel.IsUnwarpWorkflowVisible) return;
 
-        var pos = e.GetCurrentPoint(UnwarpPreviewCanvas).Position;
+        Point pos = e.GetCurrentPoint(UnwarpPreviewCanvas).Position;
         int version = ViewModel.QrVersion;
         int dim = QrAlignmentPatternHelper.GetDimension(version);
         const double canvasSize = 140.0;
         const double padding = 6.0;
-        double drawingSize = canvasSize - 2 * padding;
+        double drawingSize = canvasSize - (2 * padding);
 
-        double ToCanvasX(double moduleCol) => padding + (moduleCol + 0.5) / dim * drawingSize;
-        double ToCanvasY(double moduleRow) => padding + (moduleRow + 0.5) / dim * drawingSize;
+        double ToCanvasX(double moduleCol) => padding + ((moduleCol + 0.5) / dim * drawingSize);
+        double ToCanvasY(double moduleRow) => padding + ((moduleRow + 0.5) / dim * drawingSize);
 
         UnwarpControlPoint? closest = null;
         double minDist = double.MaxValue;
 
-        foreach (var pt in ViewModel.UnwarpControlPoints)
+        foreach (UnwarpControlPoint pt in ViewModel.UnwarpControlPoints)
         {
             double cx = ToCanvasX(pt.ModuleCol);
             double cy = ToCanvasY(pt.ModuleRow);

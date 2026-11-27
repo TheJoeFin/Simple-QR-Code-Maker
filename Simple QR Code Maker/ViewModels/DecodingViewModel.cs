@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -1012,7 +1013,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
 
             // Start the async operation then yield so the dispatcher renders
             // "Opening camera…" before we synchronously overwrite the message.
-            var captureOperation = dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
+            IAsyncOperation<StorageFile> captureOperation = dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
             await Task.Yield();
             LoadingMessage = "Taking picture…";
 
@@ -1464,42 +1465,18 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         if (string.IsNullOrWhiteSpace(InfoBarMessage))
             return;
 
-        bool isVCard = VCardBuilderHelper.IsVCard(InfoBarMessage);
-        bool isWifi = WifiBuilderHelper.IsWifi(InfoBarMessage);
-        bool isEmail = EmailBuilderHelper.IsEmail(InfoBarMessage);
-        QrContentKind contentKind = isVCard
-            ? QrContentKind.VCard
-            : isWifi
-                ? QrContentKind.WiFi
-                : isEmail
-                    ? QrContentKind.Email
-                    : QrContentKind.PlainText;
+        QrContentKind contentKind = QrDocumentHelper.ClassifyContent(InfoBarMessage);
         MultiLineCodeMode? overrideMode = contentKind == QrContentKind.PlainText
             ? null
             : MultiLineCodeMode.MultilineOneCode;
 
         // Create a new HistoryItem with the decoded text, preserving other state if available
-        HistoryItem editHistoryItem = navigationHistoryItem != null
-            ? new HistoryItem
-            {
-                CodesContent = InfoBarMessage,
-                ContentKind = contentKind,
-                MultiLineCodeModeOverride = overrideMode,
-                Foreground = navigationHistoryItem.Foreground,
-                Background = navigationHistoryItem.Background,
-                ErrorCorrection = navigationHistoryItem.ErrorCorrection,
-                LogoImagePath = navigationHistoryItem.LogoImagePath,
-                LogoEmoji = navigationHistoryItem.LogoEmoji,
-                LogoEmojiStyle = navigationHistoryItem.LogoEmojiStyle,
-                LogoSizePercentage = navigationHistoryItem.LogoSizePercentage,
-                LogoPaddingPixels = navigationHistoryItem.LogoPaddingPixels,
-            }
-            : new HistoryItem
-            {
-                CodesContent = InfoBarMessage,
-                ContentKind = contentKind,
-                MultiLineCodeModeOverride = overrideMode,
-            };
+        HistoryItem editHistoryItem = navigationHistoryItem is not null
+            ? QrCodeDesignStateMapper.ToHistoryItem(QrCodeDesignStateMapper.FromHistoryItem(navigationHistoryItem))
+            : new HistoryItem();
+        editHistoryItem.CodesContent = InfoBarMessage;
+        editHistoryItem.ContentKind = contentKind;
+        editHistoryItem.MultiLineCodeModeOverride = overrideMode;
 
         NavigationService.NavigateTo(typeof(MainViewModel).FullName!, editHistoryItem);
     }
@@ -1738,8 +1715,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
     [RelayCommand]
     private async Task ClearDecodingHistory()
     {
-        DecodingHistoryItems.Clear();
-        await DecodingHistoryStorageHelper.SaveHistoryAsync(DecodingHistoryItems);
+        await DecodingHistoryStorageHelper.ClearAndSaveAsync(DecodingHistoryItems);
         OnPropertyChanged(nameof(HasDecodingHistory));
     }
 
@@ -1749,14 +1725,7 @@ public partial class DecodingViewModel : ObservableRecipient, INavigationAware, 
         if (item is null)
             return;
 
-        if (!string.IsNullOrEmpty(item.SavedImagePath) && File.Exists(item.SavedImagePath))
-        {
-            try { File.Delete(item.SavedImagePath); }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Could not delete decoding history image: {ex.Message}"); }
-        }
-
-        DecodingHistoryItems.Remove(item);
-        await DecodingHistoryStorageHelper.SaveHistoryAsync(DecodingHistoryItems);
+        await DecodingHistoryStorageHelper.RemoveAndSaveAsync(DecodingHistoryItems, item);
         OnPropertyChanged(nameof(HasDecodingHistory));
     }
 

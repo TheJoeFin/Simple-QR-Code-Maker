@@ -27,7 +27,7 @@ public sealed partial class CutOutImagesPaneContentControl : UserControl
 
     private static void OnViewModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        var control = (CutOutImagesPaneContentControl)d;
+        CutOutImagesPaneContentControl control = (CutOutImagesPaneContentControl)d;
         control.Bindings.Update();
 
         if (e.NewValue is DecodingViewModel vm)

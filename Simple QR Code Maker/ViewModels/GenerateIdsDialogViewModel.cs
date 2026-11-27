@@ -65,7 +65,7 @@ public sealed partial class GenerateIdsDialogViewModel : ObservableRecipient
         }
 
         int previewCount = Math.Min(count, PreviewLimit);
-        List<string> values = new(count);
+        List<string> values = [with(count)];
 
         if (_previewValues.Count == previewCount)
             values.AddRange(_previewValues);

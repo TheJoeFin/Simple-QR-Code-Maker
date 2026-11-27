@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Simple_QR_Code_Maker.Controls.QrDesignGalleryControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Simple_QR_Code_Maker.Controls"
+    Unloaded="Control_Unloaded">
+    <Button x:Name="DesignButton" AutomationProperties.AutomationId="QrDesignButton" AutomationProperties.Name="QR code design"
+            ToolTipService.ToolTip="Open the QR code designer" Click="DesignButton_Click">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+            <Viewbox Width="16" Height="16"><controls:FrameIcon /></Viewbox>
+            <TextBlock Text="Design" />
+        </StackPanel>
+    </Button>
+</UserControl>

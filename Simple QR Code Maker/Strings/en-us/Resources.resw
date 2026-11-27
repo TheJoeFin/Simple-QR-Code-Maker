@@ -127,6 +127,12 @@
     <value>Main</value>
     <comment>Page title for MainPage</comment>
   </data>
+  <data name="QrDesign_NoBackground.Content" xml:space="preserve">
+    <value>No background</value>
+  </data>
+  <data name="QrDesign_NoBackgroundHelp.Text" xml:space="preserve">
+    <value>Remove the QR background without cutting into the frame. Use a dark QR color on a light frame for reliable scanning.</value>
+  </data>
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>Personalization</value>
   </data>
