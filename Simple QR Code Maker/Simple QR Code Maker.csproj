@@ -165,4 +165,28 @@
     <ItemGroup>
       <Resource Remove="Views\ShellPage.xaml" />
     </ItemGroup>
+
+    <PropertyGroup>
+      <IncludePseudoLocales Condition="'$(PseudoLocale)' != ''">true</IncludePseudoLocales>
+      <DefineConstants Condition="'$(PseudoLocale)' == 'qps-ploc'">$(DefineConstants);PSEUDO_LOCALE_ACCENTED</DefineConstants>
+      <DefineConstants Condition="'$(PseudoLocale)' == 'qps-plocm'">$(DefineConstants);PSEUDO_LOCALE_MIRRORED</DefineConstants>
+      <DefaultItemExcludes Condition="'$(IncludePseudoLocales)' != 'true'">$(DefaultItemExcludes);Strings\qps-ploc\**;Strings\qps-plocm\**</DefaultItemExcludes>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(IncludePseudoLocales)' == 'true'">
+      <PseudoBuildFlavor>all</PseudoBuildFlavor>
+      <PseudoBuildFlavor Condition="'$(PseudoLocale)' == 'qps-ploc' Or '$(PseudoLocale)' == 'qps-plocm'">$(PseudoLocale)</PseudoBuildFlavor>
+      <OutputPath>bin\pseudo\$(PseudoBuildFlavor)\$(Platform)\$(Configuration)\</OutputPath>
+      <IntermediateOutputPath>obj\pseudo\$(PseudoBuildFlavor)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+      <AppxPackageDir Condition="'$(AppxPackageDir)' == ''">AppPackages\pseudo\$(PseudoBuildFlavor)\</AppxPackageDir>
+    </PropertyGroup>
+
+    <Target Name="CheckPseudoLocaleResources" BeforeTargets="PrepareForBuild" Condition="'$(IncludePseudoLocales)' == 'true' Or '$(PseudoLocale)' != ''">
+      <Error Condition="'$(Configuration)' != 'Debug'" Text="Pseudo locales are only supported for Debug builds." />
+      <Error Condition="'$(IncludePseudoLocales)' != 'true'" Text="PseudoLocale cannot be combined with IncludePseudoLocales=false." />
+      <Error Condition="'$(PseudoLocale)' != '' And '$(PseudoLocale)' != 'qps-ploc' And '$(PseudoLocale)' != 'qps-plocm'"
+             Text="PseudoLocale must be qps-ploc or qps-plocm." />
+      <Error Condition="!Exists('Strings\qps-ploc\Resources.resw') Or !Exists('Strings\qps-plocm\Resources.resw')"
+             Text="Run scripts\New-PseudoResources.ps1 before building with IncludePseudoLocales=true." />
+    </Target>
 </Project>

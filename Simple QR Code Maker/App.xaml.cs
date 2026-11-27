@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
+using Microsoft.Windows.Globalization;
 using Simple_QR_Code_Maker.Activation;
 using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Core.Contracts.Services;
@@ -41,10 +42,13 @@ public partial class App : Application
         return service;
     }
 
-    public static WindowEx MainWindow { get; } = new MainWindow();
+    private static readonly Lazy<WindowEx> mainWindow = new(() => new MainWindow());
+
+    public static WindowEx MainWindow => mainWindow.Value;
 
     public App()
     {
+        ConfigurePseudoLocale();
         InitializeComponent();
 
         Host = Microsoft.Extensions.Hosting.Host.
@@ -143,6 +147,21 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+    }
+
+    private static void ConfigurePseudoLocale()
+    {
+#if PSEUDO_LOCALE_ACCENTED
+        ApplicationLanguages.PrimaryLanguageOverride = "qps-ploc";
+#elif PSEUDO_LOCALE_MIRRORED
+        ApplicationLanguages.PrimaryLanguageOverride = "qps-plocm";
+#else
+        // Packaged apps persist the override. Clear only an earlier localization test override.
+        string language = ApplicationLanguages.PrimaryLanguageOverride;
+        if (string.Equals(language, "qps-ploc", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(language, "qps-plocm", StringComparison.OrdinalIgnoreCase))
+            ApplicationLanguages.PrimaryLanguageOverride = string.Empty;
+#endif
     }
 
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
