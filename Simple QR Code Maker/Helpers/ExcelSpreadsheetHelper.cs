@@ -404,6 +404,7 @@ public static class ExcelSpreadsheetHelper
         }
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "The target is an external Excel COM dispatch object, so its members are not managed metadata trimmed from this application.")]
     private static object? GetProperty(object? target, string propertyName)
     {
         ArgumentNullException.ThrowIfNull(target);
@@ -416,6 +417,7 @@ public static class ExcelSpreadsheetHelper
             args: null);
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "The target is an external Excel COM dispatch object, so its members are not managed metadata trimmed from this application.")]
     private static void SetProperty(object target, string propertyName, object value)
     {
         target.GetType().InvokeMember(
@@ -426,6 +428,7 @@ public static class ExcelSpreadsheetHelper
             [value]);
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "The target is an external Excel COM dispatch object, so its members are not managed metadata trimmed from this application.")]
     private static object? GetIndexedProperty(object target, string propertyName, params object[] indexes)
     {
         return target.GetType().InvokeMember(
@@ -436,6 +439,7 @@ public static class ExcelSpreadsheetHelper
             indexes);
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "The target is an external Excel COM dispatch object, so its members are not managed metadata trimmed from this application.")]
     private static object? InvokeMethod(object? target, string methodName, params object[] args)
     {
         ArgumentNullException.ThrowIfNull(target);

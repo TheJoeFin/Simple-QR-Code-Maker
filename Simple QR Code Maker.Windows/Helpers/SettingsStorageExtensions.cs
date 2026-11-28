@@ -1,5 +1,6 @@
 ﻿using Simple_QR_Code_Maker.Contracts.Services;
 using Simple_QR_Code_Maker.Core.Helpers;
+using Simple_QR_Code_Maker.Models;
 using Simple_QR_Code_Maker.Services;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -29,14 +30,14 @@ public static class SettingsStorageExtensions
 
     public static async Task SaveAsync<T>(this IJsonFileStore files, string name, T content)
     {
-        string json = await Json.StringifyAsync(content);
+        string json = await Json.StringifyAsync(content, LocalSettingsJsonContext.Default);
         await files.WriteAsync(GetFileName(name), json);
     }
 
     public static async Task<T?> ReadAsync<T>(this IJsonFileStore files, string name)
     {
         string? json = await files.ReadAsync(GetFileName(name));
-        return json is null ? default : await Json.ToObjectAsync<T>(json);
+        return json is null ? default : await Json.ToObjectAsync<T>(json, LocalSettingsJsonContext.Default);
     }
 
     public static async Task SaveAsync<T>(this ApplicationDataContainer settings, string key, T value)
@@ -56,13 +57,13 @@ public static class SettingsStorageExtensions
 
     public static async Task SaveAsync<T>(this ISettingsStore settings, string key, T value)
     {
-        await settings.WriteAsync(key, await Json.StringifyAsync(value));
+        await settings.WriteAsync(key, await Json.StringifyAsync(value, LocalSettingsJsonContext.Default));
     }
 
     public static async Task<T?> ReadAsync<T>(this ISettingsStore settings, string key)
     {
         string? json = await settings.ReadAsync(key);
-        return json is null ? default : await Json.ToObjectAsync<T>(json);
+        return json is null ? default : await Json.ToObjectAsync<T>(json, LocalSettingsJsonContext.Default);
     }
 
     public static async Task<StorageFile> SaveFileAsync(this StorageFolder folder, byte[] content, string fileName, CreationCollisionOption options = CreationCollisionOption.ReplaceExisting)

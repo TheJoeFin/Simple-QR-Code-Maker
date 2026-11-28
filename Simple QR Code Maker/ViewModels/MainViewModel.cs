@@ -14,7 +14,6 @@ using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -1904,9 +1903,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
                 return;
             }
 
-            DataPackage dataPackage = new();
-            dataPackage.SetStorageItems(files);
-            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+            ClipboardDataHelper.SetFiles(files, files.Count == 1 ? files[0] : null);
 
             ShowClipboardCopySuccessInfoBar(
                 requestedCodes.Length == 1
@@ -1947,9 +1944,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
                 return;
             }
 
-            DataPackage dataPackage = new();
-            dataPackage.SetStorageItems(files);
-            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+            ClipboardDataHelper.SetFiles(files);
 
             ShowClipboardCopySuccessInfoBar(
                 requestedCodes.Length == 1
@@ -2088,7 +2083,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     }
 
     [RelayCommand]
-    [RequiresUnreferencedCode("Calls BrandService persistence methods")]
     private async Task CreateNewBrand()
     {
         if (string.IsNullOrWhiteSpace(NewBrandName))
@@ -2205,7 +2199,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     }
 
     [RelayCommand]
-    [RequiresUnreferencedCode("Calls BrandService persistence methods")]
     private async Task DeleteBrand(BrandItem? brand)
     {
         if (brand is null)
@@ -2219,7 +2212,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     }
 
     [RelayCommand]
-    [RequiresUnreferencedCode("Calls BrandService persistence methods")]
     private async Task SetDefaultBrand(BrandItem? brand)
     {
         if (brand is null)
@@ -2229,7 +2221,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
     }
 
     [RelayCommand]
-    [RequiresUnreferencedCode("Calls BrandService persistence methods")]
     private async Task EditBrand(BrandItem? brand)
     {
         if (brand is null)
@@ -2523,9 +2514,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware, INav
                 return;
             }
 
-            DataPackage dataPackage = new();
-            dataPackage.SetStorageItems(files);
-            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+            StorageFile? bitmapFile = files.Count == 2
+                ? files.FirstOrDefault(file => string.Equals(file.FileType, ".png", StringComparison.OrdinalIgnoreCase))
+                : null;
+            ClipboardDataHelper.SetFiles(files, bitmapFile);
 
             ShowClipboardCopySuccessInfoBar(
                 requestedCodes.Length == 1

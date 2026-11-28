@@ -40,6 +40,9 @@ public sealed partial class QrDesignDialog : ContentDialog
     private bool loadingPreviews;
     private ObservableCollection<BarcodeImageItem>? previewItems;
     private XamlRoot? dialogRoot;
+    private readonly QrModuleStyle[] moduleStyles = Enum.GetValues<QrModuleStyle>();
+    private readonly QrEyeStyle[] eyeStyles = Enum.GetValues<QrEyeStyle>();
+    private readonly QrCaptionIcon[] captionIcons = Enum.GetValues<QrCaptionIcon>();
 
     public ObservableCollection<QrDesignGalleryItem> Presets { get; } = [];
     public ObservableCollection<QrDesignGalleryItem> Frames { get; } = [];
@@ -50,20 +53,15 @@ public sealed partial class QrDesignDialog : ContentDialog
     {
         ViewModel = viewModel;
         InitializeComponent();
-        ModuleCombo.ItemsSource = LocalizeChoices<QrModuleStyle>("Design_Module");
-        EyeCombo.ItemsSource = LocalizeChoices<QrEyeStyle>("Design_Eye");
-        IconCombo.ItemsSource = LocalizeChoices<QrCaptionIcon>("Design_Icon");
+        ModuleCombo.ItemsSource = LocalizeChoices(moduleStyles, "Design_Module");
+        EyeCombo.ItemsSource = LocalizeChoices(eyeStyles, "Design_Eye");
+        IconCombo.ItemsSource = LocalizeChoices(captionIcons, "Design_Icon");
         LabelSourceCombo.ItemsSource = new[] { "Design_LabelManualText".GetLocalized(), "Design_LabelContentSummary".GetLocalized() };
         CaptionSuggestionCombo.ItemsSource = new[] { "Design_CaptionScanMe".GetLocalized(), "Design_CaptionJoinWifi".GetLocalized(), "Design_CaptionContact".GetLocalized(), "Design_CaptionViewMenu".GetLocalized(), "Design_CaptionTickets".GetLocalized(), "Design_CaptionSayHello".GetLocalized() };
     }
 
-    private sealed record DesignChoice<T>(T Value, string Label)
-    {
-        public override string ToString() => Label;
-    }
-
-    private static DesignChoice<T>[] LocalizeChoices<T>(string prefix) where T : struct, Enum
-        => [.. Enum.GetValues<T>().Select(value => new DesignChoice<T>(value, $"{prefix}_{value}".GetLocalized()))];
+    private static string[] LocalizeChoices<T>(IEnumerable<T> values, string prefix)
+        => [.. values.Select(value => $"{prefix}_{value}".GetLocalized())];
 
     private async void DesignDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
     {
@@ -198,9 +196,9 @@ public sealed partial class QrDesignDialog : ContentDialog
         updatingSelection = true;
         try
         {
-            ModuleCombo.SelectedItem = ((DesignChoice<QrModuleStyle>[])ModuleCombo.ItemsSource).FirstOrDefault(choice => choice.Value == viewModel.ModuleStyle);
-            EyeCombo.SelectedItem = ((DesignChoice<QrEyeStyle>[])EyeCombo.ItemsSource).FirstOrDefault(choice => choice.Value == viewModel.EyeStyle);
-            IconCombo.SelectedItem = ((DesignChoice<QrCaptionIcon>[])IconCombo.ItemsSource).FirstOrDefault(choice => choice.Value == viewModel.CaptionIcon);
+            ModuleCombo.SelectedIndex = Array.IndexOf(moduleStyles, viewModel.ModuleStyle);
+            EyeCombo.SelectedIndex = Array.IndexOf(eyeStyles, viewModel.EyeStyle);
+            IconCombo.SelectedIndex = Array.IndexOf(captionIcons, viewModel.CaptionIcon);
             LabelSourceCombo.SelectedIndex = (int)viewModel.FrameTextSource;
             FrameGrid.SelectedItem = Frames.FirstOrDefault(item => item.Frame == viewModel.FramePreset);
             PresetGrid.SelectedItem = Presets.FirstOrDefault(item => item.Design is QrDesignPreset design
@@ -240,20 +238,20 @@ public sealed partial class QrDesignDialog : ContentDialog
 
     private void ModuleCombo_SelectionChanged(object sender, SelectionChangedEventArgs args)
     {
-        if (!updatingSelection && ModuleCombo.SelectedItem is DesignChoice<QrModuleStyle> choice)
-            ViewModel.ModuleStyle = choice.Value;
+        if (!updatingSelection && ModuleCombo.SelectedIndex >= 0)
+            ViewModel.ModuleStyle = moduleStyles[ModuleCombo.SelectedIndex];
     }
 
     private void EyeCombo_SelectionChanged(object sender, SelectionChangedEventArgs args)
     {
-        if (!updatingSelection && EyeCombo.SelectedItem is DesignChoice<QrEyeStyle> choice)
-            ViewModel.EyeStyle = choice.Value;
+        if (!updatingSelection && EyeCombo.SelectedIndex >= 0)
+            ViewModel.EyeStyle = eyeStyles[EyeCombo.SelectedIndex];
     }
 
     private void IconCombo_SelectionChanged(object sender, SelectionChangedEventArgs args)
     {
-        if (!updatingSelection && IconCombo.SelectedItem is DesignChoice<QrCaptionIcon> choice)
-            ViewModel.CaptionIcon = choice.Value;
+        if (!updatingSelection && IconCombo.SelectedIndex >= 0)
+            ViewModel.CaptionIcon = captionIcons[IconCombo.SelectedIndex];
     }
 
     private void LabelSourceCombo_SelectionChanged(object sender, SelectionChangedEventArgs args)

@@ -267,9 +267,7 @@ public partial class BarcodeImageItem : ObservableRecipient
             return;
         }
 
-        DataPackage dataPackage = new();
-        dataPackage.SetStorageItems(files);
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+        ClipboardDataHelper.SetFiles(files, file);
 
         WeakReferenceMessenger.Default.Send(new RequestShowMessage("Main_PngCopied".GetLocalized(), string.Empty, InfoBarSeverity.Success));
         WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
@@ -294,9 +292,7 @@ public partial class BarcodeImageItem : ObservableRecipient
             return;
         }
 
-        DataPackage dataPackage = new();
-        dataPackage.SetStorageItems(files);
-        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true });
+        ClipboardDataHelper.SetFiles(files);
 
         WeakReferenceMessenger.Default.Send(new RequestShowMessage("Main_SvgCopied".GetLocalized(), string.Empty, InfoBarSeverity.Success));
         WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());

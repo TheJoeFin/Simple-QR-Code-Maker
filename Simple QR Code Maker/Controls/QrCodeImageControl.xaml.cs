@@ -59,7 +59,7 @@ public sealed partial class QrCodeImageControl : UserControl
         }
 
         WeakReferenceMessenger.Default.Send(new SaveHistoryMessage());
-        args.Data.SetStorageItems(new[] { file });
+        ClipboardDataHelper.PopulateFilePackage(args.Data, [file], file);
         args.Data.RequestedOperation = DataPackageOperation.Copy;
         deferral.Complete();
     }

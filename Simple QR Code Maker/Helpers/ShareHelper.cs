@@ -56,7 +56,8 @@ internal static class ShareHelper
         {
             data.Properties.Title = codes.Count == 1 ? "Share_OneQrCode".GetLocalized() : "Share_MultipleQrCodes".GetLocalized();
             data.Properties.Description = string.Join(Environment.NewLine, codes.Select(code => code.CodeAsText));
-            data.SetStorageItems(files);
+            IStorageItem[] items = [.. files];
+            data.SetStorageItems(items);
             if (files.Count == 1)
                 data.SetBitmap(RandomAccessStreamReference.CreateFromFile(files[0]));
         });

@@ -7,7 +7,6 @@ using Simple_QR_Code_Maker.Contracts.ViewModels;
 using Simple_QR_Code_Maker.Helpers;
 using Simple_QR_Code_Maker.Models;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Simple_QR_Code_Maker.ViewModels;
 
@@ -88,7 +87,6 @@ public partial class ShellViewModel : ObservableRecipient
         TitleBarSearchResults.Clear();
     }
 
-    [RequiresUnreferencedCode("Calls BrandStorageHelper.LoadBrandsAsync and HistoryStorageHelper.LoadHistoryAsync")]
     public async Task RefreshTitleBarSearchResultsAsync(string searchText)
     {
         int requestVersion = ++titleBarSearchRequestVersion;
