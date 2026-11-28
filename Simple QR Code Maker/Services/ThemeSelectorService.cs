@@ -38,7 +38,7 @@ public class ThemeSelectorService : IThemeSelectorService
         await SaveThemeInSettingsAsync(Theme);
     }
 
-    public async Task SetRequestedThemeAsync()
+    public Task SetRequestedThemeAsync()
     {
         if (App.MainWindow.Content is FrameworkElement rootElement)
         {
@@ -47,7 +47,7 @@ public class ThemeSelectorService : IThemeSelectorService
             TitleBarHelper.UpdateTitleBar(Theme);
         }
 
-        await Task.CompletedTask;
+        return Task.CompletedTask;
     }
 
     private async Task<ElementTheme> LoadThemeFromSettingsAsync()

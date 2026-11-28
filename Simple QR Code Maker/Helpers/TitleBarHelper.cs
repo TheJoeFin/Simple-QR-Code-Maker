@@ -69,16 +69,11 @@ internal class TitleBarHelper
             App.MainWindow.AppWindow.TitleBar.BackgroundColor = Colors.Transparent;
 
             nint hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
-            if (hwnd == GetActiveWindow())
-            {
-                SendMessage(hwnd, WMACTIVATE, WAINACTIVE, IntPtr.Zero);
-                SendMessage(hwnd, WMACTIVATE, WAACTIVE, IntPtr.Zero);
-            }
-            else
-            {
-                SendMessage(hwnd, WMACTIVATE, WAACTIVE, IntPtr.Zero);
-                SendMessage(hwnd, WMACTIVATE, WAINACTIVE, IntPtr.Zero);
-            }
+            if (hwnd != GetActiveWindow())
+                return;
+
+            SendMessage(hwnd, WMACTIVATE, WAINACTIVE, IntPtr.Zero);
+            SendMessage(hwnd, WMACTIVATE, WAACTIVE, IntPtr.Zero);
         }
     }
 

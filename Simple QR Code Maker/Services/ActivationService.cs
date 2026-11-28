@@ -24,10 +24,8 @@ public class ActivationService : IActivationService
 
     public async Task ActivateAsync(object activationArgs)
     {
-        // Execute tasks before activation.
-        await InitializeAsync();
+        await _themeSelectorService.InitializeAsync();
 
-        // Set the MainWindow Content.
         if (App.MainWindow.Content == null)
         {
             _shell = App.GetService<ShellPage>();
@@ -36,14 +34,12 @@ public class ActivationService : IActivationService
             App.MainWindow.Content = _shell ?? new Frame();
         }
 
-        // Handle activation via ActivationHandlers.
+        if (_shell is ShellPage shellPage)
+            shellPage.ConfigureTitleBar();
+
+        await _themeSelectorService.SetRequestedThemeAsync();
         await HandleActivationAsync(activationArgs);
-
-        // Activate the MainWindow.
         App.MainWindow.Activate();
-
-        // Execute tasks after activation.
-        await StartupAsync();
     }
 
     private async Task HandleActivationAsync(object activationArgs)
@@ -61,15 +57,4 @@ public class ActivationService : IActivationService
         }
     }
 
-    private async Task InitializeAsync()
-    {
-        await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
-        await Task.CompletedTask;
-    }
-
-    private async Task StartupAsync()
-    {
-        await _themeSelectorService.SetRequestedThemeAsync();
-        await Task.CompletedTask;
-    }
 }

@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -45,24 +44,25 @@ public sealed partial class ShellPage : Page
     }
 
     private void ShellPage_Loaded(object sender, RoutedEventArgs e)
+        => ConfigureTitleBar();
+
+    public void ConfigureTitleBar()
     {
-        if (TryConfigureTitleBar())
+        if (isTitleBarConfigured)
             return;
 
-        DispatcherQueue.TryEnqueue(() => _ = TryConfigureTitleBar());
+        AppTitleBar.Title = App.MainWindow.Title;
+        if (AppTitleBar.XamlRoot is not null)
+            TryConfigureTitleBar();
     }
 
-    private bool TryConfigureTitleBar()
+    private void TryConfigureTitleBar()
     {
-        if (isTitleBarConfigured || App.MainWindow.Content != this || AppTitleBar.XamlRoot is null)
-            return false;
+        if (isTitleBarConfigured || App.MainWindow.Content != this)
+            return;
 
-        App.MainWindow.ExtendsContentIntoTitleBar = true;
-        App.MainWindow.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         App.MainWindow.SetTitleBar(AppTitleBar);
-        AppTitleBar.Title = App.MainWindow.Title;
         isTitleBarConfigured = true;
-        return true;
     }
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
